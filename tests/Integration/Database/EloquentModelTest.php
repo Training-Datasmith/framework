@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Eloquent\Model;
@@ -114,8 +116,7 @@ class EloquentModelTest extends DatabaseTestCase
             $table->boolean('analyze');
         });
 
-        $model = new class extends Model
-        {
+        $model = new class () extends Model {
             protected $table = 'actions';
             protected $guarded = ['id'];
             public $timestamps = false;

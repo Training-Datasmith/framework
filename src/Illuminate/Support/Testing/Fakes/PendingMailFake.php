@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Testing\Fakes;
 
 use Illuminate\Contracts\Mail\Mailable;

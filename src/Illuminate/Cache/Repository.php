@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use ArrayAccess;
@@ -27,12 +29,14 @@ use Illuminate\Contracts\Cache\Store;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\InteractsWithTime;
-use Illuminate\Support\Traits\Macroable;
-use InvalidArgumentException;
 
 use function Illuminate\Support\defer;
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\InteractsWithTime;
+
+use Illuminate\Support\Traits\Macroable;
+use InvalidArgumentException;
 
 /**
  * @mixin \Illuminate\Contracts\Cache\Store
@@ -69,8 +73,7 @@ class Repository implements ArrayAccess, CacheContract
          * The cache store configuration options.
          */
         protected array $config = []
-    )
-    {
+    ) {
     }
 
     /**
@@ -136,7 +139,8 @@ class Repository implements ArrayAccess, CacheContract
     {
         $this->event(new RetrievingManyKeys($this->getName(), $keys));
 
-        $values = $this->store->many((new Collection($keys))
+        $values = $this->store->many(
+            (new Collection($keys))
             ->map(fn ($value, $key) => is_string($key) ? $key : enum_value($value))
             ->values()
             ->all()
@@ -451,7 +455,9 @@ class Repository implements ArrayAccess, CacheContract
             // this operation should work with a total "atomic" implementation of it.
             if (method_exists($this->store, 'add')) {
                 return $this->store->add(
-                    $this->itemKey($key), $value, $seconds
+                    $this->itemKey($key),
+                    $value,
+                    $seconds
                 );
             }
         }
@@ -829,20 +835,16 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Get the cache store implementation.
-     *
-     * @return \Illuminate\Contracts\Cache\Store
      */
-    public function getStore()
+    public function getStore(): \Illuminate\Contracts\Cache\Store
     {
         return $this->store;
     }
 
     /**
      * Set the cache store implementation.
-     *
-     * @param  \Illuminate\Contracts\Cache\Store  $store
      */
-    public function setStore($store): static
+    public function setStore(\Illuminate\Contracts\Cache\Store $store): static
     {
         $this->store = $store;
 
@@ -922,7 +924,6 @@ class Repository implements ArrayAccess, CacheContract
     /**
      * Handle dynamic calls into macros or pass missing methods to the store.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
@@ -14,8 +16,7 @@ class GenericUser implements UserContract
          * All of the user's attributes.
          */
         protected array $attributes
-    )
-    {
+    ) {
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
@@ -19,7 +21,7 @@ class DatabaseMigrationMakeCommandTest extends TestCase
             $creator = m::mock(MigrationCreator::class),
             $composer = m::mock(Composer::class)
         );
-        $app = new Application;
+        $app = new Application();
         $app->useDatabasePath(__DIR__);
         $command->setLaravel($app);
         $creator->shouldReceive('create')->once()
@@ -35,7 +37,7 @@ class DatabaseMigrationMakeCommandTest extends TestCase
             $creator = m::mock(MigrationCreator::class),
             m::mock(Composer::class)->shouldIgnoreMissing()
         );
-        $app = new Application;
+        $app = new Application();
         $app->useDatabasePath(__DIR__);
         $command->setLaravel($app);
         $creator->shouldReceive('create')->once()
@@ -51,7 +53,7 @@ class DatabaseMigrationMakeCommandTest extends TestCase
             $creator = m::mock(MigrationCreator::class),
             m::mock(Composer::class)->shouldIgnoreMissing()
         );
-        $app = new Application;
+        $app = new Application();
         $app->useDatabasePath(__DIR__);
         $command->setLaravel($app);
         $creator->shouldReceive('create')->once()
@@ -67,7 +69,7 @@ class DatabaseMigrationMakeCommandTest extends TestCase
             $creator = m::mock(MigrationCreator::class),
             m::mock(Composer::class)->shouldIgnoreMissing()
         );
-        $app = new Application;
+        $app = new Application();
         $app->useDatabasePath(__DIR__);
         $command->setLaravel($app);
         $creator->shouldReceive('create')->once()
@@ -83,7 +85,7 @@ class DatabaseMigrationMakeCommandTest extends TestCase
             $creator = m::mock(MigrationCreator::class),
             m::mock(Composer::class)->shouldIgnoreMissing()
         );
-        $app = new Application;
+        $app = new Application();
         $app->useDatabasePath(__DIR__);
         $command->setLaravel($app);
         $creator->shouldReceive('create')->once()
@@ -99,7 +101,7 @@ class DatabaseMigrationMakeCommandTest extends TestCase
             $creator = m::mock(MigrationCreator::class),
             m::mock(Composer::class)->shouldIgnoreMissing()
         );
-        $app = new Application;
+        $app = new Application();
         $command->setLaravel($app);
         $app->setBasePath('/home/laravel');
         $creator->shouldReceive('create')->once()
@@ -110,6 +112,6 @@ class DatabaseMigrationMakeCommandTest extends TestCase
 
     protected function runCommand($command, $input = [])
     {
-        return $command->run(new ArrayInput($input), new NullOutput);
+        return $command->run(new ArrayInput($input), new NullOutput());
     }
 }

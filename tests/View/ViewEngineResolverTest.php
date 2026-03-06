@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\View;
 
 use Illuminate\View\Engines\EngineResolver;
@@ -11,9 +13,9 @@ class ViewEngineResolverTest extends TestCase
 {
     public function testResolversMayBeResolved()
     {
-        $resolver = new EngineResolver;
+        $resolver = new EngineResolver();
         $resolver->register('foo', function () {
-            return new stdClass;
+            return new stdClass();
         });
         $result = $resolver->resolve('foo');
 
@@ -24,7 +26,7 @@ class ViewEngineResolverTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $resolver = new EngineResolver;
+        $resolver = new EngineResolver();
         $resolver->resolve('foo');
     }
 }

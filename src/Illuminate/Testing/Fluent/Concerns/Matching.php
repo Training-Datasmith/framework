@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing\Fluent\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
-use PHPUnit\Framework\Assert as PHPUnit;
 
 use function Illuminate\Support\enum_value;
+
+use PHPUnit\Framework\Assert as PHPUnit;
 
 trait Matching
 {

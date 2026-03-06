@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use BadMethodCallException;
@@ -56,7 +58,6 @@ abstract class Controller
     /**
      * Handle calls to missing methods on the controller.
      *
-     * @param  array  $parameters
      * @return mixed
      * @throws \BadMethodCallException
      */

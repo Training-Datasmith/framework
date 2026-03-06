@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Console;
 
 use Illuminate\Console\CacheCommandMutex;
@@ -38,8 +40,7 @@ class CacheCommandMutexTest extends TestCase
         $this->cacheFactory = m::mock(Factory::class);
         $this->cacheRepository = m::mock(Repository::class);
         $this->mutex = new CacheCommandMutex($this->cacheFactory);
-        $this->command = new class extends Command
-        {
+        $this->command = new class () extends Command {
             protected $name = 'command-name';
         };
     }
@@ -177,8 +178,7 @@ class CacheCommandMutexTest extends TestCase
 
     public function testCommandMutexNameWithIsolatedMutexNameMethod()
     {
-        $command = new class extends Command
-        {
+        $command = new class () extends Command {
             protected $name = 'command-name';
 
             public function isolatableId()

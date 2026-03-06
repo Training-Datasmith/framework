@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Pagination;
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -23,8 +25,7 @@ class Cursor implements Arrayable
          * Determine whether the cursor points to the next or previous set of items.
          */
         protected $pointsToNextItems = true
-    )
-    {
+    ) {
     }
 
     /**

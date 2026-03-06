@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Illuminate\Bus\Batchable;
@@ -52,7 +54,7 @@ class JobChainingTest extends QueueTestCase
     public function testJobsCanBeChainedOnSuccess()
     {
         JobChainingTestFirstJob::dispatch()->chain([
-            new JobChainingTestSecondJob,
+            new JobChainingTestSecondJob(),
         ]);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -64,7 +66,7 @@ class JobChainingTest extends QueueTestCase
     public function testJobsCanBeChainedOnSuccessUsingPendingChain()
     {
         JobChainingTestFirstJob::withChain([
-            new JobChainingTestSecondJob,
+            new JobChainingTestSecondJob(),
         ])->dispatch();
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -76,8 +78,8 @@ class JobChainingTest extends QueueTestCase
     public function testJobsCanBeChainedOnSuccessUsingBusFacade()
     {
         Bus::dispatchChain([
-            new JobChainingTestFirstJob,
-            new JobChainingTestSecondJob,
+            new JobChainingTestFirstJob(),
+            new JobChainingTestSecondJob(),
         ]);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -89,8 +91,8 @@ class JobChainingTest extends QueueTestCase
     public function testJobsCanBeChainedOnSuccessUsingBusFacadeAsArguments()
     {
         Bus::dispatchChain(
-            new JobChainingTestFirstJob,
-            new JobChainingTestSecondJob
+            new JobChainingTestFirstJob(),
+            new JobChainingTestSecondJob()
         );
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -102,7 +104,7 @@ class JobChainingTest extends QueueTestCase
     public function testJobsChainedOnExplicitDelete()
     {
         JobChainingTestDeletingJob::dispatch()->chain([
-            new JobChainingTestSecondJob,
+            new JobChainingTestSecondJob(),
         ]);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -114,8 +116,8 @@ class JobChainingTest extends QueueTestCase
     public function testJobsCanBeChainedOnSuccessWithSeveralJobs()
     {
         JobChainingTestFirstJob::dispatch()->chain([
-            new JobChainingTestSecondJob,
-            new JobChainingTestThirdJob,
+            new JobChainingTestSecondJob(),
+            new JobChainingTestThirdJob(),
         ]);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -127,8 +129,8 @@ class JobChainingTest extends QueueTestCase
 
     public function testJobsCanBeChainedOnSuccessUsingHelper()
     {
-        dispatch(new JobChainingTestFirstJob)->chain([
-            new JobChainingTestSecondJob,
+        dispatch(new JobChainingTestFirstJob())->chain([
+            new JobChainingTestSecondJob(),
         ]);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -139,8 +141,8 @@ class JobChainingTest extends QueueTestCase
 
     public function testJobsCanBeChainedViaQueue()
     {
-        Queue::push((new JobChainingTestFirstJob)->chain([
-            new JobChainingTestSecondJob,
+        Queue::push((new JobChainingTestFirstJob())->chain([
+            new JobChainingTestSecondJob(),
         ]));
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -151,8 +153,8 @@ class JobChainingTest extends QueueTestCase
 
     public function testSecondJobIsNotFiredIfFirstFailed()
     {
-        Queue::push((new JobChainingTestFailingJob)->chain([
-            new JobChainingTestSecondJob,
+        Queue::push((new JobChainingTestFailingJob())->chain([
+            new JobChainingTestSecondJob(),
         ]));
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -162,8 +164,8 @@ class JobChainingTest extends QueueTestCase
 
     public function testSecondJobIsNotFiredIfFirstReleased()
     {
-        Queue::push((new JobChainingTestReleasingJob)->chain([
-            new JobChainingTestSecondJob,
+        Queue::push((new JobChainingTestReleasingJob())->chain([
+            new JobChainingTestSecondJob(),
         ]));
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -173,9 +175,9 @@ class JobChainingTest extends QueueTestCase
 
     public function testThirdJobIsNotFiredIfSecondFails()
     {
-        Queue::push((new JobChainingTestFirstJob)->chain([
-            new JobChainingTestFailingJob,
-            new JobChainingTestThirdJob,
+        Queue::push((new JobChainingTestFirstJob())->chain([
+            new JobChainingTestFailingJob(),
+            new JobChainingTestThirdJob(),
         ]));
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -187,9 +189,9 @@ class JobChainingTest extends QueueTestCase
     public function testCatchCallbackIsCalledOnFailure()
     {
         Bus::chain([
-            new JobChainingTestFirstJob,
-            new JobChainingTestFailingJob,
-            new JobChainingTestSecondJob,
+            new JobChainingTestFirstJob(),
+            new JobChainingTestFailingJob(),
+            new JobChainingTestSecondJob(),
         ])->catch(static function () {
             self::$catchCallbackRan = true;
         })->dispatch();
@@ -204,8 +206,8 @@ class JobChainingTest extends QueueTestCase
     public function testChainJobsUseSameConfig()
     {
         JobChainingTestFirstJob::dispatch()->allOnQueue('some_queue')->allOnConnection('sync1')->chain([
-            new JobChainingTestSecondJob,
-            new JobChainingTestThirdJob,
+            new JobChainingTestSecondJob(),
+            new JobChainingTestThirdJob(),
         ]);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -223,8 +225,8 @@ class JobChainingTest extends QueueTestCase
     public function testChainJobsUseOwnConfig()
     {
         JobChainingTestFirstJob::dispatch()->allOnQueue('some_queue')->allOnConnection('sync1')->chain([
-            (new JobChainingTestSecondJob)->onQueue('another_queue')->onConnection('sync2'),
-            new JobChainingTestThirdJob,
+            (new JobChainingTestSecondJob())->onQueue('another_queue')->onConnection('sync2'),
+            new JobChainingTestThirdJob(),
         ]);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -242,8 +244,8 @@ class JobChainingTest extends QueueTestCase
     public function testChainJobsUseDefaultConfig()
     {
         JobChainingTestFirstJob::dispatch()->onQueue('some_queue')->onConnection('sync1')->chain([
-            (new JobChainingTestSecondJob)->onQueue('another_queue')->onConnection('sync2'),
-            new JobChainingTestThirdJob,
+            (new JobChainingTestSecondJob())->onQueue('another_queue')->onConnection('sync2'),
+            new JobChainingTestThirdJob(),
         ]);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -260,8 +262,8 @@ class JobChainingTest extends QueueTestCase
 
     public function testChainJobRemovesFalsy()
     {
-        $job = (new JobChainingTestFirstJob)->chain([
-            new JobChainingTestSecondJob,
+        $job = (new JobChainingTestFirstJob())->chain([
+            new JobChainingTestSecondJob(),
             null,
             '',
             0,
@@ -280,7 +282,7 @@ class JobChainingTest extends QueueTestCase
 
     public function testChainJobsCanBePrepended()
     {
-        JobChainAddingPrependingJob::withChain([new JobChainAddingExistingJob])->dispatch();
+        JobChainAddingPrependingJob::withChain([new JobChainAddingExistingJob()])->dispatch();
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
 
@@ -300,7 +302,7 @@ class JobChainingTest extends QueueTestCase
 
     public function testChainJobsCanBeAppended()
     {
-        JobChainAddingAppendingJob::withChain([new JobChainAddingExistingJob])->dispatch();
+        JobChainAddingAppendingJob::withChain([new JobChainAddingExistingJob()])->dispatch();
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
 
@@ -372,8 +374,8 @@ class JobChainingTest extends QueueTestCase
     public function testChainRemovesFalsy()
     {
         $chain = Bus::chain([
-            $firstJob = new JobChainingTestFirstJob,
-            $secondJob = new JobChainingTestSecondJob,
+            $firstJob = new JobChainingTestFirstJob(),
+            $secondJob = new JobChainingTestSecondJob(),
             null,
             '',
             0,
@@ -508,11 +510,13 @@ class JobChainingTest extends QueueTestCase
 
         if ($this->getQueueDriver() === 'sync') {
             $this->assertEquals(
-                ['c1', 'c2', 'b1', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'b2', 'b3', 'b4', 'c3'], JobRunRecorder::$results
+                ['c1', 'c2', 'b1', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'b2', 'b3', 'b4', 'c3'],
+                JobRunRecorder::$results
             );
         } else {
             $this->assertEquals(
-                ['c1', 'c2', 'b1', 'b2', 'b3', 'b4', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'c3'], JobRunRecorder::$results
+                ['c1', 'c2', 'b1', 'b2', 'b3', 'b4', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'c3'],
+                JobRunRecorder::$results
             );
         }
 
@@ -541,11 +545,13 @@ class JobChainingTest extends QueueTestCase
 
         if ($this->getQueueDriver() === 'sync') {
             $this->assertEquals(
-                ['c1', 'c2', 'bc1', 'bc2', 'b1', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'b2', 'b3', 'b4', 'c3'], JobRunRecorder::$results
+                ['c1', 'c2', 'bc1', 'bc2', 'b1', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'b2', 'b3', 'b4', 'c3'],
+                JobRunRecorder::$results
             );
         } else {
             $this->assertEquals(
-                ['c1', 'c2', 'bc1', 'b1', 'b2', 'b3', 'b4', 'bc2', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'c3'], JobRunRecorder::$results
+                ['c1', 'c2', 'bc1', 'b1', 'b2', 'b3', 'b4', 'bc2', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'c3'],
+                JobRunRecorder::$results
             );
         }
 
@@ -578,11 +584,13 @@ class JobChainingTest extends QueueTestCase
 
         if ($this->getQueueDriver() === 'sync') {
             $this->assertEquals(
-                ['c1', 'c2', 'bc1', 'bc2', 'bb1', 'bb2', 'b1', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'b2', 'b3', 'b4', 'c3'], JobRunRecorder::$results
+                ['c1', 'c2', 'bc1', 'bc2', 'bb1', 'bb2', 'b1', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'b2', 'b3', 'b4', 'c3'],
+                JobRunRecorder::$results
             );
         } else {
             $this->assertEquals(
-                ['c1', 'c2', 'bc1', 'b1', 'b2', 'b3', 'b4', 'bc2', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'bb1', 'bb2', 'c3'], JobRunRecorder::$results
+                ['c1', 'c2', 'bc1', 'b1', 'b2', 'b3', 'b4', 'bc2', 'b2-0', 'b2-1', 'b2-2', 'b2-3', 'bb1', 'bb2', 'c3'],
+                JobRunRecorder::$results
             );
         }
 
@@ -685,7 +693,7 @@ class JobChainingTest extends QueueTestCase
     public function testJobsAreChainedWhenDispatchIfIsTrue()
     {
         JobChainingTestFirstJob::withChain([
-            new JobChainingTestSecondJob,
+            new JobChainingTestSecondJob(),
         ])->dispatchIf(true);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -697,7 +705,7 @@ class JobChainingTest extends QueueTestCase
     public function testJobsAreNotChainedWhenDispatchIfIsFalse()
     {
         JobChainingTestFirstJob::withChain([
-            new JobChainingTestSecondJob,
+            new JobChainingTestSecondJob(),
         ])->dispatchIf(false);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -709,7 +717,7 @@ class JobChainingTest extends QueueTestCase
     public function testJobsAreChainedWhenDispatchUnlessIsFalse()
     {
         JobChainingTestFirstJob::withChain([
-            new JobChainingTestSecondJob,
+            new JobChainingTestSecondJob(),
         ])->dispatchUnless(false);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -721,7 +729,7 @@ class JobChainingTest extends QueueTestCase
     public function testJobsAreNotChainedWhenDispatchUnlessIsTrue()
     {
         JobChainingTestFirstJob::withChain([
-            new JobChainingTestSecondJob,
+            new JobChainingTestSecondJob(),
         ])->dispatchUnless(true);
 
         $this->runQueueWorkerCommand(['--stop-when-empty' => true]);
@@ -733,7 +741,8 @@ class JobChainingTest extends QueueTestCase
 
 class JobChainingTestFirstJob implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Dispatchable;
+    use Queueable;
 
     public static $ran = false;
 
@@ -751,7 +760,8 @@ class JobChainingTestFirstJob implements ShouldQueue
 
 class JobChainingTestSecondJob implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Dispatchable;
+    use Queueable;
 
     public static $ran = false;
 
@@ -769,7 +779,8 @@ class JobChainingTestSecondJob implements ShouldQueue
 
 class JobChainingTestThirdJob implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Dispatchable;
+    use Queueable;
 
     public static $ran = false;
 
@@ -787,7 +798,9 @@ class JobChainingTestThirdJob implements ShouldQueue
 
 class JobChainingTestDeletingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $ran = false;
 
@@ -800,7 +813,9 @@ class JobChainingTestDeletingJob implements ShouldQueue
 
 class JobChainingTestReleasingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public function handle()
     {
@@ -810,7 +825,9 @@ class JobChainingTestReleasingJob implements ShouldQueue
 
 class JobChainingTestFailingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public function handle()
     {
@@ -820,27 +837,33 @@ class JobChainingTestFailingJob implements ShouldQueue
 
 class JobChainAddingPrependingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public function handle()
     {
-        $this->prependToChain(new JobChainAddingAddedJob);
+        $this->prependToChain(new JobChainAddingAddedJob());
     }
 }
 
 class JobChainAddingAppendingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public function handle()
     {
-        $this->appendToChain(new JobChainAddingAddedJob);
+        $this->appendToChain(new JobChainAddingAddedJob());
     }
 }
 
 class JobChainAddingAppendingBatch implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public string $id;
 
@@ -862,7 +885,9 @@ class JobChainAddingAppendingBatch implements ShouldQueue
 
 class JobChainAddingPrependedBatch implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public string $id;
 
@@ -884,7 +909,9 @@ class JobChainAddingPrependedBatch implements ShouldQueue
 
 class JobChainAddingExistingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     /** @var Carbon|null */
     public static $ranAt = null;
@@ -897,7 +924,9 @@ class JobChainAddingExistingJob implements ShouldQueue
 
 class JobChainAddingAddedJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     /** @var Carbon|null */
     public static $ranAt = null;
@@ -910,7 +939,9 @@ class JobChainAddingAddedJob implements ShouldQueue
 
 class JobChainingTestThrowJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public function handle()
     {
@@ -920,7 +951,10 @@ class JobChainingTestThrowJob implements ShouldQueue
 
 class JobChainingNamedTestJob implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $results = [];
 
@@ -939,7 +973,10 @@ class JobChainingNamedTestJob implements ShouldQueue
 
 class JobChainingTestBatchedJob implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public string $id;
 
@@ -962,7 +999,10 @@ class JobChainingTestBatchedJob implements ShouldQueue
 
 class JobChainingTestFailingBatchedJob implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public function handle()
     {

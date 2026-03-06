@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Bus;
 
 use Closure;
 use Illuminate\Queue\CallQueuedClosure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Laravel\SerializableClosure\SerializableClosure;
-use PHPUnit\Framework\Assert as PHPUnit;
-use RuntimeException;
 
 use function Illuminate\Support\enum_value;
+
+use Laravel\SerializableClosure\SerializableClosure;
+use PHPUnit\Framework\Assert as PHPUnit;
+
+use RuntimeException;
 
 trait Queueable
 {

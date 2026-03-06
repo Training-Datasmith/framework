@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Testing;
 
 use Illuminate\Contracts\Console\Kernel;
@@ -78,7 +80,7 @@ trait DatabaseTruncation
         (new Collection($this->getAllTablesForConnection($connection, $name)))
             ->when(
                 $this->tablesToTruncate($connection, $name),
-                fn(Collection $tables, array $tablesToTruncate) => $tables->filter(fn (array $table) => $this->tableExistsIn($table, $tablesToTruncate)),
+                fn (Collection $tables, array $tablesToTruncate): \Illuminate\Support\Collection => $tables->filter(fn (array $table) => $this->tableExistsIn($table, $tablesToTruncate)),
                 function (Collection $tables) use ($connection, $name) {
                     $exceptTables = $this->exceptTables($connection, $name);
 
@@ -165,7 +167,7 @@ trait DatabaseTruncation
      */
     protected function beforeTruncatingDatabase(): void
     {
-        //
+
     }
 
     /**
@@ -173,6 +175,6 @@ trait DatabaseTruncation
      */
     protected function afterTruncatingDatabase(): void
     {
-        //
+
     }
 }

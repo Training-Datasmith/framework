@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Translation\ArrayLoader;
@@ -156,7 +158,7 @@ class ValidationNumericRuleTest extends TestCase
 
     public function testNumericValidation()
     {
-        $trans = new Translator(new ArrayLoader, 'en');
+        $trans = new Translator(new ArrayLoader(), 'en');
 
         $rule = Rule::numeric();
 

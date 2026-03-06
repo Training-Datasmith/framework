@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\View\Components;
 
 use Symfony\Component\Console\Output\OutputInterface;

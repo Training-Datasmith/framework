@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing\Middleware;
 
 use Closure;
@@ -14,7 +16,7 @@ class ValidateSignature
      * @var array<int, string>
      */
     protected $ignore = [
-        //
+
     ];
 
     /**
@@ -67,7 +69,7 @@ class ValidateSignature
             return $next($request);
         }
 
-        throw new InvalidSignatureException;
+        throw new InvalidSignatureException();
     }
 
     /**

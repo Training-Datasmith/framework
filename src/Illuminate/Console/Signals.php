@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console;
 
 /**
@@ -29,8 +31,8 @@ class Signals
     public function __construct(/**
      * The signal registry instance.
      */
-    protected $registry)
-    {
+        protected $registry
+    ) {
         $this->previousHandlers = $this->getHandlers();
     }
 

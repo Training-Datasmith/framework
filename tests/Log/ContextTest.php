@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Log;
 
 use Exception;
@@ -719,7 +721,6 @@ enum StringBackedSuit: string
 
 class ContextModel extends Model
 {
-    //
 }
 
 class MyAddContextProcessor implements ContextLogProcessor

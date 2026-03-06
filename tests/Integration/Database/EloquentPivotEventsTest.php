@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Eloquent\Model;
@@ -219,7 +221,10 @@ class PivotEventsTestProject extends Model
     public function collaborators()
     {
         return $this->belongsToMany(
-            PivotEventsTestUser::class, 'project_users', 'project_id', 'user_id'
+            PivotEventsTestUser::class,
+            'project_users',
+            'project_id',
+            'user_id'
         )->using(PivotEventsTestCollaborator::class);
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing\Constraints;
 
 use Illuminate\Database\Connection;
@@ -27,8 +29,7 @@ class CountInDatabase extends Constraint
          * The expected table entries count that will be checked against the actual count.
          */
         protected int $expectedCount
-    )
-    {
+    ) {
     }
 
     /**
@@ -52,7 +53,9 @@ class CountInDatabase extends Constraint
     {
         return sprintf(
             "table [%s] matches expected entries count of %s. Entries found: %s.\n",
-            $table, $this->expectedCount, $this->actualCount
+            $table,
+            $this->expectedCount,
+            $this->actualCount
         );
     }
 

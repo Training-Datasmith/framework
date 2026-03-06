@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Illuminate\Contracts\Queue\ClearableQueue;
@@ -130,7 +132,7 @@ class DatabaseQueue extends Queue implements QueueContract, ClearableQueue
             $this->createPayload($job, $this->getQueue($queue), $data),
             $queue,
             null,
-            fn($payload, $queue) => $this->pushToDatabase($queue, $payload)
+            fn ($payload, $queue): mixed => $this->pushToDatabase($queue, $payload)
         );
     }
 
@@ -162,7 +164,7 @@ class DatabaseQueue extends Queue implements QueueContract, ClearableQueue
             $this->createPayload($job, $this->getQueue($queue), $data, $delay),
             $queue,
             $delay,
-            fn($payload, $queue, $delay) => $this->pushToDatabase($queue, $payload, $delay)
+            fn ($payload, $queue, $delay): mixed => $this->pushToDatabase($queue, $payload, $delay)
         );
     }
 
@@ -172,16 +174,15 @@ class DatabaseQueue extends Queue implements QueueContract, ClearableQueue
      * @param  array  $jobs
      * @param  mixed  $data
      * @param  string|null  $queue
-     * @return mixed
      */
-    public function bulk($jobs, $data = '', $queue = null)
+    public function bulk($jobs, $data = '', $queue = null): void
     {
         $queue = $this->getQueue($queue);
 
         $now = $this->availableAt();
 
         return $this->database->table($this->table)->insert((new Collection((array) $jobs))->map(
-            fn($job) => $this->buildDatabaseRecord(
+            fn ($job): array => $this->buildDatabaseRecord(
                 $queue,
                 $this->createPayload($job, $this->getQueue($queue), $data),
                 isset($job->delay) ? $this->availableAt($job->delay) : $now,
@@ -266,7 +267,11 @@ class DatabaseQueue extends Queue implements QueueContract, ClearableQueue
             if ($jobRecord) {
                 try {
                     (new DatabaseJob(
-                        $this->container, $this, $jobRecord, $this->connectionName, $queue
+                        $this->container,
+                        $this,
+                        $jobRecord,
+                        $this->connectionName,
+                        $queue
                     ))->fail($e);
                 } catch (Throwable) {
                     // Ignore and throw the original exception...
@@ -451,10 +456,8 @@ class DatabaseQueue extends Queue implements QueueContract, ClearableQueue
 
     /**
      * Get the underlying database instance.
-     *
-     * @return \Illuminate\Database\Connection
      */
-    public function getDatabase()
+    public function getDatabase(): \Illuminate\Database\Connection
     {
         return $this->database;
     }

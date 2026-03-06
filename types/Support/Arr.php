@@ -1,18 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
 use JsonSerializable;
-use Traversable;
 
 use function PHPStan\Testing\assertType;
 
-$array = [new User];
+use Traversable;
+
+$array = [new User()];
 /** @var iterable<int, User> $iterable */
 $iterable = [];
 /** @var Traversable<int, User> $traversable */
-$traversable = new ArrayIterator([new User]);
+$traversable = new ArrayIterator([new User()]);
 
 assertType('User|null', Arr::first($array));
 assertType('User|null', Arr::first($array, function ($user) {
@@ -115,23 +118,20 @@ function generateArray(): iterable
     yield 1;
 }
 assertType('true', Arr::arrayable([]));
-assertType('true', Arr::arrayable(new class implements Arrayable
-{
+assertType('true', Arr::arrayable(new class () implements Arrayable {
     public function toArray()
     {
         return [];
     }
 }));
-assertType('true', Arr::arrayable(new class implements Jsonable
-{
+assertType('true', Arr::arrayable(new class () implements Jsonable {
     public function toJson($options = 0)
     {
         return '{"foo":"bar"}';
     }
 }));
 assertType('true', Arr::arrayable(generateArray()));
-assertType('true', Arr::arrayable(new class implements JsonSerializable
-{
+assertType('true', Arr::arrayable(new class () implements JsonSerializable {
     #[\Override]
     public function jsonSerialize(): mixed
     {
@@ -181,7 +181,7 @@ assertType('array{}', Arr::wrap(null));
 assertType('array{}', Arr::wrap([]));
 assertType('array{1}', Arr::wrap(1));
 assertType("array{'hello'}", Arr::wrap('hello'));
-assertType('array{stdClass}', Arr::wrap(new stdClass));
+assertType('array{stdClass}', Arr::wrap(new stdClass()));
 assertType('array<0, 1>', Arr::wrap([1]));
 assertType("array<'a'|'b', 1|2>", Arr::wrap(['a' => 1, 'b' => 2]));
 /** @var list<object>|object $value */

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Container;
 
 use Illuminate\Contracts\Container\Container;
@@ -28,8 +30,7 @@ class ContextualBindingBuilder implements ContextualBindingBuilderContract
          * The concrete instance.
          */
         protected $concrete
-    )
-    {
+    ) {
     }
 
     /**
@@ -66,7 +67,7 @@ class ContextualBindingBuilder implements ContextualBindingBuilderContract
      * @param  string  $tag
      * @return $this
      */
-    public function giveTagged($tag)
+    public function giveTagged($tag): static
     {
         return $this->give(function ($container) use ($tag): array {
             $taggedServices = $container->tagged($tag);
@@ -82,7 +83,7 @@ class ContextualBindingBuilder implements ContextualBindingBuilderContract
      * @param  mixed  $default
      * @return $this
      */
-    public function giveConfig($key, $default = null)
+    public function giveConfig($key, $default = null): static
     {
         return $this->give(fn ($container) => $container->get('config')->get($key, $default));
     }

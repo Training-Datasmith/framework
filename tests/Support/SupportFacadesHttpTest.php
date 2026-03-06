@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Container\Container;
@@ -14,7 +16,7 @@ class SupportFacadesHttpTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->app = new Container;
+        $this->app = new Container();
         Facade::setFacadeApplication($this->app);
     }
 

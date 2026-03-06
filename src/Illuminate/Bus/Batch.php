@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Bus;
 
 use Carbon\CarbonImmutable;
@@ -8,7 +10,6 @@ use Illuminate\Bus\Events\BatchCanceled;
 use Illuminate\Bus\Events\BatchFinished;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Queue\Factory as QueueFactory;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Queue\CallQueuedClosure;
 use Illuminate\Support\Arr;
@@ -177,10 +178,8 @@ class Batch implements Arrayable, JsonSerializable
 
     /**
      * Prepare a chain that exists within the jobs being added.
-     *
-     * @return \Illuminate\Support\Collection
      */
-    protected function prepareBatchedChain(array $chain)
+    protected function prepareBatchedChain(array $chain): \Illuminate\Support\Collection
     {
         return (new Collection($chain))->map(function ($job) {
             $job = $job instanceof Closure ? CallQueuedClosure::create($job) : $job;
@@ -383,10 +382,8 @@ class Batch implements Arrayable, JsonSerializable
 
     /**
      * Determine if the batch has been cancelled.
-     *
-     * @return bool
      */
-    public function canceled()
+    public function canceled(): bool
     {
         return $this->cancelled();
     }

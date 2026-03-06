@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -38,17 +40,17 @@ class NotificationSender
     public function __construct(/**
      * The notification manager instance.
      */
-    protected $manager, /**
+        protected $manager, /**
      * The Bus dispatcher instance.
      */
-    protected $bus, /**
+        protected $bus, /**
      * The event dispatcher.
      */
-    protected $events, /**
+        protected $events, /**
      * The locale to be used when sending notifications.
      */
-    protected $locale = null)
-    {
+        protected $locale = null
+    ) {
         $this->events->listen(NotificationFailed::class, fn (): true => $this->failedEventWasDispatched = true);
     }
 

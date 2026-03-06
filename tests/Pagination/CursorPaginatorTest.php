@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Pagination;
 
 use Illuminate\Pagination\Cursor;
@@ -34,40 +36,60 @@ class CursorPaginatorTest extends TestCase
 
     public function testPaginatorRemovesTrailingSlashes()
     {
-        $p = new CursorPaginator($array = [['id' => 4], ['id' => 5], ['id' => 6]], 2, null,
-            ['path' => 'http://website.com/test/', 'parameters' => ['id']]);
+        $p = new CursorPaginator(
+            $array = [['id' => 4], ['id' => 5], ['id' => 6]],
+            2,
+            null,
+            ['path' => 'http://website.com/test/', 'parameters' => ['id']]
+        );
 
         $this->assertSame('http://website.com/test?cursor='.$this->getCursor(['id' => 5]), $p->nextPageUrl());
     }
 
     public function testPaginatorGeneratesUrlsWithoutTrailingSlash()
     {
-        $p = new CursorPaginator($array = [['id' => 4], ['id' => 5], ['id' => 6]], 2, null,
-            ['path' => 'http://website.com/test', 'parameters' => ['id']]);
+        $p = new CursorPaginator(
+            $array = [['id' => 4], ['id' => 5], ['id' => 6]],
+            2,
+            null,
+            ['path' => 'http://website.com/test', 'parameters' => ['id']]
+        );
 
         $this->assertSame('http://website.com/test?cursor='.$this->getCursor(['id' => 5]), $p->nextPageUrl());
     }
 
     public function testItRetrievesThePaginatorOptions()
     {
-        $p = new CursorPaginator($array = [['id' => 4], ['id' => 5], ['id' => 6]], 2, null,
-            $options = ['path' => 'http://website.com/test', 'parameters' => ['id']]);
+        $p = new CursorPaginator(
+            $array = [['id' => 4], ['id' => 5], ['id' => 6]],
+            2,
+            null,
+            $options = ['path' => 'http://website.com/test', 'parameters' => ['id']]
+        );
 
         $this->assertSame($p->getOptions(), $options);
     }
 
     public function testPaginatorReturnsPath()
     {
-        $p = new CursorPaginator($array = [['id' => 4], ['id' => 5], ['id' => 6]], 2, null,
-            $options = ['path' => 'http://website.com/test', 'parameters' => ['id']]);
+        $p = new CursorPaginator(
+            $array = [['id' => 4], ['id' => 5], ['id' => 6]],
+            2,
+            null,
+            $options = ['path' => 'http://website.com/test', 'parameters' => ['id']]
+        );
 
         $this->assertSame($p->path(), 'http://website.com/test');
     }
 
     public function testCanTransformPaginatorItems()
     {
-        $p = new CursorPaginator($array = [['id' => 4], ['id' => 5], ['id' => 6]], 2, null,
-            $options = ['path' => 'http://website.com/test', 'parameters' => ['id']]);
+        $p = new CursorPaginator(
+            $array = [['id' => 4], ['id' => 5], ['id' => 6]],
+            2,
+            null,
+            $options = ['path' => 'http://website.com/test', 'parameters' => ['id']]
+        );
 
         $p->through(function ($item) {
             $item['id'] = $item['id'] + 2;
@@ -101,7 +123,7 @@ class CursorPaginatorTest extends TestCase
     {
         $cursor = new Cursor(['id' => 25], true);
 
-        $p = new CursorPaginator(new Collection, 25, $cursor, [
+        $p = new CursorPaginator(new Collection(), 25, $cursor, [
             'path' => 'http://website.com/test',
             'cursorName' => 'cursor',
             'parameters' => ['id'],

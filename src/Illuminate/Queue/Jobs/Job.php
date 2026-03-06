@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Jobs;
 
 use Illuminate\Bus\Batchable;
@@ -214,7 +216,9 @@ abstract class Job
             $this->failed($e);
         } finally {
             $this->resolve(Dispatcher::class)->dispatch(new JobFailed(
-                $this->connectionName, $this, $e ?: new ManuallyFailedException
+                $this->connectionName,
+                $this,
+                $e ?: new ManuallyFailedException()
             ));
         }
     }

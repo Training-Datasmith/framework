@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Database\Connection;
@@ -17,7 +19,7 @@ class SqliteSchemaState extends SchemaState
         $process = $this->makeProcess($this->baseCommand().' ".schema --indent"')
             ->setTimeout(null)
             ->mustRun(null, array_merge($this->baseVariables($this->connection->getConfig()), [
-                //
+
             ]));
 
         $migrations = preg_replace('/CREATE TABLE sqlite_.+?\);[\r\n]+/is', '', $process->getOutput());
@@ -39,11 +41,11 @@ class SqliteSchemaState extends SchemaState
         $process = $this->makeProcess(
             $this->baseCommand().' ".dump \''.$this->getMigrationTable().'\'"'
         )->mustRun(null, array_merge($this->baseVariables($this->connection->getConfig()), [
-            //
+
         ]));
 
         $migrations = (new Collection(preg_split("/\r\n|\n|\r/", $process->getOutput())))
-            ->filter(fn ($line): bool => preg_match('/^\s*(--|INSERT\s)/iu', (string) $line) === 1 && strlen((string) $line) > 0)
+            ->filter(fn ($line): bool => preg_match('/^\s*(--|INSERT\s)/iu', $line) === 1 && strlen($line) > 0)
             ->all();
 
         $this->files->append($path, implode(PHP_EOL, $migrations).PHP_EOL);

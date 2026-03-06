@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -65,7 +67,7 @@ class DatabaseSoftDeletingTraitStub
 
     public function newQuery()
     {
-        //
+
     }
 
     public function getKey()
@@ -80,7 +82,7 @@ class DatabaseSoftDeletingTraitStub
 
     public function save()
     {
-        //
+
     }
 
     public function delete()
@@ -90,7 +92,7 @@ class DatabaseSoftDeletingTraitStub
 
     public function fireModelEvent()
     {
-        //
+
     }
 
     public function freshTimestamp()

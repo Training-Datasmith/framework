@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Passwords;
 
 use Closure;
 use Illuminate\Auth\Events\PasswordResetLinkSent;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
-use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Timebox;
@@ -41,7 +42,7 @@ class PasswordBroker implements PasswordBrokerContract
          */
         protected int $timeboxDuration = 200000,
     ) {
-        $this->timebox = $timebox ?: new Timebox;
+        $this->timebox = $timebox ?: new Timebox();
     }
 
     /**
@@ -116,10 +117,8 @@ class PasswordBroker implements PasswordBrokerContract
 
     /**
      * Validate a password reset for the given credentials.
-     *
-     * @return \Illuminate\Contracts\Auth\CanResetPassword|string
      */
-    protected function validateReset(#[\SensitiveParameter] array $credentials)
+    protected function validateReset(#[\SensitiveParameter] array $credentials): string|\Illuminate\Contracts\Auth\CanResetPassword
     {
         if (is_null($user = $this->getUser($credentials))) {
             return static::INVALID_USER;
@@ -182,20 +181,16 @@ class PasswordBroker implements PasswordBrokerContract
 
     /**
      * Get the password reset token repository implementation.
-     *
-     * @return \Illuminate\Auth\Passwords\TokenRepositoryInterface
      */
-    public function getRepository()
+    public function getRepository(): \Illuminate\Auth\Passwords\TokenRepositoryInterface
     {
         return $this->tokens;
     }
 
     /**
      * Get the timebox instance used by the guard.
-     *
-     * @return \Illuminate\Support\Timebox
      */
-    public function getTimebox()
+    public function getTimebox(): \Illuminate\Support\Timebox
     {
         return $this->timebox;
     }

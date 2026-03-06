@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Container;
 
 use ArrayAccess;
@@ -353,7 +355,9 @@ class Container implements ArrayAccess, ContainerContract
     {
         if ($abstract instanceof Closure) {
             return $this->bindBasedOnClosureReturnTypes(
-                $abstract, $concrete, $shared
+                $abstract,
+                $concrete,
+                $shared
             );
         }
 
@@ -402,7 +406,9 @@ class Container implements ArrayAccess, ContainerContract
             }
 
             return $container->resolve(
-                $concrete, $parameters, raiseEvents: false
+                $concrete,
+                $parameters,
+                raiseEvents: false
             );
         };
     }
@@ -1128,7 +1134,8 @@ class Container implements ArrayAccess, ContainerContract
             array_pop($this->buildStack);
 
             $this->fireAfterResolvingAttributeCallbacks(
-                $reflector->getAttributes(), $instance = new $concrete
+                $reflector->getAttributes(),
+                $instance = new $concrete()
             );
 
             return $instance;
@@ -1146,7 +1153,8 @@ class Container implements ArrayAccess, ContainerContract
         }
 
         $this->fireAfterResolvingAttributeCallbacks(
-            $reflector->getAttributes(), $instance = new $concrete(...$instances)
+            $reflector->getAttributes(),
+            $instance = new $concrete(...$instances)
         );
 
         return $instance;
@@ -1176,7 +1184,8 @@ class Container implements ArrayAccess, ContainerContract
         array_pop($this->buildStack);
 
         $this->fireAfterResolvingAttributeCallbacks(
-            $reflector->getAttributes(), $instance
+            $reflector->getAttributes(),
+            $instance
         );
 
         return $instance;
@@ -1236,7 +1245,8 @@ class Container implements ArrayAccess, ContainerContract
     protected function hasParameterOverride($dependency): bool
     {
         return array_key_exists(
-            $dependency->name, $this->getLastParameterOverride()
+            $dependency->name,
+            $this->getLastParameterOverride()
         );
     }
 
@@ -1509,7 +1519,8 @@ class Container implements ArrayAccess, ContainerContract
         $this->fireCallbackArray($object, $this->globalResolvingCallbacks);
 
         $this->fireCallbackArray(
-            $object, $this->getCallbacksForType($abstract, $object, $this->resolvingCallbacks)
+            $object,
+            $this->getCallbacksForType($abstract, $object, $this->resolvingCallbacks)
         );
 
         $this->fireAfterResolvingCallbacks($abstract, $object);
@@ -1527,7 +1538,8 @@ class Container implements ArrayAccess, ContainerContract
         $this->fireCallbackArray($object, $this->globalAfterResolvingCallbacks);
 
         $this->fireCallbackArray(
-            $object, $this->getCallbacksForType($abstract, $object, $this->afterResolvingCallbacks)
+            $object,
+            $this->getCallbacksForType($abstract, $object, $this->afterResolvingCallbacks)
         );
     }
 
@@ -1549,7 +1561,9 @@ class Container implements ArrayAccess, ContainerContract
             }
 
             $callbacks = $this->getCallbacksForType(
-                $attribute->getName(), $object, $this->afterResolvingAttributeCallbacks
+                $attribute->getName(),
+                $object,
+                $this->afterResolvingAttributeCallbacks
             );
 
             foreach ($callbacks as $callback) {
@@ -1734,7 +1748,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public static function getInstance()
     {
-        return static::$instance ??= new static;
+        return static::$instance ??= new static();
     }
 
     /**

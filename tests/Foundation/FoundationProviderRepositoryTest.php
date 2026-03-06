@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation;
 
 use Exception;
@@ -60,7 +62,7 @@ class FoundationProviderRepositoryTest extends TestCase
 
     public function testShouldRecompileReturnsCorrectValue()
     {
-        $repo = new ProviderRepository(m::mock(ApplicationContract::class), new Filesystem, __DIR__.'/services.php');
+        $repo = new ProviderRepository(m::mock(ApplicationContract::class), new Filesystem(), __DIR__.'/services.php');
         $this->assertTrue($repo->shouldRecompile(null, []));
         $this->assertTrue($repo->shouldRecompile(['providers' => ['foo']], ['foo', 'bar']));
         $this->assertFalse($repo->shouldRecompile(['providers' => ['foo']], ['foo']));

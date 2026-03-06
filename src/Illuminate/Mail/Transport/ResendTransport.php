@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail\Transport;
 
 use Exception;
@@ -129,7 +131,7 @@ class ResendTransport extends AbstractTransport implements \Stringable
      */
     protected function getRecipients(Email $email, Envelope $envelope): array
     {
-        return array_filter($envelope->getRecipients(), fn(Address $address) => in_array($address, array_merge($email->getCc(), $email->getBcc()), true) === false);
+        return array_filter($envelope->getRecipients(), fn (Address $address): bool => in_array($address, array_merge($email->getCc(), $email->getBcc()), true) === false);
     }
 
     /**

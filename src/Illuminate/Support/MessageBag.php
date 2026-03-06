@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -73,7 +75,7 @@ class MessageBag implements Jsonable, JsonSerializable, MessageBagContract, Mess
      * @param  string  $message
      * @return $this
      */
-    public function addIf($boolean, $key, $message)
+    public function addIf($boolean, $key, $message): static
     {
         return $boolean ? $this->add($key, $message) : $this;
     }
@@ -198,7 +200,9 @@ class MessageBag implements Jsonable, JsonSerializable, MessageBagContract, Mess
         // all the messages that match the given key and output it as an array.
         if (array_key_exists($key, $this->messages)) {
             return $this->transform(
-                $this->messages[$key], $this->checkFormat($format), $key
+                $this->messages[$key],
+                $this->checkFormat($format),
+                $key
             );
         }
 
@@ -219,8 +223,8 @@ class MessageBag implements Jsonable, JsonSerializable, MessageBagContract, Mess
     protected function getMessagesForWildcardKey($key, $format)
     {
         return (new Collection($this->messages))
-            ->filter(fn ($messages, $messageKey) => Str::is($key, $messageKey))
-            ->map(fn($messages, $messageKey) => $this->transform($messages, $this->checkFormat($format), $messageKey))
+            ->filter(fn ($messages, $messageKey): bool => Str::is($key, $messageKey))
+            ->map(fn ($messages, $messageKey) => $this->transform($messages, $this->checkFormat($format), $messageKey))
             ->all();
     }
 
@@ -285,7 +289,8 @@ class MessageBag implements Jsonable, JsonSerializable, MessageBagContract, Mess
                 // We will simply spin through the given messages and transform each one
                 // replacing the :message place holder with the real message allowing
                 // the messages to be easily formatted to each developer's desires.
-                fn($message) => str_replace([':message', ':key'], [$message, $messageKey], $format))->all();
+                fn ($message): string => str_replace([':message', ':key'], [$message, $messageKey], $format)
+            )->all();
     }
 
     /**
@@ -359,10 +364,8 @@ class MessageBag implements Jsonable, JsonSerializable, MessageBagContract, Mess
 
     /**
      * Determine if the message bag has any messages.
-     *
-     * @return bool
      */
-    public function isNotEmpty()
+    public function isNotEmpty(): bool
     {
         return $this->any();
     }

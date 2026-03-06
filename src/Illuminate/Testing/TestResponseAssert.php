@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing;
 
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +21,7 @@ class TestResponseAssert
      */
     private function __construct(protected TestResponse $response)
     {
-        //
+
     }
 
     /**
@@ -33,7 +35,6 @@ class TestResponseAssert
     /**
      * Pass method calls to the Assert class and decorate the exception message.
      *
-     * @param  array  $arguments
      * @return void
      * @throws \PHPUnit\Framework\ExpectationFailedException
      */
@@ -49,7 +50,6 @@ class TestResponseAssert
     /**
      * Pass static method calls to the Assert class.
      *
-     * @param  array  $arguments
      * @return void
      * @throws \PHPUnit\Framework\ExpectationFailedException
      */

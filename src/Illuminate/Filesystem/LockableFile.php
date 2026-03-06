@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Filesystem;
 
 use Illuminate\Contracts\Filesystem\LockTimeoutException;
@@ -29,8 +31,9 @@ class LockableFile
     public function __construct(/**
      * The file path.
      */
-    protected $path, $mode)
-    {
+        protected $path,
+        $mode
+    ) {
         $this->ensureDirectoryExists($this->path);
         $this->createResource($this->path, $mode);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cache;
 
 use Exception;
@@ -23,7 +25,7 @@ class CacheFileStoreTest extends TestCase
     public function testNullIsReturnedIfFileDoesntExist()
     {
         $files = $this->mockFilesystem();
-        $files->expects($this->once())->method('get')->will($this->throwException(new FileNotFoundException));
+        $files->expects($this->once())->method('get')->will($this->throwException(new FileNotFoundException()));
         $store = new FileStore($files, __DIR__);
         $value = $store->get('foo');
         $this->assertNull($value);
@@ -249,7 +251,7 @@ class CacheFileStoreTest extends TestCase
         $valueAfterIncrement = '9999999999'.serialize(1);
         $store = new FileStore($files, __DIR__);
         // simulates a missing item in file store by the exception
-        $files->expects($this->once())->method('get')->with($this->equalTo($filePath), $this->equalTo(true))->willThrowException(new Exception);
+        $files->expects($this->once())->method('get')->with($this->equalTo($filePath), $this->equalTo(true))->willThrowException(new Exception());
         $files->expects($this->once())->method('put')->with($this->equalTo($filePath), $this->equalTo($valueAfterIncrement));
         $result = $store->increment('foo');
         $this->assertIsInt($result);
@@ -284,7 +286,7 @@ class CacheFileStoreTest extends TestCase
 
     public function testRemoveDeletesFile()
     {
-        $files = new Filesystem;
+        $files = new Filesystem();
         $store = new FileStore($files, __DIR__);
         $store->put('foobar', 'Hello Baby', 10);
 
@@ -331,7 +333,7 @@ class CacheFileStoreTest extends TestCase
 
     public function testItHandlesForgettingNonFlexibleKeys()
     {
-        $store = new FileStore(new Filesystem, __DIR__);
+        $store = new FileStore(new Filesystem(), __DIR__);
 
         $key = Str::random();
         $path = $store->path($key);
@@ -350,7 +352,7 @@ class CacheFileStoreTest extends TestCase
 
     public function itOnlyForgetsFlexibleKeysIfParentIsForgotten()
     {
-        $store = new FileStore(new Filesystem, __DIR__);
+        $store = new FileStore(new Filesystem(), __DIR__);
 
         $key = Str::random();
         $path = $store->path($key);

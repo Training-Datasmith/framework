@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Hashing;
 
 use Illuminate\Contracts\Hashing\Hasher;

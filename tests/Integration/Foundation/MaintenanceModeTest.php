@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation;
 
 use DateTimeInterface;
@@ -121,8 +123,7 @@ class MaintenanceModeTest extends TestCase
 
     public function testMaintenanceModeCanBeBypassedOnExcludedUrls()
     {
-        $this->app->instance(PreventRequestsDuringMaintenance::class, new class($this->app) extends PreventRequestsDuringMaintenance
-        {
+        $this->app->instance(PreventRequestsDuringMaintenance::class, new class ($this->app) extends PreventRequestsDuringMaintenance {
             protected $except = ['/test'];
         });
 

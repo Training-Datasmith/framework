@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Contracts\Validation\ValidationRule;
 
 use function PHPStan\Testing\assertType;
 
-$class = new class implements ValidationRule
-{
+$class = new class () implements ValidationRule {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         assertType('Closure(string, string|null=): Illuminate\Translation\PotentiallyTranslatedString', $fail);

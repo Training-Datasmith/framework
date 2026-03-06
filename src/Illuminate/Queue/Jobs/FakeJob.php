@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Jobs;
 
 use Illuminate\Contracts\Queue\Job as JobContract;

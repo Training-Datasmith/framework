@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use BadMethodCallException;
@@ -23,8 +25,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Validator implements ValidatorContract
 {
-    use Concerns\FormatsMessages,
-        Concerns\ValidatesAttributes;
+    use Concerns\FormatsMessages;
+    use Concerns\ValidatesAttributes;
 
     /**
      * The container instance.
@@ -63,10 +65,8 @@ class Validator implements ValidatorContract
 
     /**
      * The data under validation.
-     *
-     * @var array
      */
-    protected $data;
+    protected array $data;
 
     /**
      * The rules to be applied to the data.
@@ -399,7 +399,7 @@ class Validator implements ValidatorContract
      */
     protected function replaceDotPlaceholderInParameters(array $parameters): array
     {
-        return array_map(fn($field) => str_replace('__dot__'.static::$placeholderHash, '.', $field), $parameters);
+        return array_map(fn ($field): string|array => str_replace('__dot__'.static::$placeholderHash, '.', $field), $parameters);
     }
 
     /**
@@ -428,7 +428,7 @@ class Validator implements ValidatorContract
      */
     public function passes(): bool
     {
-        $this->messages = new MessageBag;
+        $this->messages = new MessageBag();
 
         [$this->distinctValues, $this->failedRules] = [[], []];
 
@@ -598,11 +598,10 @@ class Validator implements ValidatorContract
     /**
      * Get the attributes and values that were validated.
      *
-     * @return array
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function validated()
+    public function validated(): array
     {
         if (! $this->messages) {
             $this->passes();
@@ -612,7 +611,7 @@ class Validator implements ValidatorContract
 
         $results = [];
 
-        $missingValue = new stdClass;
+        $missingValue = new stdClass();
 
         foreach ($this->getRules() as $key => $rules) {
             $value = data_get($this->getData(), $key, $missingValue);
@@ -745,7 +744,7 @@ class Validator implements ValidatorContract
      */
     protected function replaceDotInParameters(array $parameters): array
     {
-        return array_map(fn($field) => static::encodeAttributeWithPlaceholder((string) ($field ?? '')), $parameters);
+        return array_map(fn ($field): string => static::encodeAttributeWithPlaceholder((string) ($field ?? '')), $parameters);
     }
 
     /**
@@ -753,7 +752,7 @@ class Validator implements ValidatorContract
      */
     protected function replaceAsterisksInParameters(array $parameters, array $keys): array
     {
-        return array_map(fn($field) => vsprintf(str_replace('*', '%s', $field), $keys), $parameters);
+        return array_map(fn ($field): string => vsprintf(str_replace('*', '%s', $field), $keys), $parameters);
     }
 
     /**
@@ -903,7 +902,10 @@ class Validator implements ValidatorContract
                 $key = is_string($key) ? $key : $originalAttribute;
 
                 $this->messages->add($key, $this->makeReplacements(
-                    $message, $key, $ruleClass, []
+                    $message,
+                    $key,
+                    $ruleClass,
+                    []
                 ));
             }
         }
@@ -963,7 +965,10 @@ class Validator implements ValidatorContract
         }
 
         $this->messages->add($attribute, $this->makeReplacements(
-            $this->getMessage($attributeWithPlaceholders, $rule), $attribute, $rule, $parameters
+            $this->getMessage($attributeWithPlaceholders, $rule),
+            $attribute,
+            $rule,
+            $parameters
         ));
 
         $this->failedRules[$attribute][$rule] = $parameters;
@@ -991,7 +996,8 @@ class Validator implements ValidatorContract
         }
 
         return array_diff_key(
-            $this->data, $this->attributesThatHaveMessages()
+            $this->data,
+            $this->attributesThatHaveMessages()
         );
     }
 
@@ -1005,7 +1011,8 @@ class Validator implements ValidatorContract
         }
 
         $invalid = array_intersect_key(
-            $this->data, $this->attributesThatHaveMessages()
+            $this->data,
+            $this->attributesThatHaveMessages()
         );
 
         $result = [];
@@ -1200,7 +1207,7 @@ class Validator implements ValidatorContract
     public function setRules(array $rules): static
     {
         $rules = (new Collection($rules))
-            ->mapWithKeys(fn($value, $key) => [static::encodeAttributeWithPlaceholder($key) => $value])
+            ->mapWithKeys(fn ($value, string $key): array => [static::encodeAttributeWithPlaceholder($key) => $value])
             ->toArray();
 
         $this->initialRules = $rules;
@@ -1217,10 +1224,10 @@ class Validator implements ValidatorContract
      *
      * @return $this
      */
-    public function appendRules(array $rules)
+    public function appendRules(array $rules): static
     {
         $rules = (new Collection($rules))
-            ->map(fn($value) => is_string($value) ? explode('|', $value) : $value)
+            ->map(fn ($value) => is_string($value) ? explode('|', $value) : $value)
             ->all();
 
         return $this->setRules(array_merge_recursive($this->getRulesWithoutPlaceholders(), $rules));
@@ -1246,7 +1253,8 @@ class Validator implements ValidatorContract
         }
 
         $this->implicitAttributes = array_merge(
-            $this->implicitAttributes, $response->implicitAttributes
+            $this->implicitAttributes,
+            $response->implicitAttributes
         );
     }
 
@@ -1562,10 +1570,8 @@ class Validator implements ValidatorContract
 
     /**
      * Get the Translator implementation.
-     *
-     * @return \Illuminate\Contracts\Translation\Translator
      */
-    public function getTranslator()
+    public function getTranslator(): \Illuminate\Contracts\Translation\Translator
     {
         return $this->translator;
     }
@@ -1646,7 +1652,6 @@ class Validator implements ValidatorContract
     /**
      * Handle dynamic calls to class methods.
      *
-     * @param  array  $parameters
      * @return mixed
      * @throws \BadMethodCallException
      */
@@ -1659,7 +1664,9 @@ class Validator implements ValidatorContract
         }
 
         throw new BadMethodCallException(sprintf(
-            'Method %s::%s does not exist.', static::class, $method
+            'Method %s::%s does not exist.',
+            static::class,
+            $method
         ));
     }
 }

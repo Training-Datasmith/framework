@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Console;
 
 use Illuminate\Console\Command;
@@ -32,8 +34,8 @@ class RestartCommand extends Command
     public function __construct(/**
      * The cache store implementation.
      */
-    protected \Illuminate\Contracts\Cache\Repository $cache)
-    {
+        protected \Illuminate\Contracts\Cache\Repository $cache
+    ) {
         parent::__construct();
     }
 

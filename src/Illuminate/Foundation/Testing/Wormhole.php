@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Testing;
 
 use Illuminate\Support\Carbon;
@@ -16,8 +18,7 @@ class Wormhole
          * The amount of time to travel.
          */
         public $value
-    )
-    {
+    ) {
     }
 
     /**

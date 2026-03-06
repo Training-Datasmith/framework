@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Session;
 
 use Illuminate\Cookie\CookieJar;
@@ -420,10 +422,10 @@ class SessionStoreTest extends TestCase
         $this->assertFalse($session->handlerNeedsRequest());
         $session->getHandler()->shouldReceive('setRequest')->never();
 
-        $session = new Store('test', m::mock(new CookieSessionHandler(new CookieJar, 60, false)));
+        $session = new Store('test', m::mock(new CookieSessionHandler(new CookieJar(), 60, false)));
         $this->assertTrue($session->handlerNeedsRequest());
         $session->getHandler()->shouldReceive('setRequest')->once();
-        $request = new Request;
+        $request = new Request();
         $session->setRequestOnHandler($request);
     }
 
@@ -758,7 +760,7 @@ class SessionStoreTest extends TestCase
         $session = $this->getSession('json');
         $session->getHandler()->shouldReceive('read')->once()->andReturn(serialize([]));
         $session->start();
-        $session->put('errors', $errorBag = new ViewErrorBag);
+        $session->put('errors', $errorBag = new ViewErrorBag());
         $messageBag = new MessageBag([
             'first_name' => [
                 'Your first name is required',

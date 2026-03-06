@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Http\Middleware;
 
 use Closure;
@@ -36,8 +38,7 @@ class PreventRequestsDuringMaintenance
          * The application implementation.
          */
         protected \Illuminate\Contracts\Foundation\Application $app
-    )
-    {
+    ) {
     }
 
     /**

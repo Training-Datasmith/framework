@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Connectors;
 
 use Illuminate\Contracts\Container\Container;
@@ -23,8 +25,7 @@ class ConnectionFactory
          * The IoC container instance.
          */
         protected \Illuminate\Contracts\Container\Container $container
-    )
-    {
+    ) {
     }
 
     /**
@@ -65,16 +66,18 @@ class ConnectionFactory
         $pdo = $this->createPdoResolver($config);
 
         return $this->createConnection(
-            $config['driver'], $pdo, $config['database'], $config['prefix'], $config
+            $config['driver'],
+            $pdo,
+            $config['database'],
+            $config['prefix'],
+            $config
         );
     }
 
     /**
      * Create a read / write database connection instance.
-     *
-     * @return \Illuminate\Database\Connection
      */
-    protected function createReadWriteConnection(array $config)
+    protected function createReadWriteConnection(array $config): \Illuminate\Database\Connection
     {
         $connection = $this->createSingleConnection($this->getWriteConfig($config));
 
@@ -101,7 +104,8 @@ class ConnectionFactory
     protected function getReadConfig(array $config)
     {
         return $this->mergeReadWriteConfig(
-            $config, $this->getReadWriteConfig($config, 'read')
+            $config,
+            $this->getReadWriteConfig($config, 'read')
         );
     }
 
@@ -113,7 +117,8 @@ class ConnectionFactory
     protected function getWriteConfig(array $config)
     {
         return $this->mergeReadWriteConfig(
-            $config, $this->getReadWriteConfig($config, 'write')
+            $config,
+            $this->getReadWriteConfig($config, 'write')
         );
     }
 
@@ -132,10 +137,8 @@ class ConnectionFactory
 
     /**
      * Merge a configuration for a read / write connection.
-     *
-     * @return array
      */
-    protected function mergeReadWriteConfig(array $config, array $merge)
+    protected function mergeReadWriteConfig(array $config, array $merge): array
     {
         return Arr::except(array_merge($config, $merge), ['read', 'write']);
     }
@@ -221,11 +224,11 @@ class ConnectionFactory
         }
 
         return match ($config['driver']) {
-            'mysql' => new MySqlConnector,
-            'mariadb' => new MariaDbConnector,
-            'pgsql' => new PostgresConnector,
-            'sqlite' => new SQLiteConnector,
-            'sqlsrv' => new SqlServerConnector,
+            'mysql' => new MySqlConnector(),
+            'mariadb' => new MariaDbConnector(),
+            'pgsql' => new PostgresConnector(),
+            'sqlite' => new SQLiteConnector(),
+            'sqlsrv' => new SqlServerConnector(),
             default => throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]."),
         };
     }

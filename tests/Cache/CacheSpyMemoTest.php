@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cache;
 
 use Closure;
@@ -18,7 +20,7 @@ class CacheSpyMemoTest extends TestCase
     {
         parent::setUp();
 
-        $container = new Container;
+        $container = new Container();
 
         $container->instance('config', new ConfigRepository([
             'cache' => [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Countable;
@@ -15,8 +17,7 @@ class InvokedProcessPool implements Countable
          * The array of invoked processes.
          */
         protected array $invokedProcesses
-    )
-    {
+    ) {
     }
 
     /**

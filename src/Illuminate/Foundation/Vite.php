@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation;
 
 use Illuminate\Contracts\Support\Htmlable;
@@ -181,7 +183,7 @@ class Vite implements Htmlable
      * @param  array  $entryPoints
      * @return $this
      */
-    public function mergeEntryPoints($entryPoints)
+    public function mergeEntryPoints($entryPoints): static
     {
         return $this->withEntryPoints(array_unique([
             ...$this->entryPoints,
@@ -309,7 +311,7 @@ class Vite implements Htmlable
      * @param  string  $event
      * @return $this
      */
-    public function prefetch($concurrency = null, $event = 'load')
+    public function prefetch($concurrency = null, $event = 'load'): static
     {
         $this->prefetchEvent = $event;
 
@@ -323,7 +325,7 @@ class Vite implements Htmlable
      *
      * @return $this
      */
-    public function useWaterfallPrefetching(?int $concurrency = null)
+    public function useWaterfallPrefetching(?int $concurrency = null): static
     {
         return $this->usePrefetchStrategy('waterfall', [
             'concurrency' => $concurrency ?? $this->prefetchConcurrently,
@@ -335,7 +337,7 @@ class Vite implements Htmlable
      *
      * @return $this
      */
-    public function useAggressivePrefetching()
+    public function useAggressivePrefetching(): static
     {
         return $this->usePrefetchStrategy('aggressive');
     }
@@ -382,8 +384,8 @@ class Vite implements Htmlable
 
         $manifest = $this->manifest($buildDirectory);
 
-        $tags = new Collection;
-        $preloads = new Collection;
+        $tags = new Collection();
+        $preloads = new Collection();
 
         foreach ($entrypoints as $entrypoint) {
             $chunk = $this->chunk($manifest, $entrypoint);
@@ -451,8 +453,8 @@ class Vite implements Htmlable
         [$stylesheets, $scripts] = $tags->unique()->partition(fn ($tag): bool => str_starts_with((string) $tag, '<link'));
 
         $preloads = $preloads->unique()
-            ->sortByDesc(fn ($args) => $this->isCssPath($args[1]))
-            ->map(fn ($args) => $this->makePreloadTagForChunk(...$args));
+            ->sortByDesc(fn ($args): bool => $this->isCssPath($args[1]))
+            ->map(fn ($args): string => $this->makePreloadTagForChunk(...$args));
 
         $base = $preloads->join('').$stylesheets->join('').$scripts->join('');
 
@@ -478,14 +480,16 @@ class Vite implements Htmlable
                         ->reduce(
                             fn ($chunks, $import) => $chunks->merge(
                                 $f($manifest[$import])
-                            ), new Collection([$chunk]))
+                            ),
+                            new Collection([$chunk])
+                        )
                         ->merge((new Collection($chunk['css'] ?? []))->map(
                             fn ($css) => (new Collection($manifest))->first(fn ($chunk): bool => $chunk['file'] === $css) ?? [
                                 'file' => $css,
                             ],
                         ));
                 })
-                ->map(fn($chunk) => (new Collection([
+                ->map(fn (array $chunk) => (new Collection([
                     ...$this->resolvePreloadTagAttributes(
                         $chunk['src'] ?? null,
                         $url = $this->assetPath("{$buildDirectory}/{$chunk['file']}"),
@@ -608,10 +612,9 @@ class Vite implements Htmlable
      *
      * @param  string  $src
      * @param  string  $url
-     * @param  array  $chunk
      * @param  array  $manifest
      */
-    protected function makePreloadTagForChunk($src, $url, $chunk, $manifest): string
+    protected function makePreloadTagForChunk($src, $url, array $chunk, $manifest): string
     {
         $attributes = $this->resolvePreloadTagAttributes($src, $url, $chunk, $manifest);
 
@@ -730,9 +733,8 @@ class Vite implements Htmlable
      * @deprecated Will be removed in a future Laravel version.
      *
      * @param  string  $url
-     * @return string
      */
-    protected function makeScriptTag($url)
+    protected function makeScriptTag($url): string
     {
         return $this->makeScriptTagWithAttributes($url, []);
     }
@@ -743,9 +745,8 @@ class Vite implements Htmlable
      * @deprecated Will be removed in a future Laravel version.
      *
      * @param  string  $url
-     * @return string
      */
-    protected function makeStylesheetTag($url)
+    protected function makeStylesheetTag($url): string
     {
         return $this->makeStylesheetTagWithAttributes($url, []);
     }
@@ -919,12 +920,10 @@ class Vite implements Htmlable
     /**
      * Get the manifest file for the given build directory.
      *
-     * @param  string  $buildDirectory
      * @return array
-     *
      * @throws \Illuminate\Foundation\ViteManifestNotFoundException
      */
-    protected function manifest($buildDirectory)
+    protected function manifest(string $buildDirectory)
     {
         $path = $this->manifestPath($buildDirectory);
 

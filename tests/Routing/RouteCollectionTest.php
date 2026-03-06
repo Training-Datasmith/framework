@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Routing;
 
 use ArrayIterator;
@@ -22,7 +24,7 @@ class RouteCollectionTest extends TestCase
     {
         parent::setUp();
 
-        $this->routeCollection = new RouteCollection;
+        $this->routeCollection = new RouteCollection();
     }
 
     public function testRouteCollectionCanAddRoute()
@@ -297,7 +299,8 @@ class RouteCollectionTest extends TestCase
         $request = Request::create('', 'GET');
         // We have to set uri in REQUEST_URI otherwise Request uses parse_url() which trim the slashes
         $request->server->set(
-            'REQUEST_URI', '//foo'
+            'REQUEST_URI',
+            '//foo'
         );
         $this->routeCollection->match($request);
     }

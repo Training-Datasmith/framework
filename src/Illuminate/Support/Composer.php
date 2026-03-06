@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Closure;
@@ -24,8 +26,7 @@ class Composer
          * The working path to regenerate from.
          */
         protected $workingPath = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -136,9 +137,8 @@ class Composer
      * Regenerate the optimized Composer autoloader files.
      *
      * @param  string|null  $composerBinary
-     * @return int
      */
-    public function dumpOptimized($composerBinary = null)
+    public function dumpOptimized($composerBinary = null): int
     {
         return $this->dumpAutoloads('--optimize', $composerBinary);
     }

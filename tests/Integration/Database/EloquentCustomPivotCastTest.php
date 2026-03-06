@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Eloquent\Model;
@@ -164,7 +166,10 @@ class CustomPivotCastTestProject extends Model
     public function collaborators()
     {
         return $this->belongsToMany(
-            CustomPivotCastTestUser::class, 'project_users', 'project_id', 'user_id'
+            CustomPivotCastTestUser::class,
+            'project_users',
+            'project_id',
+            'user_id'
         )->using(CustomPivotCastTestCollaborator::class)->withPivot('permissions');
     }
 }

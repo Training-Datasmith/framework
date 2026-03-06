@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Testing\Fakes;
 
 use Closure;
@@ -18,7 +20,8 @@ use Throwable;
  */
 class ExceptionHandlerFake implements ExceptionHandler, Fake
 {
-    use ForwardsCalls, ReflectsClosures;
+    use ForwardsCalls;
+    use ReflectsClosures;
 
     /**
      * All of the exceptions that have been reported.
@@ -43,7 +46,7 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
         protected ExceptionHandler $handler,
         protected array $exceptions = [],
     ) {
-        //
+
     }
 
     /**
@@ -79,7 +82,8 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
             (new Collection($this->reported))->contains(
                 fn (Throwable $e): bool => $this->firstClosureParameterType($exception) === $e::class
                     && $exception($e) === true,
-            ), $message,
+            ),
+            $message,
         );
     }
 
@@ -91,7 +95,8 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
         $total = (new Collection($this->reported))->count();
 
         PHPUnit::assertSame(
-            $count, $total,
+            $count,
+            $total,
             "The total number of exceptions reported was {$total} instead of {$count}."
         );
     }

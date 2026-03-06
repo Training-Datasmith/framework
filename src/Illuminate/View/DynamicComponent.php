@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 use BackedEnum;
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Illuminate\View\Compilers\ComponentTagCompiler;
 
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\Str;
+
+use Illuminate\View\Compilers\ComponentTagCompiler;
 
 class DynamicComponent extends Component
 {
@@ -91,7 +95,7 @@ EOF;
             return '';
         }
 
-        return '@props('.'[\''.implode('\',\'', (new Collection($bindings))->map(fn($dataKey) => Str::camel($dataKey))->all()).'\']'.')';
+        return '@props('.'[\''.implode('\',\'', (new Collection($bindings))->map(fn (string $dataKey) => Str::camel($dataKey))->all()).'\']'.')';
     }
 
     /**

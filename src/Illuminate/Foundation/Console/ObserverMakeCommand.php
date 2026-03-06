@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\GeneratorCommand;
 use InvalidArgumentException;
+
+use function Laravel\Prompts\suggest;
+
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
-use function Laravel\Prompts\suggest;
+use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: 'make:observer')]
 class ObserverMakeCommand extends GeneratorCommand
@@ -73,7 +77,9 @@ class ObserverMakeCommand extends GeneratorCommand
         ];
 
         return str_replace(
-            array_keys($replace), array_values($replace), $stub
+            array_keys($replace),
+            array_values($replace),
+            $stub
         );
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing\Constraints;
 
 use Illuminate\Database\Connection;
@@ -30,8 +32,7 @@ class NotSoftDeletedInDatabase extends Constraint
          * The name of the column that indicates soft deletion has occurred.
          */
         protected string $deletedAtColumn
-    )
-    {
+    ) {
     }
 
     /**
@@ -56,7 +57,9 @@ class NotSoftDeletedInDatabase extends Constraint
     {
         return sprintf(
             "any existing row in the table [%s] matches the attributes %s.\n\n%s",
-            $table, $this->toString(), $this->getAdditionalInfo($table)
+            $table,
+            $this->toString(),
+            $this->getAdditionalInfo($table)
         );
     }
 

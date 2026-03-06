@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Console\Command;
@@ -18,13 +20,14 @@ class BaseCommand extends Command
         // use the path relative to the root of the installation folder so our database
         // migrations may be run for any customized path from within the application.
         if ($this->input->hasOption('path') && $this->option('path')) {
-            return (new Collection($this->option('path')))->map(fn($path) => ! $this->usingRealPath()
+            return (new Collection($this->option('path')))->map(fn ($path) => ! $this->usingRealPath()
                 ? $this->laravel->basePath().'/'.$path
                 : $path)->all();
         }
 
         return array_merge(
-            $this->migrator->paths(), [$this->getMigrationPath()]
+            $this->migrator->paths(),
+            [$this->getMigrationPath()]
         );
     }
 

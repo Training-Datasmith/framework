@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Http\Middleware;
 
 use Closure;
@@ -73,9 +75,8 @@ class TrimStrings extends TransformsRequest
      *
      * @param  string  $key
      * @param  array  $except
-     * @return bool
      */
-    protected function shouldSkip($key, $except)
+    protected function shouldSkip($key, $except): bool
     {
         return Str::is($except, $key);
     }

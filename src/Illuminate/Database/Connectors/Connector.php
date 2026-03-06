@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Connectors;
 
 use Exception;
@@ -40,11 +42,18 @@ class Connector
 
         try {
             return $this->createPdoConnection(
-                $dsn, $username, $password, $options
+                $dsn,
+                $username,
+                $password,
+                $options
             );
         } catch (Exception $e) {
             return $this->tryAgainIfCausedByLostConnection(
-                $e, $dsn, $username, $password, $options
+                $e,
+                $dsn,
+                $username,
+                $password,
+                $options
             );
         }
     }
@@ -71,10 +80,9 @@ class Connector
      * @param  string  $username
      * @param  string  $password
      * @param  array  $options
-     * @return \PDO
      * @throws \Throwable
      */
-    protected function tryAgainIfCausedByLostConnection(Throwable $e, $dsn, $username, #[\SensitiveParameter] $password, $options)
+    protected function tryAgainIfCausedByLostConnection(Throwable $e, $dsn, $username, #[\SensitiveParameter] $password, $options): \PDO
     {
         if ($this->causedByLostConnection($e)) {
             return $this->createPdoConnection($dsn, $username, $password, $options);

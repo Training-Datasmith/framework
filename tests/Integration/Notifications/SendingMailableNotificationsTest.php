@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Notifications;
 
 use Illuminate\Database\Eloquent\Model;
@@ -112,7 +114,7 @@ class MarkdownNotification extends Notification
 
     public function toMail($notifiable): MailMessage
     {
-        $message = (new MailMessage)->markdown('markdown');
+        $message = (new MailMessage())->markdown('markdown');
 
         if (! is_null($this->theme)) {
             $message->theme($this->theme);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Pagination;
 
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -48,10 +50,8 @@ class PaginatorResourceTest extends TestCase
 
 class PaginatorResourceTestResource extends JsonResource
 {
-    //
 }
 
 class PaginatorResourceTestPaginator extends LengthAwarePaginator
 {
-    //
 }

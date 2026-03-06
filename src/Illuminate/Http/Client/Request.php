@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Client;
 
 use ArrayAccess;
@@ -148,7 +150,7 @@ class Request implements ArrayAccess
             return false;
         }
 
-        return (new Collection($this->data))->reject(fn($file) => $file['name'] != $name ||
+        return (new Collection($this->data))->reject(fn ($file): bool => $file['name'] != $name ||
             ($value && $file['contents'] != $value) ||
             ($filename && $file['filename'] != $filename))->count() > 0;
     }

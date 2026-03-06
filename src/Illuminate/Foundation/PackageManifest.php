@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation;
 
 use Exception;
@@ -39,10 +41,10 @@ class PackageManifest
     public function __construct(Filesystem $files, /**
      * The base path.
      */
-    public $basePath, /**
+        public $basePath, /**
      * The manifest path.
      */
-    public $manifestPath)
+        public $manifestPath)
     {
         $this->files = $files;
         $this->vendorPath = Env::get('COMPOSER_VENDOR_DIR') ?: $this->basePath.'/vendor';
@@ -116,9 +118,9 @@ class PackageManifest
 
         $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
 
-        $this->write((new Collection($packages))->mapWithKeys(fn($package) => [$this->format($package['name']) => $package['extra']['laravel'] ?? []])->each(function (array $configuration) use (&$ignore): void {
+        $this->write((new Collection($packages))->mapWithKeys(fn ($package): array => [$this->format($package['name']) => $package['extra']['laravel'] ?? []])->each(function (array $configuration) use (&$ignore): void {
             $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
-        })->reject(fn($configuration, $package) => $ignoreAll || in_array($package, $ignore))->filter()->all());
+        })->reject(fn ($configuration, $package): bool => $ignoreAll || in_array($package, $ignore))->filter()->all());
     }
 
     /**
@@ -160,7 +162,8 @@ class PackageManifest
         }
 
         $this->files->replace(
-            $this->manifestPath, '<?php return '.var_export($manifest, true).';'
+            $this->manifestPath,
+            '<?php return '.var_export($manifest, true).';'
         );
     }
 }

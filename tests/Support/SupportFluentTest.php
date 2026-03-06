@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use ArrayIterator;
@@ -64,7 +66,7 @@ class SupportFluentTest extends TestCase
 
     public function testSetMethodSetsAttribute()
     {
-        $fluent = new Fluent;
+        $fluent = new Fluent();
 
         $fluent->set('name', 'Taylor');
         $fluent->set('developer', true);
@@ -91,7 +93,7 @@ class SupportFluentTest extends TestCase
 
     public function testMagicMethodsCanBeUsedToSetAttributes()
     {
-        $fluent = new Fluent;
+        $fluent = new Fluent();
 
         $fluent->name = 'Taylor';
         $fluent->developer();
@@ -487,7 +489,7 @@ class SupportFluentTest extends TestCase
 
     public function testFluentIsEmpty()
     {
-        $fluent = new Fluent;
+        $fluent = new Fluent();
 
         $this->assertTrue($fluent->isEmpty());
         $this->assertFalse($fluent->isNotEmpty());

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use ArgumentCountError;
@@ -207,11 +209,9 @@ class Arr
     /**
      * Get all of the given array except for a specified array of keys.
      *
-     * @param  array  $array
      * @param  array|string|int|float  $keys
-     * @return array
      */
-    public static function except($array, $keys)
+    public static function except(array $array, $keys): array
     {
         static::forget($array, $keys);
 
@@ -229,7 +229,7 @@ class Arr
     {
         $values = (array) $values;
 
-        return array_filter($array, fn($value) => ! in_array($value, $values, $strict));
+        return array_filter($array, fn ($value): bool => ! in_array($value, $values, $strict));
     }
 
     /**
@@ -673,9 +673,8 @@ class Arr
      * Prepend the key names of an associative array.
      *
      * @param  string  $prependWith
-     * @return array
      */
-    public static function prependKeysWith(array $array, $prependWith)
+    public static function prependKeysWith(array $array, $prependWith): array
     {
         return static::mapWithKeys($array, fn ($item, $key): array => [$prependWith.$key => $item]);
     }
@@ -702,16 +701,15 @@ class Arr
     {
         $values = (array) $values;
 
-        return array_filter($array, fn($value) => in_array($value, $values, $strict));
+        return array_filter($array, fn ($value): bool => in_array($value, $values, $strict));
     }
 
     /**
      * Select an array of values from an array.
      *
      * @param  array|string  $keys
-     * @return array
      */
-    public static function select(array $array, $keys)
+    public static function select(array $array, $keys): array
     {
         $keys = static::wrap($keys);
 
@@ -838,7 +836,7 @@ class Arr
      * @param  callable(mixed...): TValue  $callback
      * @return array<TKey, TValue>
      */
-    public static function mapSpread(array $array, callable $callback)
+    public static function mapSpread(array $array, callable $callback): array
     {
         return static::map($array, function ($chunk, $key) use ($callback) {
             $chunk[] = $key;
@@ -919,7 +917,7 @@ class Arr
             return is_null($number) ? null : [];
         }
 
-        $keys = (new Randomizer)->pickArrayKeys($array, $requested);
+        $keys = (new Randomizer())->pickArrayKeys($array, $requested);
 
         if (is_null($number)) {
             return $array[$keys[0]];
@@ -996,7 +994,7 @@ class Arr
      */
     public static function shuffle(array $array): array
     {
-        return (new Randomizer)->shuffleArray($array);
+        return (new Randomizer())->shuffleArray($array);
     }
 
     /**
@@ -1017,7 +1015,7 @@ class Arr
         $count = count($array);
 
         if ($count === 0) {
-            throw new ItemNotFoundException;
+            throw new ItemNotFoundException();
         }
 
         if ($count > 1) {
@@ -1193,7 +1191,7 @@ class Arr
      * @param  callable(TValue, TKey): bool  $callback
      * @return array<TKey, TValue>
      */
-    public static function reject($array, callable $callback)
+    public static function reject($array, callable $callback): array
     {
         return static::where($array, fn ($value, $key): bool => ! $callback($value, $key));
     }
@@ -1228,9 +1226,8 @@ class Arr
      * Filter items where the value is not null.
      *
      * @param  array  $array
-     * @return array
      */
-    public static function whereNotNull($array)
+    public static function whereNotNull($array): array
     {
         return static::where($array, fn ($value): bool => ! is_null($value));
     }

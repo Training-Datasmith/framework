@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Console\Command;
@@ -14,7 +16,8 @@ use Symfony\Component\Console\Input\InputOption;
 #[AsCommand(name: 'migrate:fresh')]
 class FreshCommand extends Command
 {
-    use ConfirmableTrait, Prohibitable;
+    use ConfirmableTrait;
+    use Prohibitable;
 
     /**
      * The console command name.
@@ -36,8 +39,8 @@ class FreshCommand extends Command
     public function __construct(/**
      * The migrator instance.
      */
-    protected \Illuminate\Database\Migrations\Migrator $migrator)
-    {
+        protected \Illuminate\Database\Migrations\Migrator $migrator
+    ) {
         parent::__construct();
     }
 

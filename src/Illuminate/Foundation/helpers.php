@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Carbon\CarbonInterface;
 use Illuminate\Broadcasting\FakePendingBroadcast;
 use Illuminate\Broadcasting\PendingBroadcast;
@@ -33,6 +35,9 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Defer\DeferredCallback;
 use Illuminate\Support\Defer\DeferredCallbackCollection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
@@ -40,9 +45,8 @@ use Illuminate\Support\Uri;
 use League\Uri\Contracts\UriInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Response;
 
-use function Illuminate\Support\enum_value;
+use Symfony\Component\HttpFoundation\Response;
 
 if (! function_exists('abort')) {
     /**
@@ -245,7 +249,7 @@ if (! function_exists('broadcast_if')) {
         if ($boolean) {
             return app(BroadcastFactory::class)->event(value($event));
         }
-        return new FakePendingBroadcast;
+        return new FakePendingBroadcast();
     }
 }
 
@@ -261,7 +265,7 @@ if (! function_exists('broadcast_unless')) {
         if (! $boolean) {
             return app(BroadcastFactory::class)->event(value($event));
         }
-        return new FakePendingBroadcast;
+        return new FakePendingBroadcast();
     }
 }
 
@@ -660,7 +664,7 @@ if (! function_exists('precognitive')) {
     function precognitive($callable = null)
     {
         $callable ??= function (): void {
-            //
+
         };
 
         $payload = $callable(function ($default, $precognition = null): void {

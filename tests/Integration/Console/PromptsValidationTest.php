@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
-use Orchestra\Testbench\TestCase;
 
 use function Laravel\Prompts\text;
+
+use Orchestra\Testbench\TestCase;
 
 class PromptsValidationTest extends TestCase
 {

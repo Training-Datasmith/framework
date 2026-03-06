@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Illuminate\Support\Collection;
@@ -32,8 +34,8 @@ class DatabaseTransactionsManager
      */
     public function __construct()
     {
-        $this->committedTransactions = new Collection;
-        $this->pendingTransactions = new Collection;
+        $this->committedTransactions = new Collection();
+        $this->pendingTransactions = new Collection();
     }
 
     /**
@@ -225,7 +227,7 @@ class DatabaseTransactionsManager
      *
      * @return \Illuminate\Support\Collection<int, \Illuminate\Database\DatabaseTransactionRecord>
      */
-    public function callbackApplicableTransactions()
+    public function callbackApplicableTransactions(): \Illuminate\Support\Collection
     {
         return $this->pendingTransactions;
     }
@@ -242,20 +244,16 @@ class DatabaseTransactionsManager
 
     /**
      * Get all of the pending transactions.
-     *
-     * @return \Illuminate\Support\Collection
      */
-    public function getPendingTransactions()
+    public function getPendingTransactions(): \Illuminate\Support\Collection
     {
         return $this->pendingTransactions;
     }
 
     /**
      * Get all of the committed transactions.
-     *
-     * @return \Illuminate\Support\Collection
      */
-    public function getCommittedTransactions()
+    public function getCommittedTransactions(): \Illuminate\Support\Collection
     {
         return $this->committedTransactions;
     }

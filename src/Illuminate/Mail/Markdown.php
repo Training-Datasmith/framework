@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail;
 
-use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Support\EncodedHtmlString;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -41,8 +42,9 @@ class Markdown
     public function __construct(/**
      * The view factory implementation.
      */
-    protected \Illuminate\Contracts\View\Factory $view, array $options = [])
-    {
+        protected \Illuminate\Contracts\View\Factory $view,
+        array $options = []
+    ) {
         $this->theme = $options['theme'] ?? 'default';
         $this->loadComponentsFrom($options['paths'] ?? []);
     }
@@ -79,7 +81,8 @@ class Markdown
 
                 try {
                     $contents = $this->view->replaceNamespace(
-                        'mail', $this->htmlComponentPaths()
+                        'mail',
+                        $this->htmlComponentPaths()
                     )->make($view, $data)->render();
                 } finally {
                     EncodedHtmlString::flushState();
@@ -97,8 +100,9 @@ class Markdown
                 : 'mail::themes.'.$this->theme;
         }
 
-        return new HtmlString(($inliner ?: new CssToInlineStyles)->convert(
-            str_replace('\[', '[', $contents), $this->view->make($theme, $data)->render()
+        return new HtmlString(($inliner ?: new CssToInlineStyles())->convert(
+            str_replace('\[', '[', $contents),
+            $this->view->make($theme, $data)->render()
         ));
     }
 
@@ -112,7 +116,8 @@ class Markdown
         $this->view->flushFinderCache();
 
         $contents = $this->view->replaceNamespace(
-            'mail', $this->textComponentPaths()
+            'mail',
+            $this->textComponentPaths()
         )->make($view, $data)->render();
 
         return new HtmlString(
@@ -171,8 +176,8 @@ class Markdown
             'allow_unsafe_links' => false,
         ], $config));
 
-        $environment->addExtension(new CommonMarkCoreExtension);
-        $environment->addExtension(new TableExtension);
+        $environment->addExtension(new CommonMarkCoreExtension());
+        $environment->addExtension(new TableExtension());
 
         return new MarkdownConverter($environment);
     }
@@ -182,7 +187,7 @@ class Markdown
      */
     public function htmlComponentPaths(): array
     {
-        return array_map(fn($path) => $path.'/html', $this->componentPaths());
+        return array_map(fn ($path): string => $path.'/html', $this->componentPaths());
     }
 
     /**
@@ -190,7 +195,7 @@ class Markdown
      */
     public function textComponentPaths(): array
     {
-        return array_map(fn($path) => $path.'/text', $this->componentPaths());
+        return array_map(fn ($path): string => $path.'/text', $this->componentPaths());
     }
 
     /**

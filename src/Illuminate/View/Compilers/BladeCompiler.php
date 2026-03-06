@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Compilers;
 
 use Illuminate\Container\Container;
@@ -17,29 +19,29 @@ use ParseError;
 
 class BladeCompiler extends Compiler implements CompilerInterface
 {
-    use Concerns\CompilesAuthorizations,
-        Concerns\CompilesClasses,
-        Concerns\CompilesComments,
-        Concerns\CompilesComponents,
-        Concerns\CompilesConditionals,
-        Concerns\CompilesContexts,
-        Concerns\CompilesEchos,
-        Concerns\CompilesErrors,
-        Concerns\CompilesFragments,
-        Concerns\CompilesHelpers,
-        Concerns\CompilesIncludes,
-        Concerns\CompilesInjections,
-        Concerns\CompilesJson,
-        Concerns\CompilesJs,
-        Concerns\CompilesLayouts,
-        Concerns\CompilesLoops,
-        Concerns\CompilesRawPhp,
-        Concerns\CompilesSessions,
-        Concerns\CompilesStacks,
-        Concerns\CompilesStyles,
-        Concerns\CompilesTranslations,
-        Concerns\CompilesUseStatements,
-        ReflectsClosures;
+    use Concerns\CompilesAuthorizations;
+    use Concerns\CompilesClasses;
+    use Concerns\CompilesComments;
+    use Concerns\CompilesComponents;
+    use Concerns\CompilesConditionals;
+    use Concerns\CompilesContexts;
+    use Concerns\CompilesEchos;
+    use Concerns\CompilesErrors;
+    use Concerns\CompilesFragments;
+    use Concerns\CompilesHelpers;
+    use Concerns\CompilesIncludes;
+    use Concerns\CompilesInjections;
+    use Concerns\CompilesJson;
+    use Concerns\CompilesJs;
+    use Concerns\CompilesLayouts;
+    use Concerns\CompilesLoops;
+    use Concerns\CompilesRawPhp;
+    use Concerns\CompilesSessions;
+    use Concerns\CompilesStacks;
+    use Concerns\CompilesStyles;
+    use Concerns\CompilesTranslations;
+    use Concerns\CompilesUseStatements;
+    use ReflectsClosures;
 
     /**
      * All of the registered extensions.
@@ -311,7 +313,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
         return str_replace(
             ['##BEGIN-COMPONENT-CLASS##', '##END-COMPONENT-CLASS##'],
             '',
-            $result);
+            $result
+        );
     }
 
     /**
@@ -324,8 +327,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     public static function render($string, $data = [], $deleteCachedView = false)
     {
-        $component = new class($string) extends Component
-        {
+        $component = new class ($string) extends Component {
             public function __construct(protected $template)
             {
             }
@@ -382,7 +384,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
             $value = $this->storeVerbatimBlocks($value);
         }
 
-        if (str_contains($value, '@php')) {
+        if (str_contains((string) $value, '@php')) {
             return $this->storePhpBlocks($value);
         }
 
@@ -397,7 +399,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function storeVerbatimBlocks($value): ?string
     {
-        return preg_replace_callback('/(?<!@)@verbatim(\s*)(.*?)@endverbatim/s', fn($matches) => $matches[1].$this->storeRawBlock($matches[2]), $value);
+        return preg_replace_callback('/(?<!@)@verbatim(\s*)(.*?)@endverbatim/s', fn ($matches): string => $matches[1].$this->storeRawBlock($matches[2]), $value);
     }
 
     /**
@@ -408,16 +410,15 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function storePhpBlocks($value): ?string
     {
-        return preg_replace_callback('/(?<!@)@php(.*?)@endphp/s', fn($matches) => $this->storeRawBlock("<?php{$matches[1]}?>"), $value);
+        return preg_replace_callback('/(?<!@)@php(.*?)@endphp/s', fn ($matches) => $this->storeRawBlock("<?php{$matches[1]}?>"), $value);
     }
 
     /**
      * Store a raw block and return a unique raw placeholder.
      *
      * @param  string  $value
-     * @return string
      */
-    protected function storeRawBlock($value)
+    protected function storeRawBlock($value): string
     {
         return $this->getRawPlaceholder(
             array_push($this->rawBlocks, $value) - 1
@@ -436,7 +437,9 @@ class BladeCompiler extends Compiler implements CompilerInterface
         }
 
         return (new ComponentTagCompiler(
-            $this->classComponentAliases, $this->classComponentNamespaces, $this
+            $this->classComponentAliases,
+            $this->classComponentNamespaces,
+            $this
         ))->compile($value);
     }
 
@@ -448,7 +451,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function restoreRawContent($result): string|array|null
     {
-        $result = preg_replace_callback('/'.$this->getRawPlaceholder('(\d+)').'/', fn($matches) => $this->rawBlocks[$matches[1]], $result);
+        $result = preg_replace_callback('/'.$this->getRawPlaceholder('(\d+)').'/', fn ($matches) => $this->rawBlocks[$matches[1]], $result);
 
         $this->rawBlocks = [];
 
@@ -702,19 +705,19 @@ class BladeCompiler extends Compiler implements CompilerInterface
     {
         $this->conditions[$name] = $callback;
 
-        $this->directive($name, fn($expression) => $expression !== ''
+        $this->directive($name, fn ($expression): string => $expression !== ''
             ? "<?php if (\Illuminate\Support\Facades\Blade::check('{$name}', {$expression})): ?>"
             : "<?php if (\Illuminate\Support\Facades\Blade::check('{$name}')): ?>");
 
-        $this->directive('unless'.$name, fn($expression) => $expression !== ''
+        $this->directive('unless'.$name, fn ($expression): string => $expression !== ''
             ? "<?php if (! \Illuminate\Support\Facades\Blade::check('{$name}', {$expression})): ?>"
             : "<?php if (! \Illuminate\Support\Facades\Blade::check('{$name}')): ?>");
 
-        $this->directive('else'.$name, fn($expression) => $expression !== ''
+        $this->directive('else'.$name, fn ($expression): string => $expression !== ''
             ? "<?php elseif (\Illuminate\Support\Facades\Blade::check('{$name}', {$expression})): ?>"
             : "<?php elseif (\Illuminate\Support\Facades\Blade::check('{$name}')): ?>");
 
-        $this->directive('end'.$name, fn() => '<?php endif; ?>');
+        $this->directive('end'.$name, fn (): string => '<?php endif; ?>');
     }
 
     /**
@@ -762,7 +765,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      *
      * @param  string  $prefix
      */
-    public function components(array $components, $prefix = ''): void
+    public function components(array $components, ?string $prefix = ''): void
     {
         foreach ($components as $key => $value) {
             if (is_numeric($key)) {
@@ -865,11 +868,11 @@ class BladeCompiler extends Compiler implements CompilerInterface
     {
         $alias = $alias ?: Arr::last(explode('.', $path));
 
-        $this->directive($alias, fn($expression) => $expression
+        $this->directive($alias, fn ($expression): string => $expression
             ? "<?php \$__env->startComponent('{$path}', {$expression}); ?>"
             : "<?php \$__env->startComponent('{$path}'); ?>");
 
-        $this->directive('end'.$alias, fn($expression) => '<?php echo $__env->renderComponent(); ?>');
+        $this->directive('end'.$alias, fn ($expression): string => '<?php echo $__env->renderComponent(); ?>');
     }
 
     /**

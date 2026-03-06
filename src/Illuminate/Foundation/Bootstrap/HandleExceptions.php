@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Bootstrap;
 
 use ErrorException;
@@ -101,8 +103,11 @@ class HandleExceptions
             if ($options['trace'] ?? false) {
                 $log->warning((string) new ErrorException($message, 0, $level, $file, $line));
             } else {
-                $log->warning(sprintf('%s in %s on line %s',
-                    $message, $file, $line
+                $log->warning(sprintf(
+                    '%s in %s on line %s',
+                    $message,
+                    $file,
+                    $line
                 ));
             }
         });
@@ -200,7 +205,7 @@ class HandleExceptions
      */
     protected function renderForConsole(Throwable $e)
     {
-        $this->getExceptionHandler()->renderForConsole(new ConsoleOutput, $e);
+        $this->getExceptionHandler()->renderForConsole(new ConsoleOutput(), $e);
     }
 
     /**

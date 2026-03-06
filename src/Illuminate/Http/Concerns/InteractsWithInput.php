@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Concerns;
 
 use Illuminate\Http\UploadedFile;
@@ -12,7 +14,8 @@ use Symfony\Component\HttpFoundation\InputBag;
 
 trait InteractsWithInput
 {
-    use Dumpable, InteractsWithData;
+    use Dumpable;
+    use InteractsWithData;
 
     /**
      * Retrieve a server variable from the request.
@@ -106,7 +109,9 @@ trait InteractsWithInput
     public function input($key = null, $default = null)
     {
         return data_get(
-            $this->getInputSource()->all() + $this->query->all(), $key, $default
+            $this->getInputSource()->all() + $this->query->all(),
+            $key,
+            $default
         );
     }
 

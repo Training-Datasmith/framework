@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session;
 
 use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use SessionHandlerInterface;
 
 class EncryptedStore extends Store
@@ -18,7 +19,7 @@ class EncryptedStore extends Store
     public function __construct($name, SessionHandlerInterface $handler, /**
      * The encrypter instance.
      */
-    protected \Illuminate\Contracts\Encryption\Encrypter $encrypter, $id = null, $serialization = 'php')
+        protected \Illuminate\Contracts\Encryption\Encrypter $encrypter, $id = null, $serialization = 'php')
     {
         parent::__construct($name, $handler, $id, $serialization);
     }
@@ -51,10 +52,8 @@ class EncryptedStore extends Store
 
     /**
      * Get the encrypter instance.
-     *
-     * @return \Illuminate\Contracts\Encryption\Encrypter
      */
-    public function getEncrypter()
+    public function getEncrypter(): \Illuminate\Contracts\Encryption\Encrypter
     {
         return $this->encrypter;
     }

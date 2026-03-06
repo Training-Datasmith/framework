@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Testing\Fakes;
 
 use Closure;
@@ -84,7 +86,7 @@ class BusFake implements Fake, QueueingDispatcher
     {
         $this->dispatcher = $dispatcher;
         $this->jobsToFake = Arr::wrap($jobsToFake);
-        $this->batchRepository = $batchRepository ?: new BatchRepositoryFake;
+        $this->batchRepository = $batchRepository ?: new BatchRepositoryFake();
     }
 
     /**
@@ -154,7 +156,8 @@ class BusFake implements Fake, QueueingDispatcher
                  $this->dispatchedSync($command, $callback)->count();
 
         PHPUnit::assertSame(
-            $times, $count,
+            $times,
+            $count,
             sprintf(
                 "The expected [{$command}] job was pushed {$count} %s instead of {$times} %s.",
                 Str::plural('time', $count),
@@ -233,7 +236,8 @@ class BusFake implements Fake, QueueingDispatcher
         $count = $this->dispatchedSync($command, $callback)->count();
 
         PHPUnit::assertSame(
-            $times, $count,
+            $times,
+            $count,
             sprintf(
                 "The expected [{$command}] job was synchronously pushed {$count} %s instead of {$times} %s.",
                 Str::plural('time', $count),
@@ -255,7 +259,8 @@ class BusFake implements Fake, QueueingDispatcher
         }
 
         PHPUnit::assertCount(
-            0, $this->dispatchedSync($command, $callback),
+            0,
+            $this->dispatchedSync($command, $callback),
             "The unexpected [{$command}] job was dispatched synchronously."
         );
     }
@@ -300,7 +305,8 @@ class BusFake implements Fake, QueueingDispatcher
         $count = $this->dispatchedAfterResponse($command, $callback)->count();
 
         PHPUnit::assertSame(
-            $times, $count,
+            $times,
+            $count,
             sprintf(
                 "The expected [{$command}] job was pushed {$count} %s instead of {$times} %s.",
                 Str::plural('time', $count),
@@ -322,7 +328,8 @@ class BusFake implements Fake, QueueingDispatcher
         }
 
         PHPUnit::assertCount(
-            0, $this->dispatchedAfterResponse($command, $callback),
+            0,
+            $this->dispatchedAfterResponse($command, $callback),
             "The unexpected [{$command}] job was dispatched after sending the response."
         );
     }
@@ -351,7 +358,7 @@ class BusFake implements Fake, QueueingDispatcher
 
             $command = $instance::class;
 
-            $callback = (fn($job) => serialize($this->resetChainPropertiesToDefaults($job)) === serialize($instance));
+            $callback = (fn ($job): bool => serialize($this->resetChainPropertiesToDefaults($job)) === serialize($instance));
         }
 
         PHPUnit::assertTrue(
@@ -476,7 +483,7 @@ class BusFake implements Fake, QueueingDispatcher
      */
     public function assertBatched(callable|array $callback): void
     {
-        $callback = is_array($callback) ? fn (PendingBatchFake $batch) => $batch->hasJobs($callback) : $callback;
+        $callback = is_array($callback) ? fn (PendingBatchFake $batch): bool => $batch->hasJobs($callback) : $callback;
 
         PHPUnit::assertTrue(
             $this->batched($callback)->count() > 0,
@@ -492,7 +499,8 @@ class BusFake implements Fake, QueueingDispatcher
     public function assertBatchCount($count): void
     {
         PHPUnit::assertCount(
-            $count, $this->batches,
+            $count,
+            $this->batches,
         );
     }
 
@@ -527,7 +535,7 @@ class BusFake implements Fake, QueueingDispatcher
     public function dispatched($command, $callback = null): \Illuminate\Support\Collection
     {
         if (! $this->hasDispatched($command)) {
-            return new Collection;
+            return new Collection();
         }
 
         $callback = $callback ?: fn (): true => true;
@@ -543,7 +551,7 @@ class BusFake implements Fake, QueueingDispatcher
     public function dispatchedSync(string $command, $callback = null): \Illuminate\Support\Collection
     {
         if (! $this->hasDispatchedSync($command)) {
-            return new Collection;
+            return new Collection();
         }
 
         $callback = $callback ?: fn (): true => true;
@@ -559,7 +567,7 @@ class BusFake implements Fake, QueueingDispatcher
     public function dispatchedAfterResponse(string $command, $callback = null): \Illuminate\Support\Collection
     {
         if (! $this->hasDispatchedAfterResponse($command)) {
-            return new Collection;
+            return new Collection();
         }
 
         $callback = $callback ?: fn (): true => true;
@@ -576,7 +584,7 @@ class BusFake implements Fake, QueueingDispatcher
     public function batched(callable $callback): \Illuminate\Support\Collection
     {
         if (empty($this->batches)) {
-            return new Collection;
+            return new Collection();
         }
 
         return (new Collection($this->batches))->filter(fn ($batch) => $callback($batch));
@@ -765,7 +773,7 @@ class BusFake implements Fake, QueueingDispatcher
         }
 
         return (new Collection($this->jobsToFake))
-            ->filter(fn($job) => $job instanceof Closure
+            ->filter(fn ($job) => $job instanceof Closure
                 ? $job($command)
                 : $job === $command::class)->isNotEmpty();
     }
@@ -778,7 +786,7 @@ class BusFake implements Fake, QueueingDispatcher
     protected function shouldDispatchCommand($command): bool
     {
         return (new Collection($this->jobsToDispatch))
-            ->filter(fn($job) => $job instanceof Closure
+            ->filter(fn ($job) => $job instanceof Closure
                 ? $job($command)
                 : $job === $command::class)->isNotEmpty();
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema\Grammars;
 
 use Illuminate\Database\Schema\Blueprint;
@@ -40,7 +42,8 @@ class MariaDbGrammar extends MySqlGrammar
             $subtype = null;
         }
 
-        return sprintf('%s%s',
+        return sprintf(
+            '%s%s',
             $subtype ?? 'geometry',
             $column->srid ? ' ref_system_id='.$column->srid : ''
         );

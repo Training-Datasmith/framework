@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 class DefaultProviders
@@ -80,10 +82,8 @@ class DefaultProviders
 
     /**
      * Convert the provider collection to an array.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->providers;
     }

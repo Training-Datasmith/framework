@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Auth;
 
 use Illuminate\Auth\Access\AuthorizationException;
@@ -31,9 +33,9 @@ class AuthorizeMiddlewareTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = new stdClass;
+        $this->user = new stdClass();
 
-        Container::setInstance($this->container = new Container);
+        Container::setInstance($this->container = new Container());
 
         $this->container->singleton(GateContract::class, function () {
             return new Gate($this->container, function () {
@@ -41,7 +43,7 @@ class AuthorizeMiddlewareTest extends TestCase
             });
         });
 
-        $this->router = new Router(new Dispatcher, $this->container);
+        $this->router = new Router(new Dispatcher(), $this->container);
 
         $this->container->bind(CallableDispatcherContract::class, fn ($app) => new CallableDispatcher($app));
 
@@ -161,7 +163,7 @@ class AuthorizeMiddlewareTest extends TestCase
 
     public function testSimpleAbilityWithOptionalParameter()
     {
-        $post = new stdClass;
+        $post = new stdClass();
 
         $this->router->bind('post', function () use ($post) {
             return $post;
@@ -275,7 +277,7 @@ class AuthorizeMiddlewareTest extends TestCase
         $this->expectException(AuthorizationException::class);
         $this->expectExceptionMessage('This action is unauthorized.');
 
-        $post = new stdClass;
+        $post = new stdClass();
 
         $this->router->bind('post', function () use ($post) {
             return $post;
@@ -299,7 +301,7 @@ class AuthorizeMiddlewareTest extends TestCase
 
     public function testModelAuthorized()
     {
-        $post = new stdClass;
+        $post = new stdClass();
 
         $this->router->bind('post', function () use ($post) {
             return $post;
@@ -336,7 +338,7 @@ class AuthorizeMiddlewareTest extends TestCase
         $request = m::mock(Request::class);
 
         $next = function () {
-            //
+
         };
 
         (new Authorize($this->gate()))

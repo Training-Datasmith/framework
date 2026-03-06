@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use BadMethodCallException;
@@ -81,7 +83,7 @@ class MorphTo extends BelongsTo
     public function __construct(Builder $query, Model $parent, $foreignKey, $ownerKey, /**
      * The type of the polymorphic relation.
      */
-    protected $morphType, $relation)
+        protected $morphType, $relation)
     {
         parent::__construct($query, $parent, $foreignKey, $ownerKey, $relation);
     }
@@ -168,7 +170,8 @@ class MorphTo extends BelongsTo
         $whereIn = $this->whereInMethod($instance, $ownerKey);
 
         return $query->{$whereIn}(
-            $instance->qualifyColumn($ownerKey), $this->gatherKeysByType($type, $instance->getKeyType())
+            $instance->qualifyColumn($ownerKey),
+            $this->gatherKeysByType($type, $instance->getKeyType())
         )->get();
     }
 
@@ -182,7 +185,7 @@ class MorphTo extends BelongsTo
     {
         return $keyType !== 'string'
             ? array_keys($this->dictionary[$type])
-            : array_map(fn($modelId) => (string) $modelId, array_filter(array_keys($this->dictionary[$type])));
+            : array_map(fn ($modelId): string => (string) $modelId, array_filter(array_keys($this->dictionary[$type])));
     }
 
     /**
@@ -195,7 +198,7 @@ class MorphTo extends BelongsTo
     {
         $class = Model::getActualClassNameForMorph($type);
 
-        return tap(new $class, function ($instance): void {
+        return tap(new $class(), function ($instance): void {
             if (! $instance->getConnectionName()) {
                 $instance->setConnection($this->getConnection()->getName());
             }
@@ -245,11 +248,13 @@ class MorphTo extends BelongsTo
         }
 
         $this->parent->setAttribute(
-            $this->foreignKey, $model instanceof Model ? $model->{$foreignKey} : null
+            $this->foreignKey,
+            $model instanceof Model ? $model->{$foreignKey} : null
         );
 
         $this->parent->setAttribute(
-            $this->morphType, $model instanceof Model ? $model->getMorphClass() : null
+            $this->morphType,
+            $model instanceof Model ? $model->getMorphClass() : null
         );
 
         return $this->parent->setRelation($this->relationName, $model);
@@ -314,7 +319,8 @@ class MorphTo extends BelongsTo
     public function morphWith(array $with): static
     {
         $this->morphableEagerLoads = array_merge(
-            $this->morphableEagerLoads, $with
+            $this->morphableEagerLoads,
+            $with
         );
 
         return $this;
@@ -328,7 +334,8 @@ class MorphTo extends BelongsTo
     public function morphWithCount(array $withCount): static
     {
         $this->morphableEagerLoadCounts = array_merge(
-            $this->morphableEagerLoadCounts, $withCount
+            $this->morphableEagerLoadCounts,
+            $withCount
         );
 
         return $this;
@@ -342,7 +349,8 @@ class MorphTo extends BelongsTo
     public function constrain(array $callbacks): static
     {
         $this->morphableConstraints = array_merge(
-            $this->morphableConstraints, $callbacks
+            $this->morphableConstraints,
+            $callbacks
         );
 
         return $this;
@@ -428,11 +436,9 @@ class MorphTo extends BelongsTo
     /**
      * Handle dynamic method calls to the relationship.
      *
-     * @param  string  $method
-     * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         try {
             $result = parent::__call($method, $parameters);

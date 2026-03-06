@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Concerns;
 
 trait ParsesSearchPath
@@ -17,6 +19,6 @@ trait ParsesSearchPath
             $searchPath = $matches[0];
         }
 
-        return array_map(fn($schema) => trim((string) $schema, '\'"'), $searchPath ?? []);
+        return array_map(fn ($schema): string => trim((string) $schema, '\'"'), $searchPath ?? []);
     }
 }

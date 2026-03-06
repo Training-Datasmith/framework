@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Cookie;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -49,13 +51,13 @@ class CookieTest extends TestCase
             $handler = m::mock(ExceptionHandler::class)->shouldIgnoreMissing()
         );
 
-        $handler->shouldReceive('render')->andReturn(new Response);
+        $handler->shouldReceive('render')->andReturn(new Response());
 
         $app['config']->set('app.key', Str::random(32));
         $app['config']->set('session.driver', 'fake-null');
 
         Session::extend('fake-null', function () {
-            return new NullSessionHandler;
+            return new NullSessionHandler();
         });
     }
 }

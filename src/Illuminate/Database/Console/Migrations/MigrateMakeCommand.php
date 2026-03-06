@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Contracts\Console\PromptsForMissingInput;
-use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -36,14 +37,14 @@ class MigrateMakeCommand extends BaseCommand implements PromptsForMissingInput
     public function __construct(/**
      * The migration creator instance.
      */
-    protected \Illuminate\Database\Migrations\MigrationCreator $creator, /**
+        protected \Illuminate\Database\Migrations\MigrationCreator $creator, /**
      * The Composer instance.
      *
      *
      * @deprecated Will be removed in a future Laravel version.
      */
-    protected \Illuminate\Support\Composer $composer)
-    {
+        protected \Illuminate\Support\Composer $composer
+    ) {
         parent::__construct();
     }
 
@@ -94,7 +95,10 @@ class MigrateMakeCommand extends BaseCommand implements PromptsForMissingInput
     protected function writeMigration($name, $table, $create)
     {
         $file = $this->creator->create(
-            $name, $this->getMigrationPath(), $table, $create
+            $name,
+            $this->getMigrationPath(),
+            $table,
+            $create
         );
 
         if (windows_os()) {
@@ -106,10 +110,8 @@ class MigrateMakeCommand extends BaseCommand implements PromptsForMissingInput
 
     /**
      * Get migration path (either specified by '--path' option or default location).
-     *
-     * @return string
      */
-    protected function getMigrationPath()
+    protected function getMigrationPath(): string
     {
         if (! is_null($targetPath = $this->input->getOption('path'))) {
             return ! $this->usingRealPath()

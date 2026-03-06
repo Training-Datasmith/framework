@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Integration\Generators;
 
 use Illuminate\Tests\Integration\Generators\TestCase;

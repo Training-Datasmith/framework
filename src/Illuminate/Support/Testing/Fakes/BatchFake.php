@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Testing\Fakes;
 
 use Carbon\CarbonImmutable;
@@ -86,7 +88,7 @@ class BatchFake extends Batch
      */
     public function recordSuccessfulJob(string $jobId): void
     {
-        //
+
     }
 
     /**
@@ -94,7 +96,7 @@ class BatchFake extends Batch
      */
     public function decrementPendingJobs(string $jobId): void
     {
-        //
+
     }
 
     /**
@@ -104,7 +106,7 @@ class BatchFake extends Batch
      */
     public function recordFailedJob(string $jobId, $e): void
     {
-        //
+
     }
 
     /**
@@ -112,7 +114,7 @@ class BatchFake extends Batch
      */
     public function incrementFailedJobs(string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
-        return new UpdatedBatchJobCounts;
+        return new UpdatedBatchJobCounts();
     }
 
     /**

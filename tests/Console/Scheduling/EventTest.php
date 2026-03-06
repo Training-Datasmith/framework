@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Console\Scheduling;
 
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\EventMutex;
+
+use function Illuminate\Support\php_binary;
+
 use Illuminate\Support\Str;
 use Mockery as m;
 use PHPUnit\Framework\Attributes\RequiresOperatingSystem;
-use PHPUnit\Framework\TestCase;
 
-use function Illuminate\Support\php_binary;
+use PHPUnit\Framework\TestCase;
 
 class EventTest extends TestCase
 {

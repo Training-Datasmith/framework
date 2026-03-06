@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Events;
 
 use Illuminate\Support\Collection;

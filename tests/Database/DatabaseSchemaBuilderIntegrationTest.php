@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Container\Container;
@@ -19,7 +21,7 @@ class DatabaseSchemaBuilderIntegrationTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->db = $db = new DB;
+        $this->db = $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -28,7 +30,7 @@ class DatabaseSchemaBuilderIntegrationTest extends TestCase
 
         $db->setAsGlobal();
 
-        $container = new Container;
+        $container = new Container();
         $container->instance('db', $db->getDatabaseManager());
         Facade::setFacadeApplication($container);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Mail;
 
 use Illuminate\Contracts\Mail\Attachable;
@@ -119,8 +121,7 @@ class MailMessageTest extends TestCase
     {
         file_put_contents($path = __DIR__.'/foo.jpg', 'expected attachment body');
 
-        $this->message->attach(new class() implements Attachable
-        {
+        $this->message->attach(new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromPath(__DIR__.'/foo.jpg')
@@ -141,8 +142,7 @@ class MailMessageTest extends TestCase
 
     public function testItAttachesFilesViaAttachableContractFromData(): void
     {
-        $this->message->attach(new class() implements Attachable
-        {
+        $this->message->attach(new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromData(fn () => 'expected attachment body', 'foo.jpg')
@@ -196,8 +196,7 @@ class MailMessageTest extends TestCase
     {
         file_put_contents($path = __DIR__.'/foo.jpg', 'bar');
 
-        $cid = $this->message->embed(new class() implements Attachable
-        {
+        $cid = $this->message->embed(new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromPath(__DIR__.'/foo.jpg')->as('baz')->withMime('image/png');
@@ -221,8 +220,7 @@ class MailMessageTest extends TestCase
     {
         file_put_contents($path = __DIR__.'/foo.jpg', 'bar');
 
-        $cid = $this->message->embed(new class() implements Attachable
-        {
+        $cid = $this->message->embed(new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromPath(__DIR__.'/foo.jpg');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Aws\DynamoDb\DynamoDbClient;
@@ -42,8 +44,7 @@ class CacheManager implements FactoryContract
          * The application instance.
          */
         protected $app
-    )
-    {
+    ) {
     }
 
     /**
@@ -86,7 +87,8 @@ class CacheManager implements FactoryContract
 
         $this->app->scopedIf($bindingKey, function () use ($driver, $isSpy) {
             $repository = $this->repository(
-                new MemoizedStore($driver, $this->store($driver)), ['events' => false]
+                new MemoizedStore($driver, $this->store($driver)),
+                ['events' => false]
             );
 
             return $isSpy ? Mockery::spy($repository) : $repository;
@@ -158,7 +160,7 @@ class CacheManager implements FactoryContract
     {
         $prefix = $this->getPrefix($config);
 
-        return $this->repository(new ApcStore(new ApcWrapper, $prefix), $config);
+        return $this->repository(new ApcStore(new ApcWrapper(), $prefix), $config);
     }
 
     /**
@@ -239,7 +241,8 @@ class CacheManager implements FactoryContract
 
         if (! empty($config['key']) && ! empty($config['secret'])) {
             $dynamoConfig['credentials'] = Arr::only(
-                $config, ['key', 'secret']
+                $config,
+                ['key', 'secret']
             );
 
             if (! empty($config['token'])) {
@@ -309,7 +312,7 @@ class CacheManager implements FactoryContract
      */
     protected function createNullDriver()
     {
-        return $this->repository(new NullStore, []);
+        return $this->repository(new NullStore(), []);
     }
 
     /**
@@ -523,7 +526,6 @@ class CacheManager implements FactoryContract
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

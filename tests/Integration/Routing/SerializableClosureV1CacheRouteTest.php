@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Route;
+
+use function Illuminate\Filesystem\join_paths;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Orchestra\Testbench\Attributes\WithConfig;
 use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\Factories\UserFactory;
 use Orchestra\Testbench\TestCase;
-use PHPUnit\Framework\Attributes\RequiresOperatingSystemFamily;
 
-use function Illuminate\Filesystem\join_paths;
+use PHPUnit\Framework\Attributes\RequiresOperatingSystemFamily;
 
 #[RequiresOperatingSystemFamily('Linux|Darwin')]
 #[WithConfig('app.key', 'AckfSECXIvnK5r28GVIWUAxmbBSjTsmF')]

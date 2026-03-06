@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\Queue;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -8,11 +10,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Tests\Integration\Database\DatabaseTestCase;
 use Orchestra\Testbench\Attributes\WithConfig;
 use Orchestra\Testbench\Attributes\WithMigration;
-use PHPUnit\Framework\Attributes\RequiresPhpExtension;
-use Symfony\Component\Process\Exception\ProcessSignaledException;
-use Throwable;
 
 use function Orchestra\Testbench\remote;
+
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use Symfony\Component\Process\Exception\ProcessSignaledException;
+
+use Throwable;
 
 #[RequiresPhpExtension('pcntl')]
 #[WithMigration('laravel', 'queue')]

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Concerns\BuildsQueries;
@@ -9,8 +11,7 @@ class DatabaseConcernsBuildsQueriesTraitTest extends TestCase
 {
     public function testTapCallbackInstance()
     {
-        $mock = new class
-        {
+        $mock = new class () {
             use BuildsQueries;
         };
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
@@ -33,8 +35,8 @@ class ConfigCacheCommand extends Command
     public function __construct(/**
      * The filesystem instance.
      */
-    protected \Illuminate\Filesystem\Filesystem $files)
-    {
+        protected \Illuminate\Filesystem\Filesystem $files
+    ) {
         parent::__construct();
     }
 
@@ -53,7 +55,8 @@ class ConfigCacheCommand extends Command
         $configPath = $this->laravel->getCachedConfigPath();
 
         $this->files->put(
-            $configPath, '<?php return '.var_export($config, true).';'.PHP_EOL
+            $configPath,
+            '<?php return '.var_export($config, true).';'.PHP_EOL
         );
 
         try {

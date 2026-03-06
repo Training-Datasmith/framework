@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Foundation\Concerns\ResolvesDumpSource;
@@ -31,14 +33,14 @@ class CliDumper extends BaseCliDumper
     public function __construct(/**
      * The output instance.
      */
-    protected $output, /**
+        protected $output, /**
      * The base path of the application.
      */
-    protected $basePath, /**
+        protected $basePath, /**
      * The compiled view path for the application.
      */
-    protected $compiledViewPath)
-    {
+        protected $compiledViewPath
+    ) {
         parent::__construct();
 
         $this->setColors($this->supportsColors());

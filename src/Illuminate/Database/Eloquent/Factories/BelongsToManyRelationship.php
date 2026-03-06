@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Factories;
 
 use Illuminate\Database\Eloquent\Model;
@@ -24,11 +26,12 @@ class BelongsToManyRelationship
     public function __construct(/**
      * The related factory instance.
      */
-    protected $factory, $pivot, /**
+        protected $factory,
+        $pivot, /**
      * The relationship name.
      */
-    protected $relationship)
-    {
+        protected $relationship
+    ) {
         $this->pivot = $pivot;
     }
 

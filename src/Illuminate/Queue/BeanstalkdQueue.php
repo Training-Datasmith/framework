@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Illuminate\Contracts\Queue\Queue as QueueContract;
@@ -118,7 +120,7 @@ class BeanstalkdQueue extends Queue implements QueueContract
             $this->createPayload($job, $this->getQueue($queue), $data),
             $queue,
             null,
-            fn($payload, $queue) => $this->pushRaw($payload, $queue)
+            fn ($payload, $queue): mixed => $this->pushRaw($payload, $queue)
         );
     }
 
@@ -134,7 +136,10 @@ class BeanstalkdQueue extends Queue implements QueueContract
         $this->pheanstalk->useTube(new TubeName($this->getQueue($queue)));
 
         return $this->pheanstalk->put(
-            $payload, Pheanstalk::DEFAULT_PRIORITY, Pheanstalk::DEFAULT_DELAY, $this->timeToRun
+            $payload,
+            Pheanstalk::DEFAULT_PRIORITY,
+            Pheanstalk::DEFAULT_DELAY,
+            $this->timeToRun
         );
     }
 
@@ -207,7 +212,11 @@ class BeanstalkdQueue extends Queue implements QueueContract
 
         if ($job instanceof JobIdInterface) {
             return new BeanstalkdJob(
-                $this->container, $this->pheanstalk, $job, $this->connectionName, $queue
+                $this->container,
+                $this->pheanstalk,
+                $job,
+                $this->connectionName,
+                $queue
             );
         }
     }

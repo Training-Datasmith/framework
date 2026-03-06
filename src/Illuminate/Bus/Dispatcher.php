@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Bus;
 
-use Closure;
 use Illuminate\Contracts\Bus\QueueingDispatcher;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Queue\Queue;
@@ -48,11 +49,11 @@ class Dispatcher implements QueueingDispatcher
     public function __construct(/**
      * The container implementation.
      */
-    protected \Illuminate\Contracts\Container\Container $container, /**
+        protected \Illuminate\Contracts\Container\Container $container, /**
      * The queue resolver callback.
      */
-    protected ?\Closure $queueResolver = null)
-    {
+        protected ?\Closure $queueResolver = null
+    ) {
         $this->pipeline = new Pipeline($this->container);
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
@@ -31,8 +33,8 @@ class RouteCacheCommand extends Command
     public function __construct(/**
      * The filesystem instance.
      */
-    protected \Illuminate\Filesystem\Filesystem $files)
-    {
+        protected \Illuminate\Filesystem\Filesystem $files
+    ) {
         parent::__construct();
     }
 
@@ -56,7 +58,8 @@ class RouteCacheCommand extends Command
         }
 
         $this->files->put(
-            $this->laravel->getCachedRoutesPath(), $this->buildRouteCacheFile($routes)
+            $this->laravel->getCachedRoutesPath(),
+            $this->buildRouteCacheFile($routes)
         );
 
         $this->components->info('Routes cached successfully.');

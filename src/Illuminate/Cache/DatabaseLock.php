@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Database\Connection;
@@ -24,17 +26,20 @@ class DatabaseLock extends Lock
     public function __construct(/**
      * The database connection instance.
      */
-    protected \Illuminate\Database\Connection $connection, /**
+        protected \Illuminate\Database\Connection $connection, /**
      * The database table name.
      */
-    protected $table, $name, $seconds, $owner = null, /**
+        protected $table,
+        $name,
+        $seconds,
+        $owner = null, /**
      * The prune probability odds.
      */
-    protected $lottery = [2, 100], /**
+        protected $lottery = [2, 100], /**
      * The default number of seconds that a lock should be held.
      */
-    protected $defaultTimeoutInSeconds = 86400)
-    {
+        protected $defaultTimeoutInSeconds = 86400
+    ) {
         parent::__construct($name, $seconds, $owner);
     }
 
@@ -58,7 +63,7 @@ class DatabaseLock extends Lock
         } catch (QueryException) {
             $updated = $this->connection->table($this->table)
                 ->where('key', $this->name)
-                ->where(fn($query) => $query->where('owner', $this->owner)->orWhere('expiration', '<=', $this->currentTime()))->update([
+                ->where(fn ($query) => $query->where('owner', $this->owner)->orWhere('expiration', '<=', $this->currentTime()))->update([
                     'owner' => $this->owner,
                     'expiration' => $this->expiresAt(),
                 ]);

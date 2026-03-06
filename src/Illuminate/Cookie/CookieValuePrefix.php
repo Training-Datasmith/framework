@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cookie;
 
 class CookieValuePrefix
@@ -27,11 +29,10 @@ class CookieValuePrefix
     /**
      * Validate a cookie value contains a valid prefix. If it does, return the cookie value with the prefix removed. Otherwise, return null.
      *
-     * @param  string  $cookieName
      * @param  string  $cookieValue
      * @return string|null
      */
-    public static function validate($cookieName, $cookieValue, array $keys)
+    public static function validate(string $cookieName, $cookieValue, array $keys)
     {
         foreach ($keys as $key) {
             $hasValidPrefix = str_starts_with($cookieValue, static::create($cookieName, $key));

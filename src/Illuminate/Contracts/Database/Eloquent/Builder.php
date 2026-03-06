@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Contracts\Database\Eloquent;
 
 use Illuminate\Contracts\Database\Query\Builder as BaseContract;

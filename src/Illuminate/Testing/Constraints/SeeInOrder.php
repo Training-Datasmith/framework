@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing\Constraints;
 
 use PHPUnit\Framework\Constraint\Constraint;
@@ -24,8 +26,7 @@ class SeeInOrder extends Constraint
          * The string under validation.
          */
         protected $content
-    )
-    {
+    ) {
     }
 
     /**

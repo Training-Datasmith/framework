@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Bus;
 
 use Illuminate\Bus\Dispatcher;
@@ -17,7 +19,7 @@ class BusDispatcherTest extends TestCase
 {
     public function testCommandsThatShouldQueueIsQueued()
     {
-        $container = new Container;
+        $container = new Container();
         $dispatcher = new Dispatcher($container, function () {
             $mock = m::mock(Queue::class);
             $mock->shouldReceive('push')->once();
@@ -30,7 +32,7 @@ class BusDispatcherTest extends TestCase
 
     public function testCommandsThatShouldQueueIsQueuedUsingCustomHandler()
     {
-        $container = new Container;
+        $container = new Container();
         $dispatcher = new Dispatcher($container, function () {
             $mock = m::mock(Queue::class);
             $mock->shouldReceive('push')->once();
@@ -38,12 +40,12 @@ class BusDispatcherTest extends TestCase
             return $mock;
         });
 
-        $dispatcher->dispatch(new BusDispatcherTestCustomQueueCommand);
+        $dispatcher->dispatch(new BusDispatcherTestCustomQueueCommand());
     }
 
     public function testCommandsThatShouldQueueIsQueuedUsingCustomQueueAndDelay()
     {
-        $container = new Container;
+        $container = new Container();
         $dispatcher = new Dispatcher($container, function () {
             $mock = m::mock(Queue::class);
             $mock->shouldReceive('later')->once()->with(10, m::type(BusDispatcherTestSpecificQueueAndDelayCommand::class), '', 'foo');
@@ -51,24 +53,24 @@ class BusDispatcherTest extends TestCase
             return $mock;
         });
 
-        $dispatcher->dispatch(new BusDispatcherTestSpecificQueueAndDelayCommand);
+        $dispatcher->dispatch(new BusDispatcherTestSpecificQueueAndDelayCommand());
     }
 
     public function testDispatchNowShouldNeverQueue()
     {
-        $container = new Container;
+        $container = new Container();
         $mock = m::mock(Queue::class);
         $mock->shouldReceive('push')->never();
         $dispatcher = new Dispatcher($container, function () use ($mock) {
             return $mock;
         });
 
-        $dispatcher->dispatch(new BusDispatcherBasicCommand);
+        $dispatcher->dispatch(new BusDispatcherBasicCommand());
     }
 
     public function testDispatcherCanDispatchStandAloneHandler()
     {
-        $container = new Container;
+        $container = new Container();
         $mock = m::mock(Queue::class);
         $dispatcher = new Dispatcher($container, function () use ($mock) {
             return $mock;
@@ -76,14 +78,14 @@ class BusDispatcherTest extends TestCase
 
         $dispatcher->map([StandAloneCommand::class => StandAloneHandler::class]);
 
-        $response = $dispatcher->dispatch(new StandAloneCommand);
+        $response = $dispatcher->dispatch(new StandAloneCommand());
 
         $this->assertInstanceOf(StandAloneCommand::class, $response);
     }
 
     public function testOnConnectionOnJobWhenDispatching()
     {
-        $container = new Container;
+        $container = new Container();
         $container->singleton('config', function () {
             return new Config([
                 'queue' => [
@@ -102,7 +104,7 @@ class BusDispatcherTest extends TestCase
             return $mock;
         });
 
-        $job = (new ShouldNotBeDispatched)->onConnection('null');
+        $job = (new ShouldNotBeDispatched())->onConnection('null');
 
         $dispatcher->dispatch($job);
     }
@@ -110,7 +112,6 @@ class BusDispatcherTest extends TestCase
 
 class BusInjectionStub
 {
-    //
 }
 
 class BusDispatcherBasicCommand
@@ -124,7 +125,7 @@ class BusDispatcherBasicCommand
 
     public function handle(BusInjectionStub $stub)
     {
-        //
+
     }
 }
 
@@ -144,7 +145,6 @@ class BusDispatcherTestSpecificQueueAndDelayCommand implements ShouldQueue
 
 class StandAloneCommand
 {
-    //
 }
 
 class StandAloneHandler
@@ -157,7 +157,8 @@ class StandAloneHandler
 
 class ShouldNotBeDispatched implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public function handle()
     {

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Closure;
 use Illuminate\Contracts\Routing\ResponseFactory as FactoryContract;
-use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\StreamedEvent;
@@ -34,8 +35,7 @@ class ResponseFactory implements FactoryContract
          * The redirector instance.
          */
         protected \Illuminate\Routing\Redirector $redirector
-    )
-    {
+    ) {
     }
 
     /**
@@ -53,9 +53,8 @@ class ResponseFactory implements FactoryContract
      * Create a new "no content" response.
      *
      * @param  int  $status
-     * @return \Illuminate\Http\Response
      */
-    public function noContent($status = 204, array $headers = [])
+    public function noContent($status = 204, array $headers = []): \Illuminate\Http\Response
     {
         return $this->make('', $status, $headers);
     }
@@ -66,9 +65,8 @@ class ResponseFactory implements FactoryContract
      * @param  string|array  $view
      * @param  array  $data
      * @param  int  $status
-     * @return \Illuminate\Http\Response
      */
-    public function view($view, $data = [], $status = 200, array $headers = [])
+    public function view($view, $data = [], $status = 200, array $headers = []): \Illuminate\Http\Response
     {
         if (is_array($view)) {
             return $this->make($this->view->first($view, $data), $status, $headers);
@@ -175,7 +173,9 @@ class ResponseFactory implements FactoryContract
         if (! is_null($callback) && (new ReflectionFunction($callback))->isGenerator()) {
             if (isset($_SERVER['LARAVEL_OCTANE'])) {
                 return (new StreamedResponse(
-                    null, $status, array_merge($headers, ['X-Accel-Buffering' => 'no'])
+                    null,
+                    $status,
+                    array_merge($headers, ['X-Accel-Buffering' => 'no'])
                 ))->setCallback($callback);
             }
 

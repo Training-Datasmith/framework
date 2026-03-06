@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Tests\Database\Fixtures\Models\EloquentResourceTestResourceModel;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Integration\Database;
 
 use Illuminate\Database\Eloquent\Collection;
@@ -31,9 +33,9 @@ class EloquentCollectionLoadCountTest extends DatabaseTestCase
         });
 
         $post = Post::create();
-        $post->comments()->saveMany([new Comment, new Comment]);
+        $post->comments()->saveMany([new Comment(), new Comment()]);
 
-        $post->likes()->save(new Like);
+        $post->likes()->save(new Like());
 
         Post::create();
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Support\Collection;
@@ -26,10 +28,9 @@ class SortedMiddleware extends Collection
      * Each call to this method makes one discrete middleware movement if necessary.
      *
      * @param  array  $priorityMap
-     * @param  array  $middlewares
      * @return array
      */
-    protected function sortMiddleware($priorityMap, $middlewares)
+    protected function sortMiddleware($priorityMap, array $middlewares)
     {
         $lastIndex = 0;
 
@@ -46,7 +47,8 @@ class SortedMiddleware extends Collection
                 // middleware, we will move this middleware to be above the previous encounter.
                 if (isset($lastPriorityIndex) && $priorityIndex < $lastPriorityIndex) {
                     return $this->sortMiddleware(
-                        $priorityMap, array_values($this->moveMiddleware($middlewares, $index, $lastIndex))
+                        $priorityMap,
+                        array_values($this->moveMiddleware($middlewares, $index, $lastIndex))
                     );
                 }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Resources\JsonApi\Exceptions;
 
 use RuntimeException;
@@ -16,7 +18,8 @@ class ResourceIdentificationException extends RuntimeException
         $resourceType = get_debug_type($resource);
 
         return new self(sprintf(
-            'Unable to resolve resource object ID for [%s].', $resourceType
+            'Unable to resolve resource object ID for [%s].',
+            $resourceType
         ));
     }
 
@@ -30,7 +33,8 @@ class ResourceIdentificationException extends RuntimeException
         $resourceType = get_debug_type($resource);
 
         return new self(sprintf(
-            'Unable to resolve resource object type for [%s].', $resourceType
+            'Unable to resolve resource object type for [%s].',
+            $resourceType
         ));
     }
 }

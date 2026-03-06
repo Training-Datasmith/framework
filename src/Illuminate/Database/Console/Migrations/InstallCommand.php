@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -30,8 +31,8 @@ class InstallCommand extends Command
     public function __construct(/**
      * The repository instance.
      */
-    protected \Illuminate\Database\Migrations\MigrationRepositoryInterface $repository)
-    {
+        protected \Illuminate\Database\Migrations\MigrationRepositoryInterface $repository
+    ) {
         parent::__construct();
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Routing;
 
 use ArrayIterator;
@@ -29,7 +31,7 @@ class CompiledRouteCollectionTest extends TestCase
 
         $this->router = $this->app['router'];
 
-        $this->routeCollection = new RouteCollection;
+        $this->routeCollection = new RouteCollection();
     }
 
     protected function tearDown(): void
@@ -597,7 +599,9 @@ class CompiledRouteCollectionTest extends TestCase
         $placeholder = 'fallbackPlaceholder';
 
         return $this->newRoute(
-            'GET', "{{$placeholder}}", $action
+            'GET',
+            "{{$placeholder}}",
+            $action
         )->where($placeholder, '.*')->fallback();
     }
 }

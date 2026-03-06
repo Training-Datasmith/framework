@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Console\Migrations\InstallCommand;
@@ -15,7 +17,7 @@ class DatabaseMigrationInstallCommandTest extends TestCase
     public function testFireCallsRepositoryToInstall()
     {
         $command = new InstallCommand($repo = m::mock(MigrationRepositoryInterface::class));
-        $command->setLaravel(new Application);
+        $command->setLaravel(new Application());
         $repo->shouldReceive('setSource')->once()->with('foo');
         $repo->shouldReceive('createRepository')->once();
         $repo->shouldReceive('repositoryExists')->once()->andReturn(false);
@@ -26,7 +28,7 @@ class DatabaseMigrationInstallCommandTest extends TestCase
     public function testFireCallsRepositoryToInstallExists()
     {
         $command = new InstallCommand($repo = m::mock(MigrationRepositoryInterface::class));
-        $command->setLaravel(new Application);
+        $command->setLaravel(new Application());
         $repo->shouldReceive('setSource')->once()->with('foo');
         $repo->shouldReceive('repositoryExists')->once()->andReturn(true);
 
@@ -35,6 +37,6 @@ class DatabaseMigrationInstallCommandTest extends TestCase
 
     protected function runCommand($command, $options = [])
     {
-        return $command->run(new ArrayInput($options), new NullOutput);
+        return $command->run(new ArrayInput($options), new NullOutput());
     }
 }

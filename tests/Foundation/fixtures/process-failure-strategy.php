@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-return fn () => throw new ProcessFailedException(new class(['expected-command']) extends Process
-{
+return fn () => throw new ProcessFailedException(new class (['expected-command']) extends Process {
     public function isSuccessful(): bool
     {
         return false;

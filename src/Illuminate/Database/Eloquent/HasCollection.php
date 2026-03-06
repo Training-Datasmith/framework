@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent;
 
 use Illuminate\Database\Eloquent\Attributes\CollectedBy;

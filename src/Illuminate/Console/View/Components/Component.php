@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\View\Components;
 
 use Illuminate\Console\OutputStyle;
@@ -29,8 +31,7 @@ abstract class Component
          * The output style implementation.
          */
         protected $output
-    )
-    {
+    ) {
     }
 
     /**
@@ -78,7 +79,7 @@ abstract class Component
     protected function mutate($data, $mutators)
     {
         foreach ($mutators as $mutator) {
-            $mutator = new $mutator;
+            $mutator = new $mutator();
 
             if (is_iterable($data)) {
                 foreach ($data as $key => $value) {
@@ -108,7 +109,7 @@ abstract class Component
             ? $property->getValue($this->output)
             : new SymfonyQuestionHelper();
 
-        $property->setValue($this->output, new QuestionHelper);
+        $property->setValue($this->output, new QuestionHelper());
 
         try {
             return $callable();

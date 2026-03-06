@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
-use Symfony\Component\Mailer\SentMessage as SymfonySentMessage;
 
 /**
  * @mixin \Symfony\Component\Mailer\SentMessage
@@ -21,16 +22,13 @@ class SentMessage
          * The Symfony SentMessage instance.
          */
         protected \Symfony\Component\Mailer\SentMessage $sentMessage
-    )
-    {
+    ) {
     }
 
     /**
      * Get the underlying Symfony Email instance.
-     *
-     * @return \Symfony\Component\Mailer\SentMessage
      */
-    public function getSymfonySentMessage()
+    public function getSymfonySentMessage(): \Symfony\Component\Mailer\SentMessage
     {
         return $this->sentMessage;
     }
@@ -38,7 +36,6 @@ class SentMessage
     /**
      * Dynamically pass missing methods to the Symfony instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

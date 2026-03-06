@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Resources\JsonApi;
 
 use Illuminate\Container\Container;
@@ -24,7 +26,7 @@ class AnonymousResourceCollection extends \Illuminate\Http\Resources\Json\Anonym
                 ->map(fn ($resource) => $resource->resolveIncludedResourceObjects($request))
                 ->flatten(depth: 1)
                 ->uniqueStrict('_uniqueKey')
-                ->map(fn ($included) => Arr::except($included, ['_uniqueKey']))
+                ->map(fn (array $included): array => Arr::except($included, ['_uniqueKey']))
                 ->values()
                 ->all(),
             ...($implementation = JsonApiResource::$jsonApiInformation)

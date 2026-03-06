@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -19,9 +21,9 @@ use function Illuminate\Support\enum_value;
  */
 class BelongsTo extends Relation
 {
-    use ComparesRelatedModels,
-        InteractsWithDictionary,
-        SupportsDefaultModels;
+    use ComparesRelatedModels;
+    use InteractsWithDictionary;
+    use SupportsDefaultModels;
 
     /**
      * Create a new belongs to relationship instance.
@@ -35,16 +37,16 @@ class BelongsTo extends Relation
     public function __construct(Builder $query, /**
      * The child model instance of the relation.
      */
-    protected \Illuminate\Database\Eloquent\Model $child, /**
+        protected \Illuminate\Database\Eloquent\Model $child, /**
      * The foreign key of the parent model.
      */
-    protected $foreignKey, /**
+        protected $foreignKey, /**
      * The associated key on the parent model.
      */
-    protected $ownerKey, /**
+        protected $ownerKey, /**
      * The name of the relationship.
      */
-    protected $relationName)
+        protected $relationName)
     {
         parent::__construct($query, $this->child);
     }
@@ -156,7 +158,7 @@ class BelongsTo extends Relation
      * @param  TRelatedModel|int|string|null  $model
      * @return TDeclaringModel
      */
-    public function associate($model)
+    public function associate($model): \Illuminate\Database\Eloquent\Model
     {
         $ownerKey = $model instanceof Model ? $model->getAttribute($this->ownerKey) : $model;
 
@@ -211,7 +213,9 @@ class BelongsTo extends Relation
         }
 
         return $query->select($columns)->whereColumn(
-            $this->getQualifiedForeignKeyName(), '=', $query->qualifyColumn($this->ownerKey)
+            $this->getQualifiedForeignKeyName(),
+            '=',
+            $query->qualifyColumn($this->ownerKey)
         );
     }
 
@@ -232,7 +236,9 @@ class BelongsTo extends Relation
         $query->getModel()->setTable($hash);
 
         return $query->whereColumn(
-            $hash.'.'.$this->ownerKey, '=', $this->getQualifiedForeignKeyName()
+            $hash.'.'.$this->ownerKey,
+            '=',
+            $this->getQualifiedForeignKeyName()
         );
     }
 
@@ -261,7 +267,7 @@ class BelongsTo extends Relation
      *
      * @return TDeclaringModel
      */
-    public function getChild()
+    public function getChild(): \Illuminate\Database\Eloquent\Model
     {
         return $this->child;
     }

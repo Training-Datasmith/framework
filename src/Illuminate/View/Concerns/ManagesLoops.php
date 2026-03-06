@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Concerns;
 
 use Illuminate\Support\Arr;

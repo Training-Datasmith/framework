@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Exception;
@@ -24,8 +26,9 @@ class NotPwnedVerifier implements UncompromisedVerifier
     public function __construct(/**
      * The HTTP factory instance.
      */
-    protected $factory, $timeout = null)
-    {
+        protected $factory,
+        $timeout = null
+    ) {
         $this->timeout = $timeout ?? 30;
     }
 
@@ -87,6 +90,6 @@ class NotPwnedVerifier implements UncompromisedVerifier
             ? $response->body()
             : '';
 
-        return (new Stringable($body))->trim()->explode("\n")->filter(fn($line) => str_contains($line, ':'));
+        return (new Stringable($body))->trim()->explode("\n")->filter(fn ($line): bool => str_contains((string) $line, ':'));
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Broadcasting;
 
 use Illuminate\Broadcasting\BroadcastEvent;
@@ -26,7 +28,7 @@ class BroadcastManagerTest extends TestCase
         Bus::fake();
         Queue::fake();
 
-        Broadcast::queue(new TestEventNow);
+        Broadcast::queue(new TestEventNow());
 
         Bus::assertDispatched(BroadcastEvent::class);
         Queue::assertNotPushed(BroadcastEvent::class);
@@ -37,7 +39,7 @@ class BroadcastManagerTest extends TestCase
         Bus::fake();
         Queue::fake();
 
-        Broadcast::queue(new TestEvent);
+        Broadcast::queue(new TestEvent());
 
         Bus::assertNotDispatched(BroadcastEvent::class);
         Queue::assertPushed(BroadcastEvent::class);
@@ -48,7 +50,7 @@ class BroadcastManagerTest extends TestCase
         Bus::fake();
         Queue::fake();
 
-        Broadcast::queue(new TestEventRescue);
+        Broadcast::queue(new TestEventRescue());
 
         Bus::assertNotDispatched(BroadcastEvent::class);
         Queue::assertPushed(BroadcastEvent::class);
@@ -59,7 +61,7 @@ class BroadcastManagerTest extends TestCase
         Bus::fake();
         Queue::fake();
 
-        Broadcast::queue(new TestEventNowRescue);
+        Broadcast::queue(new TestEventNowRescue());
 
         Bus::assertDispatched(BroadcastEvent::class);
         Queue::assertNotPushed(BroadcastEvent::class);
@@ -70,7 +72,7 @@ class BroadcastManagerTest extends TestCase
         Bus::fake();
         Queue::fake();
 
-        Broadcast::queue(new TestEventUnique);
+        Broadcast::queue(new TestEventUnique());
 
         Bus::assertNotDispatched(UniqueBroadcastEvent::class);
         Queue::assertPushed(UniqueBroadcastEvent::class);
@@ -84,7 +86,7 @@ class BroadcastManagerTest extends TestCase
         Bus::fake();
         Queue::fake();
 
-        Broadcast::queue(new TestEventUniqueWithIdProperty);
+        Broadcast::queue(new TestEventUniqueWithIdProperty());
 
         Bus::assertNotDispatched(UniqueBroadcastEvent::class);
         Queue::assertPushed(UniqueBroadcastEvent::class);
@@ -98,7 +100,7 @@ class BroadcastManagerTest extends TestCase
         Bus::fake();
         Queue::fake();
 
-        Broadcast::queue(new TestEventUniqueWithIdMethod);
+        Broadcast::queue(new TestEventUniqueWithIdMethod());
 
         Bus::assertNotDispatched(UniqueBroadcastEvent::class);
         Queue::assertPushed(UniqueBroadcastEvent::class);
@@ -160,7 +162,7 @@ class BroadcastManagerTest extends TestCase
 
     protected function getApp(array $userConfig)
     {
-        $app = new Container;
+        $app = new Container();
         $app->singleton('config', fn () => new Repository($userConfig));
 
         return $app;
@@ -176,7 +178,7 @@ class TestEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        //
+
     }
 }
 
@@ -189,7 +191,7 @@ class TestEventNow implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        //
+
     }
 }
 
@@ -202,7 +204,7 @@ class TestEventUnique implements ShouldBroadcast, ShouldBeUnique
      */
     public function broadcastOn()
     {
-        //
+
     }
 }
 
@@ -225,7 +227,7 @@ class TestEventRescue implements ShouldBroadcast, ShouldRescue
      */
     public function broadcastOn()
     {
-        //
+
     }
 }
 
@@ -238,6 +240,6 @@ class TestEventNowRescue implements ShouldBroadcastNow, ShouldRescue
      */
     public function broadcastOn()
     {
-        //
+
     }
 }

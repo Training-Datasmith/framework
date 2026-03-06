@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Auth;
 
 use Illuminate\Auth\DatabaseUserProvider;
@@ -42,7 +44,7 @@ class AuthDatabaseUserProviderTest extends TestCase
 
     public function testRetrieveByTokenReturnsUser()
     {
-        $mockUser = new stdClass;
+        $mockUser = new stdClass();
         $mockUser->remember_token = 'a';
 
         $conn = m::mock(Connection::class);
@@ -69,7 +71,7 @@ class AuthDatabaseUserProviderTest extends TestCase
 
     public function testRetrieveByBadTokenReturnsNull()
     {
-        $mockUser = new stdClass;
+        $mockUser = new stdClass();
         $mockUser->remember_token = null;
 
         $conn = m::mock(Connection::class);

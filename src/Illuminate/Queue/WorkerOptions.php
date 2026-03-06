@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 class WorkerOptions
@@ -64,7 +66,6 @@ class WorkerOptions
          * The number of seconds to rest between jobs.
          */
         public $rest = 0
-    )
-    {
+    ) {
     }
 }

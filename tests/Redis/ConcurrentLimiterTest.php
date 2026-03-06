@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Redis;
 
 use Error;
@@ -146,7 +148,7 @@ class ConcurrentLimiterTest extends TestCase
 
         try {
             $lock->block(1, function () {
-                throw new Error;
+                throw new Error();
             });
         } catch (Error) {
         }
@@ -169,6 +171,6 @@ class ConcurrencyLimiterMockThatDoesntRelease extends ConcurrencyLimiter
 {
     protected function release($key, $id)
     {
-        //
+
     }
 }

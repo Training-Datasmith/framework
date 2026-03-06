@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 use Closure;
@@ -158,7 +160,7 @@ abstract class Component
             return $this->extractBladeViewFromString($view);
         };
 
-        return $view instanceof Closure ? fn(array $data = []) => $resolver($view($data))
+        return $view instanceof Closure ? fn (array $data = []) => $resolver($view($data))
         : $resolver($view);
     }
 
@@ -204,7 +206,7 @@ abstract class Component
                 mkdir($directory, 0755, true);
             }
 
-            (new Filesystem)->replace($viewFile, $contents);
+            (new Filesystem())->replace($viewFile, $contents);
         }
 
         return '__components::'.basename($viewFile, '.blade.php');
@@ -298,7 +300,7 @@ abstract class Component
      */
     protected function createInvokableVariable(string $method)
     {
-        return new InvokableComponentVariable(fn() => $this->{$method}());
+        return new InvokableComponentVariable(fn () => $this->{$method}());
     }
 
     /**

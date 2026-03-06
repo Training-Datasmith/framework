@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Auth\Access\Gate;
@@ -24,9 +26,9 @@ class ValidationRuleCanTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = new stdClass;
+        $this->user = new stdClass();
 
-        Container::setInstance($this->container = new Container);
+        Container::setInstance($this->container = new Container());
 
         $this->container->singleton(GateContract::class, function () {
             return new Gate($this->container, function () {
@@ -36,7 +38,8 @@ class ValidationRuleCanTest extends TestCase
 
         $this->container->bind('translator', function () {
             return new Translator(
-                new ArrayLoader, 'en'
+                new ArrayLoader(),
+                'en'
             );
         });
 
@@ -86,7 +89,7 @@ class ValidationRuleCanTest extends TestCase
         $v = new Validator(
             resolve('translator'),
             ['company' => '1'],
-            ['company' => new Can('update-company', [\App\Models\Company::class, new stdClass])]
+            ['company' => new Can('update-company', [\App\Models\Company::class, new stdClass()])]
         );
 
         $this->assertTrue($v->passes());
@@ -101,8 +104,8 @@ class ValidationRuleCanTest extends TestCase
                 'company_fqcn' => '1',
             ],
             [
-                'company' => new Can('update-company', [\App\Models\Company::class, new stdClass]),
-                'company_fqcn' => new Can('update-company', [\App\Models\Company::class, new stdClass]),
+                'company' => new Can('update-company', [\App\Models\Company::class, new stdClass()]),
+                'company_fqcn' => new Can('update-company', [\App\Models\Company::class, new stdClass()]),
             ],
             [
                 'company.can' => 'You dont have permission (dot notation)',

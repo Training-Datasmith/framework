@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console;
 
 use Illuminate\Database\ConnectionResolverInterface;
@@ -7,9 +9,10 @@ use Illuminate\Database\Schema\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Number;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\search;
+
+use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'db:table')]
 class TableCommand extends DatabaseInspectionCommand
@@ -53,7 +56,7 @@ class TableCommand extends DatabaseInspectionCommand
         $table = $tables[$tableName] ?? (new Collection($tables))->when(
             Arr::wrap($connection->getSchemaBuilder()->getCurrentSchemaListing()
                 ?? $connection->getSchemaBuilder()->getCurrentSchemaName()),
-            fn (Collection $collection, array $currentSchemas) => $collection->sortBy(
+            fn (Collection $collection, array $currentSchemas): \Illuminate\Support\Collection => $collection->sortBy(
                 function (array $table) use ($currentSchemas): int|string {
                     $index = array_search($table['schema'], $currentSchemas);
 
@@ -105,7 +108,7 @@ class TableCommand extends DatabaseInspectionCommand
      */
     protected function columns(Builder $schema, string $table): \Illuminate\Support\Collection
     {
-        return (new Collection($schema->getColumns($table)))->map(fn ($column): array => [
+        return (new Collection($schema->getColumns($table)))->map(fn (array $column): array => [
             'column' => $column['name'],
             'attributes' => $this->getAttributesForColumn($column),
             'default' => $column['default'],
@@ -132,7 +135,7 @@ class TableCommand extends DatabaseInspectionCommand
      */
     protected function indexes(Builder $schema, string $table): \Illuminate\Support\Collection
     {
-        return (new Collection($schema->getIndexes($table)))->map(fn ($index): array => [
+        return (new Collection($schema->getIndexes($table)))->map(fn (array $index): array => [
             'name' => $index['name'],
             'columns' => new Collection($index['columns']),
             'attributes' => $this->getAttributesForIndex($index),

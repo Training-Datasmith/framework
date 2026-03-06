@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Middleware;
 
 use Illuminate\Container\Container;
@@ -41,11 +43,12 @@ class WithoutOverlapping
     public function __construct(/**
      * The job's unique key used for preventing overlaps.
      */
-    public $key = '', /**
+        public $key = '', /**
      * The number of seconds before a job should be available again if no lock was acquired.
      */
-    public $releaseAfter = 0, $expiresAfter = 0)
-    {
+        public $releaseAfter = 0,
+        $expiresAfter = 0
+    ) {
         $this->expiresAfter = $this->secondsUntil($expiresAfter);
     }
 
@@ -58,7 +61,8 @@ class WithoutOverlapping
     public function handle($job, $next): void
     {
         $lock = Container::getInstance()->make(Cache::class)->lock(
-            $this->getLockKey($job), $this->expiresAfter
+            $this->getLockKey($job),
+            $this->expiresAfter
         );
 
         if ($lock->get()) {

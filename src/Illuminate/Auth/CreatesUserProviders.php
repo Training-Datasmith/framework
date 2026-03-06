@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use InvalidArgumentException;
@@ -29,7 +31,9 @@ trait CreatesUserProviders
 
         if (isset($this->customProviderCreators[$driver = ($config['driver'] ?? null)])) {
             return call_user_func(
-                $this->customProviderCreators[$driver], $this->app, $config
+                $this->customProviderCreators[$driver],
+                $this->app,
+                $config
             );
         }
 

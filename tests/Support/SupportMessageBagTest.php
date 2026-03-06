@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Support\Collection;
@@ -10,7 +12,7 @@ class SupportMessageBagTest extends TestCase
 {
     public function testUniqueness()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->add('foo', 'bar');
         $container->add('foo', 'bar');
         $messages = $container->getMessages();
@@ -19,7 +21,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testMessagesAreAdded()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $container->add('foo', 'baz');
@@ -31,7 +33,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testKeys()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $container->add('foo', 'baz');
@@ -65,7 +67,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testGetReturnsArrayOfMessagesByKey()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $container->add('foo', 'baz');
@@ -74,7 +76,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testGetReturnsArrayOfMessagesByImplicitKey()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo.1', 'bar');
         $container->add('foo.2', 'baz');
@@ -83,7 +85,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testFirstReturnsSingleMessage()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $container->add('foo', 'baz');
@@ -92,14 +94,14 @@ class SupportMessageBagTest extends TestCase
 
     public function testFirstReturnsEmptyStringIfNoMessagesFound()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $this->assertSame('', $container->first('foo'));
     }
 
     public function testFirstReturnsSingleMessageFromDotKeys()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('name.first', 'jon');
         $container->add('name.last', 'snow');
@@ -108,7 +110,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testHasIndicatesExistence()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $this->assertTrue($container->has('foo'));
@@ -117,7 +119,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testMissingIndicatesNonExistence()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $this->assertFalse($container->missing('foo'));
@@ -130,7 +132,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testAddIf()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->addIf(true, 'foo', 'bar');
         $this->assertTrue($container->has('foo'));
@@ -148,7 +150,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testHasWithKeyNull()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $this->assertTrue($container->has(null));
@@ -156,7 +158,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testHasAnyIndicatesExistence()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $this->assertFalse($container->hasAny());
         $container->add('foo', 'bar');
@@ -173,7 +175,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testHasAnyWithKeyNull()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $this->assertTrue($container->hasAny(null));
@@ -181,7 +183,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testHasIndicatesExistenceOfAllKeys()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $container->add('bar', 'foo');
@@ -193,7 +195,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testHasIndicatesNoneExistence()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
 
         $this->assertFalse($container->has('foo'));
@@ -201,7 +203,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testAllReturnsAllMessages()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $container->add('boom', 'baz');
@@ -210,7 +212,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testFormatIsRespected()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat('<p>:message</p>');
         $container->add('foo', 'bar');
         $container->add('boom', 'baz');
@@ -227,7 +229,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testUnique()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $container->add('foo2', 'bar');
@@ -237,7 +239,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testMessageBagReturnsCorrectArray()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $container->add('boom', 'baz');
@@ -247,7 +249,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testMessageBagReturnsExpectedJson()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $container->add('boom', 'baz');
@@ -257,7 +259,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testMessageBagReturnsExpectedPrettyJson()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo', 'bar');
         $container->add('boom', 'baz');
@@ -280,7 +282,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testCountReturnsCorrectValue()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $this->assertCount(0, $container);
 
         $container->add('foo', 'bar');
@@ -292,7 +294,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testCountable()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->add('foo', 'bar');
         $container->add('boom', 'baz');
 
@@ -307,7 +309,7 @@ class SupportMessageBagTest extends TestCase
 
     public function testFirstFindsMessageForWildcardKey()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $container->add('foo.bar', 'baz');
         $this->assertSame('baz', $container->first('foo.*'));
@@ -315,40 +317,40 @@ class SupportMessageBagTest extends TestCase
 
     public function testIsEmptyTrue()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $this->assertTrue($container->isEmpty());
     }
 
     public function testIsEmptyFalse()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->add('foo.bar', 'baz');
         $this->assertFalse($container->isEmpty());
     }
 
     public function testIsNotEmptyTrue()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->add('foo.bar', 'baz');
         $this->assertTrue($container->isNotEmpty());
     }
 
     public function testIsNotEmptyFalse()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $this->assertFalse($container->isNotEmpty());
     }
 
     public function testToString()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->add('foo.bar', 'baz');
         $this->assertSame('{"foo.bar":["baz"]}', (string) $container);
     }
 
     public function testGetFormat()
     {
-        $container = new MessageBag;
+        $container = new MessageBag();
         $container->setFormat(':message');
         $this->assertSame(':message', $container->getFormat());
     }
@@ -359,7 +361,7 @@ class SupportMessageBagTest extends TestCase
         $messages = $messageBag->getMessages();
         $this->assertEquals(['first', 'second', 'third'], $messages['messages']);
 
-        $messageBag = new MessageBag;
+        $messageBag = new MessageBag();
         $messageBag->add('messages', 'first');
         $messageBag->add('messages', 'second');
         $messageBag->add('messages', 'third');

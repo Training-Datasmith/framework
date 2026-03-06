@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console;
 
 use Illuminate\Console\View\Components\Factory;
@@ -13,13 +15,13 @@ use Throwable;
 
 class Command extends SymfonyCommand
 {
-    use Concerns\CallsCommands,
-        Concerns\ConfiguresPrompts,
-        Concerns\HasParameters,
-        Concerns\InteractsWithIO,
-        Concerns\InteractsWithSignals,
-        Concerns\PromptsForMissingInput,
-        Macroable;
+    use Concerns\CallsCommands;
+    use Concerns\ConfiguresPrompts;
+    use Concerns\HasParameters;
+    use Concerns\InteractsWithIO;
+    use Concerns\InteractsWithSignals;
+    use Concerns\PromptsForMissingInput;
+    use Macroable;
 
     /**
      * The Laravel application instance.
@@ -165,7 +167,8 @@ class Command extends SymfonyCommand
     public function run(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output instanceof OutputStyle ? $output : $this->laravel->make(
-            OutputStyle::class, ['input' => $input, 'output' => $output]
+            OutputStyle::class,
+            ['input' => $input, 'output' => $output]
         );
 
         $this->components = $this->laravel->make(Factory::class, ['output' => $this->output]);
@@ -174,7 +177,8 @@ class Command extends SymfonyCommand
 
         try {
             return parent::run(
-                $this->input = $input, $this->output
+                $this->input = $input,
+                $this->output
             );
         } finally {
             $this->untrap();
@@ -190,7 +194,8 @@ class Command extends SymfonyCommand
         if ($this instanceof Isolatable && $this->option('isolated') !== false &&
             ! $this->commandIsolationMutex()->create($this)) {
             $this->comment(sprintf(
-                'The [%s] command is already running.', $this->getName()
+                'The [%s] command is already running.',
+                $this->getName()
             ));
 
             return (int) (is_numeric($this->option('isolated'))

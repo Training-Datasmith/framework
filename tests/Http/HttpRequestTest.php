@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Http;
 
 use Illuminate\Http\Request;
@@ -1217,7 +1219,8 @@ class HttpRequestTest extends TestCase
     public function testPrefersMethod($accept, $prefers, $expected)
     {
         $this->assertSame(
-            $expected, Request::create('/', 'GET', [], [], [], ['HTTP_ACCEPT' => $accept])->prefers($prefers)
+            $expected,
+            Request::create('/', 'GET', [], [], [], ['HTTP_ACCEPT' => $accept])->prefers($prefers)
         );
     }
 

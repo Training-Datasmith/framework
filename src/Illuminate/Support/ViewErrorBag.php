@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Countable;
@@ -34,7 +36,7 @@ class ViewErrorBag implements Countable, Stringable
      */
     public function getBag($key)
     {
-        return Arr::get($this->bags, $key) ?: new MessageBag;
+        return Arr::get($this->bags, $key) ?: new MessageBag();
     }
 
     /**
@@ -78,7 +80,6 @@ class ViewErrorBag implements Countable, Stringable
     /**
      * Dynamically call methods on the default bag.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

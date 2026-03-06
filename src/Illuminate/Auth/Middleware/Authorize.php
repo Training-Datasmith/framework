@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Middleware;
 
 use Closure;
@@ -19,8 +21,7 @@ class Authorize
          * The gate instance.
          */
         protected \Illuminate\Contracts\Auth\Access\Gate $gate
-    )
-    {
+    ) {
     }
 
     /**

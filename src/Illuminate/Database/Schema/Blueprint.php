@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema;
 
 use Closure;
@@ -10,10 +12,12 @@ use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Database\Schema\Grammars\MySqlGrammar;
 use Illuminate\Database\Schema\Grammars\SQLiteGrammar;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Fluent;
-use Illuminate\Support\Traits\Macroable;
 
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\Fluent;
+
+use Illuminate\Support\Traits\Macroable;
 
 class Blueprint
 {
@@ -89,7 +93,7 @@ class Blueprint
     public function __construct(protected Connection $connection, /**
      * The table the blueprint describes.
      */
-    protected $table, ?Closure $callback = null)
+        protected $table, ?Closure $callback = null)
     {
         $this->grammar = $this->connection->getSchemaGrammar();
 
@@ -152,7 +156,7 @@ class Blueprint
      */
     protected function ensureCommandsAreValid()
     {
-        //
+
     }
 
     /**
@@ -178,7 +182,7 @@ class Blueprint
 
         if (! $this->creating()) {
             $this->commands = array_map(
-                fn (\Illuminate\Support\Fluent $command) => $command instanceof ColumnDefinition
+                fn (\Illuminate\Support\Fluent $command): \Illuminate\Support\Fluent => $command instanceof ColumnDefinition
                     ? $this->createCommand($command->change ? 'change' : 'add', ['column' => $command])
                     : $command,
                 $this->commands
@@ -489,7 +493,7 @@ class Blueprint
     public function dropForeignIdFor($model, $column = null)
     {
         if (is_string($model)) {
-            $model = new $model;
+            $model = new $model();
         }
 
         return $this->dropColumn($column ?: $model->getForeignKey());
@@ -505,7 +509,7 @@ class Blueprint
     public function dropConstrainedForeignIdFor($model, $column = null)
     {
         if (is_string($model)) {
-            $model = new $model;
+            $model = new $model();
         }
 
         return $this->dropConstrainedForeignId($column ?: $model->getForeignKey());
@@ -1002,7 +1006,7 @@ class Blueprint
     public function foreignIdFor($model, $column = null)
     {
         if (is_string($model)) {
-            $model = new $model;
+            $model = new $model();
         }
 
         $column = $column ?: $model->getForeignKey();
@@ -1236,7 +1240,7 @@ class Blueprint
      * @param  int|null  $precision
      * @return \Illuminate\Support\Collection<int, \Illuminate\Database\Schema\ColumnDefinition>
      */
-    public function nullableTimestamps($precision = null)
+    public function nullableTimestamps($precision = null): \Illuminate\Support\Collection
     {
         return $this->timestamps($precision);
     }
@@ -1263,7 +1267,7 @@ class Blueprint
      * @param  int|null  $precision
      * @return \Illuminate\Support\Collection<int, \Illuminate\Database\Schema\ColumnDefinition>
      */
-    public function nullableTimestampsTz($precision = null)
+    public function nullableTimestampsTz($precision = null): \Illuminate\Support\Collection
     {
         return $this->timestampsTz($precision);
     }
@@ -1683,7 +1687,8 @@ class Blueprint
         $index = $index ?: $this->createIndexName($type, $columns);
 
         return $this->addCommand(
-            $type, compact('index', 'columns', 'algorithm', 'operatorClass')
+            $type,
+            compact('index', 'columns', 'algorithm', 'operatorClass')
         );
     }
 
@@ -1691,11 +1696,10 @@ class Blueprint
      * Create a new drop index command on the blueprint.
      *
      * @param  string  $command
-     * @param  string  $type
      * @param  string|array  $index
      * @return \Illuminate\Support\Fluent
      */
-    protected function dropIndexCommand($command, $type, $index)
+    protected function dropIndexCommand($command, string $type, $index)
     {
         $columns = [];
 
@@ -1787,9 +1791,9 @@ class Blueprint
      */
     public function removeColumn($name): static
     {
-        $this->columns = array_values(array_filter($this->columns, fn(\Illuminate\Database\Schema\ColumnDefinition $c) => $c['name'] != $name));
+        $this->columns = array_values(array_filter($this->columns, fn (\Illuminate\Database\Schema\ColumnDefinition $c): bool => $c['name'] != $name));
 
-        $this->commands = array_values(array_filter($this->commands, fn(\Illuminate\Support\Fluent $c) => ! $c instanceof ColumnDefinition || $c['name'] != $name));
+        $this->commands = array_values(array_filter($this->commands, fn (\Illuminate\Support\Fluent $c): bool => ! $c instanceof ColumnDefinition || $c['name'] != $name));
 
         return $this;
     }
@@ -1884,7 +1888,7 @@ class Blueprint
      */
     public function getAddedColumns(): array
     {
-        return array_filter($this->columns, fn(\Illuminate\Database\Schema\ColumnDefinition $column) => ! $column->change);
+        return array_filter($this->columns, fn (\Illuminate\Database\Schema\ColumnDefinition $column): bool => ! $column->change);
     }
 
     /**
@@ -1896,7 +1900,7 @@ class Blueprint
      */
     public function getChangedColumns(): array
     {
-        return array_filter($this->columns, fn(\Illuminate\Database\Schema\ColumnDefinition $column) => (bool) $column->change);
+        return array_filter($this->columns, fn (\Illuminate\Database\Schema\ColumnDefinition $column): bool => (bool) $column->change);
     }
 
     /**

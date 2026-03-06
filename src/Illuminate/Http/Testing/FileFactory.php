@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Testing;
 
 use LogicException;
@@ -56,7 +58,9 @@ class FileFactory
     public function image($name, $width = 10, $height = 10): \Illuminate\Http\Testing\File
     {
         return new File($name, $this->generateImage(
-            $width, $height, pathinfo($name, PATHINFO_EXTENSION)
+            $width,
+            $height,
+            pathinfo($name, PATHINFO_EXTENSION)
         ));
     }
 

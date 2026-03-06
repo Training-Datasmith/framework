@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\JsonSchema\Types;
 
 class ObjectType extends Type
@@ -16,7 +18,7 @@ class ObjectType extends Type
      */
     public function __construct(protected array $properties = [])
     {
-        //
+
     }
 
     /**

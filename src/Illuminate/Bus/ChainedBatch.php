@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Bus;
 
 use Illuminate\Container\Container;
@@ -12,7 +14,10 @@ use Throwable;
 
 class ChainedBatch implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     /**
      * The collection of batched jobs.

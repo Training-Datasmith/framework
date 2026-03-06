@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
@@ -32,8 +34,7 @@ class ResetPassword extends Notification
          * The password reset token.
          */
         #[\SensitiveParameter] public $token
-    )
-    {
+    ) {
     }
 
     /**
@@ -70,7 +71,7 @@ class ResetPassword extends Notification
      */
     protected function buildMailMessage($url)
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject(Lang::get('Reset Password Notification'))
             ->line(Lang::get('You are receiving this email because we received a password reset request for your account.'))
             ->action(Lang::get('Reset Password'), $url)

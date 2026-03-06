@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail\Mailables;
 
 use Illuminate\Support\Traits\Conditionable;
@@ -55,7 +57,7 @@ class Content
     public function __construct(?string $view = null, ?string $html = null, ?string $text = null, /**
      * The Blade view that represents the Markdown version of the message.
      */
-    public $markdown = null, array $with = [], ?string $htmlString = null)
+        public $markdown = null, array $with = [], ?string $htmlString = null)
     {
         $this->view = $view;
         $this->html = $html;
@@ -81,7 +83,7 @@ class Content
      *
      * @return $this
      */
-    public function html(string $view)
+    public function html(string $view): static
     {
         return $this->view($view);
     }

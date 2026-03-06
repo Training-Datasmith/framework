@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Resources\JsonApi;
 
 use Illuminate\Http\Request;
@@ -59,7 +61,7 @@ class JsonApiRequest extends Request
             return array_keys($this->cachedSparseIncluded);
         }
 
-        return transform($this->cachedSparseIncluded[$key] ?? null, fn($value) => Collection::wrap($value)
+        return transform($this->cachedSparseIncluded[$key] ?? null, fn ($value) => Collection::wrap($value)
             ->transform(function ($item) {
                 $item = implode('.', Arr::take(explode('.', $item), JsonApiResource::$maxRelationshipDepth - 1));
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Illuminate\Contracts\Validation\DataAwareRule;
@@ -65,7 +67,7 @@ class InvokableValidationRule implements Rule, ValidatorAwareRule
     public static function make($invokable): \Illuminate\Validation\InvokableValidationRule
     {
         if ($invokable->implicit ?? false) {
-            return new class($invokable) extends InvokableValidationRule implements ImplicitRule {
+            return new class ($invokable) extends InvokableValidationRule implements ImplicitRule {
             };
         }
 
@@ -94,7 +96,7 @@ class InvokableValidationRule implements Rule, ValidatorAwareRule
             ? 'validate'
             : '__invoke';
 
-        $this->invokable->{$method}($attribute, $value, function ($attribute, $message = null) {
+        $this->invokable->{$method}($attribute, $value, function ($attribute, $message = null): \Illuminate\Translation\PotentiallyTranslatedString {
             $this->failed = true;
 
             return $this->pendingPotentiallyTranslatedString($attribute, $message);

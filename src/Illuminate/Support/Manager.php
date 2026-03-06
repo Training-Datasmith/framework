@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Closure;
@@ -35,8 +37,8 @@ abstract class Manager
     public function __construct(/**
      * The container instance.
      */
-    protected \Illuminate\Contracts\Container\Container $container)
-    {
+        protected \Illuminate\Contracts\Container\Container $container
+    ) {
         $this->config = $this->container->make('config');
     }
 
@@ -61,7 +63,8 @@ abstract class Manager
 
         if (is_null($driver)) {
             throw new InvalidArgumentException(sprintf(
-                'Unable to resolve NULL driver for [%s].', static::class
+                'Unable to resolve NULL driver for [%s].',
+                static::class
             ));
         }
 
@@ -168,7 +171,6 @@ abstract class Manager
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

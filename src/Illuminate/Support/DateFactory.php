@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Carbon\Factory;
@@ -107,7 +109,7 @@ class DateFactory
      *
      * @var string
      */
-    const DEFAULT_CLASS_NAME = Carbon::class;
+    public const DEFAULT_CLASS_NAME = Carbon::class;
 
     /**
      * The type (class) of dates that should be created.
@@ -203,7 +205,6 @@ class DateFactory
     /**
      * Handle dynamic calls to generate dates.
      *
-     * @param  array  $parameters
      * @return mixed
      * @throws \RuntimeException
      */

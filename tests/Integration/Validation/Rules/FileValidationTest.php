@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Validation\Rules;
 
 use Illuminate\Http\UploadedFile;
@@ -69,7 +71,8 @@ class FileValidationTest extends TestCase
                 'one.file' => 'File one is not a file',
                 'two.max' => 'File two is too large',
                 'two.file' => 'File two is not a file',
-            ]);
+            ]
+        );
 
         $this->assertTrue($validator->fails());
 

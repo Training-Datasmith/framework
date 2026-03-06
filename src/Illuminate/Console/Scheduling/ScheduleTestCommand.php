@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 use Illuminate\Console\Application;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\select;
+
+use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'schedule:test')]
 class ScheduleTestCommand extends Command
@@ -49,7 +52,7 @@ class ScheduleTestCommand extends Command
         if (! empty($name = $this->option('name'))) {
             $commandBinary = $phpBinary.' '.Application::artisanBinary();
 
-            $matches = array_filter($commandNames, fn($commandName) => trim(str_replace($commandBinary, '', $commandName)) === $name);
+            $matches = array_filter($commandNames, fn ($commandName): bool => trim(str_replace($commandBinary, '', $commandName)) === $name);
 
             if (count($matches) !== 1) {
                 $this->components->info('No matching scheduled command found.');
@@ -96,7 +99,7 @@ class ScheduleTestCommand extends Command
     {
         if (count($commandNames) !== count(array_unique($commandNames))) {
             // Some commands (likely closures) have the same name, append unique indexes to each one...
-            $uniqueCommandNames = array_map(fn($index, int|string $value) => "$value [$index]", array_keys($commandNames), $commandNames);
+            $uniqueCommandNames = array_map(fn ($index, int|string $value): string => "$value [$index]", array_keys($commandNames), $commandNames);
 
             $selectedCommand = select('Which command would you like to run?', $uniqueCommandNames);
 

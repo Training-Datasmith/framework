@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Encryption;
 
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -103,7 +105,11 @@ class Encrypter implements EncrypterContract, StringEncrypter
 
         $value = \openssl_encrypt(
             $serialize ? serialize($value) : $value,
-            strtolower($this->cipher), $this->key, 0, $iv, $tag
+            strtolower($this->cipher),
+            $this->key,
+            0,
+            $iv,
+            $tag
         );
 
         if ($value === false) {
@@ -130,11 +136,10 @@ class Encrypter implements EncrypterContract, StringEncrypter
      * Encrypt a string without serialization.
      *
      * @param  string  $value
-     * @return string
      *
      * @throws \Illuminate\Contracts\Encryption\EncryptException
      */
-    public function encryptString(#[\SensitiveParameter] $value)
+    public function encryptString(#[\SensitiveParameter] $value): string
     {
         return $this->encrypt($value, false);
     }
@@ -172,7 +177,12 @@ class Encrypter implements EncrypterContract, StringEncrypter
             }
 
             $decrypted = \openssl_decrypt(
-                $payload['value'], strtolower($this->cipher), $key, 0, $iv, $tag ?? ''
+                $payload['value'],
+                strtolower($this->cipher),
+                $key,
+                0,
+                $iv,
+                $tag ?? ''
             );
 
             if ($decrypted !== false) {
@@ -268,10 +278,8 @@ class Encrypter implements EncrypterContract, StringEncrypter
 
     /**
      * Determine if the MAC for the given payload is valid for the primary key.
-     *
-     * @return bool
      */
-    protected function validMac(array $payload)
+    protected function validMac(array $payload): bool
     {
         return $this->validMacForKey($payload, $this->key);
     }
@@ -284,7 +292,8 @@ class Encrypter implements EncrypterContract, StringEncrypter
     protected function validMacForKey(#[\SensitiveParameter] array $payload, $key): bool
     {
         return hash_equals(
-            $this->hash($payload['iv'], $payload['value'], $key), $payload['mac']
+            $this->hash($payload['iv'], $payload['value'], $key),
+            $payload['mac']
         );
     }
 

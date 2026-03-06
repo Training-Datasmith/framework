@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Testing\Fluent;
 
 use Illuminate\Support\Collection;
@@ -1043,7 +1045,7 @@ class AssertTest extends TestCase
         $this->expectExceptionMessage('Property [bar] is not scopeable.');
 
         $assert->has('bar', function (AssertableJson $item) {
-            //
+
         });
     }
 
@@ -1189,7 +1191,7 @@ class AssertTest extends TestCase
         $this->expectExceptionMessage('Cannot scope directly onto the first element of the root level because it is empty.');
 
         $assert->first(function (AssertableJson $item) {
-            //
+
         });
     }
 
@@ -1204,7 +1206,7 @@ class AssertTest extends TestCase
 
         $assert->has('foo', function (AssertableJson $assert) {
             $assert->first(function (AssertableJson $item) {
-                //
+
             });
         });
     }
@@ -1219,7 +1221,7 @@ class AssertTest extends TestCase
         $this->expectExceptionMessage('Property [foo] is not scopeable.');
 
         $assert->first(function (AssertableJson $item) {
-            //
+
         });
     }
 
@@ -1247,7 +1249,7 @@ class AssertTest extends TestCase
         $this->expectExceptionMessage('Cannot scope directly onto each element of the root level because it is empty.');
 
         $assert->each(function (AssertableJson $item) {
-            //
+
         });
     }
 
@@ -1262,7 +1264,7 @@ class AssertTest extends TestCase
 
         $assert->has('foo', function (AssertableJson $assert) {
             $assert->each(function (AssertableJson $item) {
-                //
+
             });
         });
     }
@@ -1277,7 +1279,7 @@ class AssertTest extends TestCase
         $this->expectExceptionMessage('Property [foo] is not scopeable.');
 
         $assert->each(function (AssertableJson $item) {
-            //
+
         });
     }
 
@@ -1331,7 +1333,7 @@ class AssertTest extends TestCase
             $item
                 ->etc()
                 ->has('baz', function (AssertableJson $item) {
-                    //
+
                 });
         });
     }

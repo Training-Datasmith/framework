@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use Closure;
@@ -215,7 +217,7 @@ class AuthManager implements FactoryContract
      * @param  string  $driver
      * @return $this
      */
-    public function viaRequest($driver, callable $callback)
+    public function viaRequest($driver, callable $callback): static
     {
         return $this->extend($driver, function () use ($callback): \Illuminate\Auth\RequestGuard {
             $guard = new RequestGuard($callback, $this->app['request'], $this->createUserProvider());
@@ -228,10 +230,8 @@ class AuthManager implements FactoryContract
 
     /**
      * Get the user resolver callback.
-     *
-     * @return \Closure
      */
-    public function userResolver()
+    public function userResolver(): \Closure
     {
         return $this->userResolver;
     }
@@ -310,7 +310,6 @@ class AuthManager implements FactoryContract
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

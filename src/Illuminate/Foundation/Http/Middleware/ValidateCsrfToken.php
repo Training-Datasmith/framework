@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Http\Middleware;
 
 /**
@@ -7,5 +9,4 @@ namespace Illuminate\Foundation\Http\Middleware;
  */
 class ValidateCsrfToken extends VerifyCsrfToken
 {
-    //
 }

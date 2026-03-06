@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Database\Connection;
@@ -44,11 +46,11 @@ class BlueprintState
     public function __construct(/**
      * The blueprint instance.
      */
-    protected \Illuminate\Database\Schema\Blueprint $blueprint, /**
+        protected \Illuminate\Database\Schema\Blueprint $blueprint, /**
      * The connection instance.
      */
-    protected \Illuminate\Database\Connection $connection)
-    {
+        protected \Illuminate\Database\Connection $connection
+    ) {
         $schema = $this->connection->getSchemaBuilder();
         $table = $this->blueprint->getTable();
 

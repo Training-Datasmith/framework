@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 use Illuminate\Contracts\Container\Container;
@@ -43,7 +45,7 @@ class CallbackEvent extends Event
     public function __construct(EventMutex $mutex, $callback, /**
      * The parameters to pass to the method.
      */
-    protected array $parameters = [], $timezone = null)
+        protected array $parameters = [], $timezone = null)
     {
         if (! is_string($callback) && ! Reflector::isCallable($callback)) {
             throw new InvalidArgumentException(
@@ -59,10 +61,9 @@ class CallbackEvent extends Event
     /**
      * Run the callback event.
      *
-     * @return mixed
      * @throws \Throwable
      */
-    public function run(Container $container)
+    public function run(Container $container): void
     {
         parent::run($container);
 

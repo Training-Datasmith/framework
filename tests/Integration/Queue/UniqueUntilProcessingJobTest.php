@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Illuminate\Bus\Queueable;
@@ -52,7 +54,9 @@ class UniqueUntilProcessingJobTest extends QueueTestCase
 
 class UniqueTestJobThatDoesNotRelease implements ShouldQueue, ShouldBeUniqueUntilProcessing
 {
-    use InteractsWithQueue, Queueable, Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use Dispatchable;
 
     public static $handled = false;
     public static $released = false;

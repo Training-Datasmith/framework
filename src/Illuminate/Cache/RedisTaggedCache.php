@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Cache\Events\CacheFlushed;
@@ -107,10 +109,8 @@ class RedisTaggedCache extends TaggedCache
 
     /**
      * Remove all items from the cache.
-     *
-     * @return bool
      */
-    public function flush()
+    public function flush(): bool
     {
         $connection = $this->store->connection();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Mail;
 
 use Illuminate\Foundation\Auth\User;
@@ -31,13 +33,12 @@ class MailableWithoutSecuredEncodingTest extends MailableTestCase
             'name' => $given,
         ]);
 
-        $mailable = new class($user) extends Mailable
-        {
+        $mailable = new class ($user) extends Mailable {
             public $theme = 'taylor';
 
             public function __construct(public User $user)
             {
-                //
+
             }
 
             public function build()
@@ -57,13 +58,12 @@ class MailableWithoutSecuredEncodingTest extends MailableTestCase
             'name' => $given,
         ]);
 
-        $mailable = new class($user) extends Mailable
-        {
+        $mailable = new class ($user) extends Mailable {
             public $theme = 'taylor';
 
             public function __construct(public User $user)
             {
-                //
+
             }
 
             public function build()

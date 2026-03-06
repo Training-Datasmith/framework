@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Events;
 
 use Closure;
@@ -39,7 +41,7 @@ class EventFakeTest extends TestCase
         Event::fake(NonImportantEvent::class);
         Post::observe([PostObserver::class]);
 
-        $post = new Post;
+        $post = new Post();
         $post->title = 'xyz';
         $post->save();
 
@@ -58,7 +60,7 @@ class EventFakeTest extends TestCase
             return 'two';
         });
         Event::listen('test', function () {
-            //
+
         });
 
         $this->assertEquals([null, 'two', null], Event::dispatch('test'));
@@ -163,9 +165,9 @@ class EventFakeTest extends TestCase
             // do something
         });
 
-        Post::observe(new PostObserver);
+        Post::observe(new PostObserver());
 
-        (new Post)->save();
+        (new Post())->save();
 
         Event::assertListening('event', 'listener');
         Event::assertListening('event', PostEventSubscriber::class);
@@ -226,8 +228,8 @@ class EventFakeTest extends TestCase
         Event::fake();
         Event::assertNothingDispatched();
 
-        Event::dispatch(new ShouldDispatchAfterCommitEvent);
-        Event::dispatch(new ShouldDispatchAfterCommitEvent);
+        Event::dispatch(new ShouldDispatchAfterCommitEvent());
+        Event::dispatch(new ShouldDispatchAfterCommitEvent());
 
         try {
             Event::assertNothingDispatched();
@@ -252,7 +254,6 @@ class Post extends Model
 
 class NonImportantEvent
 {
-    //
 }
 
 class PostEventSubscriber
@@ -283,7 +284,7 @@ class PostAutoEventSubscriber
 {
     public function handle($event)
     {
-        //
+
     }
 }
 
@@ -299,11 +300,10 @@ class InvokableEventSubscriber
 {
     public function __invoke($event)
     {
-        //
+
     }
 }
 
 class ShouldDispatchAfterCommitEvent implements ShouldDispatchAfterCommit
 {
-    //
 }

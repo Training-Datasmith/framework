@@ -1,16 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Queue\Listener;
 use Illuminate\Queue\ListenerOptions;
-use Mockery as m;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\Process;
 
 use function Illuminate\Support\artisan_binary;
 use function Illuminate\Support\php_binary;
+
+use Mockery as m;
+
 use function Orchestra\Testbench\package_version_compare;
+
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Process\Process;
 
 class QueueListenerTest extends TestCase
 {
@@ -38,7 +43,7 @@ class QueueListenerTest extends TestCase
     public function testMakeProcessCorrectlyFormatsCommandLine()
     {
         $listener = new Listener(__DIR__);
-        $options = new ListenerOptions;
+        $options = new ListenerOptions();
         $options->backoff = 1;
         $options->memory = 2;
         $options->timeout = 3;

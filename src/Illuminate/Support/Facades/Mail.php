@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Facades;
 
 use Illuminate\Support\Testing\Fakes\MailFake;

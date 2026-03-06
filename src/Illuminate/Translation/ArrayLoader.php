@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Translation;
 
 use Illuminate\Contracts\Translation\Loader;
@@ -36,7 +38,7 @@ class ArrayLoader implements Loader
      */
     public function addNamespace($namespace, $hint): void
     {
-        //
+
     }
 
     /**
@@ -46,7 +48,7 @@ class ArrayLoader implements Loader
      */
     public function addJsonPath($path): void
     {
-        //
+
     }
 
     /**

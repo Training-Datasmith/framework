@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Broadcasting;
 
 use Illuminate\Broadcasting\Broadcasters\RedisBroadcaster;
@@ -22,7 +24,7 @@ class RedisBroadcasterTest extends TestCase
         parent::setUp();
 
         $this->broadcaster = m::mock(RedisBroadcaster::class)->makePartial();
-        $container = Container::setInstance(new Container);
+        $container = Container::setInstance(new Container());
 
         $container->singleton('config', function () {
             return $this->createConfig();
@@ -89,7 +91,7 @@ class RedisBroadcasterTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
 
         $this->broadcaster->channel('test', function () {
-            //
+
         });
 
         $this->broadcaster->auth(

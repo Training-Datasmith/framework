@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Contracts\Cache\Store;
@@ -18,8 +20,7 @@ class TagSet
          * The tag names.
          */
         protected array $names = []
-    )
-    {
+    ) {
     }
 
     /**
@@ -33,10 +34,9 @@ class TagSet
     /**
      * Reset the tag and return the new tag identifier.
      *
-     * @param  string  $name
      * @return string
      */
-    public function resetTag($name): string|array
+    public function resetTag(string $name): string|array
     {
         $this->store->forever($this->tagKey($name), $id = str_replace('.', '', uniqid('', true)));
 
@@ -53,10 +53,8 @@ class TagSet
 
     /**
      * Flush the tag from the cache.
-     *
-     * @param  string  $name
      */
-    public function flushTag($name): void
+    public function flushTag(string $name): void
     {
         $this->store->forget($this->tagKey($name));
     }
@@ -98,10 +96,8 @@ class TagSet
 
     /**
      * Get all of the tag names in the set.
-     *
-     * @return array
      */
-    public function getNames()
+    public function getNames(): array
     {
         return $this->names;
     }

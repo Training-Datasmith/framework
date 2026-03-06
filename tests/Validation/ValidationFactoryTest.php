@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Container\Container;
@@ -23,13 +25,13 @@ class ValidationFactoryTest extends TestCase
 
         $presence = m::mock(PresenceVerifierInterface::class);
         $noop1 = function () {
-            //
+
         };
         $noop2 = function () {
-            //
+
         };
         $noop3 = function () {
-            //
+
         };
         $factory->extend('foo', $noop1);
         $factory->extendImplicit('implicit', $noop2);
@@ -139,7 +141,7 @@ class ValidationFactoryTest extends TestCase
     public function testSetContainer()
     {
         $translator = m::mock(TranslatorInterface::class);
-        $container = new Container;
+        $container = new Container();
         $factory = new Factory($translator);
 
         $this->assertNull($factory->getContainer());

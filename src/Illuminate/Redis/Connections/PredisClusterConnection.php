@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Connections;
 
 use Predis\Command\Redis\FLUSHDB;
@@ -31,7 +33,7 @@ class PredisClusterConnection extends PredisConnection
             : FLUSHDB::class;
 
         foreach ($this->client as $node) {
-            $node->executeCommand(tap(new $command)->setArguments(func_get_args()));
+            $node->executeCommand(tap(new $command())->setArguments(func_get_args()));
         }
     }
 }

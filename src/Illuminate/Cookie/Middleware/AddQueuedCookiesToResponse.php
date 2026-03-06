@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cookie\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Cookie\QueueingFactory as CookieJar;
 
 class AddQueuedCookiesToResponse
 {
@@ -15,8 +16,7 @@ class AddQueuedCookiesToResponse
          * The cookie jar instance.
          */
         protected \Illuminate\Contracts\Cookie\QueueingFactory $cookies
-    )
-    {
+    ) {
     }
 
     /**

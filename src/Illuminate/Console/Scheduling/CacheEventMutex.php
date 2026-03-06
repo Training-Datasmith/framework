@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 use Illuminate\Cache\DynamoDbStore;
@@ -44,7 +46,9 @@ class CacheEventMutex implements EventMutex, CacheAware
         }
 
         return $this->cache->store($this->store)->add(
-            $event->mutexName(), true, $event->expiresAt * 60
+            $event->mutexName(),
+            true,
+            $event->expiresAt * 60
         );
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session;
 
 use Illuminate\Filesystem\Filesystem;
@@ -28,8 +30,7 @@ class FileSessionHandler implements SessionHandlerInterface
          * The number of minutes the session should be valid.
          */
         protected $minutes
-    )
-    {
+    ) {
     }
 
     /**

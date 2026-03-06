@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SubstituteBindings
@@ -16,8 +17,7 @@ class SubstituteBindings
          * The router instance.
          */
         protected \Illuminate\Contracts\Routing\Registrar $router
-    )
-    {
+    ) {
     }
 
     /**

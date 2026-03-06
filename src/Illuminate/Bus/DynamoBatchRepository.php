@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Bus;
 
 use Aws\DynamoDb\DynamoDbClient;
@@ -51,7 +53,7 @@ class DynamoBatchRepository implements BatchRepository
         protected ?string $ttlAttribute,
     ) {
         $this->dynamoDbClient = $dynamoDbClient;
-        $this->marshaler = new Marshaler;
+        $this->marshaler = new Marshaler();
     }
 
     /**
@@ -349,9 +351,8 @@ class DynamoBatchRepository implements BatchRepository
      * Convert the given raw batch to a Batch object.
      *
      * @param  object  $batch
-     * @return \Illuminate\Bus\Batch
      */
-    protected function toBatch($batch)
+    protected function toBatch($batch): \Illuminate\Bus\Batch
     {
         return $this->factory->make(
             $this,

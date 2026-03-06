@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Events;
 
 use Illuminate\Contracts\Database\Events\MigrationEvent as MigrationEventContract;
@@ -22,7 +24,7 @@ abstract class MigrationEvent implements MigrationEventContract
     public function __construct(Migration $migration, /**
      * The migration method that was called.
      */
-    public $method)
+        public $method)
     {
         $this->migration = $migration;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\MariaDb;
 
 use Illuminate\Database\Schema\Blueprint;
@@ -13,10 +15,10 @@ use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 #[RequiresPhpExtension('pdo_mysql')]
 class DatabaseMariaDbConnectionTest extends MariaDbTestCase
 {
-    const TABLE = 'player';
-    const FLOAT_COL = 'float_col';
-    const JSON_COL = 'json_col';
-    const FLOAT_VAL = 0.2;
+    public const TABLE = 'player';
+    public const FLOAT_COL = 'float_col';
+    public const JSON_COL = 'json_col';
+    public const FLOAT_VAL = 0.2;
 
     protected function afterRefreshingDatabase()
     {

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Jobs;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Queue\Job as JobContract;
-use Illuminate\Queue\RedisQueue;
 
 class RedisJob extends Job implements JobContract
 {
@@ -26,13 +27,13 @@ class RedisJob extends Job implements JobContract
     public function __construct(Container $container, /**
      * The Redis queue instance.
      */
-    protected \Illuminate\Queue\RedisQueue $redis, /**
+        protected \Illuminate\Queue\RedisQueue $redis, /**
      * The Redis raw job payload.
      */
-    protected $job, /**
+        protected $job, /**
      * The Redis job payload inside the reserved queue.
      */
-    protected $reserved, $connectionName, $queue)
+        protected $reserved, $connectionName, $queue)
     {
         $this->queue = $queue;
         $this->container = $container;
@@ -95,10 +96,8 @@ class RedisJob extends Job implements JobContract
 
     /**
      * Get the underlying Redis factory implementation.
-     *
-     * @return \Illuminate\Queue\RedisQueue
      */
-    public function getRedisQueue()
+    public function getRedisQueue(): \Illuminate\Queue\RedisQueue
     {
         return $this->redis;
     }

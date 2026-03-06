@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Capsule;
 
 use Illuminate\Container\Container;
@@ -27,7 +29,7 @@ class Manager
      */
     public function __construct(?Container $container = null)
     {
-        $this->setupContainer($container ?: new Container);
+        $this->setupContainer($container ?: new Container());
 
         // Once we have the container setup, we will set up the default configuration
         // options in the container "config" bindings. This'll just make the queue
@@ -159,7 +161,6 @@ class Manager
     /**
      * Pass dynamic instance methods to the manager.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)
@@ -170,7 +171,6 @@ class Manager
     /**
      * Dynamically pass methods to the default connection.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public static function __callStatic(string $method, array $parameters)

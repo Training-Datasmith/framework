@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\Events;
 
 abstract class CacheEvent
@@ -20,11 +22,12 @@ abstract class CacheEvent
     public function __construct(/**
      * The name of the cache store.
      */
-    public $storeName, /**
+        public $storeName, /**
      * The key of the event.
      */
-    public $key, array $tags = [])
-    {
+        public $key,
+        array $tags = []
+    ) {
         $this->tags = $tags;
     }
 

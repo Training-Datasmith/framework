@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Support\Traits\Tappable;
@@ -18,8 +20,7 @@ class SupportTappableTest extends TestCase
 
     public function testTappableClassWithInvokableClass()
     {
-        $name = TappableClass::make()->tap(new class
-        {
+        $name = TappableClass::make()->tap(new class () {
             public function __invoke($tappable)
             {
                 $tappable->setName('MyName');
@@ -33,8 +34,7 @@ class SupportTappableTest extends TestCase
     {
         $this->expectException('Error');
 
-        $name = TappableClass::make()->tap(new class
-        {
+        $name = TappableClass::make()->tap(new class () {
             public function setName($tappable)
             {
                 $tappable->setName('MyName');
@@ -60,7 +60,7 @@ class TappableClass
 
     public static function make()
     {
-        return new static;
+        return new static();
     }
 
     public function setName($name)

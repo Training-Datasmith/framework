@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Concurrency;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -12,7 +14,7 @@ class ConcurrencyServiceProvider extends ServiceProvider implements DeferrablePr
      */
     public function register(): void
     {
-        $this->app->singleton(ConcurrencyManager::class, fn($app) => new ConcurrencyManager($app));
+        $this->app->singleton(ConcurrencyManager::class, fn ($app): \Illuminate\Concurrency\ConcurrencyManager => new ConcurrencyManager($app));
     }
 
     /**

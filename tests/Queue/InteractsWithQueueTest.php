@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Exception;
@@ -20,8 +22,7 @@ class InteractsWithQueueTest extends TestCase
             return true;
         });
 
-        $job = new class
-        {
+        $job = new class () {
             use InteractsWithQueue;
 
             public $job;

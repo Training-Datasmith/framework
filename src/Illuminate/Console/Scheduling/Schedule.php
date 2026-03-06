@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 use BadMethodCallException;
@@ -15,12 +17,14 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\CallQueuedClosure;
 use Illuminate\Support\Collection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\ProcessUtils;
 use Illuminate\Support\Traits\Macroable;
 use RuntimeException;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
-use function Illuminate\Support\enum_value;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
 /**
  * @mixin \Illuminate\Console\Scheduling\PendingEventAttributes
@@ -31,19 +35,19 @@ class Schedule
         __call as macroCall;
     }
 
-    const SUNDAY = 0;
+    public const SUNDAY = 0;
 
-    const MONDAY = 1;
+    public const MONDAY = 1;
 
-    const TUESDAY = 2;
+    public const TUESDAY = 2;
 
-    const WEDNESDAY = 3;
+    public const WEDNESDAY = 3;
 
-    const THURSDAY = 4;
+    public const THURSDAY = 4;
 
-    const FRIDAY = 5;
+    public const FRIDAY = 5;
 
-    const SATURDAY = 6;
+    public const SATURDAY = 6;
 
     /**
      * All of the events on the schedule.
@@ -104,8 +108,8 @@ class Schedule
     public function __construct(/**
      * The timezone the date should be evaluated on.
      */
-    protected $timezone = null)
-    {
+        protected $timezone = null
+    ) {
         if (! class_exists(Container::class)) {
             throw new RuntimeException(
                 'A container implementation is required to use the scheduler. Please install the illuminate/container package.'
@@ -132,7 +136,10 @@ class Schedule
     public function call($callback, array $parameters = [])
     {
         $this->events[] = $event = new CallbackEvent(
-            $this->eventMutex, $callback, $parameters, $this->timezone
+            $this->eventMutex,
+            $callback,
+            $parameters,
+            $this->timezone
         );
 
         $this->mergePendingAttributes($event);
@@ -154,7 +161,8 @@ class Schedule
             $command = Container::getInstance()->make($command);
 
             return $this->exec(
-                Application::formatCommandString($command->getName()), $parameters,
+                Application::formatCommandString($command->getName()),
+                $parameters,
             )->description($command->getDescription());
         }
 
@@ -162,12 +170,14 @@ class Schedule
             $command = Container::getInstance()->make($command);
 
             return $this->exec(
-                Application::formatCommandString($command->getName()), $parameters,
+                Application::formatCommandString($command->getName()),
+                $parameters,
             )->description($command->getDescription());
         }
 
         return $this->exec(
-            Application::formatCommandString($command), $parameters
+            Application::formatCommandString($command),
+            $parameters
         );
     }
 
@@ -193,7 +203,8 @@ class Schedule
         }
 
         $this->events[] = $event = new CallbackEvent(
-            $this->eventMutex, function () use ($job, $queue, $connection): void {
+            $this->eventMutex,
+            function () use ($job, $queue, $connection): void {
                 $job = is_string($job) ? Container::getInstance()->make($job) : $job;
 
                 if ($job instanceof ShouldQueue) {
@@ -201,7 +212,9 @@ class Schedule
                 } else {
                     $this->dispatchNow($job);
                 }
-            }, [], $this->timezone
+            },
+            [],
+            $this->timezone
         );
 
         $event->name($jobName);
@@ -338,10 +351,8 @@ class Schedule
 
     /**
      * Compile parameters for a command.
-     *
-     * @return string
      */
-    protected function compileParameters(array $parameters)
+    protected function compileParameters(array $parameters): string
     {
         return (new Collection($parameters))->map(function ($value, $key) {
             if (is_array($value)) {
@@ -361,16 +372,15 @@ class Schedule
      *
      * @param  string|int  $key
      * @param  array  $value
-     * @return string
      */
-    public function compileArrayInput($key, $value)
+    public function compileArrayInput($key, $value): string
     {
-        $value = (new Collection($value))->map(fn($value) => ProcessUtils::escapeArgument($value));
+        $value = (new Collection($value))->map(fn ($value) => ProcessUtils::escapeArgument($value));
 
         if (str_starts_with((string) $key, '--')) {
-            $value = $value->map(fn($value) => "{$key}={$value}");
+            $value = $value->map(fn ($value): string => "{$key}={$value}");
         } elseif (str_starts_with((string) $key, '-')) {
-            $value = $value->map(fn($value) => "{$key} {$value}");
+            $value = $value->map(fn ($value): string => "{$key} {$value}");
         }
 
         return $value->implode(' ');
@@ -443,7 +453,8 @@ class Schedule
             } catch (BindingResolutionException $e) {
                 throw new RuntimeException(
                     'Unable to resolve the dispatcher from the service container. Please bind it or install the illuminate/bus package.',
-                    is_int($e->getCode()) ? $e->getCode() : 0, $e
+                    is_int($e->getCode()) ? $e->getCode() : 0,
+                    $e
                 );
             }
         }
@@ -454,7 +465,6 @@ class Schedule
     /**
      * Dynamically handle calls into the schedule instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)
@@ -470,7 +480,9 @@ class Schedule
         }
 
         throw new BadMethodCallException(sprintf(
-            'Method %s::%s does not exist.', static::class, $method
+            'Method %s::%s does not exist.',
+            static::class,
+            $method
         ));
     }
 }

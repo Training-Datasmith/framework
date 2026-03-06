@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Failed;
 
 use DateTimeInterface;
-use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Support\Facades\Date;
 
 class DatabaseFailedJobProvider implements CountableFailedJobProvider, FailedJobProviderInterface, PrunableFailedJobProvider
@@ -27,8 +28,7 @@ class DatabaseFailedJobProvider implements CountableFailedJobProvider, FailedJob
          * The database table.
          */
         protected $table
-    )
-    {
+    ) {
     }
 
     /**
@@ -47,7 +47,11 @@ class DatabaseFailedJobProvider implements CountableFailedJobProvider, FailedJob
         $exception = (string) mb_convert_encoding($exception, 'UTF-8');
 
         return $this->getTable()->insertGetId(compact(
-            'connection', 'queue', 'payload', 'exception', 'failed_at'
+            'connection',
+            'queue',
+            'payload',
+            'exception',
+            'failed_at'
         ));
     }
 

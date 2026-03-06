@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail\Transport;
 
 use Illuminate\Support\Collection;
@@ -23,7 +25,7 @@ class ArrayTransport implements Stringable, TransportInterface
      */
     public function __construct()
     {
-        $this->messages = new Collection;
+        $this->messages = new Collection();
     }
 
     /**
@@ -51,7 +53,7 @@ class ArrayTransport implements Stringable, TransportInterface
      */
     public function flush()
     {
-        return $this->messages = new Collection;
+        return $this->messages = new Collection();
     }
 
     /**

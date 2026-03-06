@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Rules;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Contracts\Validation\ValidatorAwareRule;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Traits\Conditionable;
-use Stringable;
-use TypeError;
 
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\Traits\Conditionable;
+use Stringable;
+
+use TypeError;
 
 class Enum implements Rule, ValidatorAwareRule, Stringable
 {
@@ -47,8 +51,7 @@ class Enum implements Rule, ValidatorAwareRule, Stringable
          * The type of the enum.
          */
         protected $type
-    )
-    {
+    ) {
     }
 
     /**

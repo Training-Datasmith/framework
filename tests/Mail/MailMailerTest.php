@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Mail;
 
 use Illuminate\Contracts\Events\Dispatcher;
@@ -28,7 +30,7 @@ class MailMailerTest extends TestCase
         $view->shouldReceive('make')->once()->andReturn($view);
         $view->shouldReceive('render')->once()->andReturn('rendered.view');
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
         $sentMessage = $mailer->send('foo', ['data'], function (Message $message) {
             $message->to('taylor@laravel.com')->from('hello@laravel.com');
@@ -43,7 +45,7 @@ class MailMailerTest extends TestCase
         $view->shouldReceive('make')->once()->andReturn($view);
         $view->shouldReceive('render')->once()->andReturn('rendered.view');
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
         $sentMessage = $mailer->send('foo', ['data'], function (Message $message) {
             $message->to('taylor@laravel.com')
@@ -67,7 +69,7 @@ class MailMailerTest extends TestCase
         $view = m::mock(Factory::class);
         $view->shouldReceive('render')->never();
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
         $sentMessage = $mailer->send(
             ['html' => new HtmlString('<p>Hello Laravel</p>'), 'text' => new HtmlString('Hello World')],
@@ -86,7 +88,7 @@ class MailMailerTest extends TestCase
         $view = m::mock(Factory::class);
         $view->shouldReceive('render')->never();
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
         $sentMessage = $mailer->send(
             [
@@ -116,7 +118,7 @@ class MailMailerTest extends TestCase
         $view = m::mock(Factory::class);
         $view->shouldReceive('render')->never();
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
         $sentMessage = $mailer->html('<p>Hello World</p>', function (Message $message) {
             $message->to('taylor@laravel.com')->from('hello@laravel.com');
@@ -132,7 +134,7 @@ class MailMailerTest extends TestCase
         $view->shouldReceive('render')->once()->andReturn('rendered.view');
         $view->shouldReceive('render')->once()->andReturn('rendered.plain');
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
         $sentMessage = $mailer->send(['foo', 'bar'], ['data'], function (Message $message) {
             $message->to('taylor@laravel.com')->from('hello@laravel.com');
@@ -164,7 +166,7 @@ class MailMailerTest extends TestCase
         $view->shouldReceive('render')->once()->andReturn('rendered.view');
         $view->shouldReceive('render')->once()->andReturn('rendered.plain');
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
         $sentMessage = $mailer->send(['html' => 'foo', 'text' => 'bar'], ['data'], function (Message $message) {
             $message->to('taylor@laravel.com')->from('hello@laravel.com');
@@ -194,7 +196,7 @@ class MailMailerTest extends TestCase
         $view = m::mock(Factory::class);
         $view->shouldReceive('make')->once()->andReturn($view);
         $view->shouldReceive('render')->once()->andReturn('rendered.view');
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
         $sentMessage = $mailer->to('taylor@laravel.com', 'Taylor Otwell')->send(new TestMail());
 
@@ -209,7 +211,7 @@ class MailMailerTest extends TestCase
         $view = m::mock(Factory::class);
         $view->shouldReceive('make')->once()->andReturn($view);
         $view->shouldReceive('render')->once()->andReturn('rendered.view');
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
         $mailer->alwaysFrom('hello@laravel.com');
 
         $sentMessage = $mailer->send('foo', ['data'], function (Message $message) {
@@ -225,7 +227,7 @@ class MailMailerTest extends TestCase
         $view = m::mock(Factory::class);
         $view->shouldReceive('make')->once()->andReturn($view);
         $view->shouldReceive('render')->once()->andReturn('rendered.view');
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
         $mailer->alwaysReplyTo('taylor@laravel.com', 'Taylor Otwell');
 
         $sentMessage = $mailer->send('foo', ['data'], function (Message $message) {
@@ -241,7 +243,7 @@ class MailMailerTest extends TestCase
         $view = m::mock(Factory::class);
         $view->shouldReceive('make')->once()->andReturn($view);
         $view->shouldReceive('render')->once()->andReturn('rendered.view');
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
         $mailer->alwaysTo('taylor@laravel.com', 'Taylor Otwell');
 
         $sentMessage = $mailer->send('foo', ['data'], function (Message $message) {
@@ -272,7 +274,7 @@ class MailMailerTest extends TestCase
         $view->shouldReceive('make')->once()->andReturn($view);
         $view->shouldReceive('render')->once()->andReturn('rendered.view');
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
         $mailer->alwaysReturnPath('taylorotwell@gmail.com');
 
         $sentMessage = $mailer->send('foo', ['data'], function (Message $message) {
@@ -292,7 +294,7 @@ class MailMailerTest extends TestCase
         $events->shouldReceive('until')->once()->with(m::type(MessageSending::class));
         $events->shouldReceive('dispatch')->once()->with(m::type(MessageSent::class));
 
-        $mailer = new Mailer('array', $view, new ArrayTransport, $events);
+        $mailer = new Mailer('array', $view, new ArrayTransport(), $events);
 
         $mailer->send('foo', ['data'], function (Message $message) {
             $message->to('taylor@laravel.com')->from('hello@laravel.com');
@@ -305,10 +307,11 @@ class MailMailerTest extends TestCase
             return 'bar';
         });
 
-        $mailer = new Mailer('array', m::mock(Factory::class), new ArrayTransport);
+        $mailer = new Mailer('array', m::mock(Factory::class), new ArrayTransport());
 
         $this->assertSame(
-            'bar', $mailer->foo()
+            'bar',
+            $mailer->foo()
         );
     }
 }

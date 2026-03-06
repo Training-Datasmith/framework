@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Exception;
@@ -35,9 +37,9 @@ class SupportTestingNotificationFakeTest extends TestCase
     {
         parent::setUp();
 
-        $this->fake = new NotificationFake;
-        $this->notification = new NotificationStub;
-        $this->user = new UserStub;
+        $this->fake = new NotificationFake();
+        $this->notification = new NotificationStub();
+        $this->user = new UserStub();
     }
 
     public function testAssertSentTo()
@@ -49,14 +51,14 @@ class SupportTestingNotificationFakeTest extends TestCase
             $this->assertStringContainsString('The expected [Illuminate\Tests\Support\NotificationStub] notification was not sent.', $e->getMessage());
         }
 
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
         $this->fake->assertSentTo($this->user, NotificationStub::class);
     }
 
     public function testAssertSentToClosure()
     {
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
         $this->fake->assertSentTo($this->user, function (NotificationStub $notification) {
             return true;
@@ -65,14 +67,14 @@ class SupportTestingNotificationFakeTest extends TestCase
 
     public function testAssertSentOnDemand()
     {
-        $this->fake->send(new AnonymousNotifiable, new NotificationStub);
+        $this->fake->send(new AnonymousNotifiable(), new NotificationStub());
 
         $this->fake->assertSentOnDemand(NotificationStub::class);
     }
 
     public function testAssertSentOnDemandClosure()
     {
-        $this->fake->send(new AnonymousNotifiable, new NotificationStub);
+        $this->fake->send(new AnonymousNotifiable(), new NotificationStub());
 
         $this->fake->assertSentOnDemand(NotificationStub::class, function (NotificationStub $notification) {
             return true;
@@ -83,7 +85,7 @@ class SupportTestingNotificationFakeTest extends TestCase
     {
         $this->fake->assertNotSentTo($this->user, NotificationStub::class);
 
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
         try {
             $this->fake->assertNotSentTo($this->user, NotificationStub::class);
@@ -95,7 +97,7 @@ class SupportTestingNotificationFakeTest extends TestCase
 
     public function testAssertNotSentToClosure()
     {
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
         try {
             $this->fake->assertNotSentTo($this->user, function (NotificationStub $notification) {
@@ -110,20 +112,20 @@ class SupportTestingNotificationFakeTest extends TestCase
     public function testAssertNothingSent()
     {
         $this->fake->assertNothingSent();
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
         try {
             $this->fake->assertNothingSent();
             $this->fail();
         } catch (ExpectationFailedException $e) {
-            $this->assertStringContainsString("The following notifications were sent unexpectedly:\n\n- ".get_class(new NotificationStub), $e->getMessage());
+            $this->assertStringContainsString("The following notifications were sent unexpectedly:\n\n- ".get_class(new NotificationStub()), $e->getMessage());
         }
     }
 
     public function testAssertNothingSentTo()
     {
         $this->fake->assertNothingSentTo($this->user);
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
         try {
             $this->fake->assertNothingSentTo($this->user);
@@ -144,7 +146,7 @@ class SupportTestingNotificationFakeTest extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $this->fake->assertSentTo(new Collection, NotificationStub::class);
+        $this->fake->assertSentTo(new Collection(), NotificationStub::class);
     }
 
     public function testResettingNotificationId()
@@ -169,11 +171,11 @@ class SupportTestingNotificationFakeTest extends TestCase
     {
         $this->fake->assertSentTimes(NotificationStub::class, 0);
 
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
-        $this->fake->send(new UserStub, new NotificationStub);
+        $this->fake->send(new UserStub(), new NotificationStub());
 
         $this->fake->assertSentTimes(NotificationStub::class, 3);
     }
@@ -182,11 +184,11 @@ class SupportTestingNotificationFakeTest extends TestCase
     {
         $this->fake->assertSentToTimes($this->user, NotificationStub::class, 0);
 
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
-        $this->fake->send($this->user, new NotificationStub);
+        $this->fake->send($this->user, new NotificationStub());
 
         $this->fake->assertSentToTimes($this->user, NotificationStub::class, 3);
     }
@@ -195,20 +197,20 @@ class SupportTestingNotificationFakeTest extends TestCase
     {
         $this->fake->assertSentOnDemandTimes(NotificationStub::class, 0);
 
-        $this->fake->send(new AnonymousNotifiable, new NotificationStub);
+        $this->fake->send(new AnonymousNotifiable(), new NotificationStub());
 
-        $this->fake->send(new AnonymousNotifiable, new NotificationStub);
+        $this->fake->send(new AnonymousNotifiable(), new NotificationStub());
 
-        $this->fake->send(new AnonymousNotifiable, new NotificationStub);
+        $this->fake->send(new AnonymousNotifiable(), new NotificationStub());
 
         $this->fake->assertSentOnDemandTimes(NotificationStub::class, 3);
     }
 
     public function testAssertSentToWhenNotifiableHasPreferredLocale()
     {
-        $user = new LocalizedUserStub;
+        $user = new LocalizedUserStub();
 
-        $this->fake->send($user, new NotificationStub);
+        $this->fake->send($user, new NotificationStub());
 
         $this->fake->assertSentTo($user, NotificationStub::class, function ($notification, $channels, $notifiable, $locale) use ($user) {
             return $notifiable === $user && $locale === 'au';
@@ -217,9 +219,9 @@ class SupportTestingNotificationFakeTest extends TestCase
 
     public function testAssertSentToWhenNotifiableHasFalsyShouldSend()
     {
-        $user = new LocalizedUserStub;
+        $user = new LocalizedUserStub();
 
-        $this->fake->send($user, new NotificationWithFalsyShouldSendStub);
+        $this->fake->send($user, new NotificationWithFalsyShouldSendStub());
 
         $this->fake->assertNotSentTo($user, NotificationWithFalsyShouldSendStub::class);
     }
@@ -258,7 +260,6 @@ class NotificationWithFalsyShouldSendStub extends Notification
 
 class UserStub extends User
 {
-    //
 }
 
 class LocalizedUserStub extends User implements HasLocalePreference

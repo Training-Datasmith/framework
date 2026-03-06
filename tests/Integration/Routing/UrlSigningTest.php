@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Routing;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
@@ -40,7 +42,7 @@ class UrlSigningTest extends TestCase
             return ['slug' => $slug, 'valid' => $request->hasValidSignature() ? 'valid' : 'invalid'];
         })->name('foo');
 
-        $model = new RoutableInterfaceStub;
+        $model = new RoutableInterfaceStub();
         $model->routable = 'routable-slug';
 
         $this->assertIsString($url = URL::signedRoute('foo', ['post' => $model]));
@@ -237,7 +239,7 @@ class UrlSigningTest extends TestCase
 
     public function testSignedMiddlewareWithRoutableParameter()
     {
-        $model = new RoutableInterfaceStub;
+        $model = new RoutableInterfaceStub();
         $model->routable = 'routable';
 
         Route::get('/foo/{bar}', function (Request $request, $routable) {
@@ -375,8 +377,7 @@ class UrlSigningTest extends TestCase
 
     protected function createValidateSignatureMiddleware(array $ignore)
     {
-        return new class($ignore) extends ValidateSignature
-        {
+        return new class ($ignore) extends ValidateSignature {
             public function __construct(array $ignore)
             {
                 $this->ignore = $ignore;
@@ -403,12 +404,12 @@ class RoutableInterfaceStub implements UrlRoutable
 
     public function resolveRouteBinding($routeKey, $field = null)
     {
-        //
+
     }
 
     public function resolveChildRouteBinding($childType, $routeKey, $field = null)
     {
-        //
+
     }
 }
 

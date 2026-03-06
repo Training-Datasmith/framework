@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Mail;
 
 use Illuminate\Mail\Mailable;
@@ -20,11 +22,10 @@ abstract class MailableTestCase extends TestCase
     #[DataProvider('markdownEncodedDataProvider')]
     public function testItCanAssertMarkdownEncodedString($given, $expected)
     {
-        $mailable = new class($given) extends Mailable
-        {
+        $mailable = new class ($given) extends Mailable {
             public function __construct(public string $message)
             {
-                //
+
             }
 
             public function envelope()

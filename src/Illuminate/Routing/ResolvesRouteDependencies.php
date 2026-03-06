@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Container\Util;
@@ -27,7 +29,8 @@ trait ResolvesRouteDependencies
         }
 
         return $this->resolveMethodDependencies(
-            $parameters, new ReflectionMethod($instance, $method)
+            $parameters,
+            new ReflectionMethod($instance, $method)
         );
     }
 
@@ -40,7 +43,7 @@ trait ResolvesRouteDependencies
 
         $values = array_values($parameters);
 
-        $skippableValue = new stdClass;
+        $skippableValue = new stdClass();
 
         foreach ($reflector->getParameters() as $key => $parameter) {
             $instance = $this->transformDependency($parameter, $parameters, $skippableValue);
@@ -109,7 +112,10 @@ trait ResolvesRouteDependencies
     protected function spliceIntoParameters(array &$parameters, $offset, $value)
     {
         array_splice(
-            $parameters, $offset, 0, [$value]
+            $parameters,
+            $offset,
+            0,
+            [$value]
         );
     }
 }

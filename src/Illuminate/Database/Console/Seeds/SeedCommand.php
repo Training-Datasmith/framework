@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Seeds;
 
 use Illuminate\Console\Command;
@@ -14,7 +16,8 @@ use Symfony\Component\Console\Input\InputOption;
 #[AsCommand(name: 'db:seed')]
 class SeedCommand extends Command
 {
-    use ConfirmableTrait, Prohibitable;
+    use ConfirmableTrait;
+    use Prohibitable;
 
     /**
      * The console command name.
@@ -36,8 +39,8 @@ class SeedCommand extends Command
     public function __construct(/**
      * The connection resolver instance.
      */
-    protected \Illuminate\Database\ConnectionResolverInterface $resolver)
-    {
+        protected \Illuminate\Database\ConnectionResolverInterface $resolver
+    ) {
         parent::__construct();
     }
 

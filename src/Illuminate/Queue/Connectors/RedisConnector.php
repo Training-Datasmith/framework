@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Connectors;
 
 use Illuminate\Contracts\Redis\Factory as Redis;
@@ -21,8 +23,7 @@ class RedisConnector implements ConnectorInterface
          * The connection name.
          */
         protected $connection = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -33,7 +34,8 @@ class RedisConnector implements ConnectorInterface
     public function connect(array $config): \Illuminate\Queue\RedisQueue
     {
         return new RedisQueue(
-            $this->redis, $config['queue'],
+            $this->redis,
+            $config['queue'],
             $config['connection'] ?? $this->connection,
             $config['retry_after'] ?? 60,
             $config['block_for'] ?? null,

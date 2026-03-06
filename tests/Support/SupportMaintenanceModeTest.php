@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Contracts\Foundation\MaintenanceMode as MaintenanceModeContract;
@@ -10,7 +12,7 @@ class SupportMaintenanceModeTest extends TestCase
 {
     public function testExtends()
     {
-        MaintenanceMode::extend('test', fn () => new TestMaintenanceMode);
+        MaintenanceMode::extend('test', fn () => new TestMaintenanceMode());
 
         $this->app->config->set('app.maintenance.driver', 'test');
 

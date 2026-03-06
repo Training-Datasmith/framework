@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use ArrayAccess;
@@ -14,7 +16,10 @@ use Stringable as BaseStringable;
 
 class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
 {
-    use Conditionable, Dumpable, Macroable, Tappable;
+    use Conditionable;
+    use Dumpable;
+    use Macroable;
+    use Tappable;
 
     /**
      * The underlying string value.
@@ -69,7 +74,7 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * @param  int  $count
      * @return $this
      */
-    public function newLine($count = 1)
+    public function newLine($count = 1): static
     {
         return $this->append(str_repeat(PHP_EOL, $count));
     }
@@ -100,7 +105,7 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * @param  int  $index
      * @return string|false
      */
-    public function charAt($index)
+    public function charAt($index): string|false
     {
         return Str::charAt($this->value, $index);
     }
@@ -188,9 +193,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      *
      * @param  string|iterable<string>  $needles
      * @param  bool  $ignoreCase
-     * @return bool
      */
-    public function contains($needles, $ignoreCase = false)
+    public function contains($needles, $ignoreCase = false): bool
     {
         return Str::contains($this->value, $needles, $ignoreCase);
     }
@@ -200,9 +204,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      *
      * @param  iterable<string>  $needles
      * @param  bool  $ignoreCase
-     * @return bool
      */
-    public function containsAll($needles, $ignoreCase = false)
+    public function containsAll($needles, $ignoreCase = false): bool
     {
         return Str::containsAll($this->value, $needles, $ignoreCase);
     }
@@ -212,9 +215,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      *
      * @param  string|iterable<string>  $needles
      * @param  bool  $ignoreCase
-     * @return bool
      */
-    public function doesntContain($needles, $ignoreCase = false)
+    public function doesntContain($needles, $ignoreCase = false): bool
     {
         return Str::doesntContain($this->value, $needles, $ignoreCase);
     }
@@ -251,9 +253,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * Determine if a given string ends with a given substring.
      *
      * @param  string|iterable<string>  $needles
-     * @return bool
      */
-    public function endsWith($needles)
+    public function endsWith($needles): bool
     {
         return Str::endsWith($this->value, $needles);
     }
@@ -262,9 +263,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * Determine if a given string doesn't end with a given substring.
      *
      * @param  string|iterable<string>  $needles
-     * @return bool
      */
-    public function doesntEndWith($needles)
+    public function doesntEndWith($needles): bool
     {
         return Str::doesntEndWith($this->value, $needles);
     }
@@ -323,15 +323,13 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
 
         $segments = preg_split($pattern, $this->value, $limit, $flags);
 
-        return ! empty($segments) ? new Collection($segments) : new Collection;
+        return ! empty($segments) ? new Collection($segments) : new Collection();
     }
 
     /**
      * Cap a string with a single instance of a given value.
-     *
-     * @param  string  $cap
      */
-    public function finish($cap): static
+    public function finish(string $cap): static
     {
         return new static(Str::finish($this->value, $cap));
     }
@@ -341,9 +339,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      *
      * @param  string|iterable<string>  $pattern
      * @param  bool  $ignoreCase
-     * @return bool
      */
-    public function is($pattern, $ignoreCase = false)
+    public function is($pattern, $ignoreCase = false): bool
     {
         return Str::is($pattern, $this->value, $ignoreCase);
     }
@@ -427,9 +424,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * Return the length of the given string.
      *
      * @param  string|null  $encoding
-     * @return int
      */
-    public function length($encoding = null)
+    public function length($encoding = null): int
     {
         return Str::length($this->value, $encoding);
     }
@@ -438,10 +434,9 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * Limit the number of characters in a string.
      *
      * @param  int  $limit
-     * @param  string  $end
      * @param  bool  $preserveWords
      */
-    public function limit($limit = 100, $end = '...', $preserveWords = false): static
+    public function limit($limit = 100, string $end = '...', $preserveWords = false): static
     {
         return new static(Str::limit($this->value, $limit, $end, $preserveWords));
     }
@@ -497,9 +492,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * Determine if a given string matches a given pattern.
      *
      * @param  string|iterable<string>  $pattern
-     * @return bool
      */
-    public function isMatch($pattern)
+    public function isMatch($pattern): bool
     {
         return Str::isMatch($pattern, $this->value);
     }
@@ -508,9 +502,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * Get the string matching the given pattern.
      *
      * @param  string  $pattern
-     * @return \Illuminate\Support\Collection
      */
-    public function matchAll($pattern)
+    public function matchAll($pattern): \Illuminate\Support\Collection
     {
         return Str::matchAll($pattern, $this->value);
     }
@@ -573,7 +566,7 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * @param  string|null  $default
      * @return array<int, string|null>
      */
-    public function parseCallback($default = null)
+    public function parseCallback($default = null): array
     {
         return Str::parseCallback($this->value, $default);
     }
@@ -625,7 +618,7 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * @param  string|null  $encoding
      * @return int|false
      */
-    public function position($needle, $offset = 0, $encoding = null)
+    public function position($needle, $offset = 0, $encoding = null): int|false
     {
         return Str::position($this->value, $needle, $offset, $encoding);
     }
@@ -770,10 +763,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
 
     /**
      * Begin a string with a single instance of a given value.
-     *
-     * @param  string  $prefix
      */
-    public function start($prefix): static
+    public function start(string $prefix): static
     {
         return new static(Str::start($this->value, $prefix));
     }
@@ -842,21 +833,18 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
     /**
      * Generate a URL friendly "slug" from a given string.
      *
-     * @param  string  $separator
      * @param  string|null  $language
      * @param  array<string, string>  $dictionary
      */
-    public function slug($separator = '-', $language = 'en', $dictionary = ['@' => 'at']): static
+    public function slug(string $separator = '-', $language = 'en', array $dictionary = ['@' => 'at']): static
     {
         return new static(Str::slug($this->value, $separator, $language, $dictionary));
     }
 
     /**
      * Convert a string to snake case.
-     *
-     * @param  string  $delimiter
      */
-    public function snake($delimiter = '_'): static
+    public function snake(string $delimiter = '_'): static
     {
         return new static(Str::snake($this->value, $delimiter));
     }
@@ -865,9 +853,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * Determine if a given string starts with a given substring.
      *
      * @param  string|iterable<string>  $needles
-     * @return bool
      */
-    public function startsWith($needles)
+    public function startsWith($needles): bool
     {
         return Str::startsWith($this->value, $needles);
     }
@@ -876,9 +863,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * Determine if a given string doesn't start with a given substring.
      *
      * @param  string|iterable<string>  $needles
-     * @return bool
      */
-    public function doesntStartWith($needles)
+    public function doesntStartWith($needles): bool
     {
         return Str::doesntStartWith($this->value, $needles);
     }
@@ -917,9 +903,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * @param  string  $needle
      * @param  int  $offset
      * @param  int|null  $length
-     * @return int
      */
-    public function substrCount($needle, $offset = 0, $length = null)
+    public function substrCount($needle, $offset = 0, $length = null): int
     {
         return Str::substrCount($this->value, $needle, $offset, $length);
     }
@@ -946,10 +931,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
 
     /**
      * Take the first or last {$limit} characters.
-     *
-     * @return static
      */
-    public function take(int $limit)
+    public function take(int $limit): static
     {
         if ($limit < 0) {
             return $this->substr($limit);
@@ -1203,9 +1186,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * Limit the number of words in a string.
      *
      * @param  int  $words
-     * @param  string  $end
      */
-    public function words($words = 100, $end = '...'): static
+    public function words($words = 100, string $end = '...'): static
     {
         return new static(Str::words($this->value, $words, $end));
     }
@@ -1214,9 +1196,8 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
      * Get the number of words a string contains.
      *
      * @param  string|null  $characters
-     * @return int
      */
-    public function wordCount($characters = null)
+    public function wordCount($characters = null): int
     {
         return Str::wordCount($this->value, $characters);
     }
@@ -1236,10 +1217,9 @@ class Stringable implements JsonSerializable, ArrayAccess, BaseStringable
     /**
      * Wrap the string with the given strings.
      *
-     * @param  string  $before
      * @param  string|null  $after
      */
-    public function wrap($before, $after = null): static
+    public function wrap(string $before, $after = null): static
     {
         return new static(Str::wrap($this->value, $before, $after));
     }

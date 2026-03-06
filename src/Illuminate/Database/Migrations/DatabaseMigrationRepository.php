@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Migrations;
 
 use Illuminate\Database\ConnectionResolverInterface as Resolver;
@@ -27,8 +29,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
          * The name of the migration table.
          */
         protected $table
-    )
-    {
+    ) {
     }
 
     /**
@@ -185,20 +186,16 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
 
     /**
      * Get a query builder for the migration table.
-     *
-     * @return \Illuminate\Database\Query\Builder
      */
-    protected function table()
+    protected function table(): \Illuminate\Database\Query\Builder
     {
         return $this->getConnection()->table($this->table)->useWritePdo();
     }
 
     /**
      * Get the connection resolver instance.
-     *
-     * @return \Illuminate\Database\ConnectionResolverInterface
      */
-    public function getConnectionResolver()
+    public function getConnectionResolver(): \Illuminate\Database\ConnectionResolverInterface
     {
         return $this->resolver;
     }

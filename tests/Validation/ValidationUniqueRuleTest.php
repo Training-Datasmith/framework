@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Database\Capsule\Manager as DB;
@@ -16,7 +18,7 @@ class ValidationUniqueRuleTest extends TestCase
 {
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
         $db->addConnection([
             'driver' => 'sqlite',
             'database' => ':memory:',
@@ -212,7 +214,8 @@ class ValidationUniqueRuleTest extends TestCase
     protected function getIlluminateArrayTranslator(): Translator
     {
         return new Translator(
-            new ArrayLoader, locale: 'en'
+            new ArrayLoader(),
+            locale: 'en'
         );
     }
 }

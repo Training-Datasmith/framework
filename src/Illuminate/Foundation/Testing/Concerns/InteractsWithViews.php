@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Testing\Concerns;
 
 use Illuminate\Support\Facades\View as ViewFacade;
@@ -64,12 +66,11 @@ trait InteractsWithViews
     /**
      * Populate the shared view error bag with the given errors.
      *
-     * @param  string  $key
      * @return $this
      */
-    protected function withViewErrors(array $errors, $key = 'default')
+    protected function withViewErrors(array $errors, string $key = 'default')
     {
-        ViewFacade::share('errors', (new ViewErrorBag)->put($key, new MessageBag($errors)));
+        ViewFacade::share('errors', (new ViewErrorBag())->put($key, new MessageBag($errors)));
 
         return $this;
     }

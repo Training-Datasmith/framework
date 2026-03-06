@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Types\Builder;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -224,7 +226,7 @@ function test(
     assertType('Illuminate\Types\Builder\CommentBuilder', $comment->newQuery()->foo());
     assertType('Illuminate\Types\Builder\Comment', $comment->newQuery()->create(['name' => 'John']));
     assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Types\Builder\User>', $query->pipe(function () {
-        //
+
     }));
     assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Types\Builder\User>', $query->pipe(fn () => null));
     assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Types\Builder\User>', $query->pipe(fn ($query) => $query));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Pipeline;
 
 use Closure;
@@ -58,8 +60,7 @@ class Pipeline implements PipelineContract
          * The container implementation.
          */
         protected ?\Illuminate\Contracts\Container\Container $container = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -122,7 +123,9 @@ class Pipeline implements PipelineContract
     public function then(Closure $destination)
     {
         $pipeline = array_reduce(
-            array_reverse($this->pipes()), $this->carry(), $this->prepareDestination($destination)
+            array_reverse($this->pipes()),
+            $this->carry(),
+            $this->prepareDestination($destination)
         );
 
         try {
@@ -143,7 +146,7 @@ class Pipeline implements PipelineContract
      */
     public function thenReturn()
     {
-        return $this->then(fn($passable) => $passable);
+        return $this->then(fn ($passable) => $passable);
     }
 
     /**
@@ -181,7 +184,7 @@ class Pipeline implements PipelineContract
      */
     protected function carry()
     {
-        return fn($stack, $pipe) => function ($passable) use ($stack, $pipe) {
+        return fn ($stack, $pipe): \Closure => function ($passable) use ($stack, $pipe) {
             try {
                 if (is_callable($pipe)) {
                     // If the pipe is a callable, then we will call it directly, but otherwise we
@@ -196,8 +199,7 @@ class Pipeline implements PipelineContract
                     // execute the pipe function giving in the parameters that are required.
                     $pipe = $this->getContainer()->make($name);
                     $parameters = array_merge([$passable, $stack], $parameters);
-                }
-                else {
+                } else {
                     // If the pipe is already an object we'll just make a callable and pass it to
                     // the pipe as-is. There is no need to do any extra parsing and formatting
                     // since the object we're given was already a fully instantiated object.
@@ -259,11 +261,10 @@ class Pipeline implements PipelineContract
     /**
      * Get the container instance.
      *
-     * @return \Illuminate\Contracts\Container\Container
      *
      * @throws \RuntimeException
      */
-    protected function getContainer()
+    protected function getContainer(): \Illuminate\Contracts\Container\Container
     {
         if (! $this->container) {
             throw new RuntimeException('A container instance has not been passed to the Pipeline.');

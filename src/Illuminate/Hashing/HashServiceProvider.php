@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Hashing;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -12,9 +14,9 @@ class HashServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     public function register(): void
     {
-        $this->app->singleton('hash', fn($app) => new HashManager($app));
+        $this->app->singleton('hash', fn ($app): \Illuminate\Hashing\HashManager => new HashManager($app));
 
-        $this->app->singleton('hash.driver', fn($app) => $app['hash']->driver());
+        $this->app->singleton('hash.driver', fn ($app) => $app['hash']->driver());
     }
 
     /**

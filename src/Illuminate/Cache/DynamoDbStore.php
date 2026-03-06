@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Aws\DynamoDb\DynamoDbClient;
@@ -96,7 +98,7 @@ class DynamoDbStore implements LockProvider, Store
             return [];
         }
 
-        $prefixedKeys = array_map(fn($key) => $this->prefix.$key, $keys);
+        $prefixedKeys = array_map(fn ($key): string => $this->prefix.$key, $keys);
 
         $response = $this->dynamo->batchGetItem([
             'RequestItems' => [
@@ -127,7 +129,8 @@ class DynamoDbStore implements LockProvider, Store
                 }
 
                 return [Str::replaceFirst($this->prefix, '', $response[$this->keyAttribute]['S']) => $value];
-            })->all());
+            })->all()
+        );
     }
 
     /**
@@ -185,7 +188,7 @@ class DynamoDbStore implements LockProvider, Store
 
         $this->dynamo->batchWriteItem([
             'RequestItems' => [
-                $this->table => (new Collection($values))->map(fn($value, $key) => [
+                $this->table => (new Collection($values))->map(fn ($value, $key): array => [
                     'PutRequest' => [
                         'Item' => [
                             $this->keyAttribute => [
@@ -349,9 +352,8 @@ class DynamoDbStore implements LockProvider, Store
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return bool
      */
-    public function forever($key, $value)
+    public function forever($key, $value): bool
     {
         return $this->put($key, $value, Carbon::now()->addYears(5)->getTimestamp());
     }
@@ -376,7 +378,7 @@ class DynamoDbStore implements LockProvider, Store
      * @param  string  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function restoreLock($name, $owner)
+    public function restoreLock($name, $owner): \Illuminate\Cache\DynamoDbLock
     {
         return $this->lock($name, 0, $owner);
     }

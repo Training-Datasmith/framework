@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Contracts\Support\DeferringDisplayableValue;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -349,8 +351,7 @@ if (! function_exists('str')) {
     function str($string = null)
     {
         if (func_num_args() === 0) {
-            return new class
-            {
+            return new class () {
                 public function __call(string $method, array $parameters)
                 {
                     return Str::$method(...$parameters);

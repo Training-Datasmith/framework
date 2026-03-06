@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Contracts\Cache\Store;
@@ -8,7 +10,8 @@ use Illuminate\Support\InteractsWithTime;
 
 class SessionStore implements Store
 {
-    use InteractsWithTime, RetrievesMultipleKeys;
+    use InteractsWithTime;
+    use RetrievesMultipleKeys;
 
     /**
      * Create a new session cache store.
@@ -25,8 +28,7 @@ class SessionStore implements Store
          * The key for cache items.
          */
         public $key = '_cache'
-    )
-    {
+    ) {
     }
 
     /**
@@ -139,9 +141,8 @@ class SessionStore implements Store
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return bool
      */
-    public function forever($key, $value)
+    public function forever($key, $value): bool
     {
         return $this->put($key, $value, 0);
     }

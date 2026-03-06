@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Client;
 
 use ArrayAccess;
@@ -101,7 +103,9 @@ class Response implements ArrayAccess, Stringable
 
         if (! $this->decoded || (isset($this->decodingFlags) && $this->decodingFlags !== $flags)) {
             $this->decoded = json_decode(
-                $this->body(), true, flags: $flags
+                $this->body(),
+                true,
+                flags: $flags
             );
 
             $this->decodingFlags = $flags;
@@ -349,7 +353,7 @@ class Response implements ArrayAccess, Stringable
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
-    public function throwIf($condition)
+    public function throwIf($condition): static
     {
         return value($condition, $this) ? $this->throw(func_get_args()[1] ?? null) : $this;
     }
@@ -409,7 +413,7 @@ class Response implements ArrayAccess, Stringable
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
-    public function throwIfClientError()
+    public function throwIfClientError(): static
     {
         return $this->clientError() ? $this->throw() : $this;
     }
@@ -421,7 +425,7 @@ class Response implements ArrayAccess, Stringable
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
-    public function throwIfServerError()
+    public function throwIfServerError(): static
     {
         return $this->serverError() ? $this->throw() : $this;
     }
@@ -566,7 +570,6 @@ class Response implements ArrayAccess, Stringable
     /**
      * Dynamically proxy other methods to the underlying response.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

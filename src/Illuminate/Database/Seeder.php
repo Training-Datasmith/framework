@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Illuminate\Console\Command;
@@ -124,7 +126,7 @@ abstract class Seeder
 
             $instance->setContainer($this->container);
         } else {
-            $instance = new $class;
+            $instance = new $class();
         }
 
         if (isset($this->command)) {

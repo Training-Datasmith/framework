@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications\Channels;
 
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Mail\Factory as MailFactory;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Markdown;
@@ -29,8 +30,7 @@ class MailChannel
          * The markdown implementation.
          */
         protected \Illuminate\Mail\Markdown $markdown
-    )
-    {
+    ) {
     }
 
     /**
@@ -101,7 +101,8 @@ class MailChannel
     protected function buildMarkdownHtml($message)
     {
         return fn ($data) => $this->markdownRenderer($message)->render(
-            $message->markdown, array_merge($data, $message->data()),
+            $message->markdown,
+            array_merge($data, $message->data()),
         );
     }
 
@@ -114,7 +115,8 @@ class MailChannel
     protected function buildMarkdownText($message)
     {
         return fn ($data) => $this->markdownRenderer($message)->renderText(
-            $message->markdown, array_merge($data, $message->data()),
+            $message->markdown,
+            array_merge($data, $message->data()),
         );
     }
 
@@ -122,9 +124,8 @@ class MailChannel
      * Get the Markdown implementation.
      *
      * @param  \Illuminate\Notifications\Messages\MailMessage  $message
-     * @return \Illuminate\Mail\Markdown
      */
-    protected function markdownRenderer($message)
+    protected function markdownRenderer($message): \Illuminate\Mail\Markdown
     {
         $config = Container::getInstance()->get(ConfigRepository::class);
 
@@ -245,7 +246,7 @@ class MailChannel
         }
 
         return (new Collection($recipients))
-            ->mapWithKeys(fn($recipient, $email) => is_numeric($email)
+            ->mapWithKeys(fn ($recipient, $email): array => is_numeric($email)
                 ? [$email => (is_string($recipient) ? $recipient : $recipient->email)]
                 : [$email => $recipient])
             ->all();

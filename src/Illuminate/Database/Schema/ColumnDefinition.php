@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Support\Fluent;
@@ -37,5 +39,4 @@ use Illuminate\Support\Fluent;
  */
 class ColumnDefinition extends Fluent
 {
-    //
 }

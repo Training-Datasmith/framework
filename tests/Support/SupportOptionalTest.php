@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Support\Optional;
@@ -12,7 +14,7 @@ class SupportOptionalTest extends TestCase
     {
         $expected = 'test';
 
-        $targetObj = new stdClass;
+        $targetObj = new stdClass();
         $targetObj->item = $expected;
 
         $optional = new Optional($targetObj);
@@ -22,7 +24,7 @@ class SupportOptionalTest extends TestCase
 
     public function testGetNotExistItemOnObject()
     {
-        $targetObj = new stdClass;
+        $targetObj = new stdClass();
 
         $optional = new Optional($targetObj);
 
@@ -31,7 +33,7 @@ class SupportOptionalTest extends TestCase
 
     public function testIssetExistItemOnObject()
     {
-        $targetObj = new stdClass;
+        $targetObj = new stdClass();
         $targetObj->item = '';
 
         $optional = new Optional($targetObj);
@@ -41,7 +43,7 @@ class SupportOptionalTest extends TestCase
 
     public function testIssetNotExistItemOnObject()
     {
-        $targetObj = new stdClass;
+        $targetObj = new stdClass();
 
         $optional = new Optional($targetObj);
 

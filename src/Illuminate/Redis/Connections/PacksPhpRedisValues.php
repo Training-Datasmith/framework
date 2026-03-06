@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Connections;
 
 use Redis;
@@ -54,7 +56,7 @@ trait PacksPhpRedisValues
                     throw new RuntimeException("'lzf' extension required to call 'lzf_compress'.");
                 }
 
-                $processor = (fn($value) => \lzf_compress($this->client->_serialize($value)));
+                $processor = (fn ($value): string => \lzf_compress($this->client->_serialize($value)));
             } elseif ($this->supportsZstd() && $this->zstdCompressed()) {
                 if (! function_exists('zstd_compress')) {
                     throw new RuntimeException("'zstd' extension required to call 'zstd_compress'.");
@@ -62,7 +64,7 @@ trait PacksPhpRedisValues
 
                 $compressionLevel = $this->client->getOption(Redis::OPT_COMPRESSION_LEVEL);
 
-                $processor = (fn($value) => \zstd_compress(
+                $processor = (fn ($value): string|false => \zstd_compress(
                     $this->client->_serialize($value),
                     $compressionLevel === 0 ? Redis::COMPRESSION_ZSTD_DEFAULT : $compressionLevel
                 ));
@@ -73,7 +75,7 @@ trait PacksPhpRedisValues
                 ));
             }
         } else {
-            $processor = (fn($value) => $this->client->_serialize($value));
+            $processor = (fn ($value) => $this->client->_serialize($value));
         }
 
         return array_map($processor, $values);

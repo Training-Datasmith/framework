@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Routing;
 
 use Exception;
@@ -68,7 +70,7 @@ class PrecognitionTest extends TestCase
     {
         Route::get('test-route', function () {
             precognitive(function () {
-                //
+
             });
 
             fail();
@@ -831,7 +833,7 @@ class PrecognitionTest extends TestCase
         })->middleware(PrecognitionInvokingController::class);
 
         $response = $this->postJson('test-route', [
-            //
+
         ], [
             'Precognition' => 'true',
             'Precognition-Validate-Only' => 'escaped\.dot',
@@ -861,7 +863,7 @@ class PrecognitionTest extends TestCase
         })->middleware(PrecognitionInvokingController::class);
 
         $response = $this->postJson('test-route', [
-            //
+
         ], [
             'Precognition' => 'true',
             'Precognition-Validate-Only' => 'escaped\.dot',
@@ -886,7 +888,7 @@ class PrecognitionTest extends TestCase
             ->middleware(PrecognitionInvokingController::class);
 
         $response = $this->postJson('test-route', [
-            //
+
         ], [
             'Precognition' => 'true',
             'Precognition-Validate-Only' => 'escaped\.dot',
@@ -911,7 +913,7 @@ class PrecognitionTest extends TestCase
             ->middleware(PrecognitionInvokingController::class);
 
         $response = $this->postJson('test-route', [
-            //
+
         ], [
             'Precognition' => 'true',
             'Precognition-Validate-Only' => 'escaped\.dot',
@@ -1197,7 +1199,7 @@ class PrecognitionTest extends TestCase
     public function testItAppendsPrecognitionHeaderToSymfonyResponse()
     {
         Route::get('test-route', function () {
-            //
+
         })->middleware([
             HandlePrecognitiveRequests::class,
             MiddlewareReturningSymfonyResponse::class,
@@ -1212,7 +1214,7 @@ class PrecognitionTest extends TestCase
     public function testItCanNoContentWhileAlsoNotBeingPrecognitive()
     {
         Route::get('test-route', function () {
-            //
+
         })->middleware([HandlePrecognitiveRequests::class, MiddlewareThatReturnsNoContent::class]);
 
         $response = $this->get('test-route', ['Precognition' => 'true']);
@@ -1552,7 +1554,7 @@ class MiddlewareReturningSymfonyResponse
     public function handle($request, $next)
     {
         return response()->streamDownload(function () {
-            //
+
         }, null, ['Expected' => 'Header']);
     }
 }

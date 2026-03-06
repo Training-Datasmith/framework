@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Auth\Access;
 
 use Illuminate\Contracts\Auth\Access\Gate;
-use Illuminate\Support\Str;
 
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\Str;
 
 trait AuthorizesRequests
 {

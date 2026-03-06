@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Exceptions;
 
 use Illuminate\Support\Traits\ReflectsClosures;

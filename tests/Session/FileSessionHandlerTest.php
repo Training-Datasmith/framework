@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Session;
 
 use Illuminate\Filesystem\Filesystem;
+
+use function Illuminate\Filesystem\join_paths;
+
 use Illuminate\Session\FileSessionHandler;
 use Illuminate\Support\Carbon;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
-use function Illuminate\Filesystem\join_paths;
+use PHPUnit\Framework\TestCase;
 
 class FileSessionHandlerTest extends TestCase
 {

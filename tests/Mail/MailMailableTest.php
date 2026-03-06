@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Mail;
 
 use Illuminate\Container\Container;
@@ -21,7 +23,7 @@ class MailMailableTest extends TestCase
     {
         $this->stubMailer();
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->to('taylor@laravel.com');
         $this->assertEquals([['name' => null, 'address' => 'taylor@laravel.com']], $mailable->to);
         $this->assertTrue($mailable->hasTo('taylor@laravel.com'));
@@ -32,7 +34,7 @@ class MailMailableTest extends TestCase
         $this->assertTrue($mailable->hasTo('taylor@laravel.com', 'Taylor Otwell'));
         $mailable->assertHasTo('taylor@laravel.com', 'Taylor Otwell');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->to('taylor@laravel.com', 'Taylor Otwell');
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->to);
         $this->assertTrue($mailable->hasTo('taylor@laravel.com', 'Taylor Otwell'));
@@ -40,7 +42,7 @@ class MailMailableTest extends TestCase
         $mailable->assertHasTo('taylor@laravel.com', 'Taylor Otwell');
         $mailable->assertHasTo('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->to(['taylor@laravel.com']);
         $this->assertEquals([['name' => null, 'address' => 'taylor@laravel.com']], $mailable->to);
         $this->assertTrue($mailable->hasTo('taylor@laravel.com'));
@@ -53,41 +55,41 @@ class MailMailableTest extends TestCase
             $this->assertSame("Did not see expected recipient in email 'to' recipients.\nExpected: [taylor@laravel.com (Taylor Otwell)]\nActual: [taylor@laravel.com]\nFailed asserting that false is true.", $e->getMessage());
         }
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->to([['name' => 'Taylor Otwell', 'email' => 'taylor@laravel.com']]);
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->to);
         $this->assertTrue($mailable->hasTo('taylor@laravel.com', 'Taylor Otwell'));
         $this->assertTrue($mailable->hasTo('taylor@laravel.com'));
         $mailable->assertHasTo('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->to(new MailableTestUserStub);
+        $mailable = new WelcomeMailableStub();
+        $mailable->to(new MailableTestUserStub());
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->to);
-        $this->assertTrue($mailable->hasTo(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasTo(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasTo('taylor@laravel.com'));
         $mailable->assertHasTo('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->to(collect([new MailableTestUserStub]));
+        $mailable = new WelcomeMailableStub();
+        $mailable->to(collect([new MailableTestUserStub()]));
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->to);
-        $this->assertTrue($mailable->hasTo(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasTo(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasTo('taylor@laravel.com'));
         $mailable->assertHasTo('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->to(collect([new MailableTestUserStub, new MailableTestUserStub, new MailableTestUserStub2]));
+        $mailable = new WelcomeMailableStub();
+        $mailable->to(collect([new MailableTestUserStub(), new MailableTestUserStub(), new MailableTestUserStub2()]));
         $this->assertEquals([
             ['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com'],
             ['name' => 'Laravel Framework', 'address' => 'contact@laravel.com'],
         ], $mailable->to);
-        $this->assertTrue($mailable->hasTo(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasTo(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasTo('taylor@laravel.com'));
         $mailable->assertHasTo('taylor@laravel.com');
 
         foreach (['', null, [], false] as $address) {
-            $mailable = new WelcomeMailableStub;
+            $mailable = new WelcomeMailableStub();
             $mailable->to($address);
-            $this->assertFalse($mailable->hasTo(new MailableTestUserStub));
+            $this->assertFalse($mailable->hasTo(new MailableTestUserStub()));
             $this->assertFalse($mailable->hasTo($address));
             try {
                 $mailable->assertHasTo($address);
@@ -105,13 +107,13 @@ class MailMailableTest extends TestCase
     {
         $this->stubMailer();
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->cc('taylor@laravel.com');
         $this->assertEquals([['name' => null, 'address' => 'taylor@laravel.com']], $mailable->cc);
         $this->assertTrue($mailable->hasCc('taylor@laravel.com'));
         $mailable->assertHasCc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->cc('taylor@laravel.com', 'Taylor Otwell');
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->cc);
         $this->assertTrue($mailable->hasCc('taylor@laravel.com', 'Taylor Otwell'));
@@ -119,7 +121,7 @@ class MailMailableTest extends TestCase
         $mailable->assertHasCc('taylor@laravel.com', 'Taylor Otwell');
         $mailable->assertHasCc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->cc(['taylor@laravel.com']);
         $this->assertEquals([['name' => null, 'address' => 'taylor@laravel.com']], $mailable->cc);
         $this->assertTrue($mailable->hasCc('taylor@laravel.com'));
@@ -132,7 +134,7 @@ class MailMailableTest extends TestCase
             $this->assertSame("Did not see expected recipient in email 'cc' recipients.\nExpected: [taylor@laravel.com (Taylor Otwell)]\nActual: [taylor@laravel.com]\nFailed asserting that false is true.", $e->getMessage());
         }
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->cc([['name' => 'Taylor Otwell', 'email' => 'taylor@laravel.com']]);
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->cc);
         $this->assertTrue($mailable->hasCc('taylor@laravel.com', 'Taylor Otwell'));
@@ -140,31 +142,31 @@ class MailMailableTest extends TestCase
         $mailable->assertHasCc('taylor@laravel.com', 'Taylor Otwell');
         $mailable->assertHasCc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->cc(new MailableTestUserStub);
+        $mailable = new WelcomeMailableStub();
+        $mailable->cc(new MailableTestUserStub());
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->cc);
-        $this->assertTrue($mailable->hasCc(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasCc(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasCc('taylor@laravel.com'));
         $mailable->assertHasCc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->cc(collect([new MailableTestUserStub]));
+        $mailable = new WelcomeMailableStub();
+        $mailable->cc(collect([new MailableTestUserStub()]));
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->cc);
-        $this->assertTrue($mailable->hasCc(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasCc(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasCc('taylor@laravel.com'));
         $mailable->assertHasCc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->cc(collect([new MailableTestUserStub, new MailableTestUserStub, new MailableTestUserStub2]));
+        $mailable = new WelcomeMailableStub();
+        $mailable->cc(collect([new MailableTestUserStub(), new MailableTestUserStub(), new MailableTestUserStub2()]));
         $this->assertEquals([
             ['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com'],
             ['name' => 'Laravel Framework', 'address' => 'contact@laravel.com'],
         ], $mailable->cc);
-        $this->assertTrue($mailable->hasCc(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasCc(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasCc('taylor@laravel.com'));
         $mailable->assertHasCc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->cc(['taylor@laravel.com', 'not-taylor@laravel.com']);
         $this->assertEquals([
             ['name' => null, 'address' => 'taylor@laravel.com'],
@@ -176,9 +178,9 @@ class MailMailableTest extends TestCase
         $mailable->assertHasCc('not-taylor@laravel.com');
 
         foreach (['', null, [], false] as $address) {
-            $mailable = new WelcomeMailableStub;
+            $mailable = new WelcomeMailableStub();
             $mailable->cc($address);
-            $this->assertFalse($mailable->hasCc(new MailableTestUserStub));
+            $this->assertFalse($mailable->hasCc(new MailableTestUserStub()));
             $this->assertFalse($mailable->hasCc($address));
             try {
                 $mailable->assertHasCc($address);
@@ -196,13 +198,13 @@ class MailMailableTest extends TestCase
     {
         $this->stubMailer();
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->bcc('taylor@laravel.com');
         $this->assertEquals([['name' => null, 'address' => 'taylor@laravel.com']], $mailable->bcc);
         $this->assertTrue($mailable->hasBcc('taylor@laravel.com'));
         $mailable->assertHasBcc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->bcc('taylor@laravel.com', 'Taylor Otwell');
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->bcc);
         $this->assertTrue($mailable->hasBcc('taylor@laravel.com', 'Taylor Otwell'));
@@ -210,7 +212,7 @@ class MailMailableTest extends TestCase
         $mailable->assertHasBcc('taylor@laravel.com', 'Taylor Otwell');
         $mailable->assertHasBcc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->bcc(['taylor@laravel.com']);
         $this->assertEquals([['name' => null, 'address' => 'taylor@laravel.com']], $mailable->bcc);
         $this->assertTrue($mailable->hasBcc('taylor@laravel.com'));
@@ -223,7 +225,7 @@ class MailMailableTest extends TestCase
             $this->assertSame("Did not see expected recipient in email 'bcc' recipients.\nExpected: [taylor@laravel.com (Taylor Otwell)]\nActual: [taylor@laravel.com]\nFailed asserting that false is true.", $e->getMessage());
         }
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->bcc([['name' => 'Taylor Otwell', 'email' => 'taylor@laravel.com']]);
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->bcc);
         $this->assertTrue($mailable->hasBcc('taylor@laravel.com', 'Taylor Otwell'));
@@ -231,31 +233,31 @@ class MailMailableTest extends TestCase
         $mailable->assertHasBcc('taylor@laravel.com', 'Taylor Otwell');
         $mailable->assertHasBcc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->bcc(new MailableTestUserStub);
+        $mailable = new WelcomeMailableStub();
+        $mailable->bcc(new MailableTestUserStub());
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->bcc);
-        $this->assertTrue($mailable->hasBcc(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasBcc(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasBcc('taylor@laravel.com'));
         $mailable->assertHasBcc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->bcc(collect([new MailableTestUserStub]));
+        $mailable = new WelcomeMailableStub();
+        $mailable->bcc(collect([new MailableTestUserStub()]));
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->bcc);
-        $this->assertTrue($mailable->hasBcc(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasBcc(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasBcc('taylor@laravel.com'));
         $mailable->assertHasBcc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->bcc(collect([new MailableTestUserStub, new MailableTestUserStub, new MailableTestUserStub2]));
+        $mailable = new WelcomeMailableStub();
+        $mailable->bcc(collect([new MailableTestUserStub(), new MailableTestUserStub(), new MailableTestUserStub2()]));
         $this->assertEquals([
             ['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com'],
             ['name' => 'Laravel Framework', 'address' => 'contact@laravel.com'],
         ], $mailable->bcc);
-        $this->assertTrue($mailable->hasBcc(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasBcc(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasBcc('taylor@laravel.com'));
         $mailable->assertHasBcc('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->bcc(['taylor@laravel.com', 'not-taylor@laravel.com']);
         $this->assertEquals([
             ['name' => null, 'address' => 'taylor@laravel.com'],
@@ -267,9 +269,9 @@ class MailMailableTest extends TestCase
         $mailable->assertHasBcc('not-taylor@laravel.com');
 
         foreach (['', null, [], false] as $address) {
-            $mailable = new WelcomeMailableStub;
+            $mailable = new WelcomeMailableStub();
             $mailable->bcc($address);
-            $this->assertFalse($mailable->hasBcc(new MailableTestUserStub));
+            $this->assertFalse($mailable->hasBcc(new MailableTestUserStub()));
             $this->assertFalse($mailable->hasBcc($address));
             try {
                 $mailable->assertHasBcc($address);
@@ -287,13 +289,13 @@ class MailMailableTest extends TestCase
     {
         $this->stubMailer();
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->replyTo('taylor@laravel.com');
         $this->assertEquals([['name' => null, 'address' => 'taylor@laravel.com']], $mailable->replyTo);
         $this->assertTrue($mailable->hasReplyTo('taylor@laravel.com'));
         $mailable->assertHasReplyTo('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->replyTo('taylor@laravel.com', 'Taylor Otwell');
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->replyTo);
         $this->assertTrue($mailable->hasReplyTo('taylor@laravel.com', 'Taylor Otwell'));
@@ -301,7 +303,7 @@ class MailMailableTest extends TestCase
         $mailable->assertHasReplyTo('taylor@laravel.com', 'Taylor Otwell');
         $mailable->assertHasReplyTo('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->replyTo(['taylor@laravel.com']);
         $this->assertEquals([['name' => null, 'address' => 'taylor@laravel.com']], $mailable->replyTo);
         $this->assertTrue($mailable->hasReplyTo('taylor@laravel.com'));
@@ -314,7 +316,7 @@ class MailMailableTest extends TestCase
             $this->assertSame("Did not see expected address as email 'reply to' recipient.\nExpected: [taylor@laravel.com (Taylor Otwell)]\nActual: [taylor@laravel.com]\nFailed asserting that false is true.", $e->getMessage());
         }
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->replyTo([['name' => 'Taylor Otwell', 'email' => 'taylor@laravel.com']]);
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->replyTo);
         $this->assertTrue($mailable->hasReplyTo('taylor@laravel.com', 'Taylor Otwell'));
@@ -322,34 +324,34 @@ class MailMailableTest extends TestCase
         $mailable->assertHasReplyTo('taylor@laravel.com');
         $mailable->assertHasReplyTo('taylor@laravel.com', 'Taylor Otwell');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->replyTo(new MailableTestUserStub);
+        $mailable = new WelcomeMailableStub();
+        $mailable->replyTo(new MailableTestUserStub());
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->replyTo);
-        $this->assertTrue($mailable->hasReplyTo(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasReplyTo(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasReplyTo('taylor@laravel.com'));
         $mailable->assertHasReplyTo('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->replyTo(collect([new MailableTestUserStub]));
+        $mailable = new WelcomeMailableStub();
+        $mailable->replyTo(collect([new MailableTestUserStub()]));
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->replyTo);
-        $this->assertTrue($mailable->hasReplyTo(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasReplyTo(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasReplyTo('taylor@laravel.com'));
         $mailable->assertHasReplyTo('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->replyTo(collect([new MailableTestUserStub, new MailableTestUserStub, new MailableTestUserStub2]));
+        $mailable = new WelcomeMailableStub();
+        $mailable->replyTo(collect([new MailableTestUserStub(), new MailableTestUserStub(), new MailableTestUserStub2()]));
         $this->assertEquals([
             ['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com'],
             ['name' => 'Laravel Framework', 'address' => 'contact@laravel.com'],
         ], $mailable->replyTo);
-        $this->assertTrue($mailable->hasReplyTo(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasReplyTo(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasReplyTo('taylor@laravel.com'));
         $mailable->assertHasReplyTo('taylor@laravel.com');
 
         foreach (['', null, [], false] as $address) {
-            $mailable = new WelcomeMailableStub;
+            $mailable = new WelcomeMailableStub();
             $mailable->replyTo($address);
-            $this->assertFalse($mailable->hasReplyTo(new MailableTestUserStub));
+            $this->assertFalse($mailable->hasReplyTo(new MailableTestUserStub()));
             $this->assertFalse($mailable->hasReplyTo($address));
             try {
                 $mailable->assertHasReplyTo($address);
@@ -367,13 +369,13 @@ class MailMailableTest extends TestCase
     {
         $this->stubMailer();
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->from('taylor@laravel.com');
         $this->assertEquals([['name' => null, 'address' => 'taylor@laravel.com']], $mailable->from);
         $this->assertTrue($mailable->hasFrom('taylor@laravel.com'));
         $mailable->assertFrom('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->from('taylor@laravel.com', 'Taylor Otwell');
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->from);
         $this->assertTrue($mailable->hasFrom('taylor@laravel.com', 'Taylor Otwell'));
@@ -381,7 +383,7 @@ class MailMailableTest extends TestCase
         $mailable->assertFrom('taylor@laravel.com', 'Taylor Otwell');
         $mailable->assertFrom('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->from(['taylor@laravel.com']);
         $this->assertEquals([['name' => null, 'address' => 'taylor@laravel.com']], $mailable->from);
         $this->assertTrue($mailable->hasFrom('taylor@laravel.com'));
@@ -394,7 +396,7 @@ class MailMailableTest extends TestCase
             $this->assertSame("Email was not from expected address.\nExpected: [taylor@laravel.com (Taylor Otwell)]\nActual: [taylor@laravel.com]\nFailed asserting that false is true.", $e->getMessage());
         }
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->from([['name' => 'Taylor Otwell', 'email' => 'taylor@laravel.com']]);
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->from);
         $this->assertTrue($mailable->hasFrom('taylor@laravel.com', 'Taylor Otwell'));
@@ -402,34 +404,34 @@ class MailMailableTest extends TestCase
         $mailable->assertFrom('taylor@laravel.com', 'Taylor Otwell');
         $mailable->assertFrom('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->from(new MailableTestUserStub);
+        $mailable = new WelcomeMailableStub();
+        $mailable->from(new MailableTestUserStub());
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->from);
-        $this->assertTrue($mailable->hasFrom(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasFrom(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasFrom('taylor@laravel.com'));
         $mailable->assertFrom('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->from(collect([new MailableTestUserStub]));
+        $mailable = new WelcomeMailableStub();
+        $mailable->from(collect([new MailableTestUserStub()]));
         $this->assertEquals([['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com']], $mailable->from);
-        $this->assertTrue($mailable->hasFrom(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasFrom(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasFrom('taylor@laravel.com'));
         $mailable->assertFrom('taylor@laravel.com');
 
-        $mailable = new WelcomeMailableStub;
-        $mailable->from(collect([new MailableTestUserStub, new MailableTestUserStub, new MailableTestUserStub2]));
+        $mailable = new WelcomeMailableStub();
+        $mailable->from(collect([new MailableTestUserStub(), new MailableTestUserStub(), new MailableTestUserStub2()]));
         $this->assertEquals([
             ['name' => 'Taylor Otwell', 'address' => 'taylor@laravel.com'],
             ['name' => 'Laravel Framework', 'address' => 'contact@laravel.com'],
         ], $mailable->from);
-        $this->assertTrue($mailable->hasFrom(new MailableTestUserStub));
+        $this->assertTrue($mailable->hasFrom(new MailableTestUserStub()));
         $this->assertTrue($mailable->hasFrom('taylor@laravel.com'));
         $mailable->assertFrom('taylor@laravel.com');
 
         foreach (['', null, [], false] as $address) {
-            $mailable = new WelcomeMailableStub;
+            $mailable = new WelcomeMailableStub();
             $mailable->from($address);
-            $this->assertFalse($mailable->hasFrom(new MailableTestUserStub));
+            $this->assertFalse($mailable->hasFrom(new MailableTestUserStub()));
             $this->assertFalse($mailable->hasFrom($address));
             try {
                 $mailable->assertFrom($address);
@@ -445,14 +447,14 @@ class MailMailableTest extends TestCase
 
     public function testMailableSetsSubjectCorrectly(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->subject('foo');
         $this->assertTrue($mailable->hasSubject('foo'));
     }
 
     public function testItIgnoresDuplicatedRawAttachments(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
 
         $mailable->attachData('content1', 'report-1.txt');
         $this->assertCount(1, $mailable->rawAttachments);
@@ -494,7 +496,7 @@ class MailMailableTest extends TestCase
 
     public function testItIgnoresDuplicateStorageAttachments(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
 
         $mailable->attachFromStorageDisk('disk1', 'sample/file.txt');
         $this->assertCount(1, $mailable->diskAttachments);
@@ -549,7 +551,7 @@ class MailMailableTest extends TestCase
 
     public function testMailableBuildsViewData(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
 
         $mailable->build();
 
@@ -565,7 +567,7 @@ class MailMailableTest extends TestCase
 
     public function testMailerMayBeSet(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
 
         $mailable->mailer('array');
         $this->assertTrue($mailable->usesMailer('array'));
@@ -579,9 +581,9 @@ class MailMailableTest extends TestCase
     {
         $view = m::mock(Factory::class);
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->to('hello@laravel.com');
         $mailable->from('taylor@laravel.com');
         $mailable->html('test content');
@@ -600,9 +602,9 @@ class MailMailableTest extends TestCase
 
         $view = m::mock(Factory::class);
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->to('hello@laravel.com');
         $mailable->from('taylor@laravel.com');
         $mailable->html('test content');
@@ -631,7 +633,7 @@ class MailMailableTest extends TestCase
 
     public function testMailableMergeMetadata(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->to('hello@laravel.com');
         $mailable->from('taylor@laravel.com');
         $mailable->html('test content');
@@ -656,7 +658,7 @@ class MailMailableTest extends TestCase
 
         $this->stubMailer();
         $view = m::mock(Factory::class);
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
         $sentMessage = $mailer->send($mailable);
         $this->assertStringContainsString('X-Metadata-template_id: external-template-id', $sentMessage->toString());
@@ -674,9 +676,9 @@ class MailMailableTest extends TestCase
 
         $view = m::mock(Factory::class);
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->to('hello@laravel.com');
         $mailable->from('taylor@laravel.com');
         $mailable->html('test content');
@@ -705,13 +707,12 @@ class MailMailableTest extends TestCase
 
     public function testItCanAttachMultipleFiles(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
 
         $mailable->attachMany([
             '/forge.svg',
             '/vapor.svg' => ['as' => 'Vapor Logo.svg', 'mime' => 'text/css'],
-            new class() implements Attachable
-            {
+            new class () implements Attachable {
                 public function toMailAttachment()
                 {
                     return Attachment::fromPath('/foo.jpg')->as('bar')->withMime('image/png');
@@ -742,10 +743,9 @@ class MailMailableTest extends TestCase
 
     public function testItAttachesFilesViaAttachableContractFromPath(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
 
-        $mailable->attach(new class() implements Attachable
-        {
+        $mailable->attach(new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromPath('/foo.jpg')->as('bar')->withMime('image/png');
@@ -763,10 +763,9 @@ class MailMailableTest extends TestCase
 
     public function testItAttachesFilesViaAttachableContractFromData(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
 
-        $mailable->attach(new class() implements Attachable
-        {
+        $mailable->attach(new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromData(fn () => 'bar', 'foo.jpg')->withMime('image/png');
@@ -784,9 +783,8 @@ class MailMailableTest extends TestCase
 
     public function testItCanJitNameAttachments(): void
     {
-        $mailable = new WelcomeMailableStub;
-        $unnamedAttachable = new class() implements Attachable
-        {
+        $mailable = new WelcomeMailableStub();
+        $unnamedAttachable = new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromData(fn () => 'bar')->withMime('image/png');
@@ -806,9 +804,8 @@ class MailMailableTest extends TestCase
 
     public function testHasAttachmentWithJitNamedAttachment(): void
     {
-        $mailable = new WelcomeMailableStub;
-        $unnamedAttachable = new class() implements Attachable
-        {
+        $mailable = new WelcomeMailableStub();
+        $unnamedAttachable = new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromData(fn () => 'bar')->withMime('image/png');
@@ -823,8 +820,7 @@ class MailMailableTest extends TestCase
     public function testHasAttachmentWithEnvelopeAttachments(): void
     {
         $this->stubMailer();
-        $mailable = new class extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function envelope()
             {
                 return new Envelope();
@@ -839,8 +835,7 @@ class MailMailableTest extends TestCase
                 ];
             }
         };
-        $unnamedAttachable = new class() implements Attachable
-        {
+        $unnamedAttachable = new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromData(fn () => 'bar');
@@ -857,7 +852,7 @@ class MailMailableTest extends TestCase
 
     public function testItCanCheckForPathBasedAttachments(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attach('foo.jpg');
 
         $this->assertTrue($mailable->hasAttachment('foo.jpg'));
@@ -872,7 +867,7 @@ class MailMailableTest extends TestCase
         $this->assertFalse($mailable->hasAttachment(Attachment::fromPath('foo.jpg')->withMime('text/css')));
         $this->assertFalse($mailable->hasAttachment(new MailTestAttachable(Attachment::fromPath('foo.jpg')->withMime('text/css'))));
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attach('bar.jpg', ['mime' => 'text/css']);
 
         $this->assertTrue($mailable->hasAttachment('bar.jpg', ['mime' => 'text/css']));
@@ -890,7 +885,7 @@ class MailMailableTest extends TestCase
 
     public function testItCanCheckForAttachmentBasedAttachments(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attach(Attachment::fromPath('foo.jpg'));
 
         $this->assertTrue($mailable->hasAttachment('foo.jpg'));
@@ -905,7 +900,7 @@ class MailMailableTest extends TestCase
         $this->assertFalse($mailable->hasAttachment(Attachment::fromPath('foo.jpg')->withMime('text/css')));
         $this->assertFalse($mailable->hasAttachment(new MailTestAttachable(Attachment::fromPath('foo.jpg')->withMime('text/css'))));
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attach(Attachment::fromPath('bar.jpg')->withMime('text/css'));
 
         $this->assertTrue($mailable->hasAttachment('bar.jpg', ['mime' => 'text/css']));
@@ -923,7 +918,7 @@ class MailMailableTest extends TestCase
 
     public function testItCanCheckForAttachableBasedAttachments(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attach(new MailTestAttachable(Attachment::fromPath('foo.jpg')));
 
         $this->assertTrue($mailable->hasAttachment('foo.jpg'));
@@ -938,7 +933,7 @@ class MailMailableTest extends TestCase
         $this->assertFalse($mailable->hasAttachment(Attachment::fromPath('foo.jpg')->withMime('text/css')));
         $this->assertFalse($mailable->hasAttachment(new MailTestAttachable(Attachment::fromPath('foo.jpg')->withMime('text/css'))));
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attach(new MailTestAttachable(Attachment::fromPath('bar.jpg')->withMime('text/css')));
 
         $this->assertTrue($mailable->hasAttachment('bar.jpg', ['mime' => 'text/css']));
@@ -956,7 +951,7 @@ class MailMailableTest extends TestCase
 
     public function testItCanCheckForDataBasedAttachments(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attachData('data', 'foo.jpg');
 
         $this->assertTrue($mailable->hasAttachedData('data', 'foo.jpg'));
@@ -964,7 +959,7 @@ class MailMailableTest extends TestCase
         $this->assertFalse($mailable->hasAttachedData('data', 'bar.jpg'));
         $this->assertFalse($mailable->hasAttachedData('data', 'foo.jpg', ['mime' => 'text/css']));
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attachData('data', 'bar.jpg', ['mime' => 'text/css']);
 
         $this->assertTrue($mailable->hasAttachedData('data', 'bar.jpg', ['mime' => 'text/css']));
@@ -972,7 +967,7 @@ class MailMailableTest extends TestCase
         $this->assertFalse($mailable->hasAttachedData('data', 'bar.jpg'));
         $this->assertFalse($mailable->hasAttachedData('data', 'bar.jpg', ['mime' => 'text/html']));
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attach(Attachment::fromData(fn () => 'data', 'foo.jpg'));
 
         $this->assertTrue($mailable->hasAttachedData('data', 'foo.jpg'));
@@ -980,7 +975,7 @@ class MailMailableTest extends TestCase
         $this->assertFalse($mailable->hasAttachedData('data', 'bar.jpg'));
         $this->assertFalse($mailable->hasAttachedData('data', 'foo.jpg', ['mime' => 'text/css']));
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attach(Attachment::fromData(fn () => 'data', 'bar.jpg')->withMime('text/css'));
 
         $this->assertTrue($mailable->hasAttachedData('data', 'bar.jpg', ['mime' => 'text/css']));
@@ -991,7 +986,7 @@ class MailMailableTest extends TestCase
 
     public function testItCanCheckForStorageBasedAttachments(): void
     {
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attachFromStorageDisk('disk', '/path/to/foo.jpg');
 
         $this->assertTrue($mailable->hasAttachmentFromStorageDisk('disk', '/path/to/foo.jpg'));
@@ -1000,7 +995,7 @@ class MailMailableTest extends TestCase
         $this->assertFalse($mailable->hasAttachmentFromStorageDisk('disk', '/path/to/foo.jpg', 'bar.jpg'));
         $this->assertFalse($mailable->hasAttachmentFromStorageDisk('disk', '/path/to/foo.jpg', null, ['mime' => 'text/css']));
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attachFromStorageDisk('disk', '/path/to/foo.jpg', 'bar.jpg');
 
         $this->assertTrue($mailable->hasAttachmentFromStorageDisk('disk', '/path/to/foo.jpg', 'bar.jpg'));
@@ -1009,7 +1004,7 @@ class MailMailableTest extends TestCase
         $this->assertFalse($mailable->hasAttachmentFromStorageDisk('disk', '/path/to/foo.jpg', 'foo.jpg'));
         $this->assertFalse($mailable->hasAttachmentFromStorageDisk('disk', '/path/to/foo.jpg', 'bar.jpg', ['mime' => 'text/css']));
 
-        $mailable = new WelcomeMailableStub;
+        $mailable = new WelcomeMailableStub();
         $mailable->attachFromStorageDisk('disk', '/path/to/foo.jpg', 'bar.jpg', ['mime' => 'text/css']);
 
         $this->assertTrue($mailable->hasAttachmentFromStorageDisk('disk', '/path/to/foo.jpg', 'bar.jpg', ['mime' => 'text/css']));
@@ -1023,11 +1018,10 @@ class MailMailableTest extends TestCase
     {
         $this->stubMailer();
 
-        $mailable = new class() extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
-                //
+
             }
         };
 
@@ -1038,8 +1032,7 @@ class MailMailableTest extends TestCase
             $this->assertSame("Did not find the expected attachment.\nFailed asserting that false is true.", $e->getMessage());
         }
 
-        $mailable = new class() extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
                 $this->attach('/path/to/foo.jpg');
@@ -1053,11 +1046,10 @@ class MailMailableTest extends TestCase
     {
         $this->stubMailer();
 
-        $mailable = new class() extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
-                //
+
             }
         };
 
@@ -1068,8 +1060,7 @@ class MailMailableTest extends TestCase
             $this->assertSame("Did not find the expected attachment.\nFailed asserting that false is true.", $e->getMessage());
         }
 
-        $mailable = new class() extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
                 $this->attachData('data', 'foo.jpg');
@@ -1081,11 +1072,10 @@ class MailMailableTest extends TestCase
 
     public function testAssertHasAttachmentFromStorage(): void
     {
-        $mailable = new class() extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
-                //
+
             }
         };
 
@@ -1096,8 +1086,7 @@ class MailMailableTest extends TestCase
             $this->assertSame("Did not find the expected attachment.\nFailed asserting that false is true.", $e->getMessage());
         }
 
-        $mailable = new class() extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
                 $this->attachFromStorage('/path/to/foo.jpg');
@@ -1111,11 +1100,10 @@ class MailMailableTest extends TestCase
     {
         $this->stubMailer();
 
-        $mailable = new class() extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
-                //
+
             }
         };
 
@@ -1126,8 +1114,7 @@ class MailMailableTest extends TestCase
             $this->assertStringContainsString("Email subject does not match expected value.\nExpected: [Foo Subject]\nActual:", $e->getMessage());
         }
 
-        $mailable = new class() extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
                 $this->subject('Foo Subject');
@@ -1141,9 +1128,9 @@ class MailMailableTest extends TestCase
     {
         $view = m::mock(Factory::class);
 
-        $mailer = new Mailer('array', $view, new ArrayTransport);
+        $mailer = new Mailer('array', $view, new ArrayTransport());
 
-        $mailable = new MailableHeadersStub;
+        $mailable = new MailableHeadersStub();
         $mailable->to('hello@laravel.com');
         $mailable->from('taylor@laravel.com');
         $mailable->html('test content');
@@ -1165,8 +1152,7 @@ class MailMailableTest extends TestCase
     {
         $this->stubMailer();
 
-        $mailable = new class() extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
                 $this
@@ -1195,7 +1181,7 @@ class MailMailableTest extends TestCase
     {
         $this->stubMailer();
 
-        $mail = new WelcomeMailableStub;
+        $mail = new WelcomeMailableStub();
 
         $mail->tap(fn ($mailable) => $mailable->to('taylor@laravel.com', 'Taylor Otwell'));
         $mail->tap(fn ($mailable) => $mailable->subject('Test Subject!'));
@@ -1208,11 +1194,10 @@ class MailMailableTest extends TestCase
 
     protected function stubMailer()
     {
-        Container::getInstance()->instance('mailer', new class
-        {
+        Container::getInstance()->instance('mailer', new class () {
             public function render()
             {
-                //
+
             }
         });
     }
@@ -1264,7 +1249,7 @@ class MailTestAttachable implements Attachable
 {
     public function __construct(protected $attachment)
     {
-        //
+
     }
 
     public function toMailAttachment()

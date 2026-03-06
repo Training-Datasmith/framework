@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing\Fluent\Concerns;
 
 use Closure;
@@ -92,7 +94,7 @@ trait Has
         $this->interactsWith($key);
 
         if (! is_null($callback)) {
-            return $this->has($key, fn(self $scope) => $scope
+            return $this->has($key, fn (self $scope) => $scope
                 ->tap(function (self $scope) use ($length): void {
                     if (! is_null($length)) {
                         $scope->count($length);

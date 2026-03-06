@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console;
 
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Events\DatabaseBusy;
 use Illuminate\Support\Collection;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -33,11 +34,11 @@ class MonitorCommand extends DatabaseInspectionCommand
     public function __construct(/**
      * The connection resolver instance.
      */
-    protected \Illuminate\Database\ConnectionResolverInterface $connection, /**
+        protected \Illuminate\Database\ConnectionResolverInterface $connection, /**
      * The events dispatcher instance.
      */
-    protected \Illuminate\Contracts\Events\Dispatcher $events)
-    {
+        protected \Illuminate\Contracts\Events\Dispatcher $events
+    ) {
         parent::__construct();
     }
 

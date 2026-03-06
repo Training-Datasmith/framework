@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Testing\Concerns;
 
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
@@ -20,8 +22,7 @@ class InteractsWithViewsTest extends TestCase
 
     public function testComponentCanAccessPublicProperties()
     {
-        $exampleComponent = new class extends Component
-        {
+        $exampleComponent = new class () extends Component {
             public $foo = 'bar';
 
             public function speak()
@@ -46,8 +47,7 @@ class InteractsWithViewsTest extends TestCase
     {
         TestComponent::macro('foo', fn (): string => 'bar');
 
-        $exampleComponent = new class extends Component
-        {
+        $exampleComponent = new class () extends Component {
             public function render()
             {
                 return 'rendered content';

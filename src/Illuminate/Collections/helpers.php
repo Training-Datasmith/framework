@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -28,7 +30,7 @@ if (! function_exists('data_fill')) {
      * @param  mixed  $value
      * @return mixed
      */
-    function data_fill(&$target, $key, $value)
+    function data_fill(array &$target, $key, $value)
     {
         return data_set($target, $key, $value, false);
     }

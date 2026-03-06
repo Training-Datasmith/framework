@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use ArrayAccess;
@@ -63,7 +65,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testFirstWithDefaultAndWithoutCallback($collection)
     {
-        $data = new $collection;
+        $data = new $collection();
         $result = $data->first(null, 'default');
         $this->assertSame('default', $result);
 
@@ -377,7 +379,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testLastWithDefaultAndWithoutCallback($collection)
     {
-        $data = new $collection;
+        $data = new $collection();
         $result = $data->last(null, 'default');
         $this->assertSame('default', $result);
     }
@@ -540,7 +542,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testEmptyCollectionIsEmpty($collection)
     {
-        $c = new $collection;
+        $c = new $collection();
 
         $this->assertTrue($c->isEmpty());
     }
@@ -569,7 +571,7 @@ class SupportCollectionTest extends TestCase
         $data = new $collection(null);
         $this->assertEmpty($data->all());
 
-        $data = new $collection;
+        $data = new $collection();
         $this->assertEmpty($data->all());
     }
 
@@ -660,28 +662,28 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testGetArrayableItems($collection)
     {
-        $data = new $collection;
+        $data = new $collection();
 
         $class = new ReflectionClass($collection);
         $method = $class->getMethod('getArrayableItems');
 
-        $items = new TestArrayableObject;
+        $items = new TestArrayableObject();
         $array = $method->invokeArgs($data, [$items]);
         $this->assertSame(['foo' => 'bar'], $array);
 
-        $items = new TestJsonableObject;
+        $items = new TestJsonableObject();
         $array = $method->invokeArgs($data, [$items]);
         $this->assertSame(['foo' => 'bar'], $array);
 
-        $items = new TestJsonSerializeObject;
+        $items = new TestJsonSerializeObject();
         $array = $method->invokeArgs($data, [$items]);
         $this->assertSame(['foo' => 'bar'], $array);
 
-        $items = new TestJsonSerializeWithScalarValueObject;
+        $items = new TestJsonSerializeWithScalarValueObject();
         $array = $method->invokeArgs($data, [$items]);
         $this->assertSame(['foo'], $array);
 
-        $subject = [new stdClass, new stdClass];
+        $subject = [new stdClass(), new stdClass()];
         $items = new TestTraversableAndJsonSerializableObject($subject);
         $array = $method->invokeArgs($data, [$items]);
         $this->assertSame($subject, $array);
@@ -1030,8 +1032,7 @@ class SupportCollectionTest extends TestCase
     public function testHigherOrderFilter($collection)
     {
         $c = new $collection([
-            new class
-            {
+            new class () {
                 public $name = 'Alex';
 
                 public function active()
@@ -1039,8 +1040,7 @@ class SupportCollectionTest extends TestCase
                     return true;
                 }
             },
-            new class
-            {
+            new class () {
                 public $name = 'John';
 
                 public function active()
@@ -1205,7 +1205,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testWhereInstanceOf($collection)
     {
-        $c = new $collection([new stdClass, new stdClass, new $collection, new stdClass, new Str]);
+        $c = new $collection([new stdClass(), new stdClass(), new $collection(), new stdClass(), new Str()]);
         $this->assertCount(3, $c->whereInstanceOf(stdClass::class));
 
         $this->assertCount(4, $c->whereInstanceOf([stdClass::class, Str::class]));
@@ -1334,8 +1334,10 @@ class SupportCollectionTest extends TestCase
     {
         $c = new $collection([['v' => 1], ['v' => 2], ['v' => 3], ['v' => '3'], ['v' => 4]]);
 
-        $this->assertEquals([['v' => 2], ['v' => 3], ['v' => '3'], ['v' => 4]],
-            $c->whereBetween('v', [2, 4])->values()->all());
+        $this->assertEquals(
+            [['v' => 2], ['v' => 3], ['v' => '3'], ['v' => 4]],
+            $c->whereBetween('v', [2, 4])->values()->all()
+        );
         $this->assertEquals([['v' => 1]], $c->whereBetween('v', [-1, 1])->all());
         $this->assertEquals([['v' => 3], ['v' => '3']], $c->whereBetween('v', [3, 3])->values()->all());
     }
@@ -1911,7 +1913,7 @@ class SupportCollectionTest extends TestCase
     public function testCollapse($collection)
     {
         // Normal case: a two-dimensional array with different elements
-        $data = new $collection([[$object1 = new stdClass], [$object2 = new stdClass]]);
+        $data = new $collection([[$object1 = new stdClass()], [$object2 = new stdClass()]]);
         $this->assertEquals([$object1, $object2], $data->collapse()->all());
 
         // Case including numeric and string elements
@@ -2586,10 +2588,10 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testImplodeModels($collection)
     {
-        $model = new class extends Model {
+        $model = new class () extends Model {
         };
         $model->setAttribute('email', 'foo');
-        $modelTwo = new class extends Model {
+        $modelTwo = new class () extends Model {
         };
         $modelTwo->setAttribute('email', 'bar');
         $data = new $collection([$model, $modelTwo]);
@@ -2714,7 +2716,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testRandomOnEmptyCollection($collection)
     {
-        $data = new $collection;
+        $data = new $collection();
 
         $random = $data->random(0);
         $this->assertInstanceOf($collection, $random);
@@ -2924,21 +2926,21 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testWrapWithArrayable($collection)
     {
-        $data = $collection::wrap($o = new TestArrayableObject);
+        $data = $collection::wrap($o = new TestArrayableObject());
         $this->assertEquals([$o], $data->all());
     }
 
     #[DataProvider('collectionClassProvider')]
     public function testWrapWithJsonable($collection)
     {
-        $data = $collection::wrap($o = new TestJsonableObject);
+        $data = $collection::wrap($o = new TestJsonableObject());
         $this->assertEquals([$o], $data->all());
     }
 
     #[DataProvider('collectionClassProvider')]
     public function testWrapWithJsonSerialize($collection)
     {
-        $data = $collection::wrap($o = new TestJsonSerializeObject);
+        $data = $collection::wrap($o = new TestJsonSerializeObject());
         $this->assertEquals([$o], $data->all());
     }
 
@@ -3073,7 +3075,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testConstructMakeFromObject($collection)
     {
-        $object = new stdClass;
+        $object = new stdClass();
         $object->foo = 'bar';
         $data = $collection::make($object);
         $this->assertEquals(['foo' => 'bar'], $data->all());
@@ -3092,7 +3094,7 @@ class SupportCollectionTest extends TestCase
         $data = new $collection(null);
         $this->assertEquals([], $data->all());
 
-        $data = new $collection;
+        $data = new $collection();
         $this->assertEquals([], $data->all());
     }
 
@@ -3114,7 +3116,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testConstructMethodFromObject($collection)
     {
-        $object = new stdClass;
+        $object = new stdClass();
         $object->foo = 'bar';
         $data = new $collection($object);
         $this->assertEquals(['foo' => 'bar'], $data->all());
@@ -3124,7 +3126,7 @@ class SupportCollectionTest extends TestCase
     public function testConstructMethodFromWeakMap($collection)
     {
         $map = new WeakMap();
-        $object = new stdClass;
+        $object = new stdClass();
         $object->foo = 'bar';
         $map[$object] = 3;
         $data = new $collection($map);
@@ -3524,8 +3526,7 @@ class SupportCollectionTest extends TestCase
         $data = new $collection($payload = [
             ['name' => new Stringable('Laravel'), 'url' => '1'],
             ['name' => new HtmlString('Laravel'), 'url' => '1'],
-            ['name' => new class()
-            {
+            ['name' => new class () {
                 public function __toString()
                 {
                     return 'Framework';
@@ -4067,7 +4068,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testGettingSumFromEmptyCollection($collection)
     {
-        $c = new $collection;
+        $c = new $collection();
         $this->assertEquals(0, $c->sum('foo'));
     }
 
@@ -4556,7 +4557,7 @@ class SupportCollectionTest extends TestCase
         $c = new $collection([1, 2, 3, 4, 5]);
         $this->assertEquals(5, $c->max());
 
-        $c = new $collection;
+        $c = new $collection();
         $this->assertNull($c->max());
     }
 
@@ -4587,7 +4588,7 @@ class SupportCollectionTest extends TestCase
         $c = new $collection([0, 1, 2, 3, 4]);
         $this->assertEquals(0, $c->min());
 
-        $c = new $collection;
+        $c = new $collection();
         $this->assertNull($c->min());
     }
 
@@ -4717,7 +4718,7 @@ class SupportCollectionTest extends TestCase
         $c = new $collection([1, 2, 3, 4, 5]);
         $this->assertEquals(3, $c->avg());
 
-        $c = new $collection;
+        $c = new $collection();
         $this->assertNull($c->avg());
 
         $c = new $collection([['foo' => '4'], ['foo' => '2']]);
@@ -4742,10 +4743,10 @@ class SupportCollectionTest extends TestCase
     public function testJsonSerialize($collection)
     {
         $c = new $collection([
-            new TestArrayableObject,
-            new TestJsonableObject,
-            new TestJsonSerializeObject,
-            new TestJsonSerializeToStringObject,
+            new TestArrayableObject(),
+            new TestJsonableObject(),
+            new TestJsonSerializeObject(),
+            new TestJsonSerializeToStringObject(),
             'baz',
         ]);
 
@@ -4872,7 +4873,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testDump($collection)
     {
-        $log = new Collection;
+        $log = new Collection();
 
         VarDumper::setHandler(function ($value) use ($log) {
             $log->add($value);
@@ -5036,14 +5037,14 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testMedianOnEmptyCollectionReturnsNull($collection)
     {
-        $data = new $collection;
+        $data = new $collection();
         $this->assertNull($data->median());
     }
 
     #[DataProvider('collectionClassProvider')]
     public function testModeOnNullCollection($collection)
     {
-        $data = new $collection;
+        $data = new $collection();
         $this->assertNull($data->mode());
     }
 
@@ -5276,7 +5277,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testSplitEmptyCollection($collection)
     {
-        $data = new $collection;
+        $data = new $collection();
         $split = $data->split(2);
 
         $this->assertNull($split->get(0));
@@ -5294,7 +5295,7 @@ class SupportCollectionTest extends TestCase
     public function testHigherOrderCollectionGroupBy($collection)
     {
         $data = new $collection([
-            new TestSupportCollectionHigherOrderItem,
+            new TestSupportCollectionHigherOrderItem(),
             new TestSupportCollectionHigherOrderItem('TAYLOR'),
             new TestSupportCollectionHigherOrderItem('foo'),
         ]);
@@ -5321,7 +5322,7 @@ class SupportCollectionTest extends TestCase
 
         $this->assertEquals(['Taylor', 'Yaz'], $data->map->name->toArray());
 
-        $data = new $collection([new TestSupportCollectionHigherOrderItem, new TestSupportCollectionHigherOrderItem]);
+        $data = new $collection([new TestSupportCollectionHigherOrderItem(), new TestSupportCollectionHigherOrderItem()]);
 
         $this->assertEquals(['TAYLOR', 'TAYLOR'], $data->each->uppercase()->map->name->toArray());
     }
@@ -5336,7 +5337,7 @@ class SupportCollectionTest extends TestCase
 
         $this->assertEquals(['Taylor', 'Yaz'], $data->map->name->toArray());
 
-        $data = new $collection([new TestSupportCollectionHigherOrderItem, new TestSupportCollectionHigherOrderItem]);
+        $data = new $collection([new TestSupportCollectionHigherOrderItem(), new TestSupportCollectionHigherOrderItem()]);
 
         $this->assertEquals(['TAYLOR', 'TAYLOR'], $data->each->uppercase()->map->name->toArray());
     }
@@ -5444,7 +5445,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testPartitionEmptyCollection($collection)
     {
-        $data = new $collection;
+        $data = new $collection();
 
         $this->assertCount(2, $data->partition(function () {
             return true;
@@ -5527,7 +5528,7 @@ class SupportCollectionTest extends TestCase
 
         $this->assertSame(['michael', 'tom'], $data->toArray());
 
-        $data = new $collection;
+        $data = new $collection();
 
         $data = $data->whenEmpty(function ($data) {
             return $data->concat(['adam']);
@@ -5561,7 +5562,7 @@ class SupportCollectionTest extends TestCase
 
         $this->assertSame(['michael', 'tom', 'adam'], $data->toArray());
 
-        $data = new $collection;
+        $data = new $collection();
 
         $data = $data->whenNotEmpty(function ($data) {
             return $data->concat(['adam']);
@@ -5673,7 +5674,7 @@ class SupportCollectionTest extends TestCase
 
         $this->assertSame(['michael', 'tom', 'adam'], $data->toArray());
 
-        $data = new $collection;
+        $data = new $collection();
 
         $data = $data->unlessEmpty(function ($data) {
             return $data->concat(['adam']);
@@ -5707,7 +5708,7 @@ class SupportCollectionTest extends TestCase
 
         $this->assertSame(['michael', 'tom'], $data->toArray());
 
-        $data = new $collection;
+        $data = new $collection();
 
         $data = $data->unlessNotEmpty(function ($data) {
             return $data->concat(['adam']);
@@ -5742,7 +5743,7 @@ class SupportCollectionTest extends TestCase
 
     public function testPutAddsItemToCollection()
     {
-        $data = new Collection;
+        $data = new Collection();
         $this->assertSame([], $data->toArray());
         $data->put('foo', 1);
         $this->assertSame(['foo' => 1], $data->toArray());
@@ -5755,7 +5756,7 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testItThrowsExceptionWhenTryingToAccessNoProxyProperty($collection)
     {
-        $data = new $collection;
+        $data = new $collection();
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Property [foo] does not exist on this collection instance.');
         $data->foo;
@@ -5948,10 +5949,10 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testEnsureForObjects($collection)
     {
-        $data = $collection::make([new stdClass, new stdClass, new stdClass]);
+        $data = $collection::make([new stdClass(), new stdClass(), new stdClass()]);
         $data->ensure(stdClass::class);
 
-        $data = $collection::make([new stdClass, new stdClass, new stdClass, $collection]);
+        $data = $collection::make([new stdClass(), new stdClass(), new stdClass(), $collection]);
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(sprintf('Collection should only include [%s] items, but \'%s\' found at position %d.', class_basename(new stdClass()), gettype($collection), 3));
         $data->ensure(stdClass::class);
@@ -5960,11 +5961,11 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testEnsureForInheritance($collection)
     {
-        $data = $collection::make([new \Error, new \Error]);
+        $data = $collection::make([new \Error(), new \Error()]);
         $data->ensure(\Throwable::class);
 
-        $wrongType = new $collection;
-        $data = $collection::make([new \Error, new \Error, $wrongType]);
+        $wrongType = new $collection();
+        $data = $collection::make([new \Error(), new \Error(), $wrongType]);
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(sprintf("Collection should only include [%s] items, but '%s' found at position %d.", \Throwable::class, get_class($wrongType), 2));
         $data->ensure(\Throwable::class);
@@ -5973,11 +5974,11 @@ class SupportCollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testEnsureForMultipleTypes($collection)
     {
-        $data = $collection::make([new \Error, 123]);
+        $data = $collection::make([new \Error(), 123]);
         $data->ensure([\Throwable::class, 'int']);
 
-        $wrongType = new $collection;
-        $data = $collection::make([new \Error, new \Error, $wrongType]);
+        $wrongType = new $collection();
+        $data = $collection::make([new \Error(), new \Error(), $wrongType]);
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(sprintf('Collection should only include [%s] items, but \'%s\' found at position %d.', implode(', ', [\Throwable::class, 'int']), get_class($wrongType), 2));
         $data->ensure([\Throwable::class, 'int']);
@@ -6177,7 +6178,6 @@ class TestCollectionMapIntoObject
 
 class TestCollectionSubclass extends Collection
 {
-    //
 }
 
 enum StaffEnum

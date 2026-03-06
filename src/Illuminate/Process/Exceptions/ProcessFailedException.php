@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process\Exceptions;
 
 use Illuminate\Contracts\Process\ProcessResult;
@@ -21,7 +23,8 @@ class ProcessFailedException extends RuntimeException
     {
         $this->result = $result;
 
-        $error = sprintf('The command "%s" failed.'."\n\nExit Code: %s",
+        $error = sprintf(
+            'The command "%s" failed.'."\n\nExit Code: %s",
             $result->command(),
             $result->exitCode(),
         );

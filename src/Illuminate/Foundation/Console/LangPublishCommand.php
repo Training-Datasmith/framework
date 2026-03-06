@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
@@ -31,7 +33,7 @@ class LangPublishCommand extends Command
     public function handle(): void
     {
         if (! is_dir($langPath = $this->laravel->basePath('lang/en'))) {
-            (new Filesystem)->makeDirectory($langPath, recursive: true);
+            (new Filesystem())->makeDirectory($langPath, recursive: true);
         }
 
         $stubs = [

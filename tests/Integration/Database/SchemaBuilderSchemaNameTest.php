@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Schema\Blueprint;
@@ -526,16 +528,20 @@ class SchemaBuilderSchemaNameTest extends DatabaseTestCase
         $tableName = $connection === 'with-prefix' ? 'example_table' : 'table';
         $defaultSchema = $this->driver === 'pgsql' ? 'public' : 'laravel';
 
-        $this->assertEquals('comment on schema table',
+        $this->assertEquals(
+            'comment on schema table',
             $tables->first(fn ($table) => $table['name'] === $tableName && $table['schema'] === 'my_schema')['comment']
         );
-        $this->assertEquals('comment on table',
+        $this->assertEquals(
+            'comment on table',
             $tables->first(fn ($table) => $table['name'] === $tableName && $table['schema'] === $defaultSchema)['comment']
         );
-        $this->assertEquals('comment on schema column',
+        $this->assertEquals(
+            'comment on schema column',
             collect($schema->getColumns('my_schema.table'))->firstWhere('name', 'name')['comment']
         );
-        $this->assertEquals('comment on column',
+        $this->assertEquals(
+            'comment on column',
             collect($schema->getColumns('table'))->firstWhere('name', 'name')['comment']
         );
     }
@@ -566,8 +572,8 @@ class SchemaBuilderSchemaNameTest extends DatabaseTestCase
         try {
             $db->statement("create login my_user with password = 'Passw0rd'");
             $db->statement('create user my_user for login my_user');
-        } catch(\Illuminate\Database\QueryException) {
-            //
+        } catch (\Illuminate\Database\QueryException) {
+
         }
 
         $db->statement('grant create table to my_user');

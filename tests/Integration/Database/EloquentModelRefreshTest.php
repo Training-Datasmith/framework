@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentModelRefreshTest;
 
 use Illuminate\Database\Eloquent\Model;
@@ -87,11 +89,10 @@ class EloquentModelRefreshTest extends DatabaseTestCase
 
 class Post extends Model
 {
+    use SoftDeletes;
     public $table = 'posts';
     public $timestamps = true;
     protected $guarded = [];
-
-    use SoftDeletes;
 
     protected static function boot()
     {
@@ -108,7 +109,7 @@ class AsPivotPost extends Post
     public function children()
     {
         return $this
-            ->belongsToMany(static::class, (new AsPivotPostPivot)->getTable(), 'foreign_id', 'related_id')
+            ->belongsToMany(static::class, (new AsPivotPostPivot())->getTable(), 'foreign_id', 'related_id')
             ->using(AsPivotPostPivot::class);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Concerns;
 
 use Symfony\Component\Console\Completion\CompletionInput;

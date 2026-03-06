@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema;
 
 use Exception;
@@ -54,7 +56,7 @@ class MySqlSchemaState extends SchemaState
         $process = $this->executeDumpProcess($this->makeProcess(
             $this->baseDumpCommand().' '.$this->getMigrationTable().' --no-create-info --skip-extended-insert --skip-routines --compact --complete-insert'
         ), null, array_merge($this->baseVariables($this->connection->getConfig()), [
-            //
+
         ]));
 
         $this->files->append($path, $process->getOutput());

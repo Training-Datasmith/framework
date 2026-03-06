@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Log;
 
 use Illuminate\Log\Logger;
@@ -273,8 +275,7 @@ class LogManagerTest extends TestCase
             'driver' => 'monolog',
             'handler' => NullHandler::class,
         ]);
-        $manager = new class($this->app) extends LogManager
-        {
+        $manager = new class ($this->app) extends LogManager {
             protected function createEmergencyLogger()
             {
                 throw new RuntimeException('Emergency logger was created.');
@@ -472,8 +473,7 @@ class LogManagerTest extends TestCase
             'driver' => 'single',
         ]);
 
-        $factory = new class()
-        {
+        $factory = new class () {
             public function __invoke()
             {
                 return new Monolog(
@@ -728,7 +728,8 @@ class LogManagerTest extends TestCase
 
         $this->assertEquals(
             '[%datetime%] %channel%.%level_name%: %message% %context% %extra%',
-            rtrim($format->getValue($formatter)));
+            rtrim($format->getValue($formatter))
+        );
     }
 
     public function testDriverUsersPsrLoggerManagerReturnsLogger()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue\Fixtures;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,6 +13,6 @@ class FakeSqsJob implements ShouldQueue
 
     public function handle(): void
     {
-        //
+
     }
 }

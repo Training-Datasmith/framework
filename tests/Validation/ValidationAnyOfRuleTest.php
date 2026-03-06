@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Container\Container;
@@ -382,7 +384,7 @@ class ValidationAnyOfRuleTest extends TestCase
         $container = Container::getInstance();
         $container->bind('translator', function () {
             return new Translator(
-                new ArrayLoader,
+                new ArrayLoader(),
                 'en'
             );
         });

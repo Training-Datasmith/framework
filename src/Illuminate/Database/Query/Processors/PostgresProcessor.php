@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Query\Processors;
 
 use Illuminate\Database\Query\Builder;

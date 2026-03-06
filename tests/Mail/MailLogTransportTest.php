@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Mail;
 
 use Illuminate\Mail\Attachment;
@@ -38,7 +40,7 @@ class MailLogTransportTest extends TestCase
 
     public function testItDecodesTheMessageBeforeLogging(): void
     {
-        $message = (new Message(new Email))
+        $message = (new Message(new Email()))
             ->from('noreply@example.com', 'no-reply')
             ->to('taylor@example.com', 'Taylor')
             ->html(<<<'BODY'
@@ -62,7 +64,7 @@ class MailLogTransportTest extends TestCase
 
     public function testItOnlyDecodesQuotedPrintablePartsOfTheMessageBeforeLogging(): void
     {
-        $message = (new Message(new Email))
+        $message = (new Message(new Email()))
             ->from('noreply@example.com', 'no-reply')
             ->to('taylor@example.com', 'Taylor')
             ->html(<<<'BODY'
@@ -90,7 +92,7 @@ class MailLogTransportTest extends TestCase
     {
         $this->app['config']->set('mail.driver', 'log');
 
-        $logger = $this->app->instance('log', new NullLogger);
+        $logger = $this->app->instance('log', new NullLogger());
 
         $transportLogger = app('mailer')->getSymfonyTransport()->logger();
 
@@ -99,8 +101,7 @@ class MailLogTransportTest extends TestCase
 
     private function getLoggedEmailMessage(Message $message): string
     {
-        $logger = new class extends NullLogger
-        {
+        $logger = new class () extends NullLogger {
             public string $loggedValue = '';
 
             public function log($level, string|\Stringable $message, array $context = []): void

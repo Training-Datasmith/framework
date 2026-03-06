@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use BaseController;
 
 class FooController extends BaseController
@@ -11,7 +13,7 @@ class FooController extends BaseController
      */
     public function index()
     {
-        //
+
     }
 
     /**
@@ -22,6 +24,6 @@ class FooController extends BaseController
      */
     public function show($id)
     {
-        //
+
     }
 }

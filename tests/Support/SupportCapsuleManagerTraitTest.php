@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Config\Repository;
@@ -16,7 +18,7 @@ class SupportCapsuleManagerTraitTest extends TestCase
     public function testSetupContainerForCapsule()
     {
         $this->container = null;
-        $app = new Container;
+        $app = new Container();
 
         $this->setupContainer($app);
         $this->assertEquals($app, $this->getContainer());
@@ -26,7 +28,7 @@ class SupportCapsuleManagerTraitTest extends TestCase
     public function testSetupContainerForCapsuleWhenConfigIsBound()
     {
         $this->container = null;
-        $app = new Container;
+        $app = new Container();
         $app['config'] = m::mock(Repository::class);
 
         $this->setupContainer($app);

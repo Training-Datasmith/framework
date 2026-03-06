@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent;
 
 use Illuminate\Contracts\Queue\QueueableCollection;
@@ -41,7 +43,7 @@ class Collection extends BaseCollection implements QueueableCollection
 
         if (is_array($key)) {
             if ($this->isEmpty()) {
-                return new static;
+                return new static();
             }
 
             return $this->whereIn($this->first()->getKeyName(), $key);
@@ -69,7 +71,7 @@ class Collection extends BaseCollection implements QueueableCollection
             return $result;
         }
 
-        $exception = new ModelNotFoundException;
+        $exception = new ModelNotFoundException();
 
         if (! $model = head($this->items)) {
             throw $exception;
@@ -146,7 +148,7 @@ class Collection extends BaseCollection implements QueueableCollection
      * @param  array<array-key, array|(callable(\Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|string>|string  $relations
      * @return $this
      */
-    public function loadCount($relations)
+    public function loadCount($relations): static
     {
         return $this->loadAggregate($relations, '*', 'count');
     }
@@ -158,7 +160,7 @@ class Collection extends BaseCollection implements QueueableCollection
      * @param  string  $column
      * @return $this
      */
-    public function loadMax($relations, $column)
+    public function loadMax($relations, $column): static
     {
         return $this->loadAggregate($relations, $column, 'max');
     }
@@ -170,7 +172,7 @@ class Collection extends BaseCollection implements QueueableCollection
      * @param  string  $column
      * @return $this
      */
-    public function loadMin($relations, $column)
+    public function loadMin($relations, $column): static
     {
         return $this->loadAggregate($relations, $column, 'min');
     }
@@ -182,7 +184,7 @@ class Collection extends BaseCollection implements QueueableCollection
      * @param  string  $column
      * @return $this
      */
-    public function loadSum($relations, $column)
+    public function loadSum($relations, $column): static
     {
         return $this->loadAggregate($relations, $column, 'sum');
     }
@@ -194,7 +196,7 @@ class Collection extends BaseCollection implements QueueableCollection
      * @param  string  $column
      * @return $this
      */
-    public function loadAvg($relations, $column)
+    public function loadAvg($relations, $column): static
     {
         return $this->loadAggregate($relations, $column, 'avg');
     }
@@ -205,7 +207,7 @@ class Collection extends BaseCollection implements QueueableCollection
      * @param  array<array-key, array|(callable(\Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|string>|string  $relations
      * @return $this
      */
-    public function loadExists($relations)
+    public function loadExists($relations): static
     {
         return $this->loadAggregate($relations, '*', 'exists');
     }
@@ -258,7 +260,7 @@ class Collection extends BaseCollection implements QueueableCollection
     {
         [$relation, $class] = array_shift($tuples);
 
-        $this->filter(fn($model) => ! is_null($model) &&
+        $this->filter(fn ($model): bool => ! is_null($model) &&
             ! $model->relationLoaded($relation) &&
             $model::class === $class)->load($relation);
 
@@ -318,7 +320,7 @@ class Collection extends BaseCollection implements QueueableCollection
         $this->pluck($relation)
             ->filter()
             ->groupBy(fn ($model): string|false => $model::class)
-            ->each(fn ($models, $className) => static::make($models)->load($relations[$className] ?? []));
+            ->each(fn ($models, $className): static => static::make($models)->load($relations[$className] ?? []));
 
         return $this;
     }
@@ -440,12 +442,11 @@ class Collection extends BaseCollection implements QueueableCollection
      * Reload a fresh model instance from the database for all the entities.
      *
      * @param  array<array-key, string>|string  $with
-     * @return static
      */
-    public function fresh($with = [])
+    public function fresh($with = []): static
     {
         if ($this->isEmpty()) {
-            return new static;
+            return new static();
         }
 
         $model = $this->first();
@@ -467,7 +468,7 @@ class Collection extends BaseCollection implements QueueableCollection
      */
     public function diff($items): static
     {
-        $diff = new static;
+        $diff = new static();
 
         $dictionary = $this->getDictionary($items);
 
@@ -489,7 +490,7 @@ class Collection extends BaseCollection implements QueueableCollection
      */
     public function intersect($items): static
     {
-        $intersect = new static;
+        $intersect = new static();
 
         if (empty($items)) {
             return $intersect;
@@ -649,7 +650,7 @@ class Collection extends BaseCollection implements QueueableCollection
      *
      * @return $this
      */
-    public function withoutAppends()
+    public function withoutAppends(): \Illuminate\Database\Eloquent\Model
     {
         return $this->setAppends([]);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Bus\Queueable;
@@ -12,9 +14,10 @@ class BeforeCommitContractTest extends TestCase
 {
     public function testJobWithoutContractRespectsBeforeCommit()
     {
-        $job = new class
-        {
-            use Dispatchable, InteractsWithQueue, Queueable;
+        $job = new class () {
+            use Dispatchable;
+            use InteractsWithQueue;
+            use Queueable;
 
             public function beforeCommit()
             {
@@ -29,9 +32,10 @@ class BeforeCommitContractTest extends TestCase
 
     public function testJobWithoutContractRespectsAfterCommit()
     {
-        $job = new class
-        {
-            use Dispatchable, InteractsWithQueue, Queueable;
+        $job = new class () {
+            use Dispatchable;
+            use InteractsWithQueue;
+            use Queueable;
 
             public function afterCommit()
             {
@@ -48,9 +52,10 @@ class BeforeCommitContractTest extends TestCase
 
     public function testJobWithContractDefaultsToAfterCommit()
     {
-        $job = new class implements ShouldQueueAfterCommit
-        {
-            use Dispatchable, InteractsWithQueue, Queueable;
+        $job = new class () implements ShouldQueueAfterCommit {
+            use Dispatchable;
+            use InteractsWithQueue;
+            use Queueable;
         };
 
         $this->assertTrue($this->shouldDispatchAfterCommit($job));
@@ -58,9 +63,10 @@ class BeforeCommitContractTest extends TestCase
 
     public function testJobWithContractAndAfterCommitFalseRespectsBeforeCommit()
     {
-        $job = new class implements ShouldQueueAfterCommit
-        {
-            use Dispatchable, InteractsWithQueue, Queueable;
+        $job = new class () implements ShouldQueueAfterCommit {
+            use Dispatchable;
+            use InteractsWithQueue;
+            use Queueable;
 
             public function beforeCommit()
             {
@@ -77,9 +83,10 @@ class BeforeCommitContractTest extends TestCase
 
     public function testJobWithContractAndExplicitAfterCommitTrueStillSchedulesAfterCommit()
     {
-        $job = new class implements ShouldQueueAfterCommit
-        {
-            use Dispatchable, InteractsWithQueue, Queueable;
+        $job = new class () implements ShouldQueueAfterCommit {
+            use Dispatchable;
+            use InteractsWithQueue;
+            use Queueable;
 
             public function afterCommit()
             {

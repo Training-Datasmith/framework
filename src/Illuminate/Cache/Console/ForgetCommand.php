@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\Console;
 
-use Illuminate\Cache\CacheManager;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -29,8 +30,8 @@ class ForgetCommand extends Command
     public function __construct(/**
      * The cache manager instance.
      */
-    protected \Illuminate\Cache\CacheManager $cache)
-    {
+        protected \Illuminate\Cache\CacheManager $cache
+    ) {
         parent::__construct();
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http;
 
 class StreamedEvent
@@ -16,7 +18,6 @@ class StreamedEvent
          * The data of the stream.
          */
         public mixed $data
-    )
-    {
+    ) {
     }
 }

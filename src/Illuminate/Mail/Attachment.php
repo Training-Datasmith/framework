@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail;
 
 use Closure;
@@ -36,8 +38,7 @@ class Attachment
          * A callback that attaches the attachment to the mail message.
          */
         protected \Closure $resolver
-    )
-    {
+    ) {
     }
 
     /**
@@ -54,9 +55,8 @@ class Attachment
      * Create a mail attachment from a URL.
      *
      * @param  string  $url
-     * @return static
      */
-    public static function fromUrl($url)
+    public static function fromUrl($url): static
     {
         return static::fromPath($url);
     }
@@ -65,9 +65,8 @@ class Attachment
      * Create a mail attachment from in-memory data.
      *
      * @param  string|null  $name
-     * @return static
      */
-    public static function fromData(Closure $data, $name = null)
+    public static function fromData(Closure $data, $name = null): static
     {
         return (new static(
             fn ($attachment, $pathStrategy, $dataStrategy) => $dataStrategy($data, $attachment)
@@ -92,9 +91,8 @@ class Attachment
      * Create a mail attachment from a file on the default storage disk.
      *
      * @param  string  $path
-     * @return static
      */
-    public static function fromStorage($path)
+    public static function fromStorage($path): static
     {
         return static::fromStorageDisk(null, $path);
     }
@@ -124,9 +122,8 @@ class Attachment
      * Create a mail attachment from a file on the cloud storage disk.
      *
      * @param  string  $path
-     * @return static
      */
-    public static function fromCloudStorage($path)
+    public static function fromCloudStorage($path): static
     {
         return self::fromStorageDisk(Storage::getDefaultCloudDriver(), $path);
     }

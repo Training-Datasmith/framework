@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Bus\Queueable;
@@ -173,7 +175,9 @@ class EloquentTransactionWithAfterCommitTestsUserObserverUsingDispatchSync exten
 
 class EloquentTransactionWithAfterCommitTestsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public function __construct(public string $email)
     {

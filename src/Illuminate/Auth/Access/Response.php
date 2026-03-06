@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Access;
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -34,8 +36,7 @@ class Response implements Arrayable, Stringable
          * The response code.
          */
         protected $code = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -66,9 +67,8 @@ class Response implements Arrayable, Stringable
      * @param  int  $status
      * @param  string|null  $message
      * @param  mixed  $code
-     * @return \Illuminate\Auth\Access\Response
      */
-    public static function denyWithStatus($status, $message = null, $code = null)
+    public static function denyWithStatus($status, $message = null, $code = null): static
     {
         return static::deny($message, $code)->withStatus($status);
     }
@@ -158,7 +158,7 @@ class Response implements Arrayable, Stringable
      *
      * @return $this
      */
-    public function asNotFound()
+    public function asNotFound(): static
     {
         return $this->withStatus(404);
     }

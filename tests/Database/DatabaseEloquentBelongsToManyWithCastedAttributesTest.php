@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -38,8 +40,7 @@ class DatabaseEloquentBelongsToManyWithCastedAttributesTest extends TestCase
 
         $result1 = (object) [
             'pivot' => (object) [
-                'foreign_key' => new class
-                {
+                'foreign_key' => new class () {
                     public function __toString()
                     {
                         return '1';
@@ -69,7 +70,7 @@ class DatabaseEloquentBelongsToManyWithCastedAttributesTest extends TestCase
 
         return new BelongsToMany(
             $builder,
-            new EloquentBelongsToManyModelStub,
+            new EloquentBelongsToManyModelStub(),
             'relation',
             'foreign_key',
             'id',

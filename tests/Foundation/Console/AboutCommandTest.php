@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Console;
 
 use Illuminate\Foundation\Console\AboutCommand;

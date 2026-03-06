@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use ArrayIterator;
@@ -28,7 +30,8 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     /**
      * @use \Illuminate\Support\Traits\EnumeratesValues<TKey, TValue>
      */
-    use EnumeratesValues, Macroable;
+    use EnumeratesValues;
+    use Macroable;
 
     /**
      * The source from which to generate items.
@@ -231,7 +234,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     public function contains($key, $operator = null, $value = null)
     {
         if (func_num_args() === 1 && $this->useAsCallable($key)) {
-            $placeholder = new stdClass;
+            $placeholder = new stdClass();
 
             /** @var callable $key */
             return $this->first($key, $placeholder) !== $placeholder;
@@ -262,7 +265,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     public function containsStrict($key, $value = null)
     {
         if (func_num_args() === 2) {
-            return $this->contains(fn ($item): bool => data_get($item, $key) === $value);
+            return $this->contains(fn (array $item): bool => data_get($item, $key) === $value);
         }
 
         if ($this->useAsCallable($key)) {
@@ -306,7 +309,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function crossJoin(...$arrays)
+    public function crossJoin(...$arrays): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -344,7 +347,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function diff($items)
+    public function diff($items): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -353,7 +356,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function diffUsing($items, callable $callback)
+    public function diffUsing($items, callable $callback): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -362,7 +365,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function diffAssoc($items)
+    public function diffAssoc($items): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -371,7 +374,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function diffAssocUsing($items, callable $callback)
+    public function diffAssocUsing($items, callable $callback): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -380,7 +383,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function diffKeys($items)
+    public function diffKeys($items): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -389,7 +392,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function diffKeysUsing($items, callable $callback)
+    public function diffKeysUsing($items, callable $callback): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -398,7 +401,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function duplicates($callback = null, $strict = false)
+    public function duplicates($callback = null, $strict = false): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -407,7 +410,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function duplicatesStrict($callback = null)
+    public function duplicatesStrict($callback = null): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -416,7 +419,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function except($keys)
+    public function except($keys): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -477,7 +480,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @param  int  $depth
      * @return static<int, mixed>
      */
-    public function flatten($depth = INF)
+    public function flatten($depth = INF): static
     {
         $instance = new static(function () use ($depth) {
             foreach ($this as $item) {
@@ -546,7 +549,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * >
      */
     #[\Override]
-    public function groupBy($groupBy, $preserveKeys = false)
+    public function groupBy($groupBy, $preserveKeys = false): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -618,9 +621,8 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      *
      * @param  (callable(TValue, TKey): mixed)|string  $value
      * @param  string|null  $glue
-     * @return string
      */
-    public function implode($value, $glue = null)
+    public function implode($value, $glue = null): string
     {
         return $this->collect()->implode(...func_get_args());
     }
@@ -629,7 +631,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function intersect($items)
+    public function intersect($items): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -638,7 +640,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function intersectUsing($items, callable $callback)
+    public function intersectUsing($items, callable $callback): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -647,7 +649,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function intersectAssoc($items)
+    public function intersectAssoc($items): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -656,7 +658,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function intersectAssocUsing($items, callable $callback)
+    public function intersectAssocUsing($items, callable $callback): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -665,7 +667,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function intersectByKeys($items)
+    public function intersectByKeys($items): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -738,7 +740,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      */
     public function last(?callable $callback = null, $default = null)
     {
-        $needle = $placeholder = new stdClass;
+        $needle = $placeholder = new stdClass();
 
         foreach ($this as $key => $value) {
             if (is_null($callback) || $callback($value, $key)) {
@@ -804,7 +806,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function mapToDictionary(callable $callback)
+    public function mapToDictionary(callable $callback): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -833,7 +835,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function merge($items)
+    public function merge($items): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -842,17 +844,15 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function mergeRecursive($items)
+    public function mergeRecursive($items): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
 
     /**
      * Multiply the items in the collection by the multiplier.
-     *
-     * @return static
      */
-    public function multiply(int $multiplier)
+    public function multiply(int $multiplier): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -894,7 +894,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function union($items)
+    public function union($items): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -1004,7 +1004,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @param  iterable<TConcatKey, TConcatValue>  $source
      * @return static<TKey|TConcatKey, TValue|TConcatValue>
      */
-    public function concat($source)
+    public function concat($source): static
     {
         return (new static(function () use ($source) {
             yield from $this;
@@ -1058,7 +1058,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function replaceRecursive($items)
+    public function replaceRecursive($items): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -1067,7 +1067,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function reverse()
+    public function reverse(): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -1084,7 +1084,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
         /** @var (callable(TValue,TKey): bool) $predicate */
         $predicate = $this->useAsCallable($value)
             ? $value
-            : (fn($item) => $strict ? $item === $value : $item == $value);
+            : (fn ($item): bool => $strict ? $item === $value : $item == $value);
 
         foreach ($this as $key => $item) {
             if ($predicate($item, $key)) {
@@ -1109,7 +1109,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
         /** @var (callable(TValue,TKey): bool) $predicate */
         $predicate = $this->useAsCallable($value)
             ? $value
-            : (fn($item) => $strict ? $item === $value : $item == $value);
+            : (fn ($item): bool => $strict ? $item === $value : $item == $value);
 
         foreach ($this as $key => $item) {
             if ($predicate($item, $key)) {
@@ -1136,7 +1136,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
         /** @var (callable(TValue,TKey): bool) $predicate */
         $predicate = $this->useAsCallable($value)
             ? $value
-            : (fn($item) => $strict ? $item === $value : $item == $value);
+            : (fn ($item): bool => $strict ? $item === $value : $item == $value);
 
         foreach ($this as $key => $item) {
             if ($found) {
@@ -1155,7 +1155,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function shuffle()
+    public function shuffle(): static
     {
         return $this->passthru(__FUNCTION__, []);
     }
@@ -1234,9 +1234,8 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * Skip items in the collection until the given condition is met.
      *
      * @param  TValue|callable(TValue,TKey): bool  $value
-     * @return static
      */
-    public function skipUntil($value)
+    public function skipUntil($value): static
     {
         $callback = $this->useAsCallable($value) ? $value : $this->equality($value);
 
@@ -1271,7 +1270,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function slice($offset, $length = null)
+    public function slice($offset, $length = null): static
     {
         if ($offset < 0 || $length < 0) {
             return $this->passthru(__FUNCTION__, func_get_args());
@@ -1288,7 +1287,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @throws \InvalidArgumentException
      */
     #[\Override]
-    public function split($numberOfGroups)
+    public function split($numberOfGroups): static
     {
         if ($numberOfGroups < 1) {
             throw new InvalidArgumentException('Number of groups must be at least 1.');
@@ -1373,7 +1372,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @param  bool  $preserveKeys
      * @return ($preserveKeys is true ? static<int, static> : static<int, static<int, TValue>>)
      */
-    public function chunk($size, $preserveKeys = true)
+    public function chunk($size, $preserveKeys = true): static
     {
         if ($size <= 0) {
             return static::empty();
@@ -1439,7 +1438,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
         return new static(function () use ($callback) {
             $iterator = $this->getIterator();
 
-            $chunk = new Collection;
+            $chunk = new Collection();
 
             if ($iterator->valid()) {
                 $chunk[$iterator->key()] = $iterator->current();
@@ -1451,7 +1450,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
                 if (! $callback($iterator->current(), $iterator->key(), $chunk)) {
                     yield new static($chunk);
 
-                    $chunk = new Collection;
+                    $chunk = new Collection();
                 }
 
                 $chunk[$iterator->key()] = $iterator->current();
@@ -1469,7 +1468,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function sort($callback = null)
+    public function sort($callback = null): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -1478,7 +1477,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function sortDesc($options = SORT_REGULAR)
+    public function sortDesc($options = SORT_REGULAR): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -1487,7 +1486,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function sortBy($callback, $options = SORT_REGULAR, $descending = false)
+    public function sortBy($callback, $options = SORT_REGULAR, $descending = false): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -1496,7 +1495,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function sortByDesc($callback, $options = SORT_REGULAR)
+    public function sortByDesc($callback, $options = SORT_REGULAR): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -1505,7 +1504,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function sortKeys($options = SORT_REGULAR, $descending = false)
+    public function sortKeys($options = SORT_REGULAR, $descending = false): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -1514,7 +1513,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function sortKeysDesc($options = SORT_REGULAR)
+    public function sortKeysDesc($options = SORT_REGULAR): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -1523,7 +1522,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function sortKeysUsing(callable $callback)
+    public function sortKeysUsing(callable $callback): static
     {
         return $this->passthru(__FUNCTION__, func_get_args());
     }
@@ -1632,7 +1631,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @param  TValue|callable(TValue,TKey): bool  $value
      * @return static<TKey, TValue>
      */
-    public function takeWhile($value)
+    public function takeWhile($value): static
     {
         /** @var callable(TValue, TKey): bool $callback */
         $callback = $this->useAsCallable($value) ? $value : $this->equality($value);
@@ -1681,10 +1680,8 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
 
     /**
      * Flatten a multi-dimensional associative array with dots.
-     *
-     * @return static
      */
-    public function dot()
+    public function dot(): static
     {
         return $this->passthru(__FUNCTION__, []);
     }
@@ -1693,7 +1690,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function undot()
+    public function undot(): static
     {
         return $this->passthru(__FUNCTION__, []);
     }
@@ -1804,7 +1801,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * {@inheritDoc}
      */
     #[\Override]
-    public function pad($size, $value)
+    public function pad($size, $value): static
     {
         if ($size < 0) {
             return $this->passthru(__FUNCTION__, func_get_args());

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Bus\Queueable;
@@ -9,7 +11,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 class QueuedCommand implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Dispatchable;
+    use Queueable;
 
     /**
      * Create a new job instance.
@@ -21,8 +24,7 @@ class QueuedCommand implements ShouldQueue
          * The data to pass to the Artisan command.
          */
         protected $data
-    )
-    {
+    ) {
     }
 
     /**

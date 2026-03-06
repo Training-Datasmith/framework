@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\Events;
 
 class KeyWriteFailed extends CacheEvent
@@ -15,10 +17,10 @@ class KeyWriteFailed extends CacheEvent
     public function __construct($storeName, $key, /**
      * The value that would have been written.
      */
-    public $value, /**
+        public $value, /**
      * The number of seconds the key should have been valid.
      */
-    public $seconds = null, array $tags = [])
+        public $seconds = null, array $tags = [])
     {
         parent::__construct($storeName, $key, $tags);
     }

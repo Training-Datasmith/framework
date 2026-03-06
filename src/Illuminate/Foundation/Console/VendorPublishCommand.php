@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
@@ -8,15 +10,17 @@ use Illuminate\Foundation\Events\VendorTagPublished;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+
+use function Laravel\Prompts\search;
+use function Laravel\Prompts\select;
+
 use League\Flysystem\Filesystem as Flysystem;
 use League\Flysystem\Local\LocalFilesystemAdapter as LocalAdapter;
 use League\Flysystem\MountManager;
 use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
+
 use League\Flysystem\Visibility;
 use Symfony\Component\Console\Attribute\AsCommand;
-
-use function Laravel\Prompts\search;
-use function Laravel\Prompts\select;
 
 #[AsCommand(name: 'vendor:publish')]
 class VendorPublishCommand extends Command
@@ -74,8 +78,8 @@ class VendorPublishCommand extends Command
     public function __construct(/**
      * The filesystem instance.
      */
-    protected \Illuminate\Filesystem\Filesystem $files)
-    {
+        protected \Illuminate\Filesystem\Filesystem $files
+    ) {
         parent::__construct();
     }
 
@@ -212,7 +216,8 @@ class VendorPublishCommand extends Command
     protected function pathsToPublish($tag)
     {
         return ServiceProvider::pathsToPublish(
-            $this->provider, $tag
+            $this->provider,
+            $tag
         );
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation\fixtures;
 
 use Illuminate\Contracts\Support\Arrayable;

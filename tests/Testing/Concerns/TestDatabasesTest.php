@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Testing\Concerns;
 
 use Illuminate\Config\Repository as Config;
@@ -17,7 +19,7 @@ class TestDatabasesTest extends TestCase
     {
         parent::setUp();
 
-        Container::setInstance($container = new Container);
+        Container::setInstance($container = new Container());
 
         $container->singleton('config', function () {
             return m::mock(Config::class)
@@ -66,8 +68,7 @@ class TestDatabasesTest extends TestCase
 
     public function switchToDatabase($database)
     {
-        $instance = new class
-        {
+        $instance = new class () {
             use TestDatabases;
         };
 

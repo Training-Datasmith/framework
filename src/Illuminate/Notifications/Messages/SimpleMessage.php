@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications\Messages;
 
 use Illuminate\Contracts\Support\Htmlable;
@@ -152,7 +154,7 @@ class SimpleMessage
      * @param  mixed  $line
      * @return $this
      */
-    public function line($line)
+    public function line($line): static
     {
         return $this->with($line);
     }
@@ -195,7 +197,7 @@ class SimpleMessage
      * @param  iterable  $lines
      * @return $this
      */
-    public function linesIf($boolean, $lines)
+    public function linesIf($boolean, $lines): static
     {
         if ($boolean) {
             return $this->lines($lines);

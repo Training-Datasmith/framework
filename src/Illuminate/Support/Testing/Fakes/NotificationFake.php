@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Testing\Fakes;
 
 use Closure;
@@ -17,7 +19,8 @@ use PHPUnit\Framework\Assert as PHPUnit;
 
 class NotificationFake implements Fake, NotificationDispatcher, NotificationFactory
 {
-    use Macroable, ReflectsClosures;
+    use Macroable;
+    use ReflectsClosures;
 
     /**
      * All of the notifications that have been sent.
@@ -50,7 +53,7 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
      */
     public function assertSentOnDemand($notification, $callback = null): void
     {
-        $this->assertSentTo(new AnonymousNotifiable, $notification, $callback);
+        $this->assertSentTo(new AnonymousNotifiable(), $notification, $callback);
     }
 
     /**
@@ -99,7 +102,7 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
      */
     public function assertSentOnDemandTimes($notification, $times = 1): void
     {
-        $this->assertSentToTimes(new AnonymousNotifiable, $notification, $times);
+        $this->assertSentToTimes(new AnonymousNotifiable(), $notification, $times);
     }
 
     /**
@@ -114,7 +117,8 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
         $count = $this->sent($notifiable, $notification)->count();
 
         PHPUnit::assertSame(
-            $times, $count,
+            $times,
+            $count,
             "Expected [{$notification}] to be sent {$times} times, but was sent {$count} times."
         );
     }
@@ -147,7 +151,8 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
         }
 
         PHPUnit::assertCount(
-            0, $this->sent($notifiable, $notification, $callback),
+            0,
+            $this->sent($notifiable, $notification, $callback),
             "The unexpected [{$notification}] notification was sent."
         );
     }
@@ -158,7 +163,8 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
     public function assertNothingSent(): void
     {
         $notificationNames = (new Collection($this->notifications))
-            ->map(fn ($notifiableModels): \Illuminate\Support\Collection => (new Collection($notifiableModels))
+            ->map(
+                fn ($notifiableModels): \Illuminate\Support\Collection => (new Collection($notifiableModels))
                 ->map(fn ($notifiables): \Illuminate\Support\Collection => (new Collection($notifiables))->keys())
             )
             ->flatten()->join("\n- ");
@@ -206,7 +212,8 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
             ->reduce(fn ($count, $sent): float|int => $count + count($sent[$notification] ?? []), 0);
 
         PHPUnit::assertSame(
-            $expectedCount, $actualCount,
+            $expectedCount,
+            $actualCount,
             sprintf(
                 "Expected [{$notification}] to be sent {$expectedCount} %s, but was sent {$actualCount} %s.",
                 Str::plural('time', $expectedCount),
@@ -225,7 +232,8 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
         $actualCount = (new Collection($this->notifications))->flatten(3)->count();
 
         PHPUnit::assertSame(
-            $expectedCount, $actualCount,
+            $expectedCount,
+            $actualCount,
             "Expected {$expectedCount} notifications to be sent, but {$actualCount} were sent."
         );
     }
@@ -240,7 +248,7 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
     public function sent($notifiable, $notification, $callback = null): \Illuminate\Support\Collection
     {
         if (! $this->hasSent($notifiable, $notification)) {
-            return new Collection;
+            return new Collection();
         }
 
         $callback = $callback ?: fn (): true => true;
@@ -338,7 +346,7 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
      */
     public function channel($name = null): void
     {
-        //
+
     }
 
     /**

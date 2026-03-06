@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Bootstrap;
 
 use Illuminate\Contracts\Foundation\Application;
@@ -26,7 +28,12 @@ class SetRequestForConsole
         }
 
         $app->instance('request', Request::create(
-            $uri, 'GET', [], [], [], $server
+            $uri,
+            'GET',
+            [],
+            [],
+            [],
+            $server
         ));
     }
 }

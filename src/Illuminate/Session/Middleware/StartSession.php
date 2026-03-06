@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
-use Illuminate\Session\SessionManager;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -27,8 +28,9 @@ class StartSession
     public function __construct(/**
      * The session manager.
      */
-    protected \Illuminate\Session\SessionManager $manager, ?callable $cacheFactoryResolver = null)
-    {
+        protected \Illuminate\Session\SessionManager $manager,
+        ?callable $cacheFactoryResolver = null
+    ) {
         $this->cacheFactoryResolver = $cacheFactoryResolver;
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting;
 
 use Ably\AblyRest;
@@ -53,8 +55,7 @@ class BroadcastManager implements FactoryContract
          * The application instance.
          */
         protected $app
-    )
-    {
+    ) {
     }
 
     /**
@@ -70,7 +71,8 @@ class BroadcastManager implements FactoryContract
 
         $this->app['router']->group($attributes, function ($router): void {
             $router->match(
-                ['get', 'post'], '/broadcasting/auth',
+                ['get', 'post'],
+                '/broadcasting/auth',
                 '\\'.BroadcastController::class.'@authenticate'
             )->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
         });
@@ -89,7 +91,8 @@ class BroadcastManager implements FactoryContract
 
         $this->app['router']->group($attributes, function ($router): void {
             $router->match(
-                ['get', 'post'], '/broadcasting/user-auth',
+                ['get', 'post'],
+                '/broadcasting/user-auth',
                 '\\'.BroadcastController::class.'@authenticateUser'
             )->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
         });
@@ -299,7 +302,7 @@ class BroadcastManager implements FactoryContract
      *
      * @return \Illuminate\Contracts\Broadcasting\Broadcaster
      */
-    protected function createReverbDriver(array $config)
+    protected function createReverbDriver(array $config): \Illuminate\Broadcasting\Broadcasters\PusherBroadcaster
     {
         return $this->createPusherDriver($config);
     }
@@ -375,7 +378,8 @@ class BroadcastManager implements FactoryContract
     protected function createRedisDriver(array $config): \Illuminate\Broadcasting\Broadcasters\RedisBroadcaster
     {
         return new RedisBroadcaster(
-            $this->app->make('redis'), $config['connection'] ?? null,
+            $this->app->make('redis'),
+            $config['connection'] ?? null,
             $this->app['config']->get('database.redis.options.prefix', '')
         );
     }
@@ -399,7 +403,7 @@ class BroadcastManager implements FactoryContract
      */
     protected function createNullDriver(array $config): \Illuminate\Broadcasting\Broadcasters\NullBroadcaster
     {
-        return new NullBroadcaster;
+        return new NullBroadcaster();
     }
 
     /**
@@ -514,7 +518,6 @@ class BroadcastManager implements FactoryContract
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

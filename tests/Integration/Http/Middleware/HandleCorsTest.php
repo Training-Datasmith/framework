@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Http\Middleware;
 
 use Illuminate\Contracts\Http\Kernel;

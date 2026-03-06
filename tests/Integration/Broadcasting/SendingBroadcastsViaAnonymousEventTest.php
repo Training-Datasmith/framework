@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Broadcasting;
 
 use Illuminate\Broadcasting\AnonymousEvent;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use BaseController;
 
 class FooController extends BaseController
@@ -11,7 +13,7 @@ class FooController extends BaseController
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -21,7 +23,7 @@ class FooController extends BaseController
      */
     public function store()
     {
-        //
+
     }
 
     /**
@@ -32,7 +34,7 @@ class FooController extends BaseController
      */
     public function edit($id)
     {
-        //
+
     }
 
     /**
@@ -43,7 +45,7 @@ class FooController extends BaseController
      */
     public function update($id)
     {
-        //
+
     }
 
     /**
@@ -54,6 +56,6 @@ class FooController extends BaseController
      */
     public function destroy($id)
     {
-        //
+
     }
 }

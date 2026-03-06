@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -34,8 +36,7 @@ class DatabaseEloquentMorphToTest extends TestCase
 
     public function testLookupDictionaryIsProperlyConstructed()
     {
-        $stringish = new class
-        {
+        $stringish = new class () {
             public function __toString()
             {
                 return 'foreign_key_2';
@@ -74,7 +75,7 @@ class DatabaseEloquentMorphToTest extends TestCase
 
         $this->builder->shouldReceive('first')->once()->andReturnNull();
 
-        $newModel = new EloquentMorphToModelStub;
+        $newModel = new EloquentMorphToModelStub();
 
         $this->assertEquals($newModel, $relation->getResults());
     }
@@ -87,7 +88,7 @@ class DatabaseEloquentMorphToTest extends TestCase
 
         $this->builder->shouldReceive('first')->once()->andReturnNull();
 
-        $newModel = new EloquentMorphToModelStub;
+        $newModel = new EloquentMorphToModelStub();
         $newModel->username = 'taylor';
 
         $result = $relation->getResults();
@@ -103,7 +104,7 @@ class DatabaseEloquentMorphToTest extends TestCase
 
         $this->builder->shouldReceive('first')->once()->andReturnNull();
 
-        $newModel = new EloquentMorphToModelStub;
+        $newModel = new EloquentMorphToModelStub();
         $newModel->username = 'taylor';
 
         $result = $relation->getResults();
@@ -135,12 +136,12 @@ class DatabaseEloquentMorphToTest extends TestCase
 
     public function testMorphToWithSpecifiedClassDefault()
     {
-        $parent = new EloquentMorphToModelStub;
+        $parent = new EloquentMorphToModelStub();
         $parent->relation_type = EloquentMorphToRelatedStub::class;
 
         $relation = $parent->relation()->withDefault();
 
-        $newModel = new EloquentMorphToRelatedStub;
+        $newModel = new EloquentMorphToRelatedStub();
 
         $result = $relation->getResults();
 
@@ -378,7 +379,7 @@ class DatabaseEloquentMorphToTest extends TestCase
         $this->related->shouldReceive('getTable')->andReturn('relation');
         $this->related->shouldReceive('qualifyColumn')->andReturnUsing(fn (string $column) => "relation.{$column}");
         $this->builder->shouldReceive('getModel')->andReturn($this->related);
-        $parent = $parent ?: new EloquentMorphToModelStub;
+        $parent = $parent ?: new EloquentMorphToModelStub();
 
         return m::mock(MorphTo::class.'[createModelByType]', [$this->builder, $parent, 'foreign_key', 'id', 'morph_type', 'relation']);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Illuminate\Bus\Queueable;
@@ -39,7 +41,7 @@ class JobEncryptionTest extends DatabaseTestCase
 
     public function testEncryptedJobPayloadIsStoredEncrypted()
     {
-        Bus::dispatch(new JobEncryptionTestEncryptedJob);
+        Bus::dispatch(new JobEncryptionTestEncryptedJob());
 
         $this->assertNotEmpty(
             decrypt(json_decode(DB::table('jobs')->first()->payload)->data->command)
@@ -48,12 +50,13 @@ class JobEncryptionTest extends DatabaseTestCase
 
     public function testNonEncryptedJobPayloadIsStoredRaw()
     {
-        Bus::dispatch(new JobEncryptionTestNonEncryptedJob);
+        Bus::dispatch(new JobEncryptionTestNonEncryptedJob());
 
         $this->expectException(DecryptException::class);
         $this->expectExceptionMessage('The payload is invalid');
 
-        $this->assertInstanceOf(JobEncryptionTestNonEncryptedJob::class,
+        $this->assertInstanceOf(
+            JobEncryptionTestNonEncryptedJob::class,
             unserialize(json_decode(DB::table('jobs')->first()->payload)->data->command)
         );
 
@@ -62,7 +65,7 @@ class JobEncryptionTest extends DatabaseTestCase
 
     public function testQueueCanProcessEncryptedJob()
     {
-        Bus::dispatch(new JobEncryptionTestEncryptedJob);
+        Bus::dispatch(new JobEncryptionTestEncryptedJob());
 
         Queue::pop()->fire();
 
@@ -71,7 +74,7 @@ class JobEncryptionTest extends DatabaseTestCase
 
     public function testQueueCanProcessUnEncryptedJob()
     {
-        Bus::dispatch(new JobEncryptionTestNonEncryptedJob);
+        Bus::dispatch(new JobEncryptionTestNonEncryptedJob());
 
         Queue::pop()->fire();
 
@@ -81,7 +84,8 @@ class JobEncryptionTest extends DatabaseTestCase
 
 class JobEncryptionTestEncryptedJob implements ShouldQueue, ShouldBeEncrypted
 {
-    use Dispatchable, Queueable;
+    use Dispatchable;
+    use Queueable;
 
     public static $ran = false;
 
@@ -93,7 +97,8 @@ class JobEncryptionTestEncryptedJob implements ShouldQueue, ShouldBeEncrypted
 
 class JobEncryptionTestNonEncryptedJob implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Dispatchable;
+    use Queueable;
 
     public static $ran = false;
 

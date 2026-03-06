@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Http\Middleware;
 
 use Illuminate\Container\Container;
@@ -23,14 +25,13 @@ class VitePreloadingTest extends TestCase
 
     public function testItDoesNotSetLinkTagWhenNoTagsHaveBeenPreloaded()
     {
-        $app = new Container;
-        $app->instance(Vite::class, new class extends Vite
-        {
+        $app = new Container();
+        $app->instance(Vite::class, new class () extends Vite {
             protected $preloadedAssets = [];
         });
         Facade::setFacadeApplication($app);
 
-        $response = (new AddLinkHeadersForPreloadedAssets)->handle(new Request, function () {
+        $response = (new AddLinkHeadersForPreloadedAssets())->handle(new Request(), function () {
             return new Response('Hello Laravel');
         });
 
@@ -39,9 +40,8 @@ class VitePreloadingTest extends TestCase
 
     public function testItAddsPreloadLinkHeader()
     {
-        $app = new Container;
-        $app->instance(Vite::class, new class extends Vite
-        {
+        $app = new Container();
+        $app->instance(Vite::class, new class () extends Vite {
             protected $preloadedAssets = [
                 'https://laravel.com/app.js' => [
                     'rel="modulepreload"',
@@ -51,7 +51,7 @@ class VitePreloadingTest extends TestCase
         });
         Facade::setFacadeApplication($app);
 
-        $response = (new AddLinkHeadersForPreloadedAssets)->handle(new Request, function () {
+        $response = (new AddLinkHeadersForPreloadedAssets())->handle(new Request(), function () {
             return new Response('Hello Laravel');
         });
 
@@ -63,9 +63,8 @@ class VitePreloadingTest extends TestCase
 
     public function testItDoesNotAttachHeadersToNonIlluminateResponses()
     {
-        $app = new Container;
-        $app->instance(Vite::class, new class extends Vite
-        {
+        $app = new Container();
+        $app->instance(Vite::class, new class () extends Vite {
             protected $preloadedAssets = [
                 'https://laravel.com/app.js' => [
                     'rel="modulepreload"',
@@ -75,7 +74,7 @@ class VitePreloadingTest extends TestCase
         });
         Facade::setFacadeApplication($app);
 
-        $response = (new AddLinkHeadersForPreloadedAssets)->handle(new Request, function () {
+        $response = (new AddLinkHeadersForPreloadedAssets())->handle(new Request(), function () {
             return new SymfonyResponse('Hello Laravel');
         });
 
@@ -84,9 +83,8 @@ class VitePreloadingTest extends TestCase
 
     public function testItDoesNotOverwriteOtherLinkHeaders()
     {
-        $app = new Container;
-        $app->instance(Vite::class, new class extends Vite
-        {
+        $app = new Container();
+        $app->instance(Vite::class, new class () extends Vite {
             protected $preloadedAssets = [
                 'https://laravel.com/app.js' => [
                     'rel="modulepreload"',
@@ -96,7 +94,7 @@ class VitePreloadingTest extends TestCase
         });
         Facade::setFacadeApplication($app);
 
-        $response = (new AddLinkHeadersForPreloadedAssets)->handle(new Request, function () {
+        $response = (new AddLinkHeadersForPreloadedAssets())->handle(new Request(), function () {
             return new Response('Hello Laravel', headers: ['Link' => '<https://laravel.com/logo.png>; rel="preload"; as="image"']);
         });
 
@@ -111,9 +109,8 @@ class VitePreloadingTest extends TestCase
 
     public function testItCanLimitNumberOfAssetsPreloaded()
     {
-        $app = new Container;
-        $app->instance(Vite::class, new class extends Vite
-        {
+        $app = new Container();
+        $app->instance(Vite::class, new class () extends Vite {
             protected $preloadedAssets = [
                 'https://laravel.com/first.js' => [
                     'rel="modulepreload"',
@@ -135,7 +132,7 @@ class VitePreloadingTest extends TestCase
         });
         Facade::setFacadeApplication($app);
 
-        $response = (new AddLinkHeadersForPreloadedAssets)->handle(new Request, fn () => new Response('ok'), 2);
+        $response = (new AddLinkHeadersForPreloadedAssets())->handle(new Request(), fn () => new Response('ok'), 2);
 
         $this->assertSame(
             [

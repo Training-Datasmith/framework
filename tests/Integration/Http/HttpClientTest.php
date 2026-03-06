@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Http;
 
 use Illuminate\Http\Client\Events\RequestSending;

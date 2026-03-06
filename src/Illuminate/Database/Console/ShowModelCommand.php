@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console;
 
 use Illuminate\Console\Concerns\FindsAvailableModels;
@@ -7,10 +9,12 @@ use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\ModelInspector;
 use Illuminate\Support\Collection;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Output\OutputInterface;
 
 use function Laravel\Prompts\suggest;
+
+use Symfony\Component\Console\Attribute\AsCommand;
+
+use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: 'model:show')]
 class ShowModelCommand extends DatabaseInspectionCommand implements PromptsForMissingInput

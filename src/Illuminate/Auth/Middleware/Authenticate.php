@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Middleware;
 
 use Closure;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Http\Request;
 
@@ -25,8 +26,7 @@ class Authenticate implements AuthenticatesRequests
          * The authentication factory instance.
          */
         protected \Illuminate\Contracts\Auth\Factory $auth
-    )
-    {
+    ) {
     }
 
     /**

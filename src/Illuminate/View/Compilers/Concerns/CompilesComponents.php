@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Compilers\Concerns;
 
 use Illuminate\Contracts\Support\CanBeEscapedWhenCastToString;
@@ -20,9 +22,8 @@ trait CompilesComponents
      * Compile the component statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileComponent($expression)
+    protected function compileComponent($expression): string
     {
         [$component, $alias, $data] = str_contains($expression, ',')
             ? array_map(trim(...), explode(',', trim($expression, '()'), 3)) + ['', '', '']

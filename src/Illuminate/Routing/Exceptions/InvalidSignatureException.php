@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;

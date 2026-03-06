@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console\Scheduling;
 
 use Exception;
@@ -48,7 +50,7 @@ class CallbackEventTest extends TestCase
         $success = null;
 
         $event = (new CallbackEvent(m::mock(EventMutex::class), function () {
-            throw new Exception;
+            throw new Exception();
         }))->onSuccess(function () use (&$success) {
             $success = true;
         })->onFailure(function () use (&$success) {
@@ -66,7 +68,7 @@ class CallbackEventTest extends TestCase
     public function testExceptionBubbles()
     {
         $event = new CallbackEvent(m::mock(EventMutex::class), function () {
-            throw new Exception;
+            throw new Exception();
         });
 
         $this->expectException(Exception::class);

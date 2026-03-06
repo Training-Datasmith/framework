@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Config\Repository as Config;
@@ -200,7 +202,9 @@ class SupportServiceProviderTest extends TestCase
     public function test_can_remove_provider()
     {
         $this->tempFile = __DIR__.'/providers.php';
-        file_put_contents($this->tempFile, $contents = <<< PHP
+        file_put_contents(
+            $this->tempFile,
+            $contents = <<< PHP
 <?php
 
 return [
@@ -244,7 +248,7 @@ class ServiceProviderForTestingOne extends ServiceProvider
 {
     public function register()
     {
-        //
+
     }
 
     public function boot()
@@ -270,7 +274,7 @@ class ServiceProviderForTestingTwo extends ServiceProvider
 {
     public function register()
     {
-        //
+
     }
 
     public function boot()

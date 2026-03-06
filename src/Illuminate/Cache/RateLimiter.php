@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Closure;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Redis\Connections\PhpRedisConnection;
 use Illuminate\Support\Collection;
-use Illuminate\Support\InteractsWithTime;
 
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\InteractsWithTime;
 
 class RateLimiter
 {
@@ -29,8 +32,7 @@ class RateLimiter
          * The cache store implementation.
          */
         protected \Illuminate\Contracts\Cache\Repository $cache
-    )
-    {
+    ) {
     }
 
     /**
@@ -134,9 +136,8 @@ class RateLimiter
      *
      * @param  string  $key
      * @param  \DateTimeInterface|\DateInterval|int  $decaySeconds
-     * @return int
      */
-    public function hit($key, $decaySeconds = 60)
+    public function hit($key, $decaySeconds = 60): int
     {
         return $this->increment($key, $decaySeconds);
     }
@@ -153,7 +154,9 @@ class RateLimiter
         $key = $this->cleanRateLimiterKey($key);
 
         $this->cache->add(
-            $key.':timer', $this->availableAt($decaySeconds), $decaySeconds
+            $key.':timer',
+            $this->availableAt($decaySeconds),
+            $decaySeconds
         );
 
         $added = $this->withoutSerializationOrCompression(
@@ -177,9 +180,8 @@ class RateLimiter
      * @param  string  $key
      * @param  \DateTimeInterface|\DateInterval|int  $decaySeconds
      * @param  int  $amount
-     * @return int
      */
-    public function decrement($key, $decaySeconds = 60, $amount = 1)
+    public function decrement($key, $decaySeconds = 60, $amount = 1): int
     {
         return $this->increment($key, $decaySeconds, $amount * -1);
     }
@@ -233,7 +235,7 @@ class RateLimiter
      * @param  int  $maxAttempts
      * @return int
      */
-    public function retriesLeft($key, $maxAttempts)
+    public function retriesLeft($key, $maxAttempts): float|int
     {
         return $this->remaining($key, $maxAttempts);
     }

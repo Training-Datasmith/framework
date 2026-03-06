@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Auth;
 
 use Illuminate\Auth\Events\PasswordResetLinkSent;
@@ -119,7 +121,7 @@ class ForgotPasswordTest extends TestCase
         Notification::fake();
 
         ResetPassword::toMailUsing(function ($notifiable, $token) {
-            return (new MailMessage)
+            return (new MailMessage())
                 ->subject(__('Reset Password Notification'))
                 ->line(__('You are receiving this email because we received a password reset request for your account.'))
                 ->action(__('Reset Password'), route('custom.password.reset', $token))

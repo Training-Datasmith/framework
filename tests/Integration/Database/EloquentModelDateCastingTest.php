@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentModelDateCastingTest;
 
 use Carbon\Carbon;
@@ -167,7 +169,7 @@ class TestModel1 extends Model
 class TestModel2 extends Model
 {
     public $table = 'test_model2';
-    const UPDATED_AT = null;
+    public const UPDATED_AT = null;
     protected $guarded = [];
 
     public $casts = [

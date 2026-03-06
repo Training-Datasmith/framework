@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Bootstrap;
 
 use Illuminate\Foundation\Application;
@@ -37,7 +39,7 @@ class LoadEnvironmentVariablesTest extends TestCase
     {
         $this->expectOutputString('');
 
-        (new LoadEnvironmentVariables)->bootstrap($this->getAppMock('.env'));
+        (new LoadEnvironmentVariables())->bootstrap($this->getAppMock('.env'));
 
         $this->assertSame('BAR', env('FOO'));
         $this->assertSame('BAR', getenv('FOO'));
@@ -49,6 +51,6 @@ class LoadEnvironmentVariablesTest extends TestCase
     {
         $this->expectOutputString('');
 
-        (new LoadEnvironmentVariables)->bootstrap($this->getAppMock('BAD_FILE'));
+        (new LoadEnvironmentVariables())->bootstrap($this->getAppMock('BAD_FILE'));
     }
 }

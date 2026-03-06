@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Middleware;
 
 use Illuminate\Container\Container;
@@ -26,7 +28,7 @@ class RateLimitedWithRedis extends RateLimited
     public function __construct($limiterName, /**
      * The name of the Redis connection that should be used.
      */
-    protected ?string $connectionName = null)
+        protected ?string $connectionName = null)
     {
         parent::__construct($limiterName);
     }
@@ -66,7 +68,10 @@ class RateLimitedWithRedis extends RateLimited
             ->connection($this->connectionName);
 
         $limiter = new DurationLimiter(
-            $redis, $key, $maxAttempts, $decaySeconds
+            $redis,
+            $key,
+            $maxAttempts,
+            $decaySeconds
         );
 
         return tap(! $limiter->acquire(), function () use ($key, $limiter): void {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database\Fixtures\Models;
 
 use Illuminate\Database\Eloquent\Attributes\UseResource;
@@ -9,5 +11,4 @@ use Illuminate\Tests\Database\Fixtures\Resources\EloquentResourceTestJsonResourc
 #[UseResource(EloquentResourceTestJsonResource::class)]
 class EloquentResourceTestResourceModelWithUseResourceAttribute extends Model
 {
-    //
 }

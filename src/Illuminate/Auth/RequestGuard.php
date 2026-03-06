@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use Illuminate\Contracts\Auth\Guard;
@@ -9,7 +11,8 @@ use Illuminate\Support\Traits\Macroable;
 
 class RequestGuard implements Guard
 {
-    use GuardHelpers, Macroable;
+    use GuardHelpers;
+    use Macroable;
 
     /**
      * The guard callback.
@@ -24,7 +27,7 @@ class RequestGuard implements Guard
     public function __construct(callable $callback, /**
      * The request instance.
      */
-    protected \Illuminate\Http\Request $request, ?UserProvider $provider = null)
+        protected \Illuminate\Http\Request $request, ?UserProvider $provider = null)
     {
         $this->callback = $callback;
         $this->provider = $provider;
@@ -45,7 +48,9 @@ class RequestGuard implements Guard
         }
 
         return $this->user = call_user_func(
-            $this->callback, $this->request, $this->getProvider()
+            $this->callback,
+            $this->request,
+            $this->getProvider()
         );
     }
 

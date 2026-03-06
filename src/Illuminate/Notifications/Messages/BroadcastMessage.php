@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications\Messages;
 
 use Illuminate\Bus\Queueable;

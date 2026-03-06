@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Connectors;
 
 use PDO;
@@ -37,10 +39,8 @@ class MySqlConnector extends Connector implements ConnectorInterface
      * Create a DSN string from a configuration.
      *
      * Chooses socket or host/port based on the 'unix_socket' config value.
-     *
-     * @return string
      */
-    protected function getDsn(array $config)
+    protected function getDsn(array $config): string
     {
         return $this->hasSocket($config)
             ? $this->getSocketDsn($config)

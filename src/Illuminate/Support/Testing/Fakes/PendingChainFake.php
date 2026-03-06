@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Testing\Fakes;
 
 use Closure;
@@ -17,8 +19,10 @@ class PendingChainFake extends PendingChain
     public function __construct(/**
      * The fake bus instance.
      */
-    protected \Illuminate\Support\Testing\Fakes\BusFake $bus, $job, $chain)
-    {
+        protected \Illuminate\Support\Testing\Fakes\BusFake $bus,
+        $job,
+        $chain
+    ) {
         $this->job = $job;
         $this->chain = $chain;
     }

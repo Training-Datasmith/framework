@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail\Transport;
 
 use Illuminate\Support\Str;
-use Psr\Log\LoggerInterface;
 use Stringable;
 use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mailer\SentMessage;
@@ -20,8 +21,7 @@ class LogTransport implements Stringable, TransportInterface
          * The Logger instance.
          */
         protected \Psr\Log\LoggerInterface $logger
-    )
-    {
+    ) {
     }
 
     /**
@@ -70,10 +70,8 @@ class LogTransport implements Stringable, TransportInterface
 
     /**
      * Get the logger for the LogTransport instance.
-     *
-     * @return \Psr\Log\LoggerInterface
      */
-    public function logger()
+    public function logger(): \Psr\Log\LoggerInterface
     {
         return $this->logger;
     }

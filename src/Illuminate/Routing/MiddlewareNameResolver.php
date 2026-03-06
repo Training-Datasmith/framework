@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Closure;
@@ -10,9 +12,8 @@ class MiddlewareNameResolver
      * Resolve the middleware name to a class name(s) preserving passed parameters.
      *
      * @param  \Closure|string  $name
-     * @return \Closure|string|array
      */
-    public static function resolve($name, array $map, array $middlewareGroups)
+    public static function resolve($name, array $map, array $middlewareGroups): \Closure|array|string
     {
         // When the middleware is simply a Closure, we will return this Closure instance
         // directly so that Closures can be registered as middleware inline, which is
@@ -55,14 +56,18 @@ class MiddlewareNameResolver
             // reference other groups without needing to repeat all their middlewares.
             if (isset($middlewareGroups[$middleware])) {
                 $results = array_merge($results, static::parseMiddlewareGroup(
-                    $middleware, $map, $middlewareGroups
+                    $middleware,
+                    $map,
+                    $middlewareGroups
                 ));
 
                 continue;
             }
 
             [$middleware, $parameters] = array_pad(
-                explode(':', (string) $middleware, 2), 2, null
+                explode(':', (string) $middleware, 2),
+                2,
+                null
             );
 
             // If this middleware is actually a route middleware, we will extract the full

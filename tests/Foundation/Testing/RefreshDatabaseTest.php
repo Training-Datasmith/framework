@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Testing;
 
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
@@ -10,9 +12,10 @@ use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Mockery as m;
 use Orchestra\Testbench\Concerns\ApplicationTestingHooks;
 use Orchestra\Testbench\Foundation\Application as Testbench;
-use PHPUnit\Framework\TestCase;
 
 use function Orchestra\Testbench\package_path;
+
+use PHPUnit\Framework\TestCase;
 
 class RefreshDatabaseTest extends TestCase
 {

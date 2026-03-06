@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Bus;
 
 use Carbon\CarbonImmutable;
@@ -37,7 +39,7 @@ class BusBatchTest extends TestCase
 {
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -48,7 +50,7 @@ class BusBatchTest extends TestCase
         $db->setAsGlobal();
 
         if (! Facade::getFacadeApplication()) {
-            $container = new Container;
+            $container = new Container();
             Facade::setFacadeApplication($container);
 
             $queue = m::mock(Factory::class);
@@ -129,13 +131,11 @@ class BusBatchTest extends TestCase
 
         $batch = $this->createTestBatch($queue);
 
-        $job = new class
-        {
+        $job = new class () {
             use Batchable;
         };
 
-        $secondJob = new class
-        {
+        $secondJob = new class () {
             use Batchable;
         };
 
@@ -164,18 +164,16 @@ class BusBatchTest extends TestCase
 
     public function test_jobs_can_be_added_to_pending_batch()
     {
-        $batch = new PendingBatch(new Container, collect());
+        $batch = new PendingBatch(new Container(), collect());
         $this->assertCount(0, $batch->jobs);
 
-        $job = new class
-        {
+        $job = new class () {
             use Batchable;
         };
         $batch->add([$job]);
         $this->assertCount(1, $batch->jobs);
 
-        $secondJob = new class
-        {
+        $secondJob = new class () {
             use Batchable;
 
             public $anotherProperty;
@@ -186,14 +184,13 @@ class BusBatchTest extends TestCase
 
     public function test_jobs_can_be_added_to_the_pending_batch_from_iterable()
     {
-        $batch = new PendingBatch(new Container, collect());
+        $batch = new PendingBatch(new Container(), collect());
         $this->assertCount(0, $batch->jobs);
 
         $count = 3;
         $generator = function (int $jobsCount) {
             for ($i = 0; $i < $jobsCount; $i++) {
-                yield new class
-                {
+                yield new class () {
                     use Batchable;
                 };
             }
@@ -222,13 +219,11 @@ class BusBatchTest extends TestCase
 
         $batch = $this->createTestBatch($queue);
 
-        $job = new class
-        {
+        $job = new class () {
             use Batchable;
         };
 
-        $secondJob = new class
-        {
+        $secondJob = new class () {
             use Batchable;
         };
 
@@ -263,8 +258,7 @@ class BusBatchTest extends TestCase
         $queue = m::mock(Factory::class);
         $batch = $this->createTestBatch($queue);
 
-        $job = new class
-        {
+        $job = new class () {
             use Batchable;
         };
 
@@ -289,13 +283,11 @@ class BusBatchTest extends TestCase
 
         $batch = $this->createTestBatch($queue, $allowFailures = false);
 
-        $job = new class
-        {
+        $job = new class () {
             use Batchable;
         };
 
-        $secondJob = new class
-        {
+        $secondJob = new class () {
             use Batchable;
         };
 
@@ -331,13 +323,11 @@ class BusBatchTest extends TestCase
 
         $batch = $this->createTestBatch($queue, $allowFailures = true);
 
-        $job = new class
-        {
+        $job = new class () {
             use Batchable;
         };
 
-        $secondJob = new class
-        {
+        $secondJob = new class () {
             use Batchable;
         };
 
@@ -368,19 +358,17 @@ class BusBatchTest extends TestCase
 
     public function test_pending_batch_filters_out_falsy_jobs()
     {
-        $job = new class
-        {
+        $job = new class () {
             use Batchable;
         };
 
-        $secondJob = new class
-        {
+        $secondJob = new class () {
             use Batchable;
         };
 
         $jobsWithNulls = collect([$job, null, $secondJob, [], 0, '', false]);
 
-        $batch = new PendingBatch(new Container, $jobsWithNulls);
+        $batch = new PendingBatch(new Container(), $jobsWithNulls);
 
         $this->assertCount(2, $batch->jobs);
         $this->assertTrue($batch->jobs->contains($job));
@@ -393,7 +381,7 @@ class BusBatchTest extends TestCase
 
         $repository = new DatabaseBatchRepository(new BatchFactory($queue), DB::connection(), 'job_batches');
 
-        $pendingBatch = (new PendingBatch(new Container, collect()))
+        $pendingBatch = (new PendingBatch(new Container(), collect()))
             ->allowFailures([
                 static fn (Batch $batch, $e): true => $_SERVER['__failure1.invoked'] = true,
                 function (Batch $batch, $e) {
@@ -414,8 +402,7 @@ class BusBatchTest extends TestCase
 
         $batch = $repository->store($pendingBatch);
 
-        $job = new class
-        {
+        $job = new class () {
             use Batchable;
         };
 
@@ -530,11 +517,11 @@ class BusBatchTest extends TestCase
 
         $batch = $this->createTestBatch($queue);
 
-        $chainHeadJob = new ChainHeadJob;
+        $chainHeadJob = new ChainHeadJob();
 
-        $secondJob = new SecondTestJob;
+        $secondJob = new SecondTestJob();
 
-        $thirdJob = new ThirdTestJob;
+        $thirdJob = new ThirdTestJob();
 
         $queue->shouldReceive('connection')->once()
             ->with('test-connection')
@@ -564,8 +551,7 @@ class BusBatchTest extends TestCase
     {
         Queue::fake();
 
-        $TestBatchJob = new class
-        {
+        $TestBatchJob = new class () {
             use Batchable;
 
             public function handle()
@@ -585,7 +571,7 @@ class BusBatchTest extends TestCase
 
     public function test_options_serialization_on_postgres()
     {
-        $pendingBatch = (new PendingBatch(new Container, collect()))
+        $pendingBatch = (new PendingBatch(new Container(), collect()))
             ->onQueue('test-queue');
 
         $connection = m::spy(PostgresConnection::class);
@@ -596,7 +582,9 @@ class BusBatchTest extends TestCase
         $builder->shouldReceive('where')->andReturnSelf();
 
         $repository = new DatabaseBatchRepository(
-            new BatchFactory(m::mock(Factory::class)), $connection, 'job_batches'
+            new BatchFactory(m::mock(Factory::class)),
+            $connection,
+            'job_batches'
         );
 
         $repository->store($pendingBatch);
@@ -655,7 +643,7 @@ class BusBatchTest extends TestCase
     {
         $repository = new DatabaseBatchRepository(new BatchFactory($queue), DB::connection(), 'job_batches');
 
-        $pendingBatch = (new PendingBatch(new Container, collect()))
+        $pendingBatch = (new PendingBatch(new Container(), collect()))
             ->progress(function (Batch $batch) {
                 $_SERVER['__progress.batch'] = $batch;
                 $_SERVER['__progress.count']++;
@@ -703,15 +691,21 @@ class BusBatchTest extends TestCase
 
 class ChainHeadJob implements ShouldQueue
 {
-    use Batchable, Dispatchable, Queueable;
+    use Batchable;
+    use Dispatchable;
+    use Queueable;
 }
 
 class SecondTestJob implements ShouldQueue
 {
-    use Batchable, Dispatchable, Queueable;
+    use Batchable;
+    use Dispatchable;
+    use Queueable;
 }
 
 class ThirdTestJob implements ShouldQueue
 {
-    use Batchable, Dispatchable, Queueable;
+    use Batchable;
+    use Dispatchable;
+    use Queueable;
 }

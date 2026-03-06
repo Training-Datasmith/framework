@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -106,7 +108,7 @@ class DatabaseNotification extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
-    public function scopeRead(Builder $query)
+    public function scopeRead(Builder $query): \Illuminate\Database\Query\Builder
     {
         return $query->whereNotNull('read_at');
     }

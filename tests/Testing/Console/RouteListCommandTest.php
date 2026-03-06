@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Testing\Console;
 
 use Illuminate\Contracts\Routing\Registrar;
@@ -40,7 +42,7 @@ class RouteListCommandTest extends TestCase
     public function testDisplayRoutesForCli()
     {
         $this->router->get('/', function () {
-            //
+
         });
 
         $this->router->get('closure', function () {
@@ -51,11 +53,11 @@ class RouteListCommandTest extends TestCase
         $this->router->post('controller-invokable', FooController::class);
         $this->router->domain('{account}.example.com')->group(function () {
             $this->router->get('/', function () {
-                //
+
             });
 
             $this->router->get('user/{id}', function ($account, $id) {
-                //
+
             })->name('user.show')->middleware('web');
         });
 
@@ -83,7 +85,7 @@ class RouteListCommandTest extends TestCase
         $this->router->post('controller-invokable', FooController::class);
         $this->router->domain('{account}.example.com')->group(function () {
             $this->router->get('user/{id}', function ($account, $id) {
-                //
+
             })->name('user.show')->middleware('web');
         });
 
@@ -105,10 +107,10 @@ class RouteListCommandTest extends TestCase
         $this->withoutDeprecationHandling();
 
         $this->router->get('/', function () {
-            //
+
         });
         $this->router->get('/foo', function () {
-            //
+
         })->name('foo.show');
 
         $this->artisan(RouteListCommand::class, ['--name' => 'foo'])
@@ -129,7 +131,7 @@ class RouteListCommandTest extends TestCase
         });
 
         $this->router->get('/', function () {
-            //
+
         });
         $this->router->get('foo/{user}', [FooController::class, 'show']);
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Support\Facades\DB;
@@ -94,10 +96,10 @@ class DatabaseTransactionsTest extends DatabaseTestCase
                 DB::connection('second_connection')->transaction(function () use ($thirdObject) {
                     DB::afterCommit(fn () => $thirdObject->handle());
 
-                    throw new \Exception;
+                    throw new \Exception();
                 });
             } catch (\Exception) {
-                //
+
             }
         });
 

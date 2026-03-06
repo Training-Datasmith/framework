@@ -1,22 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Translation;
 
 use Closure;
 use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Contracts\Translation\Translator as TranslatorContract;
 use Illuminate\Support\Arr;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\NamespacedItemResolver;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
-use InvalidArgumentException;
 
-use function Illuminate\Support\enum_value;
+use InvalidArgumentException;
 
 class Translator extends NamespacedItemResolver implements TranslatorContract
 {
-    use Macroable, ReflectsClosures;
+    use Macroable;
+    use ReflectsClosures;
 
     /**
      * The default locale being used by the translator.
@@ -82,8 +87,9 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     public function __construct(/**
      * The loader implementation.
      */
-    protected \Illuminate\Contracts\Translation\Loader $loader, $locale)
-    {
+        protected \Illuminate\Contracts\Translation\Loader $loader,
+        $locale
+    ) {
         $this->setLocale($locale);
     }
 
@@ -164,14 +170,21 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
             foreach ($locales as $languageLineLocale) {
                 if (! is_null($line = $this->getLine(
-                    $namespace, $group, $languageLineLocale, $item, $replace
+                    $namespace,
+                    $group,
+                    $languageLineLocale,
+                    $item,
+                    $replace
                 ))) {
                     return $line;
                 }
             }
 
             $key = $this->handleMissingTranslationKey(
-                $key, $replace, $locale, $fallback
+                $key,
+                $replace,
+                $locale,
+                $fallback
             );
         }
 
@@ -192,7 +205,9 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     public function choice($key, $number, array $replace = [], $locale = null)
     {
         $line = $this->get(
-            $key, [], $locale = $this->localeForChoice($key, $locale)
+            $key,
+            [],
+            $locale = $this->localeForChoice($key, $locale)
         );
 
         // If the given "number" is actually an array or countable we will simply count the
@@ -207,7 +222,8 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
         }
 
         return $this->makeReplacements(
-            $this->getSelector()->choose($line, $number, $locale), $replace
+            $this->getSelector()->choose($line, $number, $locale),
+            $replace
         );
     }
 
@@ -359,7 +375,10 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
         $key = call_user_func(
             $this->missingTranslationKeyCallback,
-            $key, $replace, $locale, $fallback
+            $key,
+            $replace,
+            $locale,
+            $fallback
         ) ?? $key;
 
         $this->handleMissingTranslationKeys = true;
@@ -457,7 +476,7 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     public function getSelector()
     {
         if (! isset($this->selector)) {
-            $this->selector = new MessageSelector;
+            $this->selector = new MessageSelector();
         }
 
         return $this->selector;
@@ -473,10 +492,8 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Get the language line loader implementation.
-     *
-     * @return \Illuminate\Contracts\Translation\Loader
      */
-    public function getLoader()
+    public function getLoader(): \Illuminate\Contracts\Translation\Loader
     {
         return $this->loader;
     }

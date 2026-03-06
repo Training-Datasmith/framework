@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail;
 
 use Aws\Ses\SesClient;
@@ -58,8 +60,7 @@ class MailManager implements FactoryContract
          * The application instance.
          */
         protected $app
-    )
-    {
+    ) {
     }
 
     /**
@@ -89,10 +90,9 @@ class MailManager implements FactoryContract
     /**
      * Attempt to get the mailer from the local cache.
      *
-     * @param  string  $name
      * @return \Illuminate\Mail\Mailer
      */
-    protected function get($name)
+    protected function get(string $name)
     {
         return $this->mailers[$name] ?? $this->resolve($name);
     }
@@ -172,12 +172,10 @@ class MailManager implements FactoryContract
 
     /**
      * Create an instance of the Symfony SMTP Transport driver.
-     *
-     * @return \Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport
      */
-    protected function createSmtpTransport(array $config)
+    protected function createSmtpTransport(array $config): \Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport
     {
-        $factory = new EsmtpTransportFactory;
+        $factory = new EsmtpTransportFactory();
 
         $scheme = $config['scheme'] ?? null;
 
@@ -269,10 +267,8 @@ class MailManager implements FactoryContract
 
     /**
      * Add the SES credentials to the configuration array.
-     *
-     * @return array
      */
-    protected function addSesCredentials(array $config)
+    protected function addSesCredentials(array $config): array
     {
         if (! empty($config['key']) && ! empty($config['secret'])) {
             $config['credentials'] = Arr::only($config, ['key', 'secret']);
@@ -302,7 +298,7 @@ class MailManager implements FactoryContract
      */
     protected function createMailTransport()
     {
-        return new SendmailTransport;
+        return new SendmailTransport();
     }
 
     /**
@@ -424,7 +420,7 @@ class MailManager implements FactoryContract
      */
     protected function createArrayTransport(): \Illuminate\Mail\Transport\ArrayTransport
     {
-        return new ArrayTransport;
+        return new ArrayTransport();
     }
 
     /**
@@ -472,7 +468,7 @@ class MailManager implements FactoryContract
             : $this->app['config']["mail.mailers.{$name}"];
 
         if (isset($config['url'])) {
-            $config = array_merge($config, (new ConfigurationUrlParser)->parseConfiguration($config));
+            $config = array_merge($config, (new ConfigurationUrlParser())->parseConfiguration($config));
 
             $config['transport'] = Arr::pull($config, 'driver');
         }
@@ -569,7 +565,6 @@ class MailManager implements FactoryContract
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

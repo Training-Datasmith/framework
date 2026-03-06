@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Eloquent\Collection as DatabaseCollection;
@@ -157,7 +159,10 @@ class PivotSerializationTestProject extends Model
     public function collaborators()
     {
         return $this->belongsToMany(
-            PivotSerializationTestUser::class, 'project_users', 'project_id', 'user_id'
+            PivotSerializationTestUser::class,
+            'project_users',
+            'project_id',
+            'user_id'
         )->using(PivotSerializationTestCollaborator::class);
     }
 

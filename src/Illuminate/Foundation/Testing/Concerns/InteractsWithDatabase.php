@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Testing\Concerns;
 
 use Illuminate\Contracts\Support\Jsonable;
@@ -41,7 +43,8 @@ trait InteractsWithDatabase
         }
 
         $this->assertThat(
-            $this->getTable($table), new HasInDatabase($this->getConnection($connection, $table), $data)
+            $this->getTable($table),
+            new HasInDatabase($this->getConnection($connection, $table), $data)
         );
 
         return $this;
@@ -91,7 +94,8 @@ trait InteractsWithDatabase
     protected function assertDatabaseCount($table, int $count, $connection = null)
     {
         $this->assertThat(
-            $this->getTable($table), new CountInDatabase($this->getConnection($connection, $table), $count)
+            $this->getTable($table),
+            new CountInDatabase($this->getConnection($connection, $table), $count)
         );
 
         return $this;
@@ -107,7 +111,8 @@ trait InteractsWithDatabase
     protected function assertDatabaseEmpty($table, $connection = null)
     {
         $this->assertThat(
-            $this->getTable($table), new CountInDatabase($this->getConnection($connection, $table), 0)
+            $this->getTable($table),
+            new CountInDatabase($this->getConnection($connection, $table), 0)
         );
 
         return $this;
@@ -344,7 +349,7 @@ trait InteractsWithDatabase
      */
     protected function newModelFor($table): ?\Illuminate\Database\Eloquent\Model
     {
-        return is_subclass_of($table, Model::class) ? (new $table) : null;
+        return is_subclass_of($table, Model::class) ? (new $table()) : null;
     }
 
     /**

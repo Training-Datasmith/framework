@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Bus;
 
 use Carbon\CarbonImmutable;
@@ -66,17 +68,18 @@ trait Batchable
      *
      * @return array{0: $this, 1: \Illuminate\Support\Testing\Fakes\BatchFake}
      */
-    public function withFakeBatch(string $id = '',
-                                  string $name = '',
-                                  int $totalJobs = 0,
-                                  int $pendingJobs = 0,
-                                  int $failedJobs = 0,
-                                  array $failedJobIds = [],
-                                  array $options = [],
-                                  ?CarbonImmutable $createdAt = null,
-                                  ?CarbonImmutable $cancelledAt = null,
-                                  ?CarbonImmutable $finishedAt = null): array
-    {
+    public function withFakeBatch(
+        string $id = '',
+        string $name = '',
+        int $totalJobs = 0,
+        int $pendingJobs = 0,
+        int $failedJobs = 0,
+        array $failedJobIds = [],
+        array $options = [],
+        ?CarbonImmutable $createdAt = null,
+        ?CarbonImmutable $cancelledAt = null,
+        ?CarbonImmutable $finishedAt = null
+    ): array {
         $this->fakeBatch = new BatchFake(
             empty($id) ? (string) Str::uuid() : $id,
             $name,

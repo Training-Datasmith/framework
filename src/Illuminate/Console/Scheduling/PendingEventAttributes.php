@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 /**
@@ -7,7 +9,8 @@ namespace Illuminate\Console\Scheduling;
  */
 class PendingEventAttributes
 {
-    use ManagesAttributes, ManagesFrequencies;
+    use ManagesAttributes;
+    use ManagesFrequencies;
 
     /**
      * The recorded macro calls to replay on each event.

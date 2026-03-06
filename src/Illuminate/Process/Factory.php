@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Closure;
@@ -59,7 +61,7 @@ class Factory
      */
     public function describe(): \Illuminate\Process\FakeProcessDescription
     {
-        return new FakeProcessDescription;
+        return new FakeProcessDescription();
     }
 
     /**
@@ -80,7 +82,7 @@ class Factory
         $this->recording = true;
 
         if (is_null($callback)) {
-            $this->fakeHandlers = ['*' => fn (): \Illuminate\Process\FakeProcessResult => new FakeProcessResult];
+            $this->fakeHandlers = ['*' => fn (): \Illuminate\Process\FakeProcessResult => new FakeProcessResult()];
 
             return $this;
         }
@@ -168,7 +170,7 @@ class Factory
         $callback = is_string($callback) ? fn ($process): bool => $process->command === $callback : $callback;
 
         PHPUnit::assertTrue(
-            (new Collection($this->recorded))->filter(fn($pair) => $callback($pair[0], $pair[1]))->count() > 0,
+            (new Collection($this->recorded))->filter(fn ($pair) => $callback($pair[0], $pair[1]))->count() > 0,
             'An expected process was not invoked.'
         );
 
@@ -189,7 +191,8 @@ class Factory
             ->count();
 
         PHPUnit::assertSame(
-            $times, $count,
+            $times,
+            $count,
             "An expected process ran {$count} times instead of {$times} times."
         );
 
@@ -206,7 +209,7 @@ class Factory
         $callback = is_string($callback) ? fn ($process): bool => $process->command === $callback : $callback;
 
         PHPUnit::assertTrue(
-            (new Collection($this->recorded))->filter(fn($pair) => $callback($pair[0], $pair[1]))->count() === 0,
+            (new Collection($this->recorded))->filter(fn ($pair) => $callback($pair[0], $pair[1]))->count() === 0,
             'An unexpected process was invoked.'
         );
 
@@ -218,7 +221,7 @@ class Factory
      *
      * @return $this
      */
-    public function assertDidntRun(Closure|string $callback)
+    public function assertDidntRun(Closure|string $callback): static
     {
         return $this->assertNotRan($callback);
     }
@@ -262,20 +265,16 @@ class Factory
 
     /**
      * Run a pool of processes and wait for them to finish executing.
-     *
-     * @return \Illuminate\Process\ProcessPoolResults
      */
-    public function concurrently(callable $callback, ?callable $output = null)
+    public function concurrently(callable $callback, ?callable $output = null): \Illuminate\Process\ProcessPoolResults
     {
         return (new Pool($this, $callback))->start($output)->wait();
     }
 
     /**
      * Create a new pending process associated with this factory.
-     *
-     * @return \Illuminate\Process\PendingProcess
      */
-    public function newPendingProcess()
+    public function newPendingProcess(): \Illuminate\Process\PendingProcess
     {
         return (new PendingProcess($this))->withFakeHandlers($this->fakeHandlers);
     }
@@ -283,7 +282,6 @@ class Factory
     /**
      * Dynamically proxy methods to a new pending process instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

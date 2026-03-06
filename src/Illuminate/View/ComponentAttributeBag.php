@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 use ArrayAccess;
@@ -20,7 +22,9 @@ use Traversable;
 
 class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate, JsonSerializable, Htmlable, Stringable
 {
-    use Conditionable, InteractsWithData, Macroable;
+    use Conditionable;
+    use InteractsWithData;
+    use Macroable;
 
     /**
      * The raw array of attributes.
@@ -141,22 +145,20 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Return a bag of attributes that have keys starting with the given value / pattern.
      *
      * @param  string|string[]  $needles
-     * @return static
      */
-    public function whereStartsWith($needles)
+    public function whereStartsWith($needles): static
     {
-        return $this->filter(fn($value, $key) => Str::startsWith($key, $needles));
+        return $this->filter(fn ($value, $key): bool => Str::startsWith($key, $needles));
     }
 
     /**
      * Return a bag of attributes with keys that do not start with the given value / pattern.
      *
      * @param  string|string[]  $needles
-     * @return static
      */
-    public function whereDoesntStartWith($needles)
+    public function whereDoesntStartWith($needles): static
     {
-        return $this->filter(fn($value, $key) => ! Str::startsWith($key, $needles));
+        return $this->filter(fn ($value, $key): bool => ! Str::startsWith($key, $needles));
     }
 
     /**
@@ -174,9 +176,8 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Only include the given attribute from the attribute array.
      *
      * @param  mixed  $keys
-     * @return static
      */
-    public function onlyProps(array $keys)
+    public function onlyProps(array $keys): static
     {
         return $this->only(static::extractPropNames($keys));
     }
@@ -185,9 +186,8 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Exclude the given attribute from the attribute array.
      *
      * @param  mixed  $keys
-     * @return static
      */
-    public function exceptProps(array $keys)
+    public function exceptProps(array $keys): static
     {
         return $this->except(static::extractPropNames($keys));
     }
@@ -196,9 +196,8 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Conditionally merge classes into the attribute bag.
      *
      * @param  mixed  $classList
-     * @return static
      */
-    public function class($classList)
+    public function class($classList): static
     {
         $classList = Arr::wrap($classList);
 
@@ -209,9 +208,8 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Conditionally merge styles into the attribute bag.
      *
      * @param  mixed  $styleList
-     * @return static
      */
-    public function style($styleList)
+    public function style($styleList): static
     {
         $styleList = Arr::wrap($styleList);
 
@@ -225,12 +223,12 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      */
     public function merge(array $attributeDefaults = [], $escape = true): static
     {
-        $attributeDefaults = array_map(fn($value) => $this->shouldEscapeAttributeValue($escape, $value)
+        $attributeDefaults = array_map(fn ($value) => $this->shouldEscapeAttributeValue($escape, $value)
             ? e($value)
             : $value, $attributeDefaults);
 
         [$appendableAttributes, $nonAppendableAttributes] = (new Collection($this->attributes))
-            ->partition(fn($value, $key) => $key === 'class' || $key === 'style' || (
+            ->partition(fn ($value, $key): bool => $key === 'class' || $key === 'style' || (
                 isset($attributeDefaults[$key]) &&
                 $attributeDefaults[$key] instanceof AppendableAttributeValue
             ));

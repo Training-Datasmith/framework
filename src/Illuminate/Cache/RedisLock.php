@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 class RedisLock extends Lock
@@ -15,8 +17,11 @@ class RedisLock extends Lock
     public function __construct(/**
      * The Redis factory implementation.
      */
-    protected $redis, $name, $seconds, $owner = null)
-    {
+        protected $redis,
+        $name,
+        $seconds,
+        $owner = null
+    ) {
         parent::__construct($name, $seconds, $owner);
     }
 

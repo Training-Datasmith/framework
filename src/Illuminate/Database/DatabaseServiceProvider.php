@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Faker\Factory as FakerFactory;
@@ -53,22 +55,22 @@ class DatabaseServiceProvider extends ServiceProvider
         // The connection factory is used to create the actual connection instances on
         // the database. We will inject the factory into the manager so that it may
         // make the connections while they are actually needed and not of before.
-        $this->app->singleton('db.factory', fn($app) => new ConnectionFactory($app));
+        $this->app->singleton('db.factory', fn ($app): \Illuminate\Database\Connectors\ConnectionFactory => new ConnectionFactory($app));
 
         // The database manager is used to resolve various connections, since multiple
         // connections might be managed. It also implements the connection resolver
         // interface which may be used by other components requiring connections.
-        $this->app->singleton('db', fn($app) => new DatabaseManager($app, $app['db.factory']));
+        $this->app->singleton('db', fn ($app): \Illuminate\Database\DatabaseManager => new DatabaseManager($app, $app['db.factory']));
 
-        $this->app->bind('db.connection', fn($app) => $app['db']->connection());
+        $this->app->bind('db.connection', fn ($app) => $app['db']->connection());
 
-        $this->app->bind('db.schema', fn($app) => $app['db']->connection()->getSchemaBuilder());
+        $this->app->bind('db.schema', fn ($app) => $app['db']->connection()->getSchemaBuilder());
 
-        $this->app->singleton('db.transactions', fn() => new DatabaseTransactionsManager);
+        $this->app->singleton('db.transactions', fn (): \Illuminate\Database\DatabaseTransactionsManager => new DatabaseTransactionsManager());
 
-        $this->app->singleton(ConcurrencyErrorDetectorContract::class, fn() => new ConcurrencyErrorDetector);
+        $this->app->singleton(ConcurrencyErrorDetectorContract::class, fn (): \Illuminate\Database\ConcurrencyErrorDetector => new ConcurrencyErrorDetector());
 
-        $this->app->singleton(LostConnectionDetectorContract::class, fn() => new LostConnectionDetector);
+        $this->app->singleton(LostConnectionDetectorContract::class, fn (): \Illuminate\Database\LostConnectionDetector => new LostConnectionDetector());
     }
 
     /**
@@ -102,6 +104,6 @@ class DatabaseServiceProvider extends ServiceProvider
      */
     protected function registerQueueableEntityResolver()
     {
-        $this->app->singleton(EntityResolver::class, fn() => new QueueEntityResolver);
+        $this->app->singleton(EntityResolver::class, fn (): \Illuminate\Database\Eloquent\QueueEntityResolver => new QueueEntityResolver());
     }
 }

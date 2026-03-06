@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Configuration;
 
 use Closure;
@@ -303,7 +305,7 @@ class Middleware
      *
      * @return $this
      */
-    public function web(array|string $append = [], array|string $prepend = [], array|string $remove = [], array $replace = [])
+    public function web(array|string $append = [], array|string $prepend = [], array|string $remove = [], array $replace = []): static
     {
         return $this->modifyGroup('web', $append, $prepend, $remove, $replace);
     }
@@ -313,7 +315,7 @@ class Middleware
      *
      * @return $this
      */
-    public function api(array|string $append = [], array|string $prepend = [], array|string $remove = [], array $replace = [])
+    public function api(array|string $append = [], array|string $prepend = [], array|string $remove = [], array $replace = []): static
     {
         return $this->modifyGroup('api', $append, $prepend, $remove, $replace);
     }
@@ -425,7 +427,7 @@ class Middleware
             \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         ]));
 
-        $middleware = array_map(fn($middleware) => $this->replacements[$middleware] ?? $middleware, $middleware);
+        $middleware = array_map(fn ($middleware) => $this->replacements[$middleware] ?? $middleware, $middleware);
 
         return array_values(array_filter(
             array_diff(
@@ -494,7 +496,7 @@ class Middleware
      *
      * @return $this
      */
-    public function redirectGuestsTo(callable|string $redirect)
+    public function redirectGuestsTo(callable|string $redirect): static
     {
         return $this->redirectTo(guests: $redirect);
     }
@@ -504,7 +506,7 @@ class Middleware
      *
      * @return $this
      */
-    public function redirectUsersTo(callable|string $redirect)
+    public function redirectUsersTo(callable|string $redirect): static
     {
         return $this->redirectTo(users: $redirect);
     }

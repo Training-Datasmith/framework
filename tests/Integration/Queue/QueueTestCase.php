@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Illuminate\Foundation\Testing\Concerns\InteractsWithRedis;
@@ -8,7 +10,8 @@ use Orchestra\Testbench\TestCase;
 
 abstract class QueueTestCase extends TestCase
 {
-    use DatabaseMigrations, InteractsWithRedis;
+    use DatabaseMigrations;
+    use InteractsWithRedis;
 
     /**
      * The current database driver.

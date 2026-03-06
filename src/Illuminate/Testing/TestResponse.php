@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing;
 
 use ArrayAccess;
@@ -69,10 +71,10 @@ class TestResponse implements ArrayAccess
     public function __construct($response, /**
      * The original request.
      */
-    public $baseRequest = null)
+        public $baseRequest = null)
     {
         $this->baseResponse = $response;
-        $this->exceptions = new Collection;
+        $this->exceptions = new Collection();
     }
 
     /**
@@ -216,7 +218,8 @@ class TestResponse implements ArrayAccess
         );
 
         PHPUnit::withResponse($this)->assertTrue(
-            Str::contains($this->headers->get('Location'), $uri), 'Redirect location ['.$this->headers->get('Location').'] does not contain ['.$uri.'].'
+            Str::contains($this->headers->get('Location'), $uri),
+            'Redirect location ['.$this->headers->get('Location').'] does not contain ['.$uri.'].'
         );
 
         return $this;
@@ -313,7 +316,8 @@ class TestResponse implements ArrayAccess
         $request = Request::create($this->headers->get('Location'));
 
         PHPUnit::withResponse($this)->assertTrue(
-            $request->hasValidSignature($absolute), 'The response is not a redirect to a signed route.'
+            $request->hasValidSignature($absolute),
+            'The response is not a redirect to a signed route.'
         );
 
         if (! is_null($name)) {
@@ -323,7 +327,8 @@ class TestResponse implements ArrayAccess
             ]), '?');
 
             PHPUnit::withResponse($this)->assertEquals(
-                app('url')->to($uri), $expectedUri
+                app('url')->to($uri),
+                $expectedUri
             );
         }
 
@@ -361,14 +366,16 @@ class TestResponse implements ArrayAccess
     public function assertHeader($headerName, $value = null): static
     {
         PHPUnit::withResponse($this)->assertTrue(
-            $this->headers->has($headerName), "Header [{$headerName}] not present on response."
+            $this->headers->has($headerName),
+            "Header [{$headerName}] not present on response."
         );
 
         $actual = $this->headers->get($headerName);
 
         if (! is_null($value)) {
             PHPUnit::withResponse($this)->assertEqualsIgnoringCase(
-                $value, $this->headers->get($headerName),
+                $value,
+                $this->headers->get($headerName),
                 "Header [{$headerName}] was found, but value [{$actual}] does not match [{$value}]."
             );
         }
@@ -386,7 +393,8 @@ class TestResponse implements ArrayAccess
     public function assertHeaderContains($headerName, $value): static
     {
         PHPUnit::withResponse($this)->assertTrue(
-            $this->headers->has($headerName), "Header [{$headerName}] not present on response."
+            $this->headers->has($headerName),
+            "Header [{$headerName}] not present on response."
         );
 
         $actual = $this->headers->get($headerName, '');
@@ -408,7 +416,8 @@ class TestResponse implements ArrayAccess
     public function assertHeaderMissing($headerName): static
     {
         PHPUnit::withResponse($this)->assertFalse(
-            $this->headers->has($headerName), "Unexpected header [{$headerName}] is present on response."
+            $this->headers->has($headerName),
+            "Unexpected header [{$headerName}] is present on response."
         );
 
         return $this;
@@ -423,7 +432,8 @@ class TestResponse implements ArrayAccess
     public function assertLocation($uri): static
     {
         PHPUnit::withResponse($this)->assertEquals(
-            app('url')->to($uri), app('url')->to($this->headers->get('Location', ''))
+            app('url')->to($uri),
+            app('url')->to($this->headers->get('Location', ''))
         );
 
         return $this;
@@ -514,7 +524,8 @@ class TestResponse implements ArrayAccess
         $cookieValue = $cookie->getValue();
 
         PHPUnit::withResponse($this)->assertEquals(
-            $value, $cookieValue,
+            $value,
+            $cookieValue,
             "Cookie [{$cookieName}] was found, but value [{$cookieValue}] does not match [{$value}]."
         );
 
@@ -681,7 +692,7 @@ class TestResponse implements ArrayAccess
      * @param  array  $value
      * @return $this
      */
-    public function assertStreamedJsonContent($value)
+    public function assertStreamedJsonContent($value): static
     {
         return $this->assertStreamedContent(json_encode($value, JSON_THROW_ON_ERROR));
     }
@@ -712,7 +723,7 @@ class TestResponse implements ArrayAccess
      * @param  array|string  $value
      * @return $this
      */
-    public function assertSeeHtml($value)
+    public function assertSeeHtml($value): static
     {
         return $this->assertSee($value, false);
     }
@@ -737,7 +748,7 @@ class TestResponse implements ArrayAccess
      *
      * @return $this
      */
-    public function assertSeeHtmlInOrder(array $values)
+    public function assertSeeHtmlInOrder(array $values): static
     {
         return $this->assertSeeInOrder($values, false);
     }
@@ -805,7 +816,7 @@ class TestResponse implements ArrayAccess
      * @param  array|string  $value
      * @return $this
      */
-    public function assertDontSeeHtml($value)
+    public function assertDontSeeHtml($value): static
     {
         return $this->assertDontSee($value, false);
     }
@@ -1266,7 +1277,7 @@ class TestResponse implements ArrayAccess
      * @param  mixed  $value
      * @return $this
      */
-    public function assertViewHas($key, $value = null)
+    public function assertViewHas($key, $value = null): static
     {
         if (is_array($key)) {
             return $this->assertViewHasAll($key);
@@ -1376,7 +1387,7 @@ class TestResponse implements ArrayAccess
      * @param  string  $responseKey
      * @return $this
      */
-    public function assertValid($keys = null, $errorBag = 'default', $responseKey = 'errors')
+    public function assertValid($keys = null, $errorBag = 'default', $responseKey = 'errors'): static
     {
         if ($this->baseResponse->headers->get('Content-Type') === 'application/json') {
             return $this->assertJsonMissingValidationErrors($keys, $responseKey);
@@ -1419,10 +1430,11 @@ class TestResponse implements ArrayAccess
      * @param  string  $responseKey
      * @return $this
      */
-    public function assertInvalid($errors = null,
-                                  $errorBag = 'default',
-                                  $responseKey = 'errors')
-    {
+    public function assertInvalid(
+        $errors = null,
+        $errorBag = 'default',
+        $responseKey = 'errors'
+    ): static {
         if ($this->baseResponse->headers->get('Content-Type') === 'application/json') {
             return $this->assertJsonValidationErrors($errors, $responseKey);
         }
@@ -1475,7 +1487,7 @@ class TestResponse implements ArrayAccess
      * @param  string  $responseKey
      * @return $this
      */
-    public function assertOnlyInvalid($errors = null, $errorBag = 'default', $responseKey = 'errors')
+    public function assertOnlyInvalid($errors = null, $errorBag = 'default', $responseKey = 'errors'): static
     {
         if ($this->baseResponse->headers->get('Content-Type') === 'application/json') {
             return $this->assertOnlyJsonValidationErrors($errors, $responseKey);
@@ -1508,7 +1520,7 @@ class TestResponse implements ArrayAccess
      * @param  mixed  $value
      * @return $this
      */
-    public function assertSessionHas($key, $value = null)
+    public function assertSessionHas($key, $value = null): static
     {
         if (is_array($key)) {
             return $this->assertSessionHasAll($key);
@@ -1626,7 +1638,7 @@ class TestResponse implements ArrayAccess
      * @param  string  $errorBag
      * @return $this
      */
-    public function assertSessionDoesntHaveErrors($keys = [], $format = null, $errorBag = 'default')
+    public function assertSessionDoesntHaveErrors($keys = [], $format = null, $errorBag = 'default'): static
     {
         $keys = (array) $keys;
 
@@ -1693,7 +1705,7 @@ class TestResponse implements ArrayAccess
      * @param  mixed  $format
      * @return $this
      */
-    public function assertSessionHasErrorsIn($errorBag, $keys = [], $format = null)
+    public function assertSessionHasErrorsIn($errorBag, $keys = [], $format = null): static
     {
         return $this->assertSessionHasErrors($keys, $format, $errorBag);
     }
@@ -1962,7 +1974,6 @@ class TestResponse implements ArrayAccess
     /**
      * Handle dynamic calls into macros or pass missing methods to the base response.
      *
-     * @param  array  $args
      * @return mixed
      */
     public function __call(string $method, array $args)

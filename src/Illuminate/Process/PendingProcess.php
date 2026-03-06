@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Closure;
@@ -94,8 +96,7 @@ class PendingProcess
          * The process factory instance.
          */
         protected \Illuminate\Process\Factory $factory
-    )
-    {
+    ) {
     }
 
     /**
@@ -391,7 +392,7 @@ class PendingProcess
         if ($result instanceof ProcessResult) {
             return (new FakeInvokedProcess(
                 $command,
-                (new FakeProcessDescription)
+                (new FakeProcessDescription())
                     ->replaceOutput($result->output())
                     ->replaceErrorOutput($result->errorOutput())
                     ->runsFor(iterations: 0)
@@ -401,7 +402,7 @@ class PendingProcess
         if ($result instanceof FakeProcessResult) {
             return (new FakeInvokedProcess(
                 $command,
-                (new FakeProcessDescription)
+                (new FakeProcessDescription())
                     ->replaceOutput($result->output())
                     ->replaceErrorOutput($result->errorOutput())
                     ->runsFor(iterations: 0)

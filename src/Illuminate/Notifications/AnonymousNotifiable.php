@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications;
 
 use Illuminate\Contracts\Notifications\Dispatcher;
@@ -70,6 +72,6 @@ class AnonymousNotifiable
      */
     public function getKey(): void
     {
-        //
+
     }
 }

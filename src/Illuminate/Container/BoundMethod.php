@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Container;
 
 use Closure;
@@ -31,7 +33,7 @@ class BoundMethod
             return static::callClass($container, $callback, $parameters, $defaultMethod);
         }
 
-        return static::callBoundMethod($container, $callback, fn() => $callback(...array_values(static::getMethodDependencies($container, $callback, $parameters))));
+        return static::callBoundMethod($container, $callback, fn () => $callback(...array_values(static::getMethodDependencies($container, $callback, $parameters))));
     }
 
     /**

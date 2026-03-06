@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Concerns;
 
 use Illuminate\Contracts\Support\Htmlable;
@@ -65,7 +67,7 @@ trait ManagesComponents
      */
     public function startComponentFirst(array $names, array $data = []): void
     {
-        $name = Arr::first($names, fn($item) => $this->exists($item));
+        $name = Arr::first($names, fn ($item) => $this->exists($item));
 
         $this->startComponent($name, $data);
     }
@@ -180,7 +182,8 @@ trait ManagesComponents
         [$currentName, $currentAttributes] = $currentSlot;
 
         $this->slots[$this->currentComponent()][$currentName] = new ComponentSlot(
-            trim(ob_get_clean()), $currentAttributes
+            trim(ob_get_clean()),
+            $currentAttributes
         );
     }
 

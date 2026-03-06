@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Factory as AuthFactory;
 
 class AuthenticateWithBasicAuth
 {
@@ -15,8 +16,7 @@ class AuthenticateWithBasicAuth
          * The guard factory instance.
          */
         protected \Illuminate\Contracts\Auth\Factory $auth
-    )
-    {
+    ) {
     }
 
     /**

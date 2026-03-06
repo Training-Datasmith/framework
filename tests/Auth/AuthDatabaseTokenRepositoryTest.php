@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Auth;
 
 use Illuminate\Auth\Passwords\DatabaseTokenRepository;
@@ -156,6 +158,8 @@ class AuthDatabaseTokenRepositoryTest extends TestCase
         return new DatabaseTokenRepository(
             m::mock(Connection::class),
             m::mock(Hasher::class),
-            'table', 'key');
+            'table',
+            'key'
+        );
     }
 }

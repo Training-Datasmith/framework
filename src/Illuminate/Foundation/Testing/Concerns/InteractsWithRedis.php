@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Testing\Concerns;
 
 use Exception;
@@ -37,7 +39,7 @@ trait InteractsWithRedis
             $this->markTestSkipped('Trying default host/port failed, please set environment variable REDIS_HOST & REDIS_PORT to enable '.self::class);
         }
 
-        $app = $this->app ?? new Application;
+        $app = $this->app ?? new Application();
         $host = Env::get('REDIS_HOST', '127.0.0.1');
         $port = Env::get('REDIS_PORT', 6379);
 

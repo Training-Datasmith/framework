@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Exception;
@@ -101,6 +103,6 @@ class SQLiteConnection extends Connection
      */
     protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\Processor
     {
-        return new SQLiteProcessor;
+        return new SQLiteProcessor();
     }
 }

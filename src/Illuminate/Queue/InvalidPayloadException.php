@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use InvalidArgumentException;
@@ -15,7 +17,7 @@ class InvalidPayloadException extends InvalidArgumentException
     public function __construct($message = null, /**
      * The value that failed to decode.
      */
-    public $value = null)
+        public $value = null)
     {
         parent::__construct($message ?: json_last_error());
     }

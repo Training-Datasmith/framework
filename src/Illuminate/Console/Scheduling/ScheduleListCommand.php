@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 use Closure;
@@ -119,7 +121,7 @@ class ScheduleListCommand extends Command
 
         $repeatExpressionSpacing = $this->getRepeatExpressionSpacing($events);
 
-        $events = $events->map(fn($event) => $this->listEvent($event, $terminalWidth, $expressionSpacing, $repeatExpressionSpacing, $timezone));
+        $events = $events->map(fn ($event): array => $this->listEvent($event, $terminalWidth, $expressionSpacing, $repeatExpressionSpacing, $timezone));
 
         $this->line(
             $events->flatten()->filter()->prepend('')->push('')->toArray()
@@ -191,7 +193,8 @@ class ScheduleListCommand extends Command
         $hasMutex = $event->mutex->exists($event) ? 'Has Mutex › ' : '';
 
         $dots = str_repeat('.', max(
-            $terminalWidth - mb_strwidth($expression.$repeatExpression.$command.$nextDueDateLabel.$nextDueDate.$hasMutex) - 8, 0
+            $terminalWidth - mb_strwidth($expression.$repeatExpression.$command.$nextDueDateLabel.$nextDueDate.$hasMutex) - 8,
+            0
         ));
 
         // Highlight the parameters...
@@ -286,9 +289,8 @@ class ScheduleListCommand extends Command
      *
      * @param  string  $expression
      * @param  array<int, int>  $spacing
-     * @return string
      */
-    private function formatCronExpression($expression, $spacing)
+    private function formatCronExpression($expression, $spacing): string
     {
         $expressions = preg_split("/\s+/", $expression);
 
@@ -335,7 +337,7 @@ class ScheduleListCommand extends Command
     public static function getTerminalWidth()
     {
         return is_null(static::$terminalWidthResolver)
-            ? (new Terminal)->getWidth()
+            ? (new Terminal())->getWidth()
             : call_user_func(static::$terminalWidthResolver);
     }
 

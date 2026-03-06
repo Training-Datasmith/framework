@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Notifications;
 
 use Illuminate\Notifications\AnonymousNotifiable;
@@ -12,13 +14,13 @@ class SendingNotificationsViaAnonymousNotifiableTest extends TestCase
 {
     public function testMailIsSent()
     {
-        $notifiable = (new AnonymousNotifiable)
+        $notifiable = (new AnonymousNotifiable())
             ->route('testchannel', 'enzo')
             ->route('anothertestchannel', 'enzo@deepblue.com');
 
         NotificationFacade::send(
             $notifiable,
-            new TestMailNotificationForAnonymousNotifiable
+            new TestMailNotificationForAnonymousNotifiable()
         );
 
         $this->assertEquals([
@@ -46,16 +48,18 @@ class SendingNotificationsViaAnonymousNotifiableTest extends TestCase
 
         $this->assertInstanceOf(NotificationFake::class, $fake);
 
-        $notifiable = (new AnonymousNotifiable)
+        $notifiable = (new AnonymousNotifiable())
             ->route('testchannel', 'enzo')
             ->route('anothertestchannel', 'enzo@deepblue.com');
 
         NotificationFacade::locale('it')->send(
             $notifiable,
-            new TestMailNotificationForAnonymousNotifiable
+            new TestMailNotificationForAnonymousNotifiable()
         );
 
-        NotificationFacade::assertSentTo(new AnonymousNotifiable, TestMailNotificationForAnonymousNotifiable::class,
+        NotificationFacade::assertSentTo(
+            new AnonymousNotifiable(),
+            TestMailNotificationForAnonymousNotifiable::class,
             function ($notification, $channels, $notifiable, $locale) {
                 return $notifiable->routes['testchannel'] === 'enzo' &&
                     $notifiable->routes['anothertestchannel'] === 'enzo@deepblue.com' &&

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Pipeline;
 
 use Closure;
@@ -23,8 +25,7 @@ class Hub implements HubContract
          * The container implementation.
          */
         protected ?\Illuminate\Contracts\Container\Container $container = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -56,7 +57,9 @@ class Hub implements HubContract
         $pipeline = $pipeline ?: 'default';
 
         return call_user_func(
-            $this->pipelines[$pipeline], new Pipeline($this->container), $object
+            $this->pipelines[$pipeline],
+            new Pipeline($this->container),
+            $object
         );
     }
 
@@ -65,7 +68,7 @@ class Hub implements HubContract
      *
      * @return \Illuminate\Contracts\Container\Container
      */
-    public function getContainer()
+    public function getContainer(): ?\Illuminate\Contracts\Container\Container
     {
         return $this->container;
     }

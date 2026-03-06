@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Testing\Fakes;
 
 use Closure;
@@ -17,8 +19,9 @@ class PendingBatchFake extends PendingBatch
     public function __construct(/**
      * The fake bus instance.
      */
-    protected \Illuminate\Support\Testing\Fakes\BusFake $bus, Collection $jobs)
-    {
+        protected \Illuminate\Support\Testing\Fakes\BusFake $bus,
+        Collection $jobs
+    ) {
         $this->jobs = $jobs->filter()->values();
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Log;
 
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
@@ -62,7 +64,7 @@ class LogLoggerTest extends TestCase
 
     public function testLoggerFiresEventsDispatcher()
     {
-        $writer = new Logger($monolog = m::mock(Monolog::class), $events = new Dispatcher);
+        $writer = new Logger($monolog = m::mock(Monolog::class), $events = new Dispatcher());
         $monolog->shouldReceive('isHandling')->with('error')->andReturn(true);
         $monolog->shouldReceive('error')->once()->with('foo', []);
 
@@ -91,7 +93,7 @@ class LogLoggerTest extends TestCase
 
         $writer = new Logger(m::mock(Monolog::class));
         $writer->listen(function () {
-            //
+
         });
     }
 
@@ -132,8 +134,7 @@ class LogLoggerTest extends TestCase
 
         $writer = new Logger($monolog);
 
-        $arrayable = new class implements Arrayable
-        {
+        $arrayable = new class () implements Arrayable {
             public bool $wasCalled = false;
 
             public function toArray(): array
@@ -157,8 +158,7 @@ class LogLoggerTest extends TestCase
 
         $writer = new Logger($monolog);
 
-        $arrayable = new class implements Arrayable
-        {
+        $arrayable = new class () implements Arrayable {
             public bool $wasCalled = false;
 
             public function toArray(): array

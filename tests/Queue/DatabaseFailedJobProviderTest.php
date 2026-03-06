@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Exception;
@@ -179,7 +181,7 @@ class DatabaseFailedJobProviderTest extends TestCase
 
     protected function createSimpleDatabaseWithFailedJobTable()
     {
-        $db = new DB;
+        $db = new DB();
         $db->addConnection([
             'driver' => 'sqlite',
             'database' => ':memory:',
@@ -195,7 +197,7 @@ class DatabaseFailedJobProviderTest extends TestCase
 
     protected function createDatabaseWithFailedJobTable()
     {
-        $this->db = new DB;
+        $this->db = new DB();
         $this->db->addConnection([
             'driver' => 'sqlite',
             'database' => ':memory:',

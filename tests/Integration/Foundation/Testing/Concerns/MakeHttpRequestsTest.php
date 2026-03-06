@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation\Testing\Concerns;
 
 use Illuminate\Http\Request;

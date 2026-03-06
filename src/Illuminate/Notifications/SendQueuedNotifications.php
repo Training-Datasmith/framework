@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -14,7 +16,9 @@ use Illuminate\Support\Collection;
 
 class SendQueuedNotifications implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * The notifiable entities that should receive the notification.
@@ -67,7 +71,7 @@ class SendQueuedNotifications implements ShouldQueue
     public function __construct($notifiables, /**
      * The notification to be sent.
      */
-    public $notification, ?array $channels = null)
+        public $notification, ?array $channels = null)
     {
         $this->channels = $channels;
         $this->notifiables = $this->wrapNotifiables($notifiables);

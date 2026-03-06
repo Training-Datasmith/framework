@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Events;
 
 class SchemaDumped
@@ -20,11 +22,11 @@ class SchemaDumped
     public function __construct(/**
      * The database connection instance.
      */
-    public $connection, /**
+        public $connection, /**
      * The path to the schema dump.
      */
-    public $path)
-    {
+        public $path
+    ) {
         $this->connectionName = $this->connection->getName();
     }
 }

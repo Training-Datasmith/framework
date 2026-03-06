@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cache;
 
 use BadMethodCallException;
@@ -21,7 +23,7 @@ class ConcurrencyLimiterTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = new Repository(new ArrayStore);
+        $this->repository = new Repository(new ArrayStore());
     }
 
     public function testItLocksTasksWhenNoSlotAvailable()
@@ -143,7 +145,7 @@ class ConcurrencyLimiterTest extends TestCase
 
         try {
             $lock->block(1, function () {
-                throw new Error;
+                throw new Error();
             });
         } catch (Error) {
         }
@@ -285,7 +287,7 @@ class ConcurrencyLimiterMockThatDoesntRelease extends ConcurrencyLimiter
 {
     protected function release($lock)
     {
-        //
+
     }
 }
 

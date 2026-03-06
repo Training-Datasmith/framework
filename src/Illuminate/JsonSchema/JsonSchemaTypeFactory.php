@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\JsonSchema;
 
 use Closure;
@@ -26,7 +28,7 @@ class JsonSchemaTypeFactory extends JsonSchema implements JsonSchemaContract
      */
     public function array(): Types\ArrayType
     {
-        return new Types\ArrayType;
+        return new Types\ArrayType();
     }
 
     /**
@@ -34,7 +36,7 @@ class JsonSchemaTypeFactory extends JsonSchema implements JsonSchemaContract
      */
     public function string(): Types\StringType
     {
-        return new Types\StringType;
+        return new Types\StringType();
     }
 
     /**
@@ -42,7 +44,7 @@ class JsonSchemaTypeFactory extends JsonSchema implements JsonSchemaContract
      */
     public function integer(): Types\IntegerType
     {
-        return new Types\IntegerType;
+        return new Types\IntegerType();
     }
 
     /**
@@ -50,7 +52,7 @@ class JsonSchemaTypeFactory extends JsonSchema implements JsonSchemaContract
      */
     public function number(): Types\NumberType
     {
-        return new Types\NumberType;
+        return new Types\NumberType();
     }
 
     /**
@@ -58,6 +60,6 @@ class JsonSchemaTypeFactory extends JsonSchema implements JsonSchemaContract
      */
     public function boolean(): Types\BooleanType
     {
-        return new Types\BooleanType;
+        return new Types\BooleanType();
     }
 }

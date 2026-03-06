@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Facades;
 
 use Illuminate\Database\Eloquent\Model;
@@ -72,7 +74,7 @@ class Event extends Facade
     public static function fakeExcept($eventsToAllow)
     {
         return static::fake([
-            fn($eventName) => ! in_array($eventName, (array) $eventsToAllow),
+            fn ($eventName): bool => ! in_array($eventName, (array) $eventsToAllow),
         ]);
     }
 

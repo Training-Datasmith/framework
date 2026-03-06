@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Log\Context;
 
 use Illuminate\Contracts\Log\ContextLogProcessor as ContextLogProcessorContract;

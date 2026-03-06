@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console\Events;
 
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -144,7 +146,7 @@ class ExampleBroadcastEvent implements ShouldBroadcast
 {
     public function broadcastOn()
     {
-        //
+
     }
 }
 
@@ -166,6 +168,6 @@ class ExampleBroadcastListener
 {
     public function handle()
     {
-        //
+
     }
 }

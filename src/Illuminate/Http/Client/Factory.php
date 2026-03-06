@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Client;
 
 use Closure;
@@ -84,9 +86,9 @@ class Factory
     public function __construct(/**
      * The event dispatcher implementation.
      */
-    protected ?\Illuminate\Contracts\Events\Dispatcher $dispatcher = null)
-    {
-        $this->stubCallbacks = new Collection;
+        protected ?\Illuminate\Contracts\Events\Dispatcher $dispatcher = null
+    ) {
+        $this->stubCallbacks = new Collection();
     }
 
     /**
@@ -146,10 +148,9 @@ class Factory
      *
      * @param  array|string|null  $body
      * @param  int  $status
-     * @param  array  $headers
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public static function response($body = null, $status = 200, $headers = [])
+    public static function response($body = null, $status = 200, array $headers = [])
     {
         return Create::promiseFor(
             static::psr7Response($body, $status, $headers)
@@ -182,7 +183,7 @@ class Factory
      * @param  int  $status
      * @param  array<string, mixed>  $headers
      */
-    public static function failedRequest($body = null, $status = 200, $headers = []): \Illuminate\Http\Client\RequestException
+    public static function failedRequest($body = null, $status = 200, array $headers = []): \Illuminate\Http\Client\RequestException
     {
         return new RequestException(new Response(static::psr7Response($body, $status, $headers)));
     }
@@ -195,7 +196,7 @@ class Factory
      */
     public static function failedConnection($message = null)
     {
-        return fn($request) => Create::rejectionFor(new ConnectException(
+        return fn ($request) => Create::rejectionFor(new ConnectException(
             $message ?? "cURL error 6: Could not resolve host: {$request->toPsrRequest()->getUri()->getHost()} (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for {$request->toPsrRequest()->getUri()}.",
             $request->toPsrRequest(),
         ));
@@ -224,7 +225,7 @@ class Factory
         $this->recorded = [];
 
         if (is_null($callback)) {
-            $callback = (fn() => static::response());
+            $callback = (fn () => static::response());
         }
 
         if (is_array($callback)) {
@@ -277,7 +278,7 @@ class Factory
      * @param  \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface|callable|int|string|array|\Illuminate\Http\Client\ResponseSequence  $callback
      * @return $this
      */
-    public function stubUrl($url, $callback)
+    public function stubUrl($url, $callback): static
     {
         return $this->fake(function ($request, $options) use ($url, $callback) {
             if (! Str::is(Str::start($url, '*'), $request->url())) {
@@ -390,7 +391,7 @@ class Factory
         $this->assertSentCount(count($callbacks));
 
         foreach ($callbacks as $index => $url) {
-            $callback = is_callable($url) ? $url : (fn($request) => $request->url() == $url);
+            $callback = is_callable($url) ? $url : (fn ($request): bool => $request->url() == $url);
 
             PHPUnit::assertTrue($callback(
                 $this->recorded[$index][0],
@@ -455,7 +456,7 @@ class Factory
     public function recorded($callback = null): \Illuminate\Support\Collection
     {
         if (empty($this->recorded)) {
-            return new Collection;
+            return new Collection();
         }
 
         $collect = new Collection($this->recorded);
@@ -494,10 +495,8 @@ class Factory
 
     /**
      * Get the current event dispatcher implementation.
-     *
-     * @return \Illuminate\Contracts\Events\Dispatcher|null
      */
-    public function getDispatcher()
+    public function getDispatcher(): ?\Illuminate\Contracts\Events\Dispatcher
     {
         return $this->dispatcher;
     }
@@ -515,7 +514,6 @@ class Factory
     /**
      * Execute a method against a new pending request instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

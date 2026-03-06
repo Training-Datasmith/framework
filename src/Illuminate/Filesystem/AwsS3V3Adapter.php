@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Filesystem;
 
 use Aws\S3\S3Client;
@@ -48,7 +50,8 @@ class AwsS3V3Adapter extends FilesystemAdapter
         }
 
         return $this->client->getObjectUrl(
-            $this->config['bucket'], $this->prefixer->prefixPath($path)
+            $this->config['bucket'],
+            $this->prefixer->prefixPath($path)
         );
     }
 
@@ -74,7 +77,9 @@ class AwsS3V3Adapter extends FilesystemAdapter
         ], $options));
 
         $uri = $this->client->createPresignedRequest(
-            $command, $expiration, $options
+            $command,
+            $expiration,
+            $options
         )->getUri();
 
         // If an explicit base URL has been set on the disk configuration then we will use
@@ -101,7 +106,9 @@ class AwsS3V3Adapter extends FilesystemAdapter
         ], $options));
 
         $signedRequest = $this->client->createPresignedRequest(
-            $command, $expiration, $options
+            $command,
+            $expiration,
+            $options
         );
 
         $uri = $signedRequest->getUri();

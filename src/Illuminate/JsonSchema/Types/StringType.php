@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\JsonSchema\Types;
 
 class StringType extends Type

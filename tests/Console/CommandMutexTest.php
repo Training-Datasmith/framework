@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Console;
 
 use Illuminate\Console\Command;
@@ -30,8 +32,7 @@ class CommandMutexTest extends TestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->command = new class extends Command implements Isolatable
-        {
+        $this->command = new class () extends Command implements Isolatable {
             public $ran = 0;
 
             public function __invoke()
@@ -42,7 +43,7 @@ class CommandMutexTest extends TestCase
 
         $this->commandMutex = m::mock(CommandMutex::class);
 
-        $app = new Application;
+        $app = new Application();
         $app->instance(CommandMutex::class, $this->commandMutex);
         $this->command->setLaravel($app);
     }
@@ -106,7 +107,7 @@ class CommandMutexTest extends TestCase
     protected function runCommand($withIsolated = true)
     {
         $input = new ArrayInput(['--isolated' => $withIsolated]);
-        $output = new NullOutput;
+        $output = new NullOutput();
         $this->command->run($input, $output);
     }
 }

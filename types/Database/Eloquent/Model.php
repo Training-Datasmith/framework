@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Types\Model;
 
 use Illuminate\Database\Eloquent\Attributes\CollectedBy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\HasCollection;
 use Illuminate\Database\Eloquent\Model;
-use User;
 
 use function PHPStan\Testing\assertType;
+
+use User;
 
 function test(User $user, Post $post, Comment $comment, Article $article): void
 {

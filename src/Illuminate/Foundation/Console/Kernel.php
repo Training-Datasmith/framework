@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Carbon\CarbonInterval;
@@ -119,11 +121,11 @@ class Kernel implements KernelContract
     public function __construct(/**
      * The application implementation.
      */
-    protected \Illuminate\Contracts\Foundation\Application $app, /**
+        protected \Illuminate\Contracts\Foundation\Application $app, /**
      * The event dispatcher implementation.
      */
-    protected \Illuminate\Contracts\Events\Dispatcher $events)
-    {
+        protected \Illuminate\Contracts\Events\Dispatcher $events
+    ) {
         if (! defined('ARTISAN_BINARY')) {
             define('ARTISAN_BINARY', 'artisan');
         }
@@ -145,7 +147,7 @@ class Kernel implements KernelContract
     public function rerouteSymfonyCommandEvents(): static
     {
         if (is_null($this->symfonyDispatcher)) {
-            $this->symfonyDispatcher = new EventDispatcher;
+            $this->symfonyDispatcher = new EventDispatcher();
 
             $this->symfonyDispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event): void {
                 $this->events->dispatch(
@@ -198,7 +200,7 @@ class Kernel implements KernelContract
      */
     public function terminate($input, $status): void
     {
-        $this->events->dispatch(new Terminating);
+        $this->events->dispatch(new Terminating());
 
         $this->app->terminate();
 
@@ -258,7 +260,7 @@ class Kernel implements KernelContract
      */
     protected function schedule(Schedule $schedule)
     {
-        //
+
     }
 
     /**
@@ -292,7 +294,7 @@ class Kernel implements KernelContract
      */
     protected function scheduleCache()
     {
-        return $this->app['config']->get('cache.schedule_store', Env::get('SCHEDULE_CACHE_DRIVER', fn() => Env::get('SCHEDULE_CACHE_STORE')));
+        return $this->app['config']->get('cache.schedule_store', Env::get('SCHEDULE_CACHE_DRIVER', fn () => Env::get('SCHEDULE_CACHE_STORE')));
     }
 
     /**
@@ -302,7 +304,7 @@ class Kernel implements KernelContract
      */
     protected function commands()
     {
-        //
+
     }
 
     /**
@@ -331,7 +333,7 @@ class Kernel implements KernelContract
     {
         $paths = array_unique(Arr::wrap($paths));
 
-        $paths = array_filter($paths, fn($path) => is_dir($path));
+        $paths = array_filter($paths, is_dir(...));
 
         if (empty($paths)) {
             return;
@@ -343,7 +345,7 @@ class Kernel implements KernelContract
 
         $namespace = $this->app->getNamespace();
 
-        $possibleCommands = new WeakMap;
+        $possibleCommands = new WeakMap();
 
         $filterCommands = function (SplFileInfo $file) use ($namespace, &$possibleCommands): bool {
             $commandClassName = $this->commandClassFromFile($file, $namespace);
@@ -415,9 +417,8 @@ class Kernel implements KernelContract
      * Queue the given console command.
      *
      * @param  string  $command
-     * @return \Illuminate\Foundation\Bus\PendingDispatch
      */
-    public function queue($command, array $parameters = [])
+    public function queue($command, array $parameters = []): \Illuminate\Foundation\Bus\PendingDispatch
     {
         return QueuedCommand::dispatch(func_get_args());
     }

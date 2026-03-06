@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Query\Processors\SQLiteProcessor;
@@ -9,7 +11,7 @@ class DatabaseSQLiteProcessorTest extends TestCase
 {
     public function testProcessColumns()
     {
-        $processor = new SQLiteProcessor;
+        $processor = new SQLiteProcessor();
 
         $listing = [
             ['name' => 'id', 'type' => 'INTEGER', 'nullable' => '0', 'default' => '', 'primary' => '1', 'extra' => 1],

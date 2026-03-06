@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Config;
 
 use Illuminate\Config\Repository;
@@ -52,7 +54,8 @@ class RepositoryTest extends TestCase
     public function testGetValueWhenKeyContainDot()
     {
         $this->assertSame(
-            $this->repository->get('a.b'), 'c'
+            $this->repository->get('a.b'),
+            'c'
         );
         $this->assertNull(
             $this->repository->get('a.b.c')
@@ -293,7 +296,8 @@ class RepositoryTest extends TestCase
     public function testItGetsAsString(): void
     {
         $this->assertSame(
-            'c', $this->repository->string('a.b')
+            'c',
+            $this->repository->string('a.b')
         );
     }
 
@@ -308,7 +312,8 @@ class RepositoryTest extends TestCase
     public function testItGetsAsArray(): void
     {
         $this->assertSame(
-            $this->repository->array('array'), ['aaa', 'zzz']
+            $this->repository->array('array'),
+            ['aaa', 'zzz']
         );
     }
 
@@ -346,7 +351,8 @@ class RepositoryTest extends TestCase
     public function testItGetsAsInteger(): void
     {
         $this->assertSame(
-            $this->repository->integer('integer'), 1
+            $this->repository->integer('integer'),
+            1
         );
     }
 
@@ -361,7 +367,8 @@ class RepositoryTest extends TestCase
     public function testItGetsAsFloat(): void
     {
         $this->assertSame(
-            $this->repository->float('float'), 1.1
+            $this->repository->float('float'),
+            1.1
         );
     }
 

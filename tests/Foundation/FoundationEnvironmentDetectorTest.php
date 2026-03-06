@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation;
 
 use Illuminate\Foundation\EnvironmentDetector;
@@ -9,7 +11,7 @@ class FoundationEnvironmentDetectorTest extends TestCase
 {
     public function testClosureCanBeUsedForCustomEnvironmentDetection()
     {
-        $env = new EnvironmentDetector;
+        $env = new EnvironmentDetector();
 
         $result = $env->detect(function () {
             return 'foobar';
@@ -19,7 +21,7 @@ class FoundationEnvironmentDetectorTest extends TestCase
 
     public function testConsoleEnvironmentDetection()
     {
-        $env = new EnvironmentDetector;
+        $env = new EnvironmentDetector();
 
         $result = $env->detect(function () {
             return 'foobar';
@@ -29,7 +31,7 @@ class FoundationEnvironmentDetectorTest extends TestCase
 
     public function testConsoleEnvironmentDetectionSeparatedWithSpace()
     {
-        $env = new EnvironmentDetector;
+        $env = new EnvironmentDetector();
 
         $result = $env->detect(function () {
             return 'foobar';
@@ -39,7 +41,7 @@ class FoundationEnvironmentDetectorTest extends TestCase
 
     public function testConsoleEnvironmentDetectionWithNoValue()
     {
-        $env = new EnvironmentDetector;
+        $env = new EnvironmentDetector();
 
         $result = $env->detect(function () {
             return 'foobar';
@@ -49,7 +51,7 @@ class FoundationEnvironmentDetectorTest extends TestCase
 
     public function testConsoleEnvironmentDetectionDoesNotUseArgumentThatStartsWithEnv()
     {
-        $env = new EnvironmentDetector;
+        $env = new EnvironmentDetector();
 
         $result = $env->detect(function () {
             return 'foobar';
@@ -59,7 +61,7 @@ class FoundationEnvironmentDetectorTest extends TestCase
 
     public function testConsoleEnvironmentDetectionDoesNotUseArgumentThatStartsWithEnvSeparatedWithSpace()
     {
-        $env = new EnvironmentDetector;
+        $env = new EnvironmentDetector();
 
         $result = $env->detect(function () {
             return 'foobar';
@@ -69,7 +71,7 @@ class FoundationEnvironmentDetectorTest extends TestCase
 
     public function testConsoleEnvironmentDetectionDoesNotUseArgumentThatStartsWithEnvWithNoValue()
     {
-        $env = new EnvironmentDetector;
+        $env = new EnvironmentDetector();
 
         $result = $env->detect(function () {
             return 'foobar';

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console;
 
 use Illuminate\Console\Command;
@@ -11,7 +13,8 @@ use Symfony\Component\Console\Input\InputOption;
 #[AsCommand(name: 'db:wipe')]
 class WipeCommand extends Command
 {
-    use ConfirmableTrait, Prohibitable;
+    use ConfirmableTrait;
+    use Prohibitable;
 
     /**
      * The console command name.

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Illuminate\Bus\Dispatcher;
@@ -102,7 +104,8 @@ class SkipMiddlewareTest extends TestCase
 
 class SkipTestJob
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 

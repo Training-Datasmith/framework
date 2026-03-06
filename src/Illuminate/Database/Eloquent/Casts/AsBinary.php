@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
@@ -16,8 +18,7 @@ class AsBinary implements Castable
      */
     public static function castUsing(array $arguments): \Illuminate\Contracts\Database\Eloquent\CastsAttributes
     {
-        return new class($arguments) implements CastsAttributes
-        {
+        return new class ($arguments) implements CastsAttributes {
             protected string $format;
 
             public function __construct(protected array $arguments)

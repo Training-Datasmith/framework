@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Query;
 
 use Illuminate\Contracts\Database\Query\Expression as ExpressionContract;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Query;
 
 class IndexHint
@@ -19,7 +21,6 @@ class IndexHint
          * The name of the index.
          */
         public $index
-    )
-    {
+    ) {
     }
 }

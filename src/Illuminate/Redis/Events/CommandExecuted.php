@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Events;
 
 class CommandExecuted
@@ -22,17 +24,17 @@ class CommandExecuted
     public function __construct(/**
      * The Redis command that was executed.
      */
-    public $command, /**
+        public $command, /**
      * The array of command parameters.
      */
-    public $parameters, /**
+        public $parameters, /**
      * The number of milliseconds it took to execute the command.
      */
-    public $time, /**
+        public $time, /**
      * The Redis connection instance.
      */
-    public $connection)
-    {
+        public $connection
+    ) {
         $this->connectionName = $this->connection->getName();
     }
 }

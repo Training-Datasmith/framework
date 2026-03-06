@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Events;
 
 use Illuminate\Database\DatabaseTransactionsManager;
@@ -28,7 +30,7 @@ class ListenerTest extends TestCase
 
         Event::listen(ListenerTestEvent::class, ListenerTestListener::class);
 
-        Event::dispatch(new ListenerTestEvent);
+        Event::dispatch(new ListenerTestEvent());
 
         $this->assertTrue(ListenerTestListener::$ran);
     }
@@ -44,7 +46,7 @@ class ListenerTest extends TestCase
 
         Event::listen(ListenerTestEvent::class, ListenerTestListenerAfterCommit::class);
 
-        Event::dispatch(new ListenerTestEvent);
+        Event::dispatch(new ListenerTestEvent());
 
         $this->assertFalse(ListenerTestListenerAfterCommit::$ran);
     }
@@ -52,7 +54,6 @@ class ListenerTest extends TestCase
 
 class ListenerTestEvent
 {
-    //
 }
 
 class ListenerTestListener

@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing;
 
 use Illuminate\Console\OutputStyle;
 use Illuminate\Console\PromptValidationException;
 use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -27,7 +28,9 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class PendingCommand
 {
-    use Conditionable, Macroable, Tappable;
+    use Conditionable;
+    use Macroable;
+    use Tappable;
 
     /**
      * The test being run.
@@ -66,13 +69,13 @@ class PendingCommand
     public function __construct(PHPUnitTestCase $test, /**
      * The application instance.
      */
-    protected \Illuminate\Contracts\Container\Container $app, /**
+        protected \Illuminate\Contracts\Container\Container $app, /**
      * The command to run.
      */
-    protected $command, /**
+        protected $command, /**
      * The parameters to pass to the command.
      */
-    protected $parameters)
+        protected $parameters)
     {
         $this->test = $test;
     }
@@ -98,7 +101,7 @@ class PendingCommand
      * @param  string  $answer
      * @return $this
      */
-    public function expectsConfirmation($question, $answer = 'no')
+    public function expectsConfirmation($question, $answer = 'no'): static
     {
         return $this->expectsQuestion($question, strtolower($answer) === 'yes');
     }
@@ -112,7 +115,7 @@ class PendingCommand
      * @param  bool  $strict
      * @return $this
      */
-    public function expectsChoice($question, $answer, $answers, $strict = false)
+    public function expectsChoice($question, $answer, $answers, $strict = false): static
     {
         $this->test->expectedChoices[$question] = [
             'expected' => $answers,
@@ -212,7 +215,7 @@ class PendingCommand
      */
     public function expectsTable($headers, $rows, \Symfony\Component\Console\Helper\TableStyle|string $tableStyle = 'default', array $columnStyles = []): static
     {
-        $table = (new Table($output = new BufferedOutput))
+        $table = (new Table($output = new BufferedOutput()))
             ->setHeaders((array) $headers)
             ->setRows($rows instanceof Arrayable ? $rows->toArray() : $rows)
             ->setStyle($tableStyle);
@@ -343,7 +346,7 @@ class PendingCommand
      */
     protected function expectOutputToContainPrompt(BasePrompt $prompt)
     {
-        $prompt->setOutput($output = new BufferedOutput);
+        $prompt->setOutput($output = new BufferedOutput());
 
         $prompt->display();
 
@@ -381,7 +384,7 @@ class PendingCommand
      *
      * @return $this
      */
-    public function assertSuccessful()
+    public function assertSuccessful(): static
     {
         return $this->assertExitCode(Command::SUCCESS);
     }
@@ -401,7 +404,7 @@ class PendingCommand
      *
      * @return $this
      */
-    public function assertFailed()
+    public function assertFailed(): static
     {
         return $this->assertNotExitCode(Command::SUCCESS);
     }
@@ -443,12 +446,14 @@ class PendingCommand
 
         if ($this->expectedExitCode !== null) {
             $this->test->assertEquals(
-                $this->expectedExitCode, $exitCode,
+                $this->expectedExitCode,
+                $exitCode,
                 "Expected status code {$this->expectedExitCode} but received {$exitCode}."
             );
         } elseif (! is_null($this->unexpectedExitCode)) {
             $this->test->assertNotEquals(
-                $this->unexpectedExitCode, $exitCode,
+                $this->unexpectedExitCode,
+                $exitCode,
                 "Unexpected status code {$this->unexpectedExitCode} was received."
             );
         }
@@ -551,7 +556,7 @@ class PendingCommand
                 });
         }
 
-        $this->app->bind(OutputStyle::class, fn() => $mock);
+        $this->app->bind(OutputStyle::class, fn () => $mock);
 
         return $mock;
     }

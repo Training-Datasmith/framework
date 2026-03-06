@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Support\Arr;
@@ -16,17 +18,15 @@ class RouteParameterBinder
          * The route instance.
          */
         protected $route
-    )
-    {
+    ) {
     }
 
     /**
      * Get the parameters for the route.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
-    public function parameters($request)
+    public function parameters($request): array
     {
         $parameters = $this->bindPathParameters($request);
 
@@ -35,7 +35,8 @@ class RouteParameterBinder
         // merge them into this parameters array so that this array is completed.
         if (! is_null($this->route->compiled->getHostRegex())) {
             $parameters = $this->bindHostParameters(
-                $request, $parameters
+                $request,
+                $parameters
             );
         }
 
@@ -46,9 +47,8 @@ class RouteParameterBinder
      * Get the parameter matches for the path portion of the URI.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
-    protected function bindPathParameters($request)
+    protected function bindPathParameters($request): array
     {
         $path = '/'.ltrim($request->decodedPath(), '/');
 
@@ -81,7 +81,7 @@ class RouteParameterBinder
 
         $parameters = array_intersect_key($matches, array_flip($parameterNames));
 
-        return array_filter($parameters, fn($value) => is_string($value) && strlen($value) > 0);
+        return array_filter($parameters, fn ($value): bool => is_string($value) && strlen($value) > 0);
     }
 
     /**

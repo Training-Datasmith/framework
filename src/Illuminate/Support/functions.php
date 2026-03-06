@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Carbon\CarbonInterface;
@@ -34,7 +36,7 @@ if (! function_exists('Illuminate\Support\php_binary')) {
      */
     function php_binary(): string
     {
-        return (new PhpExecutableFinder)->find(false) ?: 'php';
+        return (new PhpExecutableFinder())->find(false) ?: 'php';
     }
 }
 

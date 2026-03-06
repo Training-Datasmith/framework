@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Broadcasting;
 
 use Exception;
@@ -18,14 +20,16 @@ class BroadcastEventTest extends TestCase
         $broadcaster = m::mock(Broadcaster::class);
 
         $broadcaster->shouldReceive('broadcast')->once()->with(
-            ['test-channel'], TestBroadcastEvent::class, ['firstName' => 'Taylor', 'lastName' => 'Otwell', 'collection' => ['foo' => 'bar']]
+            ['test-channel'],
+            TestBroadcastEvent::class,
+            ['firstName' => 'Taylor', 'lastName' => 'Otwell', 'collection' => ['foo' => 'bar']]
         );
 
         $manager = m::mock(BroadcastingFactory::class);
 
         $manager->shouldReceive('connection')->once()->with(null)->andReturn($broadcaster);
 
-        $event = new TestBroadcastEvent;
+        $event = new TestBroadcastEvent();
 
         (new BroadcastEvent($event))->handle($manager);
     }
@@ -35,14 +39,16 @@ class BroadcastEventTest extends TestCase
         $broadcaster = m::mock(Broadcaster::class);
 
         $broadcaster->shouldReceive('broadcast')->once()->with(
-            ['test-channel'], TestBroadcastEventWithManualData::class, ['name' => 'Taylor', 'socket' => null]
+            ['test-channel'],
+            TestBroadcastEventWithManualData::class,
+            ['name' => 'Taylor', 'socket' => null]
         );
 
         $manager = m::mock(BroadcastingFactory::class);
 
         $manager->shouldReceive('connection')->once()->with(null)->andReturn($broadcaster);
 
-        $event = new TestBroadcastEventWithManualData;
+        $event = new TestBroadcastEventWithManualData();
 
         (new BroadcastEvent($event))->handle($manager);
     }
@@ -57,7 +63,7 @@ class BroadcastEventTest extends TestCase
 
         $manager->shouldReceive('connection')->once()->with('log')->andReturn($broadcaster);
 
-        $event = new TestBroadcastEventWithSpecificBroadcaster;
+        $event = new TestBroadcastEventWithSpecificBroadcaster();
 
         (new BroadcastEvent($event))->handle($manager);
     }
@@ -67,11 +73,15 @@ class BroadcastEventTest extends TestCase
         $broadcaster = m::mock(Broadcaster::class);
 
         $broadcaster->shouldReceive('broadcast')->once()->with(
-            ['first-channel'], TestBroadcastEventWithChannelsPerConnection::class, ['firstName' => 'Taylor', 'lastName' => 'Otwell', 'collection' => ['foo' => 'bar']]
+            ['first-channel'],
+            TestBroadcastEventWithChannelsPerConnection::class,
+            ['firstName' => 'Taylor', 'lastName' => 'Otwell', 'collection' => ['foo' => 'bar']]
         );
 
         $broadcaster->shouldReceive('broadcast')->once()->with(
-            ['second-channel'], TestBroadcastEventWithChannelsPerConnection::class, ['firstName' => 'Taylor']
+            ['second-channel'],
+            TestBroadcastEventWithChannelsPerConnection::class,
+            ['firstName' => 'Taylor']
         );
 
         $manager = m::mock(BroadcastingFactory::class);
@@ -79,15 +89,14 @@ class BroadcastEventTest extends TestCase
         $manager->shouldReceive('connection')->once()->with('first_connection')->andReturn($broadcaster);
         $manager->shouldReceive('connection')->once()->with('second_connection')->andReturn($broadcaster);
 
-        $event = new TestBroadcastEventWithChannelsPerConnection;
+        $event = new TestBroadcastEventWithChannelsPerConnection();
 
         (new BroadcastEvent($event))->handle($manager);
     }
 
     public function testMiddlewareProxiesMiddlewareFromUnderlyingEvent()
     {
-        $event = new class
-        {
+        $event = new class () {
             public function middleware(): array
             {
                 return ['foo', 'bar'];
@@ -101,8 +110,7 @@ class BroadcastEventTest extends TestCase
 
     public function testMiddlewareProxiesFailedHandlerFromUnderlyingEvent()
     {
-        $event = new class
-        {
+        $event = new class () {
             public function failed(?Throwable $e = null): void
             {
                 $e->validateCall();

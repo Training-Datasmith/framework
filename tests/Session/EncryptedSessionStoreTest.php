@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Session;
 
 use Illuminate\Contracts\Encryption\Encrypter;

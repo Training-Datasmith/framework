@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http;
 
 use Illuminate\Container\Container;
@@ -12,7 +14,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile as SymfonyUploadedFile;
 
 class UploadedFile extends SymfonyUploadedFile
 {
-    use FileHelpers, Macroable;
+    use FileHelpers;
+    use Macroable;
 
     /**
      * Begin creating a new file fake.
@@ -21,7 +24,7 @@ class UploadedFile extends SymfonyUploadedFile
      */
     public static function fake()
     {
-        return new FileFactory;
+        return new FileFactory();
     }
 
     /**
@@ -92,7 +95,10 @@ class UploadedFile extends SymfonyUploadedFile
         $disk = Arr::pull($options, 'disk');
 
         return Container::getInstance()->make(FilesystemFactory::class)->disk($disk)->putFileAs(
-            $path, $this, $name, $options
+            $path,
+            $this,
+            $name,
+            $options
         );
     }
 

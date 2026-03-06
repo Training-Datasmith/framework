@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Console\Command;
@@ -14,7 +16,7 @@ class TestSeeder extends Seeder
 {
     public function run()
     {
-        //
+
     }
 }
 
@@ -22,7 +24,7 @@ class TestDepsSeeder extends Seeder
 {
     public function run(Mock $someDependency, $someParam = '')
     {
-        //
+
     }
 }
 
@@ -30,7 +32,7 @@ class DatabaseSeederTest extends TestCase
 {
     public function testCallResolveTheClassAndCallsRun()
     {
-        $seeder = new TestSeeder;
+        $seeder = new TestSeeder();
         $seeder->setContainer($container = m::mock(Container::class));
         $output = m::mock(OutputInterface::class);
         $output->shouldReceive('writeln')->times(3);
@@ -47,14 +49,14 @@ class DatabaseSeederTest extends TestCase
 
     public function testSetContainer()
     {
-        $seeder = new TestSeeder;
+        $seeder = new TestSeeder();
         $container = m::mock(Container::class);
         $this->assertEquals($seeder->setContainer($container), $seeder);
     }
 
     public function testSetCommand()
     {
-        $seeder = new TestSeeder;
+        $seeder = new TestSeeder();
         $command = m::mock(Command::class);
         $this->assertEquals($seeder->setCommand($command), $seeder);
     }
@@ -64,7 +66,7 @@ class DatabaseSeederTest extends TestCase
         $container = m::mock(Container::class);
         $container->shouldReceive('call');
 
-        $seeder = new TestDepsSeeder;
+        $seeder = new TestDepsSeeder();
         $seeder->setContainer($container);
 
         $seeder->__invoke();
@@ -77,7 +79,7 @@ class DatabaseSeederTest extends TestCase
         $container = m::mock(Container::class);
         $container->shouldReceive('call');
 
-        $seeder = new TestDepsSeeder;
+        $seeder = new TestDepsSeeder();
         $seeder->setContainer($container);
 
         $seeder->__invoke(['test1', 'test2']);

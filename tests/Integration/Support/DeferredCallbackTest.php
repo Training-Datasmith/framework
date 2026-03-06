@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Support;
 
 use Illuminate\Bus\Queueable;
@@ -22,7 +24,7 @@ class DeferredCallbackTest extends TestCase
                 $executed = true;
             });
 
-            dispatch(new TestSyncJob);
+            dispatch(new TestSyncJob());
         })->middleware(InvokeDeferredCallbacks::class);
 
         $this->get('/test');
@@ -33,10 +35,11 @@ class DeferredCallbackTest extends TestCase
 
 class TestSyncJob implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Dispatchable;
+    use Queueable;
 
     public function handle(): void
     {
-        //
+
     }
 }

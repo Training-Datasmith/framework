@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Query\Grammars;
 
 use Illuminate\Contracts\Database\Query\Expression;
@@ -52,10 +54,8 @@ class Grammar extends BaseGrammar
 
     /**
      * Compile a select query into SQL.
-     *
-     * @return string
      */
-    public function compileSelect(Builder $query)
+    public function compileSelect(Builder $query): string
     {
         if (($query->unions || $query->havings) && $query->aggregate) {
             return $this->compileUnionAggregate($query);
@@ -84,8 +84,10 @@ class Grammar extends BaseGrammar
         // To compile the query, we'll spin through each component of the query and
         // see if that component exists. If it does we'll just call the compiler
         // function for the component which is responsible for making the SQL.
-        $sql = trim($this->concatenate(
-            $this->compileComponents($query))
+        $sql = trim(
+            $this->concatenate(
+                $this->compileComponents($query)
+            )
         );
 
         if ($query->unions) {
@@ -204,10 +206,8 @@ class Grammar extends BaseGrammar
 
     /**
      * Compile the "where" portions of the query.
-     *
-     * @return string
      */
-    public function compileWheres(Builder $query)
+    public function compileWheres(Builder $query): string
     {
         // Each type of where clause has its own compiler function, which is responsible
         // for actually creating the where clauses SQL. This helps keep the code nice
@@ -276,21 +276,16 @@ class Grammar extends BaseGrammar
 
     /**
      * Compile a bitwise operator where clause.
-     *
-     * @param  array  $where
-     * @return string
      */
-    protected function whereBitwise(Builder $query, $where)
+    protected function whereBitwise(Builder $query, array $where): string
     {
         return $this->whereBasic($query, $where);
     }
 
     /**
      * Compile a "where like" clause.
-     *
-     * @return string
      */
-    protected function whereLike(Builder $query, array $where)
+    protected function whereLike(Builder $query, array $where): string
     {
         if ($where['caseSensitive']) {
             throw new RuntimeException('This database engine does not support case sensitive like operations.');
@@ -421,55 +416,40 @@ class Grammar extends BaseGrammar
 
     /**
      * Compile a "where date" clause.
-     *
-     * @param  array  $where
-     * @return string
      */
-    protected function whereDate(Builder $query, $where)
+    protected function whereDate(Builder $query, array $where): string
     {
         return $this->dateBasedWhere('date', $query, $where);
     }
 
     /**
      * Compile a "where time" clause.
-     *
-     * @param  array  $where
-     * @return string
      */
-    protected function whereTime(Builder $query, $where)
+    protected function whereTime(Builder $query, array $where): string
     {
         return $this->dateBasedWhere('time', $query, $where);
     }
 
     /**
      * Compile a "where day" clause.
-     *
-     * @param  array  $where
-     * @return string
      */
-    protected function whereDay(Builder $query, $where)
+    protected function whereDay(Builder $query, array $where): string
     {
         return $this->dateBasedWhere('day', $query, $where);
     }
 
     /**
      * Compile a "where month" clause.
-     *
-     * @param  array  $where
-     * @return string
      */
-    protected function whereMonth(Builder $query, $where)
+    protected function whereMonth(Builder $query, array $where): string
     {
         return $this->dateBasedWhere('month', $query, $where);
     }
 
     /**
      * Compile a "where year" clause.
-     *
-     * @param  array  $where
-     * @return string
      */
-    protected function whereYear(Builder $query, $where)
+    protected function whereYear(Builder $query, array $where): string
     {
         return $this->dateBasedWhere('year', $query, $where);
     }
@@ -716,7 +696,7 @@ class Grammar extends BaseGrammar
      */
     protected function compileHavings(Builder $query): string
     {
-        return 'having '.$this->removeLeadingBoolean((new Collection($query->havings))->map(fn($having) => $having['boolean'].' '.$this->compileHaving($having))->implode(' '));
+        return 'having '.$this->removeLeadingBoolean((new Collection($query->havings))->map(fn (array $having): string => $having['boolean'].' '.$this->compileHaving($having))->implode(' '));
     }
 
     /**
@@ -1045,9 +1025,8 @@ class Grammar extends BaseGrammar
      * Compile an insert and get ID statement into SQL.
      *
      * @param  string|null  $sequence
-     * @return string
      */
-    public function compileInsertGetId(Builder $query, array $values, $sequence)
+    public function compileInsertGetId(Builder $query, array $values, $sequence): string
     {
         return $this->compileInsert($query, $values);
     }
@@ -1289,7 +1268,7 @@ class Grammar extends BaseGrammar
      */
     protected function concatenate($segments): string
     {
-        return implode(' ', array_filter($segments, fn($value) => (string) $value !== ''));
+        return implode(' ', array_filter($segments, fn ($value): bool => (string) $value !== ''));
     }
 
     /**

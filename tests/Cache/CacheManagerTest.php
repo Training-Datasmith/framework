@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cache;
 
 use Illuminate\Cache\ArrayStore;
@@ -82,19 +84,19 @@ class CacheManagerTest extends TestCase
         $this->assertFalse($app->bound(Dispatcher::class));
 
         $cacheManager = new CacheManager($app);
-        $repo = $cacheManager->repository($theStore = new NullStore);
+        $repo = $cacheManager->repository($theStore = new NullStore());
 
         $this->assertNull($repo->getEventDispatcher());
         $this->assertSame($theStore, $repo->getStore());
 
         // binding dispatcher after the repo's birth will have no effect.
-        $app->bind(Dispatcher::class, fn () => new Event);
+        $app->bind(Dispatcher::class, fn () => new Event());
 
         $this->assertNull($repo->getEventDispatcher());
         $this->assertSame($theStore, $repo->getStore());
 
         $cacheManager = new CacheManager($app);
-        $repo = $cacheManager->repository(new NullStore);
+        $repo = $cacheManager->repository(new NullStore());
         // now that the $app has a Dispatcher, the newly born repository will also have one.
         $this->assertNotNull($repo->getEventDispatcher());
     }
@@ -122,7 +124,7 @@ class CacheManagerTest extends TestCase
         $this->assertNull($repo1->getEventDispatcher());
         $this->assertNull($repo2->getEventDispatcher());
 
-        $dispatcher = new Event;
+        $dispatcher = new Event();
         $app->bind(Dispatcher::class, fn () => $dispatcher);
 
         $cacheManager->refreshEventDispatcher();
@@ -206,7 +208,7 @@ class CacheManagerTest extends TestCase
         $cacheManager->shouldReceive('resolve')
             ->withArgs(['array'])
             ->times(4)
-            ->andReturn(new ArrayStore);
+            ->andReturn(new ArrayStore());
 
         $cacheManager->shouldReceive('getDefaultDriver')
             ->once()
@@ -231,7 +233,7 @@ class CacheManagerTest extends TestCase
             ],
         ]);
         $cacheManager->extend('forget', function () {
-            return new ArrayStore;
+            return new ArrayStore();
         });
 
         $cacheManager->store('forget')->forever('foo', 'bar');
@@ -301,7 +303,7 @@ class CacheManagerTest extends TestCase
         ];
 
         $app = $this->getApp($userConfig);
-        $app->bind(Dispatcher::class, fn () => new Event);
+        $app->bind(Dispatcher::class, fn () => new Event());
 
         $cacheManager = new CacheManager($app);
 
@@ -316,7 +318,7 @@ class CacheManagerTest extends TestCase
 
     protected function getApp(array $userConfig)
     {
-        $app = new Container;
+        $app = new Container();
         $app->singleton('config', fn () => new Repository($userConfig));
 
         return $app;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Factories;
 
 use Closure;
@@ -10,15 +12,17 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Enumerable;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Illuminate\Support\Traits\Macroable;
 use Throwable;
-use UnitEnum;
 
-use function Illuminate\Support\enum_value;
+use UnitEnum;
 
 /**
  * @template TModel of \Illuminate\Database\Eloquent\Model
@@ -144,12 +148,12 @@ abstract class Factory
          */
         protected array $excludeRelationships = [],
     ) {
-        $this->states = $states ?? new Collection;
-        $this->has = $has ?? new Collection;
-        $this->for = $for ?? new Collection;
-        $this->afterMaking = $afterMaking ?? new Collection;
-        $this->afterCreating = $afterCreating ?? new Collection;
-        $this->recycle = $recycle ?? new Collection;
+        $this->states = $states ?? new Collection();
+        $this->has = $has ?? new Collection();
+        $this->for = $for ?? new Collection();
+        $this->afterMaking = $afterMaking ?? new Collection();
+        $this->afterCreating = $afterCreating ?? new Collection();
+        $this->recycle = $recycle ?? new Collection();
         $this->faker = $this->withFaker();
         $this->expandRelationships = $expandRelationships ?? self::$expandRelationshipsByDefault;
     }
@@ -169,7 +173,7 @@ abstract class Factory
      */
     public static function new($attributes = [])
     {
-        return (new static)->state($attributes)->configure();
+        return (new static())->state($attributes)->configure();
     }
 
     /**
@@ -204,7 +208,7 @@ abstract class Factory
             return $this->state($attributes)->getExpandedAttributes($parent);
         }
 
-        return array_map(fn() => $this->state($attributes)->getExpandedAttributes($parent), range(1, $this->count));
+        return array_map(fn () => $this->state($attributes)->getExpandedAttributes($parent), range(1, $this->count));
     }
 
     /**
@@ -246,7 +250,7 @@ abstract class Factory
         }
 
         return new EloquentCollection(
-            (new Collection($records))->map(fn($record) => $this->state($record)->create())
+            (new Collection($records))->map(fn ($record) => $this->state($record)->create())
         );
     }
 
@@ -389,7 +393,7 @@ abstract class Factory
                 return $this->newModel()->newCollection();
             }
 
-            $instances = $this->newModel()->newCollection(array_map(fn() => $this->makeInstance($parent), range(1, $this->count)));
+            $instances = $this->newModel()->newCollection(array_map(fn () => $this->makeInstance($parent), range(1, $this->count)));
 
             $this->callAfterMaking($instances);
 
@@ -416,7 +420,7 @@ abstract class Factory
         }
 
         return new EloquentCollection(
-            (new Collection($records))->map(fn($record) => $this->state($record)->make())
+            (new Collection($records))->map(fn ($record) => $this->state($record)->make())
         );
     }
 
@@ -456,7 +460,7 @@ abstract class Factory
      */
     protected function makeInstance(?Model $parent)
     {
-        return Model::unguarded(fn() => tap($this->newModel($this->getExpandedAttributes($parent)), function ($instance): void {
+        return Model::unguarded(fn () => tap($this->newModel($this->getExpandedAttributes($parent)), function ($instance): void {
             if (isset($this->connection)) {
                 $instance->setConnection($this->connection);
             }
@@ -480,7 +484,7 @@ abstract class Factory
      */
     protected function getRawAttributes(?Model $parent)
     {
-        return $this->states->pipe(fn($states) => $this->for->isEmpty() ? $states : new Collection(array_merge([fn() => $this->parentResolvers()], $states->all())))->reduce(function ($carry, $state) use ($parent): array {
+        return $this->states->pipe(fn ($states): \Illuminate\Support\Collection => $this->for->isEmpty() ? $states : new Collection(array_merge([$this->parentResolvers(...)], $states->all())))->reduce(function ($carry, $state) use ($parent): array {
             if ($state instanceof Closure) {
                 $state = $state->bindTo($this);
             }
@@ -624,7 +628,8 @@ abstract class Factory
     {
         return $this->newInstance([
             'has' => $this->has->concat([new Relationship(
-                $factory, $relationship ?? $this->guessRelationship($factory->modelName())
+                $factory,
+                $relationship ?? $this->guessRelationship($factory->modelName())
             )]),
         ]);
     }
@@ -742,7 +747,7 @@ abstract class Factory
      */
     public function withoutAfterMaking()
     {
-        return $this->newInstance(['afterMaking' => new Collection]);
+        return $this->newInstance(['afterMaking' => new Collection()]);
     }
 
     /**
@@ -752,7 +757,7 @@ abstract class Factory
      */
     public function withoutAfterCreating()
     {
-        return $this->newInstance(['afterCreating' => new Collection]);
+        return $this->newInstance(['afterCreating' => new Collection()]);
     }
 
     /**
@@ -871,7 +876,9 @@ abstract class Factory
 
         $resolver = static::$modelNameResolvers[static::class] ?? static::$modelNameResolvers[self::class] ?? static::$modelNameResolver ?? function (self $factory): string {
             $namespacedFactoryBasename = Str::replaceLast(
-                'Factory', '', Str::replaceFirst(static::$namespace, '', $factory::class)
+                'Factory',
+                '',
+                Str::replaceFirst(static::$namespace, '', $factory::class)
             );
 
             $factoryBasename = Str::replaceLast('Factory', '', class_basename($factory));
@@ -1013,7 +1020,6 @@ abstract class Factory
     /**
      * Proxy dynamic factory methods onto their proper methods.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

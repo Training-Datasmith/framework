@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Concurrency\Console;
 
 use Illuminate\Concurrency\Console\InvokeSerializedClosureCommand;
@@ -26,7 +28,7 @@ class InvokeSerializedClosureCommandTest extends TestCase
     {
         parent::setUp();
 
-        $this->app[Kernel::class]->registerCommand(new InvokeSerializedClosureCommand);
+        $this->app[Kernel::class]->registerCommand(new InvokeSerializedClosureCommand());
     }
 
     public function testItCanInvokeSerializedClosureFromArgument()
@@ -36,7 +38,7 @@ class InvokeSerializedClosureCommandTest extends TestCase
         $serialized = serialize(new SerializableClosure($closure));
 
         // Create a new output buffer
-        $output = new BufferedOutput;
+        $output = new BufferedOutput();
 
         // Call the command with the serialized closure
         Artisan::call('invoke-serialized-closure', [
@@ -61,7 +63,7 @@ class InvokeSerializedClosureCommandTest extends TestCase
         $_SERVER['LARAVEL_INVOKABLE_CLOSURE'] = base64_encode($serialized);
 
         // Create a new output buffer
-        $output = new BufferedOutput;
+        $output = new BufferedOutput();
 
         // Call the command without arguments
         Artisan::call('invoke-serialized-closure', [], $output);
@@ -80,7 +82,7 @@ class InvokeSerializedClosureCommandTest extends TestCase
     public function testItReturnsNullWhenNoClosureIsProvided()
     {
         // Create a new output buffer
-        $output = new BufferedOutput;
+        $output = new BufferedOutput();
 
         // Call the command without arguments
         Artisan::call('invoke-serialized-closure', [], $output);
@@ -100,7 +102,7 @@ class InvokeSerializedClosureCommandTest extends TestCase
         $serialized = serialize(new SerializableClosure($closure));
 
         // Create a new output buffer
-        $output = new BufferedOutput;
+        $output = new BufferedOutput();
 
         // Call the command with the serialized closure
         Artisan::call('invoke-serialized-closure', [
@@ -123,7 +125,7 @@ class InvokeSerializedClosureCommandTest extends TestCase
         $serialized = serialize(new SerializableClosure($closure));
 
         // Create a new output buffer
-        $output = new BufferedOutput;
+        $output = new BufferedOutput();
 
         // Call the command with the serialized closure
         Artisan::call('invoke-serialized-closure', [

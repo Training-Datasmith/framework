@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Exception;
@@ -147,6 +149,6 @@ class MySqlConnection extends Connection
      */
     protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\MySqlProcessor
     {
-        return new MySqlProcessor;
+        return new MySqlProcessor();
     }
 }

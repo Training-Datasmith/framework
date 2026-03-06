@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Cache\CacheManager;
@@ -29,7 +31,7 @@ class SupportFacadesEventTest extends TestCase
 
         $this->events = m::mock(Dispatcher::class);
 
-        $container = new Container;
+        $container = new Container();
         $container->instance('events', $this->events);
         $container->alias('events', DispatcherContract::class);
         $container->instance('cache', new CacheManager($container));
@@ -49,14 +51,14 @@ class SupportFacadesEventTest extends TestCase
     public function testFakeFor()
     {
         Event::fakeFor(function () {
-            (new FakeForStub)->dispatch();
+            (new FakeForStub())->dispatch();
 
             Event::assertDispatched(EventStub::class);
         });
 
         $this->events->shouldReceive('dispatch')->once();
 
-        (new FakeForStub)->dispatch();
+        (new FakeForStub())->dispatch();
     }
 
     public function testFakeForSwapsDispatchers()

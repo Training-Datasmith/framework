@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use BadMethodCallException;
@@ -22,7 +24,7 @@ class DatabaseEloquentSoftDeletesIntegrationTest extends TestCase
     {
         parent::setUp();
 
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -223,8 +225,7 @@ class DatabaseEloquentSoftDeletesIntegrationTest extends TestCase
 
     public function testForceDeleteDoesntUpdateExistsPropertyIfFailed()
     {
-        $user = new class() extends SoftDeletesTestUser
-        {
+        $user = new class () extends SoftDeletesTestUser {
             public $exists = true;
 
             public function newModelQuery()
@@ -685,7 +686,7 @@ class DatabaseEloquentSoftDeletesIntegrationTest extends TestCase
 
     public function testSoftDeleteIsAppliedToNewQuery()
     {
-        $query = (new SoftDeletesTestUser)->newQuery();
+        $query = (new SoftDeletesTestUser())->newQuery();
         $this->assertSame('select * from "users" where "users"."deleted_at" is null', $query->toSql());
     }
 

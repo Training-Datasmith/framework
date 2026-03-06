@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications\Events;
 
 use Illuminate\Bus\Queueable;
@@ -7,7 +9,8 @@ use Illuminate\Queue\SerializesModels;
 
 class NotificationSending
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new event instance.

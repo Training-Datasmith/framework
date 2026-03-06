@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Concerns;
 
 use Closure;
@@ -61,7 +63,7 @@ trait HasGlobalScopes
             return static::$globalScopes[static::class][$scope::class] = $scope;
         }
         if (is_string($scope) && class_exists($scope) && is_subclass_of($scope, Scope::class)) {
-            return static::$globalScopes[static::class][$scope] = new $scope;
+            return static::$globalScopes[static::class][$scope] = new $scope();
         }
 
         throw new InvalidArgumentException('Global scope must be an instance of Closure or Scope or be a class name of a class extending '.Scope::class);
@@ -104,7 +106,8 @@ trait HasGlobalScopes
         }
 
         return Arr::get(
-            static::$globalScopes, static::class.'.'.$scope::class
+            static::$globalScopes,
+            static::class.'.'.$scope::class
         );
     }
 

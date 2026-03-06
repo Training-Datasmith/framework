@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Concerns;
 
 use Illuminate\Support\Str;
@@ -8,10 +10,8 @@ trait InteractsWithContentTypes
 {
     /**
      * Determine if the request is sending JSON.
-     *
-     * @return bool
      */
-    public function isJson()
+    public function isJson(): bool
     {
         return Str::contains($this->header('CONTENT_TYPE') ?? '', ['/json', '+json']);
     }

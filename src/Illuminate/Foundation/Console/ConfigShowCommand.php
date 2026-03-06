@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
@@ -89,11 +91,13 @@ class ConfigShowCommand extends Command
     protected function formatKey($key): ?string
     {
         return preg_replace_callback(
-            '/(.*)\.(.*)$/', fn ($matches): string => sprintf(
+            '/(.*)\.(.*)$/',
+            fn ($matches): string => sprintf(
                 '<fg=gray>%s ⇁</> %s',
                 str_replace('.', ' ⇁ ', $matches[1]),
                 $matches[2]
-            ), $key
+            ),
+            $key
         );
     }
 

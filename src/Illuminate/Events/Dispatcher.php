@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Events;
 
 use Closure;
@@ -20,16 +22,19 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\ReflectsClosures;
-use ReflectionClass;
 
 use function Illuminate\Support\enum_value;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
+use Illuminate\Support\Traits\ReflectsClosures;
+
+use ReflectionClass;
+
 class Dispatcher implements DispatcherContract
 {
-    use Macroable, ReflectsClosures;
+    use Macroable;
+    use ReflectsClosures;
 
     /**
      * The IoC container instance.
@@ -97,7 +102,7 @@ class Dispatcher implements DispatcherContract
      */
     public function __construct(?ContainerContract $container = null)
     {
-        $this->container = $container ?: new Container;
+        $this->container = $container ?: new Container();
     }
 
     /**
@@ -533,7 +538,7 @@ class Dispatcher implements DispatcherContract
      * @param  string  $listener
      * @return array{class-string, string}
      */
-    protected function parseClassCallable($listener)
+    protected function parseClassCallable($listener): array
     {
         return Str::parseCallback($listener, 'handle');
     }
@@ -566,7 +571,7 @@ class Dispatcher implements DispatcherContract
     protected function createQueuedHandlerCallable($class, $method)
     {
         return function () use ($class, $method): void {
-            $arguments = array_map(fn($a) => is_object($a) ? clone $a : $a, func_get_args());
+            $arguments = array_map(fn ($a): mixed => is_object($a) ? clone $a : $a, func_get_args());
 
             if ($this->handlerWantsToBeQueued($class, $arguments)) {
                 $this->queueHandler($class, $method, $arguments);
@@ -671,7 +676,8 @@ class Dispatcher implements DispatcherContract
         $listener = (new ReflectionClass($class))->newInstanceWithoutConstructor();
 
         return [$listener, $this->propagateListenerOptions(
-            $listener, new CallQueuedListener($class, $method, $arguments)
+            $listener,
+            new CallQueuedListener($class, $method, $arguments)
         )];
     }
 
@@ -701,7 +707,8 @@ class Dispatcher implements DispatcherContract
             $job->failOnTimeout = $listener->failOnTimeout ?? false;
             $job->tries = method_exists($listener, 'tries') ? $listener->tries(...$data) : ($listener->tries ?? null);
             $job->messageGroup = method_exists($listener, 'messageGroup') ? $listener->messageGroup(...$data) : ($listener->messageGroup ?? null);
-            $job->withDeduplicator(method_exists($listener, 'deduplicator')
+            $job->withDeduplicator(
+                method_exists($listener, 'deduplicator')
                 ? $listener->deduplicator(...$data)
                 : (method_exists($listener, 'deduplicationId') ? $listener->deduplicationId(...) : null)
             );

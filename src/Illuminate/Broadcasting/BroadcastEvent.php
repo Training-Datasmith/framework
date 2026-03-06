@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting;
 
 use Illuminate\Bus\Queueable;
@@ -58,8 +60,8 @@ class BroadcastEvent implements ShouldQueue
     public function __construct(/**
      * The event instance.
      */
-    public $event)
-    {
+        public $event
+    ) {
         $this->tries = property_exists($this->event, 'tries') ? $this->event->tries : null;
         $this->timeout = property_exists($this->event, 'timeout') ? $this->event->timeout : null;
         $this->backoff = property_exists($this->event, 'backoff') ? $this->event->backoff : null;

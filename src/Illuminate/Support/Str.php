@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Closure;
@@ -29,7 +31,7 @@ class Str
      *
      * @var string
      */
-    const INVISIBLE_CHARACTERS = '\x{0009}\x{0020}\x{00A0}\x{00AD}\x{034F}\x{061C}\x{115F}\x{1160}\x{17B4}\x{17B5}\x{180E}\x{2000}\x{2001}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{2007}\x{2008}\x{2009}\x{200A}\x{200B}\x{200C}\x{200D}\x{200E}\x{200F}\x{202F}\x{205F}\x{2060}\x{2061}\x{2062}\x{2063}\x{2064}\x{2065}\x{206A}\x{206B}\x{206C}\x{206D}\x{206E}\x{206F}\x{3000}\x{2800}\x{3164}\x{FEFF}\x{FFA0}\x{1D159}\x{1D173}\x{1D174}\x{1D175}\x{1D176}\x{1D177}\x{1D178}\x{1D179}\x{1D17A}\x{E0020}';
+    public const INVISIBLE_CHARACTERS = '\x{0009}\x{0020}\x{00A0}\x{00AD}\x{034F}\x{061C}\x{115F}\x{1160}\x{17B4}\x{17B5}\x{180E}\x{2000}\x{2001}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{2007}\x{2008}\x{2009}\x{200A}\x{200B}\x{200C}\x{200D}\x{200E}\x{200F}\x{202F}\x{205F}\x{2060}\x{2061}\x{2062}\x{2063}\x{2064}\x{2065}\x{206A}\x{206B}\x{206C}\x{206D}\x{206E}\x{206F}\x{3000}\x{2800}\x{3164}\x{FEFF}\x{FFA0}\x{1D159}\x{1D173}\x{1D174}\x{1D175}\x{1D176}\x{1D177}\x{1D178}\x{1D179}\x{1D17A}\x{E0020}';
 
     /**
      * The cache of snake-cased words.
@@ -369,7 +371,7 @@ class Str
 
         return array_reduce(
             $characters,
-            fn ($carry, $character): ?string => preg_replace('/'.preg_quote((string) $character, '/').'+/u', (string) $character, (string) $carry),
+            fn ($carry, $character): ?string => preg_replace('/'.preg_quote($character, '/').'+/u', $character, (string) $carry),
             $string
         );
     }
@@ -432,15 +434,15 @@ class Str
         $start = ltrim($matches[1]);
 
         $start = Str::of(mb_substr($start, max(mb_strlen($start, 'UTF-8') - $radius, 0), $radius, 'UTF-8'))->ltrim()->unless(
-            fn ($startWithRadius) => $startWithRadius->exactly($start),
-            fn ($startWithRadius) => $startWithRadius->prepend($omission),
+            fn ($startWithRadius): bool => $startWithRadius->exactly($start),
+            fn ($startWithRadius): \Illuminate\Support\Stringable => $startWithRadius->prepend($omission),
         );
 
         $end = rtrim($matches[3]);
 
         $end = Str::of(mb_substr($end, 0, $radius, 'UTF-8'))->rtrim()->unless(
-            fn ($endWithRadius) => $endWithRadius->exactly($end),
-            fn ($endWithRadius) => $endWithRadius->append($omission),
+            fn ($endWithRadius): bool => $endWithRadius->exactly($end),
+            fn ($endWithRadius): \Illuminate\Support\Stringable => $endWithRadius->append($omission),
         );
 
         return $start->append($matches[2], $end)->toString();
@@ -638,7 +640,7 @@ class Str
             return preg_match('/^[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}$/D', $value) > 0;
         }
 
-        $factory = new UuidFactory;
+        $factory = new UuidFactory();
 
         try {
             $factoryUuid = $factory->fromString($value);
@@ -893,7 +895,7 @@ class Str
         preg_match_all($pattern, $subject, $matches);
 
         if (empty($matches[0])) {
-            return new Collection;
+            return new Collection();
         }
 
         return new Collection($matches[1] ?? $matches[0]);
@@ -1005,9 +1007,8 @@ class Str
      *
      * @param  string  $value
      * @param  int|array|\Countable  $count
-     * @return string
      */
-    public static function pluralPascal($value, $count = 2)
+    public static function pluralPascal($value, $count = 2): string
     {
         return static::pluralStudly($value, $count);
     }
@@ -1446,7 +1447,7 @@ class Str
             if (str_contains($lowercaseWord, '-')) {
                 $hyphenatedWords = explode('-', $lowercaseWord);
 
-                $hyphenatedWords = array_map(fn(string $part) => (in_array($part, $minorWords) && mb_strlen($part) <= 3)
+                $hyphenatedWords = array_map(fn (string $part): string => (in_array($part, $minorWords) && mb_strlen($part) <= 3)
                     ? $part
                     : mb_strtoupper(mb_substr($part, 0, 1)).mb_substr($part, 1), $hyphenatedWords);
 
@@ -1799,7 +1800,7 @@ class Str
     {
         $pattern = '/(^|['.preg_quote($separators, '/').'])(\p{Ll})/u';
 
-        return preg_replace_callback($pattern, fn($matches) => $matches[1].mb_strtoupper($matches[2]), $string);
+        return preg_replace_callback($pattern, fn ($matches): string => $matches[1].mb_strtoupper((string) $matches[2]), $string);
     }
 
     /**
@@ -1874,7 +1875,7 @@ class Str
             return call_user_func(static::$uuidFactory);
         }
 
-        $factory = new UuidFactory;
+        $factory = new UuidFactory();
 
         $factory->setRandomGenerator(new CombGenerator(
             $factory->getRandomGenerator(),

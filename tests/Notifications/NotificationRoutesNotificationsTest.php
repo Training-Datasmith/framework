@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Notifications;
 
 use Illuminate\Container\Container;
@@ -22,11 +24,11 @@ class NotificationRoutesNotificationsTest extends TestCase
 
     public function testNotificationCanBeDispatched()
     {
-        $container = new Container;
+        $container = new Container();
         $factory = m::mock(Dispatcher::class);
         $container->instance(Dispatcher::class, $factory);
-        $notifiable = new RoutesNotificationsTestInstance;
-        $instance = new stdClass;
+        $notifiable = new RoutesNotificationsTestInstance();
+        $instance = new stdClass();
         $factory->shouldReceive('send')->with($notifiable, $instance);
         Container::setInstance($container);
 
@@ -35,11 +37,11 @@ class NotificationRoutesNotificationsTest extends TestCase
 
     public function testNotificationCanBeSentNow()
     {
-        $container = new Container;
+        $container = new Container();
         $factory = m::mock(Dispatcher::class);
         $container->instance(Dispatcher::class, $factory);
-        $notifiable = new RoutesNotificationsTestInstance;
-        $instance = new stdClass;
+        $notifiable = new RoutesNotificationsTestInstance();
+        $instance = new stdClass();
         $factory->shouldReceive('sendNow')->with($notifiable, $instance, null);
         Container::setInstance($container);
 
@@ -48,7 +50,7 @@ class NotificationRoutesNotificationsTest extends TestCase
 
     public function testNotificationOptionRouting()
     {
-        $instance = new RoutesNotificationsTestInstance;
+        $instance = new RoutesNotificationsTestInstance();
         $this->assertSame('bar', $instance->routeNotificationFor('foo'));
         $this->assertSame('taylor@laravel.com', $instance->routeNotificationFor('mail'));
     }

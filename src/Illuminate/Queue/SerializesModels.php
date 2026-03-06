@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Illuminate\Queue\Attributes\WithoutRelations;
@@ -93,7 +95,8 @@ trait SerializesModels
             }
 
             $property->setValue(
-                $this, $this->getRestoredPropertyValue($values[$name])
+                $this,
+                $this->getRestoredPropertyValue($values[$name])
             );
         }
     }

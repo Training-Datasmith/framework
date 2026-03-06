@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Rules;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +10,8 @@ use Stringable;
 
 class Unique implements Stringable
 {
-    use Conditionable, DatabaseRule;
+    use Conditionable;
+    use DatabaseRule;
 
     /**
      * The ID that should be ignored.
@@ -31,7 +34,7 @@ class Unique implements Stringable
      * @param  string|null  $idColumn
      * @return $this
      */
-    public function ignore($id, $idColumn = null)
+    public function ignore($id, $idColumn = null): static
     {
         if ($id instanceof Model) {
             return $this->ignoreModel($id, $idColumn);
@@ -63,7 +66,8 @@ class Unique implements Stringable
      */
     public function __toString(): string
     {
-        return rtrim(sprintf('unique:%s,%s,%s,%s,%s',
+        return rtrim(sprintf(
+            'unique:%s,%s,%s,%s,%s',
             $this->table,
             $this->column,
             $this->ignore ? '"'.addslashes((string) $this->ignore).'"' : 'NULL',

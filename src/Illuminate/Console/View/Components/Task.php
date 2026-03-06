@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\View\Components;
 
 use Illuminate\Console\View\TaskResult;
 use Illuminate\Support\InteractsWithTime;
 use Symfony\Component\Console\Output\OutputInterface;
-use Throwable;
 
 use function Termwind\terminal;
+
+use Throwable;
 
 class Task extends Component
 {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation;
 
 use Closure;
@@ -13,6 +15,9 @@ use Illuminate\Contracts\Foundation\MaintenanceMode as MaintenanceModeContract;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Events\EventServiceProvider;
 use Illuminate\Filesystem\Filesystem;
+
+use function Illuminate\Filesystem\join_paths;
+
 use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 use Illuminate\Foundation\Events\LocaleUpdated;
 use Illuminate\Http\Request;
@@ -32,9 +37,8 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-use function Illuminate\Filesystem\join_paths;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class Application extends Container implements ApplicationContract, CachesConfiguration, CachesRoutes, HttpKernelInterface
 {
@@ -45,7 +49,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      *
      * @var string
      */
-    const VERSION = '12.53.0';
+    public const VERSION = '12.53.0';
 
     /**
      * The base path for the Laravel installation.
@@ -227,10 +231,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
 
     /**
      * Begin configuring a new Laravel application instance.
-     *
-     * @return \Illuminate\Foundation\Configuration\ApplicationBuilder
      */
-    public static function configure(?string $basePath = null)
+    public static function configure(?string $basePath = null): \Illuminate\Foundation\Configuration\ApplicationBuilder
     {
         $basePath = match (true) {
             is_string($basePath) => $basePath,
@@ -284,7 +286,9 @@ class Application extends Container implements ApplicationContract, CachesConfig
         $this->singleton(Mix::class);
 
         $this->singleton(PackageManifest::class, fn (): \Illuminate\Foundation\PackageManifest => new PackageManifest(
-            new Filesystem, $this->basePath(), $this->getCachedPackagesPath()
+            new Filesystem(),
+            $this->basePath(),
+            $this->getCachedPackagesPath()
         ));
     }
 
@@ -347,7 +351,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
     public function afterLoadingEnvironment(Closure $callback): void
     {
         $this->afterBootstrapping(
-            LoadEnvironmentVariables::class, $callback
+            LoadEnvironmentVariables::class,
+            $callback
         );
     }
 
@@ -407,11 +412,11 @@ class Application extends Container implements ApplicationContract, CachesConfig
         $this->instance('path.resources', $this->resourcePath());
         $this->instance('path.storage', $this->storagePath());
 
-        $this->useBootstrapPath(value(fn() => is_dir($directory = $this->basePath('.laravel'))
+        $this->useBootstrapPath(value(fn () => is_dir($directory = $this->basePath('.laravel'))
             ? $directory
             : $this->basePath('bootstrap')));
 
-        $this->useLangPath(value(fn() => is_dir($directory = $this->resourcePath('lang'))
+        $this->useLangPath(value(fn () => is_dir($directory = $this->resourcePath('lang'))
             ? $directory
             : $this->basePath('lang')));
     }
@@ -420,9 +425,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * Get the path to the application "app" directory.
      *
      * @param  string  $path
-     * @return string
      */
-    public function path($path = '')
+    public function path($path = ''): string
     {
         return $this->joinPaths($this->appPath ?: $this->basePath('app'), $path);
     }
@@ -446,9 +450,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * Get the base path of the Laravel installation.
      *
      * @param  string  $path
-     * @return string
      */
-    public function basePath($path = '')
+    public function basePath($path = ''): string
     {
         return $this->joinPaths($this->basePath, $path);
     }
@@ -457,9 +460,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * Get the path to the bootstrap directory.
      *
      * @param  string  $path
-     * @return string
      */
-    public function bootstrapPath($path = '')
+    public function bootstrapPath($path = ''): string
     {
         return $this->joinPaths($this->bootstrapPath, $path);
     }
@@ -493,9 +495,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * Get the path to the application configuration files.
      *
      * @param  string  $path
-     * @return string
      */
-    public function configPath($path = '')
+    public function configPath($path = ''): string
     {
         return $this->joinPaths($this->configPath ?: $this->basePath('config'), $path);
     }
@@ -519,9 +520,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * Get the path to the database directory.
      *
      * @param  string  $path
-     * @return string
      */
-    public function databasePath($path = '')
+    public function databasePath($path = ''): string
     {
         return $this->joinPaths($this->databasePath ?: $this->basePath('database'), $path);
     }
@@ -545,9 +545,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * Get the path to the language files.
      *
      * @param  string  $path
-     * @return string
      */
-    public function langPath($path = '')
+    public function langPath($path = ''): string
     {
         return $this->joinPaths($this->langPath, $path);
     }
@@ -571,9 +570,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * Get the path to the public / web directory.
      *
      * @param  string  $path
-     * @return string
      */
-    public function publicPath($path = '')
+    public function publicPath($path = ''): string
     {
         return $this->joinPaths($this->publicPath ?: $this->basePath('public'), $path);
     }
@@ -597,9 +595,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * Get the path to the storage directory.
      *
      * @param  string  $path
-     * @return string
      */
-    public function storagePath($path = '')
+    public function storagePath($path = ''): string
     {
         if (isset($_ENV['LARAVEL_STORAGE_PATH'])) {
             return $this->joinPaths($this->storagePath ?: $_ENV['LARAVEL_STORAGE_PATH'], $path);
@@ -631,9 +628,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * Get the path to the resources directory.
      *
      * @param  string  $path
-     * @return string
      */
-    public function resourcePath($path = '')
+    public function resourcePath($path = ''): string
     {
         return $this->joinPaths($this->basePath('resources'), $path);
     }
@@ -644,9 +640,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * This method returns the first configured path in the array of view paths.
      *
      * @param  string  $path
-     * @return string
      */
-    public function viewPath($path = '')
+    public function viewPath($path = ''): string
     {
         $viewPath = rtrim((string) $this['config']->get('view.paths')[0], DIRECTORY_SEPARATOR);
 
@@ -762,7 +757,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
             ? $_SERVER['argv']
             : null;
 
-        return $this['env'] = (new EnvironmentDetector)->detect($callback, $args);
+        return $this['env'] = (new EnvironmentDetector())->detect($callback, $args);
     }
 
     /**
@@ -833,7 +828,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
-        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
+        (new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath()))
             ->load($providers->collapse()->toArray());
 
         $this->fireAppCallbacks($this->registeredCallbacks);
@@ -1184,7 +1179,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
 
         $status = $kernel->handle(
             $input,
-            new ConsoleOutput
+            new ConsoleOutput()
         );
 
         $kernel->terminate($input, $status);
@@ -1303,7 +1298,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
         }
 
         return $this->instance(
-            'events.cached', $this['files']->exists($this->getCachedEventsPath())
+            'events.cached',
+            $this['files']->exists($this->getCachedEventsPath())
         );
     }
 

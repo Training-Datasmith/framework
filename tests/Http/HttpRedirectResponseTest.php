@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Http;
 
 use BadMethodCallException;
@@ -105,10 +107,10 @@ class HttpRedirectResponseTest extends TestCase
         $response = new RedirectResponse('foo.bar');
         $response->setRequest(Request::create('/', 'GET', ['name' => 'Taylor', 'age' => 26]));
         $response->setSession($session = m::mock(Store::class));
-        $session->shouldReceive('get')->with('errors', m::type(ViewErrorBag::class))->andReturn(new ViewErrorBag);
+        $session->shouldReceive('get')->with('errors', m::type(ViewErrorBag::class))->andReturn(new ViewErrorBag());
         $session->shouldReceive('flash')->once()->with('errors', m::type(ViewErrorBag::class));
         $provider = m::mock(MessageProvider::class);
-        $provider->shouldReceive('getMessageBag')->once()->andReturn(new MessageBag);
+        $provider->shouldReceive('getMessageBag')->once()->andReturn(new MessageBag());
         $response->withErrors($provider);
     }
 
@@ -194,7 +196,7 @@ class HttpRedirectResponseTest extends TestCase
         $response = new RedirectResponse('foo.bar');
         $response->setRequest(Request::create('/', 'GET', ['name' => 'Taylor', 'age' => 26]));
         $response->setSession($session = m::mock(Store::class));
-        $session->shouldReceive('get')->with('errors', m::type(ViewErrorBag::class))->andReturn(new ViewErrorBag);
+        $session->shouldReceive('get')->with('errors', m::type(ViewErrorBag::class))->andReturn(new ViewErrorBag());
         $session->shouldReceive('flash')->once()->with('errors', m::type(ViewErrorBag::class));
         $provider = ['foo' => 'bar'];
         $response->withErrors($provider);

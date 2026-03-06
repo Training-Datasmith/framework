@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Jobs;
 
 use Illuminate\Support\InteractsWithTime;
@@ -18,8 +20,7 @@ class DatabaseJobRecord
          * The underlying job record.
          */
         protected $record
-    )
-    {
+    ) {
     }
 
     /**

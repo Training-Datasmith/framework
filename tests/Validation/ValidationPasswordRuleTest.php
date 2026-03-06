@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Container\Container;
@@ -312,8 +314,7 @@ class ValidationPasswordRuleTest extends TestCase
             }
         };
 
-        $ruleObject = new class implements RuleContract
-        {
+        $ruleObject = new class () implements RuleContract {
             public function passes($attribute, $value)
             {
                 return $value === 'aa';
@@ -532,7 +533,8 @@ class ValidationPasswordRuleTest extends TestCase
 
         $container->bind('translator', function () {
             return new Translator(
-                new ArrayLoader, 'en'
+                new ArrayLoader(),
+                'en'
             );
         });
 

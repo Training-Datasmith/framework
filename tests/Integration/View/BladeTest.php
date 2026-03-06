@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\View;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\View;
 use Illuminate\View\Component;
-use Orchestra\Testbench\TestCase;
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 use function Orchestra\Testbench\artisan;
 use function Orchestra\Testbench\phpunit_version_compare;
+
+use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class BladeTest extends TestCase
 {

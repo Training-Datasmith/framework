@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Testing\Concerns;
 
 use Illuminate\Database\Connection;
@@ -22,19 +24,22 @@ class InteractsWithDatabaseTest extends TestCase
     {
         $grammar = 'SQLite';
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         '["foo","bar"]'
         TEXT,
             $this->castAsJson(['foo', 'bar'], $grammar)
         );
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         '["foo","bar"]'
         TEXT,
             $this->castAsJson(collect(['foo', 'bar']), $grammar)
         );
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         '{"foo":"bar"}'
         TEXT,
             $this->castAsJson((object) ['foo' => 'bar'], $grammar)
@@ -45,19 +50,22 @@ class InteractsWithDatabaseTest extends TestCase
     {
         $grammar = 'Postgres';
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         '["foo","bar"]'
         TEXT,
             $this->castAsJson(['foo', 'bar'], $grammar)
         );
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         '["foo","bar"]'
         TEXT,
             $this->castAsJson(collect(['foo', 'bar']), $grammar)
         );
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         '{"foo":"bar"}'
         TEXT,
             $this->castAsJson((object) ['foo' => 'bar'], $grammar)
@@ -68,19 +76,22 @@ class InteractsWithDatabaseTest extends TestCase
     {
         $grammar = 'SqlServer';
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         json_query('["foo","bar"]')
         TEXT,
             $this->castAsJson(['foo', 'bar'], $grammar)
         );
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         json_query('["foo","bar"]')
         TEXT,
             $this->castAsJson(collect(['foo', 'bar']), $grammar)
         );
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         json_query('{"foo":"bar"}')
         TEXT,
             $this->castAsJson((object) ['foo' => 'bar'], $grammar)
@@ -91,19 +102,22 @@ class InteractsWithDatabaseTest extends TestCase
     {
         $grammar = 'MySql';
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         cast('["foo","bar"]' as json)
         TEXT,
             $this->castAsJson(['foo', 'bar'], $grammar)
         );
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         cast('["foo","bar"]' as json)
         TEXT,
             $this->castAsJson(collect(['foo', 'bar']), $grammar)
         );
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         cast('{"foo":"bar"}' as json)
         TEXT,
             $this->castAsJson((object) ['foo' => 'bar'], $grammar)
@@ -114,19 +128,22 @@ class InteractsWithDatabaseTest extends TestCase
     {
         $grammar = 'MariaDb';
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         json_query('["foo","bar"]', '$')
         TEXT,
             $this->castAsJson(['foo', 'bar'], $grammar)
         );
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         json_query('["foo","bar"]', '$')
         TEXT,
             $this->castAsJson(collect(['foo', 'bar']), $grammar)
         );
 
-        $this->assertEquals(<<<'TEXT'
+        $this->assertEquals(
+            <<<'TEXT'
         json_query('{"foo":"bar"}', '$')
         TEXT,
             $this->castAsJson((object) ['foo' => 'bar'], $grammar)
@@ -151,8 +168,7 @@ class InteractsWithDatabaseTest extends TestCase
 
         DB::shouldReceive('connection')->with(null)->andReturn($connection);
 
-        $instance = new class
-        {
+        $instance = new class () {
             use InteractsWithDatabase;
         };
 

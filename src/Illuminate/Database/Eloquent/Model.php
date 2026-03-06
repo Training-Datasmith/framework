@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent;
 
 use ArrayAccess;
@@ -23,6 +25,9 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable as SupportStringable;
 use Illuminate\Support\Traits\ForwardsCalls;
@@ -31,23 +36,22 @@ use JsonSerializable;
 use LogicException;
 use ReflectionClass;
 use ReflectionMethod;
-use Stringable;
 
-use function Illuminate\Support\enum_value;
+use Stringable;
 
 abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToString, HasBroadcastChannel, Jsonable, JsonSerializable, QueueableEntity, Stringable, UrlRoutable
 {
-    use Concerns\HasAttributes,
-        Concerns\HasEvents,
-        Concerns\HasGlobalScopes,
-        Concerns\HasRelationships,
-        Concerns\HasTimestamps,
-        Concerns\HasUniqueIds,
-        Concerns\HidesAttributes,
-        Concerns\GuardsAttributes,
-        Concerns\PreventsCircularRecursion,
-        Concerns\TransformsToResource,
-        ForwardsCalls;
+    use Concerns\HasAttributes;
+    use Concerns\HasEvents;
+    use Concerns\HasGlobalScopes;
+    use Concerns\HasRelationships;
+    use Concerns\HasTimestamps;
+    use Concerns\HasUniqueIds;
+    use Concerns\HidesAttributes;
+    use Concerns\GuardsAttributes;
+    use Concerns\PreventsCircularRecursion;
+    use Concerns\TransformsToResource;
+    use ForwardsCalls;
     /** @use HasCollection<\Illuminate\Database\Eloquent\Collection<array-key, static & self>> */
     use HasCollection;
 
@@ -280,14 +284,14 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      *
      * @var string|null
      */
-    const CREATED_AT = 'created_at';
+    public const CREATED_AT = 'created_at';
 
     /**
      * The name of the "updated at" column.
      *
      * @var string|null
      */
-    const UPDATED_AT = 'updated_at';
+    public const UPDATED_AT = 'updated_at';
 
     /**
      * Create a new Eloquent model instance.
@@ -338,7 +342,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      */
     protected static function booting()
     {
-        //
+
     }
 
     /**
@@ -407,7 +411,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      */
     protected static function booted()
     {
-        //
+
     }
 
     /**
@@ -602,7 +606,8 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
                 } else {
                     throw new MassAssignmentException(sprintf(
                         'Add [%s] to fillable property to allow mass assignment on [%s].',
-                        $key, static::class
+                        $key,
+                        static::class
                     ));
                 }
             }
@@ -660,7 +665,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     public function qualifyColumns($columns)
     {
         return (new BaseCollection($columns))
-            ->map(fn ($column) => $this->qualifyColumn($column))
+            ->map(fn (string $column) => $this->qualifyColumn($column))
             ->all();
     }
 
@@ -676,7 +681,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
         // This method just provides a convenient way for us to generate fresh model
         // instances of this current model. It is particularly useful during the
         // hydration of new objects via the Eloquent query builder instances.
-        $model = new static;
+        $model = new static();
 
         $model->exists = $exists;
 
@@ -724,7 +729,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
         // First we will just create a fresh instance of this model, and then we can set the
         // connection on the model so that it is used for the queries we execute, as well
         // as being set on every relation we retrieve without a custom connection name.
-        return (new static)->setConnection($connection)->newQuery();
+        return (new static())->setConnection($connection)->newQuery();
     }
 
     /**
@@ -926,10 +931,9 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      * Eager load relationship counts on the polymorphic relation of a model.
      *
      * @param  string  $relation
-     * @param  array  $relations
      * @return $this
      */
-    public function loadMorphCount($relation, $relations)
+    public function loadMorphCount($relation, array $relations)
     {
         return $this->loadMorphAggregate($relation, $relations, '*', 'count');
     }
@@ -938,11 +942,10 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      * Eager load relationship max column values on the polymorphic relation of a model.
      *
      * @param  string  $relation
-     * @param  array  $relations
      * @param  string  $column
      * @return $this
      */
-    public function loadMorphMax($relation, $relations, $column)
+    public function loadMorphMax($relation, array $relations, $column)
     {
         return $this->loadMorphAggregate($relation, $relations, $column, 'max');
     }
@@ -951,11 +954,10 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      * Eager load relationship min column values on the polymorphic relation of a model.
      *
      * @param  string  $relation
-     * @param  array  $relations
      * @param  string  $column
      * @return $this
      */
-    public function loadMorphMin($relation, $relations, $column)
+    public function loadMorphMin($relation, array $relations, $column)
     {
         return $this->loadMorphAggregate($relation, $relations, $column, 'min');
     }
@@ -964,11 +966,10 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      * Eager load relationship column summations on the polymorphic relation of a model.
      *
      * @param  string  $relation
-     * @param  array  $relations
      * @param  string  $column
      * @return $this
      */
-    public function loadMorphSum($relation, $relations, $column)
+    public function loadMorphSum($relation, array $relations, $column)
     {
         return $this->loadMorphAggregate($relation, $relations, $column, 'sum');
     }
@@ -977,11 +978,10 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      * Eager load relationship average column values on the polymorphic relation of a model.
      *
      * @param  string  $relation
-     * @param  array  $relations
      * @param  string  $column
      * @return $this
      */
-    public function loadMorphAvg($relation, $relations, $column)
+    public function loadMorphAvg($relation, array $relations, $column)
     {
         return $this->loadMorphAggregate($relation, $relations, $column, 'avg');
     }
@@ -1429,7 +1429,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
         // We will actually pull the models from the database table and call delete on
         // each of them individually so that their events get fired properly with a
         // correct set of attributes in case the developers wants to check these.
-        $key = ($instance = new static)->getKeyName();
+        $key = ($instance = new static())->getKeyName();
 
         $count = 0;
 
@@ -1553,7 +1553,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      */
     public static function query()
     {
-        return (new static)->newQuery();
+        return (new static())->newQuery();
     }
 
     /**
@@ -1845,10 +1845,11 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
         ]));
 
         $attributes = Arr::except(
-            $this->getAttributes(), $except ? array_unique(array_merge($except, $defaults)) : $defaults
+            $this->getAttributes(),
+            $except ? array_unique(array_merge($except, $defaults)) : $defaults
         );
 
-        return tap(new static, function ($instance) use ($attributes): void {
+        return tap(new static(), function ($instance) use ($attributes): void {
             $instance->setRawAttributes($attributes);
 
             $instance->setRelations($this->relations);
@@ -2225,10 +2226,9 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Retrieve the child route model binding relationship name for the given child type.
      *
-     * @param  string  $childType
      * @return string
      */
-    protected function childRouteBindingRelationshipName($childType)
+    protected function childRouteBindingRelationshipName(string $childType)
     {
         return Str::plural(Str::camel($childType));
     }
@@ -2458,7 +2458,6 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Handle dynamic method calls into the model.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)
@@ -2482,7 +2481,6 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Handle dynamic static method calls into the model.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public static function __callStatic(string $method, array $parameters)
@@ -2491,7 +2489,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
             return static::query()->$method(...$parameters);
         }
 
-        return (new static)->$method(...$parameters);
+        return (new static())->$method(...$parameters);
     }
 
     /**

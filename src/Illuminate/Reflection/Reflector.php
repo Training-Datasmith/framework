@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use ReflectionAttribute;
@@ -67,7 +69,7 @@ class Reflector
      * @param  bool  $ascend
      * @return TAttribute|null
      */
-    public static function getClassAttribute($objectOrClass, $attribute, $ascend = false)
+    public static function getClassAttribute($objectOrClass, ?string $attribute, $ascend = false)
     {
         return static::getClassAttributes($objectOrClass, $attribute, $ascend)->flatten()->first();
     }

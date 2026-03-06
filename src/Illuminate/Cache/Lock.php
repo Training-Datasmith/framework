@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Contracts\Cache\Lock as LockContract;
@@ -36,11 +38,12 @@ abstract class Lock implements LockContract
     public function __construct(/**
      * The name of the lock.
      */
-    protected $name, /**
+        protected $name, /**
      * The number of seconds the lock should be maintained.
      */
-    protected $seconds, $owner = null)
-    {
+        protected $seconds,
+        $owner = null
+    ) {
         if (is_null($owner)) {
             $owner = Str::random();
         }
@@ -108,7 +111,7 @@ abstract class Lock implements LockContract
             $now = ((int) now()->format('Uu')) / 1000;
 
             if (($now + $this->sleepMilliseconds - $milliseconds) >= $starting) {
-                throw new LockTimeoutException;
+                throw new LockTimeoutException();
             }
 
             Sleep::usleep($this->sleepMilliseconds * 1000);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Translation;
 
 use Illuminate\Contracts\Translation\Loader;
@@ -34,8 +36,9 @@ class FileLoader implements Loader
     public function __construct(/**
      * The filesystem instance.
      */
-    protected \Illuminate\Filesystem\Filesystem $files, array|string $path)
-    {
+        protected \Illuminate\Filesystem\Filesystem $files,
+        array|string $path
+    ) {
         $this->paths = is_string($path) ? [$path] : $path;
     }
 
@@ -189,10 +192,8 @@ class FileLoader implements Loader
 
     /**
      * Get an array of all the registered paths to translation files.
-     *
-     * @return array
      */
-    public function paths()
+    public function paths(): array
     {
         return $this->paths;
     }

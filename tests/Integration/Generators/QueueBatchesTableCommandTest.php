@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Generators;
 
 use Illuminate\Queue\Console\BatchesTableCommand;

@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Fluent;
 
 use function PHPStan\Testing\assertType;
 
-$fluent = new Fluent(['name' => 'Taylor', 'age' => 25, 'user' => new User]);
+$fluent = new Fluent(['name' => 'Taylor', 'age' => 25, 'user' => new User()]);
 
 assertType("Illuminate\Support\Fluent<string, 25|'Taylor'|User>", $fluent);
 assertType('Illuminate\Support\Fluent<string, string>', new Fluent(['name' => 'Taylor']));
 assertType('Illuminate\Support\Fluent<string, int>', new Fluent(['age' => 25]));
-assertType('Illuminate\Support\Fluent<string, User>', new Fluent(['user' => new User]));
+assertType('Illuminate\Support\Fluent<string, User>', new Fluent(['user' => new User()]));
 
 assertType("25|'Taylor'|User|null", $fluent['name']);
 assertType("25|'Taylor'|User|null", $fluent['age']);

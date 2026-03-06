@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Connections;
 
 use InvalidArgumentException;
@@ -31,7 +33,8 @@ class PhpRedisClusterConnection extends PhpRedisConnection
     #[\Override]
     public function scan($cursor, $options = []): array|false
     {
-        $result = $this->client->scan($cursor,
+        $result = $this->client->scan(
+            $cursor,
             $options['node'] ?? $this->defaultNode(),
             $options['match'] ?? '*',
             $options['count'] ?? 10

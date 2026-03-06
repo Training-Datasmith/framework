@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Exception;
@@ -30,8 +32,8 @@ class QueueSyncQueueTest extends TestCase
     {
         unset($_SERVER['__sync.test']);
 
-        $sync = new SyncQueue;
-        $container = new Container;
+        $sync = new SyncQueue();
+        $container = new Container();
         $sync->setContainer($container);
 
         $sync->push(SyncQueueTestHandler::class, ['foo' => 'bar']);
@@ -43,8 +45,8 @@ class QueueSyncQueueTest extends TestCase
     {
         unset($_SERVER['__sync.failed']);
 
-        $sync = new SyncQueue;
-        $container = new Container;
+        $sync = new SyncQueue();
+        $container = new Container();
         Container::setInstance($container);
         $events = m::mock(Dispatcher::class);
         $events->shouldReceive('dispatch')->times(4);
@@ -65,8 +67,8 @@ class QueueSyncQueueTest extends TestCase
     {
         unset($_SERVER['__sync.failed']);
 
-        $sync = new SyncQueue;
-        $container = new Container;
+        $sync = new SyncQueue();
+        $container = new Container();
         $container->bind(\Illuminate\Contracts\Events\Dispatcher::class, \Illuminate\Events\Dispatcher::class);
         $container->bind(\Illuminate\Contracts\Bus\Dispatcher::class, \Illuminate\Bus\Dispatcher::class);
         $container->bind(\Illuminate\Contracts\Container\Container::class, \Illuminate\Container\Container::class);
@@ -85,8 +87,8 @@ class QueueSyncQueueTest extends TestCase
 
     public function testCreatesPayloadObject()
     {
-        $sync = new SyncQueue;
-        $container = new Container;
+        $sync = new SyncQueue();
+        $container = new Container();
         $container->bind(\Illuminate\Contracts\Events\Dispatcher::class, \Illuminate\Events\Dispatcher::class);
         $container->bind(\Illuminate\Contracts\Bus\Dispatcher::class, \Illuminate\Bus\Dispatcher::class);
         $container->bind(\Illuminate\Contracts\Container\Container::class, \Illuminate\Container\Container::class);
@@ -105,8 +107,8 @@ class QueueSyncQueueTest extends TestCase
 
     public function testItAddsATransactionCallbackForAfterCommitJobs()
     {
-        $sync = new SyncQueue;
-        $container = new Container;
+        $sync = new SyncQueue();
+        $container = new Container();
         $container->bind(\Illuminate\Contracts\Container\Container::class, \Illuminate\Container\Container::class);
         $transactionManager = m::mock(DatabaseTransactionsManager::class);
         $transactionManager->shouldReceive('addCallback')->once()->andReturn(null);
@@ -119,8 +121,8 @@ class QueueSyncQueueTest extends TestCase
 
     public function testItAddsATransactionCallbackForInterfaceBasedAfterCommitJobs()
     {
-        $sync = new SyncQueue;
-        $container = new Container;
+        $sync = new SyncQueue();
+        $container = new Container();
         $container->bind(\Illuminate\Contracts\Container\Container::class, \Illuminate\Container\Container::class);
         $transactionManager = m::mock(DatabaseTransactionsManager::class);
         $transactionManager->shouldReceive('addCallback')->once()->andReturn(null);
@@ -133,8 +135,8 @@ class QueueSyncQueueTest extends TestCase
 
     public function testItAddsATransactionCallbackForAfterCommitUniqueJobs()
     {
-        $sync = new SyncQueue;
-        $container = new Container;
+        $sync = new SyncQueue();
+        $container = new Container();
         $container->bind(\Illuminate\Contracts\Container\Container::class, \Illuminate\Container\Container::class);
         $transactionManager = m::mock(DatabaseTransactionsManager::class);
         $transactionManager->shouldReceive('addCallback')->once()->andReturn(null);
@@ -147,8 +149,8 @@ class QueueSyncQueueTest extends TestCase
 
     public function testItAddsATransactionCallbackForInterfaceBasedAfterCommitUniqueJobs()
     {
-        $sync = new SyncQueue;
-        $container = new Container;
+        $sync = new SyncQueue();
+        $container = new Container();
         $container->bind(\Illuminate\Contracts\Container\Container::class, \Illuminate\Container\Container::class);
         $transactionManager = m::mock(DatabaseTransactionsManager::class);
         $transactionManager->shouldReceive('addCallback')->once()->andReturn(null);
@@ -169,12 +171,12 @@ class SyncQueueTestEntity implements QueueableEntity
 
     public function getQueueableConnection()
     {
-        //
+
     }
 
     public function getQueueableRelations()
     {
-        //
+
     }
 }
 
@@ -190,7 +192,7 @@ class FailingSyncQueueTestHandler
 {
     public function fire($job, $data)
     {
-        throw new Exception;
+        throw new Exception();
     }
 
     public function failed()

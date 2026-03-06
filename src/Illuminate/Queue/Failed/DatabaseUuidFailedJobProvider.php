@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Failed;
 
 use DateTimeInterface;
-use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Support\Facades\Date;
 
 class DatabaseUuidFailedJobProvider implements CountableFailedJobProvider, FailedJobProviderInterface, PrunableFailedJobProvider
@@ -27,8 +28,7 @@ class DatabaseUuidFailedJobProvider implements CountableFailedJobProvider, Faile
          * The database table.
          */
         protected $table
-    )
-    {
+    ) {
     }
 
     /**

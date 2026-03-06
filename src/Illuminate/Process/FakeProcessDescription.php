@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Illuminate\Support\Collection;
@@ -55,7 +57,7 @@ class FakeProcessDescription
     public function output(array|string $output): static
     {
         if (is_array($output)) {
-            (new Collection($output))->each(fn (array|string $line) => $this->output($line));
+            (new Collection($output))->each(fn (array|string $line): static => $this->output($line));
 
             return $this;
         }
@@ -73,7 +75,7 @@ class FakeProcessDescription
     public function errorOutput(array|string $output): static
     {
         if (is_array($output)) {
-            (new Collection($output))->each(fn (array|string $line) => $this->errorOutput($line));
+            (new Collection($output))->each(fn (array|string $line): static => $this->errorOutput($line));
 
             return $this;
         }
@@ -144,7 +146,7 @@ class FakeProcessDescription
      *
      * @return $this
      */
-    public function iterations(int $iterations)
+    public function iterations(int $iterations): static
     {
         return $this->runsFor(iterations: $iterations);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting;
 
 class FakePendingBroadcast extends PendingBroadcast
@@ -9,7 +11,7 @@ class FakePendingBroadcast extends PendingBroadcast
      */
     public function __construct()
     {
-        //
+
     }
 
     /**
@@ -38,6 +40,6 @@ class FakePendingBroadcast extends PendingBroadcast
      */
     public function __destruct()
     {
-        //
+
     }
 }

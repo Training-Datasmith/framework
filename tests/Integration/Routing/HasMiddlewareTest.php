@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Routing;
 
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -32,7 +34,7 @@ class HasMiddlewareTestController implements HasMiddleware
 
     public function index()
     {
-        //
+
     }
 
     public function show()

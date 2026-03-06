@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Migrations;
 
 use Closure;
@@ -30,8 +32,7 @@ class MigrationCreator
          * The custom app stubs directory.
          */
         protected $customStubPath
-    )
-    {
+    ) {
     }
 
     /**
@@ -41,11 +42,10 @@ class MigrationCreator
      * @param  string  $path
      * @param  string|null  $table
      * @param  bool  $create
-     * @return string
      *
      * @throws \Exception
      */
-    public function create($name, $path, $table = null, $create = false)
+    public function create($name, $path, $table = null, $create = false): string
     {
         $this->ensureMigrationDoesntAlreadyExist($name, $path);
 
@@ -59,7 +59,8 @@ class MigrationCreator
         $this->files->ensureDirectoryExists(dirname($path));
 
         $this->files->put(
-            $path, $this->populateStub($stub, $table)
+            $path,
+            $this->populateStub($stub, $table)
         );
 
         // Next, we will fire any hooks that are supposed to fire after a migration is
@@ -135,7 +136,8 @@ class MigrationCreator
         if (! is_null($table)) {
             return str_replace(
                 ['DummyTable', '{{ table }}', '{{table}}'],
-                $table, $stub
+                $table,
+                $stub
             );
         }
 
@@ -203,10 +205,8 @@ class MigrationCreator
 
     /**
      * Get the filesystem instance.
-     *
-     * @return \Illuminate\Filesystem\Filesystem
      */
-    public function getFilesystem()
+    public function getFilesystem(): \Illuminate\Filesystem\Filesystem
     {
         return $this->files;
     }

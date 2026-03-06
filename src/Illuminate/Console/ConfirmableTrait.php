@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console;
 
 use function Laravel\Prompts\confirm;
@@ -48,6 +50,6 @@ trait ConfirmableTrait
      */
     protected function getDefaultConfirmCallback()
     {
-        return fn() => $this->getLaravel()->environment() === 'production';
+        return fn (): bool => $this->getLaravel()->environment() === 'production';
     }
 }

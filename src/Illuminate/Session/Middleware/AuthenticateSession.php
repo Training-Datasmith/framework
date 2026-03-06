@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session\Middleware;
 
 use BadMethodCallException;
 use Closure;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Session\Middleware\AuthenticatesSessions;
 use Illuminate\Http\Request;
 
@@ -26,8 +27,7 @@ class AuthenticateSession implements AuthenticatesSessions
          * The authentication factory implementation.
          */
         protected \Illuminate\Contracts\Auth\Factory $auth
-    )
-    {
+    ) {
     }
 
     /**
@@ -122,7 +122,9 @@ class AuthenticateSession implements AuthenticatesSessions
         $request->session()->flush();
 
         throw new AuthenticationException(
-            'Unauthenticated.', [$this->auth->getDefaultDriver()], $this->redirectTo($request)
+            'Unauthenticated.',
+            [$this->auth->getDefaultDriver()],
+            $this->redirectTo($request)
         );
     }
 
@@ -131,7 +133,7 @@ class AuthenticateSession implements AuthenticatesSessions
      *
      * @return \Illuminate\Contracts\Auth\Factory|\Illuminate\Contracts\Auth\Guard
      */
-    protected function guard()
+    protected function guard(): \Illuminate\Contracts\Auth\Factory
     {
         return $this->auth;
     }

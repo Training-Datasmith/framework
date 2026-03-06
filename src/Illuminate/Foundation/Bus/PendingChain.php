@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Bus;
 
 use Closure;
@@ -7,10 +9,12 @@ use Illuminate\Bus\ChainedBatch;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Queue\CallQueuedClosure;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\Conditionable;
-use Laravel\SerializableClosure\SerializableClosure;
 
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\Traits\Conditionable;
+
+use Laravel\SerializableClosure\SerializableClosure;
 
 class PendingChain
 {
@@ -59,8 +63,7 @@ class PendingChain
          * The jobs to be chained.
          */
         public $chain
-    )
-    {
+    ) {
     }
 
     /**

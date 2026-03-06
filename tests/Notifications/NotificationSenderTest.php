@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -33,7 +35,7 @@ class NotificationSenderTest extends TestCase
 
         $sender = new NotificationSender($manager, $bus, $events);
 
-        $sender->send($notifiable, new DummyQueuedNotificationWithStringVia);
+        $sender->send($notifiable, new DummyQueuedNotificationWithStringVia());
     }
 
     public function testItCanSendQueuedNotificationsWithAnArrayVia()
@@ -58,12 +60,12 @@ class NotificationSenderTest extends TestCase
 
         $sender = new NotificationSender($manager, $bus, $events);
 
-        $sender->send($notifiable, new DummyQueuedNotificationWithArrayVia);
+        $sender->send($notifiable, new DummyQueuedNotificationWithArrayVia());
     }
 
     public function testItCanSendNotificationsWithAnEmptyStringVia()
     {
-        $notifiable = new AnonymousNotifiable;
+        $notifiable = new AnonymousNotifiable();
         $manager = m::mock(ChannelManager::class);
         $bus = m::mock(BusDispatcher::class);
         $bus->shouldNotReceive('dispatch');
@@ -72,12 +74,12 @@ class NotificationSenderTest extends TestCase
 
         $sender = new NotificationSender($manager, $bus, $events);
 
-        $sender->sendNow($notifiable, new DummyNotificationWithEmptyStringVia);
+        $sender->sendNow($notifiable, new DummyNotificationWithEmptyStringVia());
     }
 
     public function testItCannotSendNotificationsViaDatabaseForAnonymousNotifiables()
     {
-        $notifiable = new AnonymousNotifiable;
+        $notifiable = new AnonymousNotifiable();
         $manager = m::mock(ChannelManager::class);
         $manager->shouldReceive('getContainer')->andReturn(app());
         $bus = m::mock(BusDispatcher::class);
@@ -87,7 +89,7 @@ class NotificationSenderTest extends TestCase
 
         $sender = new NotificationSender($manager, $bus, $events);
 
-        $sender->sendNow($notifiable, new DummyNotificationWithDatabaseVia);
+        $sender->sendNow($notifiable, new DummyNotificationWithDatabaseVia());
     }
 
     public function testItCanSendQueuedNotificationsThroughMiddleware()
@@ -105,7 +107,7 @@ class NotificationSenderTest extends TestCase
 
         $sender = new NotificationSender($manager, $bus, $events);
 
-        $sender->send($notifiable, new DummyNotificationWithMiddleware);
+        $sender->send($notifiable, new DummyNotificationWithMiddleware());
     }
 
     public function testItCanSendQueuedMultiChannelNotificationsThroughDifferentMiddleware()
@@ -134,12 +136,12 @@ class NotificationSenderTest extends TestCase
 
         $sender = new NotificationSender($manager, $bus, $events);
 
-        $sender->send($notifiable, new DummyMultiChannelNotificationWithConditionalMiddleware);
+        $sender->send($notifiable, new DummyMultiChannelNotificationWithConditionalMiddleware());
     }
 
     public function testItCanSendQueuedWithViaConnectionsNotifications()
     {
-        $notifiable = new AnonymousNotifiable;
+        $notifiable = new AnonymousNotifiable();
         $manager = m::mock(ChannelManager::class);
         $manager->shouldReceive('getContainer')->andReturn(app());
         $bus = m::mock(BusDispatcher::class);
@@ -159,12 +161,12 @@ class NotificationSenderTest extends TestCase
 
         $sender = new NotificationSender($manager, $bus, $events);
 
-        $sender->send($notifiable, new DummyNotificationWithViaConnections);
+        $sender->send($notifiable, new DummyNotificationWithViaConnections());
     }
 
     public function testItCanSendQueuedWithViaQueuesNotifications()
     {
-        $notifiable = new AnonymousNotifiable;
+        $notifiable = new AnonymousNotifiable();
         $manager = m::mock(ChannelManager::class);
         $manager->shouldReceive('getContainer')->andReturn(app());
         $bus = m::mock(BusDispatcher::class);
@@ -184,7 +186,7 @@ class NotificationSenderTest extends TestCase
 
         $sender = new NotificationSender($manager, $bus, $events);
 
-        $sender->send($notifiable, new DummyNotificationWithViaQueues);
+        $sender->send($notifiable, new DummyNotificationWithViaQueues());
     }
 
     public function testNotificationFailedSentWithoutHttpTransportException()
@@ -212,7 +214,7 @@ class NotificationSenderTest extends TestCase
 
     public function testItPreservesNotificationStateMutatedInViaMethod()
     {
-        $notifiable = new AnonymousNotifiable;
+        $notifiable = new AnonymousNotifiable();
         $manager = m::mock(ChannelManager::class);
         $manager->shouldReceive('driver')->andReturn($driver = m::mock());
         $driver->shouldReceive('send')->once()->withArgs(function ($notifiable, $notification) {
@@ -227,7 +229,7 @@ class NotificationSenderTest extends TestCase
 
         $sender = new NotificationSender($manager, $bus, $events);
 
-        $sender->sendNow($notifiable, new DummyNotificationWithViaMutation);
+        $sender->sendNow($notifiable, new DummyNotificationWithViaMutation());
     }
 }
 
@@ -359,7 +361,7 @@ class DummyNotificationWithMiddleware extends Notification implements ShouldQueu
     public function middleware()
     {
         return [
-            new TestNotificationMiddleware,
+            new TestNotificationMiddleware(),
         ];
     }
 }
@@ -380,8 +382,8 @@ class DummyMultiChannelNotificationWithConditionalMiddleware extends Notificatio
     public function middleware($notifiable, $channel)
     {
         return match ($channel) {
-            'mail' => [new TestMailNotificationMiddleware],
-            'database' => [new TestDatabaseNotificationMiddleware],
+            'mail' => [new TestMailNotificationMiddleware()],
+            'database' => [new TestDatabaseNotificationMiddleware()],
             default => []
         };
     }

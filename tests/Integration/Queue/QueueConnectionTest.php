@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Illuminate\Bus\Queueable;
@@ -35,7 +37,7 @@ class QueueConnectionTest extends TestCase
             return $transactionManager;
         });
 
-        Bus::dispatch(new QueueConnectionTestJob);
+        Bus::dispatch(new QueueConnectionTestJob());
     }
 
     public function testJobWillGetDispatchedInsideATransactionWhenExplicitlyIndicated()
@@ -49,7 +51,7 @@ class QueueConnectionTest extends TestCase
         });
 
         try {
-            Bus::dispatch((new QueueConnectionTestJob)->beforeCommit());
+            Bus::dispatch((new QueueConnectionTestJob())->beforeCommit());
         } catch (Throwable) {
             // This job was dispatched
         }
@@ -68,7 +70,7 @@ class QueueConnectionTest extends TestCase
         });
 
         try {
-            Bus::dispatch((new QueueConnectionTestJob)->afterCommit());
+            Bus::dispatch((new QueueConnectionTestJob())->afterCommit());
         } catch (SqsException) {
             // This job was dispatched
         }
@@ -84,7 +86,7 @@ class QueueConnectionTest extends TestCase
             return $transactionManager;
         });
 
-        Bus::dispatch(new QueueConnectionTestUniqueJob);
+        Bus::dispatch(new QueueConnectionTestUniqueJob());
     }
 
     public function testUniqueJobWillGetDispatchedInsideATransactionWhenExplicitlyIndicated()
@@ -98,7 +100,7 @@ class QueueConnectionTest extends TestCase
         });
 
         try {
-            Bus::dispatch((new QueueConnectionTestUniqueJob)->beforeCommit());
+            Bus::dispatch((new QueueConnectionTestUniqueJob())->beforeCommit());
         } catch (Throwable) {
             // This job was dispatched
         }
@@ -117,7 +119,7 @@ class QueueConnectionTest extends TestCase
         });
 
         try {
-            Bus::dispatch((new QueueConnectionTestUniqueJob)->afterCommit());
+            Bus::dispatch((new QueueConnectionTestUniqueJob())->afterCommit());
         } catch (SqsException) {
             // This job was dispatched
         }
@@ -126,7 +128,8 @@ class QueueConnectionTest extends TestCase
 
 class QueueConnectionTestJob implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Dispatchable;
+    use Queueable;
 
     public static $ran = false;
 
@@ -138,7 +141,8 @@ class QueueConnectionTestJob implements ShouldQueue
 
 class QueueConnectionTestUniqueJob implements ShouldQueue, ShouldBeUnique
 {
-    use Dispatchable, Queueable;
+    use Dispatchable;
+    use Queueable;
 
     public static $ran = false;
 

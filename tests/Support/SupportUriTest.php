@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Contracts\Routing\UrlGenerator;
@@ -10,7 +12,7 @@ class SupportUriTest extends TestCase
 {
     public function test_can_build_special_urls()
     {
-        Uri::setUrlGeneratorResolver(fn () => new CustomUrlGeneratorResolver);
+        Uri::setUrlGeneratorResolver(fn () => new CustomUrlGeneratorResolver());
 
         $this->assertEquals('https://laravel.com/to', Uri::to('')->value());
         $this->assertEquals('https://laravel.com/route', Uri::route('')->value());

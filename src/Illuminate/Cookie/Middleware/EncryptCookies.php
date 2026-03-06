@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cookie\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Support\Arr;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -42,8 +43,7 @@ class EncryptCookies
          * The encrypter instance.
          */
         protected \Illuminate\Contracts\Encryption\Encrypter $encrypter
-    )
-    {
+    ) {
     }
 
     /**
@@ -60,9 +60,8 @@ class EncryptCookies
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle(\Symfony\Component\HttpFoundation\Request $request, Closure $next)
+    public function handle(\Symfony\Component\HttpFoundation\Request $request, Closure $next): \Symfony\Component\HttpFoundation\Response
     {
         return $this->encrypt($next($this->decrypt($request)));
     }

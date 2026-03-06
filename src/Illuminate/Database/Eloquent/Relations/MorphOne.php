@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Contracts\Database\Eloquent\SupportsPartialRelations;
@@ -19,7 +21,9 @@ use Illuminate\Database\Query\JoinClause;
  */
 class MorphOne extends MorphOneOrMany implements SupportsPartialRelations
 {
-    use CanBeOneOfMany, ComparesRelatedModels, SupportsDefaultModels;
+    use CanBeOneOfMany;
+    use ComparesRelatedModels;
+    use SupportsDefaultModels;
 
     /** @inheritDoc */
     public function getResults()

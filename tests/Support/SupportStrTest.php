@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Exception;
@@ -316,9 +318,12 @@ class SupportStrTest extends TestCase
         $this->assertSame('[...]is a beautiful morn[...]', Str::excerpt('This is a beautiful morning', 'beautiful', ['omission' => '[...]', 'radius' => 5]));
         $this->assertSame(
             'This is the ultimate supercalifragilisticexpialidocious very looooooooooooooooooong looooooooooooong beautiful morning with amazing sunshine and awesome tempera[...]',
-            Str::excerpt('This is the ultimate supercalifragilisticexpialidocious very looooooooooooooooooong looooooooooooong beautiful morning with amazing sunshine and awesome temperatures. So what are you gonna do about it?', 'very',
+            Str::excerpt(
+                'This is the ultimate supercalifragilisticexpialidocious very looooooooooooooooooong looooooooooooong beautiful morning with amazing sunshine and awesome temperatures. So what are you gonna do about it?',
+                'very',
                 ['omission' => '[...]'],
-            ));
+            )
+        );
 
         $this->assertSame('...y...', Str::excerpt('taylor', 'y', ['radius' => 0]));
         $this->assertSame('...ayl...', Str::excerpt('taylor', 'Y', ['radius' => 1]));
@@ -1975,8 +1980,7 @@ class SupportStrTest extends TestCase
         $this->assertSame('UserGroups', Str::pluralPascal('UserGroup', []));   // plural (empty array count is 0)
 
         // Test with Countable
-        $countable = new class implements \Countable
-        {
+        $countable = new class () implements \Countable {
             public function count(): int
             {
                 return 3;

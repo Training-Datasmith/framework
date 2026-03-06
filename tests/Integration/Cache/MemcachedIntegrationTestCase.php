@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Cache;
 
 use Memcached;
@@ -12,7 +14,7 @@ abstract class MemcachedIntegrationTestCase extends TestCase
         parent::setUp();
 
         // Determine whether there is a running Memcached instance
-        $testConnection = new Memcached;
+        $testConnection = new Memcached();
 
         $testConnection->addServer(
             env('MEMCACHED_HOST', '127.0.0.1'),

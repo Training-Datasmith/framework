@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Concerns;
 
 use Brick\Math\BigDecimal;
@@ -333,7 +335,7 @@ trait ValidatesAttributes
         try {
             return @Date::parse($value) ?: null;
         } catch (Exception) {
-            //
+
         }
     }
 
@@ -801,7 +803,8 @@ trait ValidatesAttributes
         }
 
         [$numerator, $denominator] = array_replace(
-            [1, 1], array_filter(sscanf($parameters['ratio'], '%f/%d'))
+            [1, 1],
+            array_filter(sscanf($parameters['ratio'], '%f/%d'))
         );
 
         $precision = 1 / (max(($width + $height) / 2, $height) + 1);
@@ -824,7 +827,8 @@ trait ValidatesAttributes
         }
 
         [$minNumerator, $minDenominator] = array_replace(
-            [1, 1], array_filter(sscanf($parameters['min_ratio'], '%f/%d'))
+            [1, 1],
+            array_filter(sscanf($parameters['min_ratio'], '%f/%d'))
         );
 
         return ($width / $height) > ($minNumerator / $minDenominator);
@@ -845,7 +849,8 @@ trait ValidatesAttributes
         }
 
         [$maxNumerator, $maxDenominator] = array_replace(
-            [1, 1], array_filter(sscanf($parameters['max_ratio'], '%f/%d'))
+            [1, 1],
+            array_filter(sscanf($parameters['max_ratio'], '%f/%d'))
         );
 
         return ($width / $height) < ($maxNumerator / $maxDenominator);
@@ -898,12 +903,13 @@ trait ValidatesAttributes
     protected function extractDistinctValues($attribute): array
     {
         $attributeData = ValidationData::extractDataFromPath(
-            ValidationData::getLeadingExplicitAttributePath($attribute), $this->data
+            ValidationData::getLeadingExplicitAttributePath($attribute),
+            $this->data
         );
 
         $pattern = str_replace('\*', '[^.]+', preg_quote($attribute, '#'));
 
-        return Arr::where(Arr::dot($attributeData), fn($value, $key) => (bool) preg_match('#^'.$pattern.'\z#u', (string) $key));
+        return Arr::where(Arr::dot($attributeData), fn ($value, $key): bool => (bool) preg_match('#^'.$pattern.'\z#u', (string) $key));
     }
 
     /**
@@ -932,7 +938,7 @@ trait ValidatesAttributes
                 default => new RFCValidation(),
             })
             ->values()
-            ->all() ?: [new RFCValidation];
+            ->all() ?: [new RFCValidation()];
 
         $emailValidator = Container::getInstance()->make(EmailValidator::class);
 
@@ -983,7 +989,11 @@ trait ValidatesAttributes
         }
 
         return $this->getExistCount(
-            $connection, $table, $column, $value, $parameters
+            $connection,
+            $table,
+            $column,
+            $value,
+            $parameters
         ) >= $expected;
     }
 
@@ -1056,7 +1066,12 @@ trait ValidatesAttributes
         }
 
         return $verifier->getCount(
-            $table, $column, $value, $id, $idColumn, $extra
+            $table,
+            $column,
+            $value,
+            $id,
+            $idColumn,
+            $extra
         ) == 0;
     }
 
@@ -1121,7 +1136,7 @@ trait ValidatesAttributes
         [$connection, $table] = str_contains($table, '.') ? explode('.', $table, 2) : [null, $table];
 
         if (str_contains((string) $table, '\\') && class_exists($table) && is_a($table, Model::class, true)) {
-            $model = new $table;
+            $model = new $table();
 
             $table = $model->getTable();
             $connection ??= $model->getConnectionName();
@@ -1499,7 +1514,7 @@ trait ValidatesAttributes
 
         $attributeData = ValidationData::extractDataFromPath($explicitPath, $this->data);
 
-        $otherValues = Arr::where(Arr::dot($attributeData), fn($value, $key) => Str::is($parameters[0], $key));
+        $otherValues = Arr::where(Arr::dot($attributeData), fn ($value, $key): bool => Str::is($parameters[0], $key));
 
         return in_array($value, $otherValues);
     }
@@ -2406,7 +2421,7 @@ trait ValidatesAttributes
      */
     protected function convertValuesToNull($values): array
     {
-        return array_map(fn($value) => Str::lower($value) === 'null' ? null : $value, $values);
+        return array_map(fn ($value) => Str::lower($value) === 'null' ? null : $value, $values);
     }
 
     /**
@@ -2732,7 +2747,7 @@ trait ValidatesAttributes
             '<=' => $first <= $second,
             '>=' => $first >= $second,
             '=' => $first == $second,
-            default => throw new InvalidArgumentException,
+            default => throw new InvalidArgumentException(),
         };
     }
 

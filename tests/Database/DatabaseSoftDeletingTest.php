@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +13,7 @@ class DatabaseSoftDeletingTest extends TestCase
 {
     public function testDeletedAtIsAddedToCastsAsDefaultType()
     {
-        $model = new SoftDeletingModel;
+        $model = new SoftDeletingModel();
 
         $this->assertArrayHasKey('deleted_at', $model->getCasts());
         $this->assertSame('datetime', $model->getCasts()['deleted_at']);
@@ -28,8 +30,7 @@ class DatabaseSoftDeletingTest extends TestCase
 
     public function testExistingCastOverridesAddedDateCast()
     {
-        $model = new class(['deleted_at' => '2018-12-29 13:59:39']) extends SoftDeletingModel
-        {
+        $model = new class (['deleted_at' => '2018-12-29 13:59:39']) extends SoftDeletingModel {
             protected $casts = ['deleted_at' => 'bool'];
         };
 
@@ -38,8 +39,7 @@ class DatabaseSoftDeletingTest extends TestCase
 
     public function testExistingMutatorOverridesAddedDateCast()
     {
-        $model = new class(['deleted_at' => '2018-12-29 13:59:39']) extends SoftDeletingModel
-        {
+        $model = new class (['deleted_at' => '2018-12-29 13:59:39']) extends SoftDeletingModel {
             protected function getDeletedAtAttribute()
             {
                 return 'expected';
@@ -51,8 +51,7 @@ class DatabaseSoftDeletingTest extends TestCase
 
     public function testCastingToStringOverridesAutomaticDateCastingToRetainPreviousBehaviour()
     {
-        $model = new class(['deleted_at' => '2018-12-29 13:59:39']) extends SoftDeletingModel
-        {
+        $model = new class (['deleted_at' => '2018-12-29 13:59:39']) extends SoftDeletingModel {
             protected $casts = ['deleted_at' => 'string'];
         };
 

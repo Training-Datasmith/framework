@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Closure;
 use Illuminate\Contracts\Cache\LockProvider;
 use Illuminate\Contracts\Cache\Store;
-use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\PostgresConnection;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\SQLiteConnection;
@@ -65,8 +66,7 @@ class DatabaseStore implements LockProvider, Store
          * The classes that should be allowed during unserialization.
          */
         protected $serializableClasses = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -84,10 +84,8 @@ class DatabaseStore implements LockProvider, Store
      * Retrieve multiple items from the cache by key.
      *
      * Items not found in the cache will have a null value.
-     *
-     * @return array
      */
-    public function many(array $keys)
+    public function many(array $keys): array
     {
         if (count($keys) === 0) {
             return [];
@@ -99,16 +97,16 @@ class DatabaseStore implements LockProvider, Store
         // the prefix value. Then we will need to iterate through each of the items
         // and convert them to an object when they are currently in array format.
         $values = $this->table()
-            ->whereIn('key', array_map(fn($key) => $this->prefix.$key, $keys))
+            ->whereIn('key', array_map(fn ($key): string => $this->prefix.$key, $keys))
             ->get()
-            ->map(fn($value) => is_array($value) ? (object) $value : $value);
+            ->map(fn ($value): \stdClass => is_array($value) ? (object) $value : $value);
 
         $currentTime = $this->currentTime();
 
         // If this cache expiration date is past the current time, we will remove this
         // item from the cache. Then we will return a null value since the cache is
         // expired. We will use "Carbon" to make this comparison with the column.
-        [$values, $expired] = $values->partition(fn($cache) => $cache->expiration > $currentTime);
+        [$values, $expired] = $values->partition(fn ($cache): bool => $cache->expiration > $currentTime);
 
         if ($expired->isNotEmpty()) {
             $this->forgetManyIfExpired($expired->pluck('key')->all(), prefixed: true);
@@ -129,9 +127,8 @@ class DatabaseStore implements LockProvider, Store
      * @param  string  $key
      * @param  mixed  $value
      * @param  int  $seconds
-     * @return bool
      */
-    public function put($key, $value, $seconds)
+    public function put($key, $value, $seconds): bool
     {
         return $this->putMany([$key => $value], $seconds);
     }
@@ -198,7 +195,7 @@ class DatabaseStore implements LockProvider, Store
      */
     public function increment($key, $value = 1)
     {
-        return $this->incrementOrDecrement($key, $value, fn($current, $value) => $current + $value);
+        return $this->incrementOrDecrement($key, $value, fn ($current, $value): float|int|array => $current + $value);
     }
 
     /**
@@ -210,7 +207,7 @@ class DatabaseStore implements LockProvider, Store
      */
     public function decrement($key, $value = 1)
     {
-        return $this->incrementOrDecrement($key, $value, fn($current, $value) => $current - $value);
+        return $this->incrementOrDecrement($key, $value, fn ($current, $value): int|float => $current - $value);
     }
 
     /**
@@ -309,7 +306,7 @@ class DatabaseStore implements LockProvider, Store
      * @param  string  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function restoreLock($name, $owner)
+    public function restoreLock($name, $owner): \Illuminate\Cache\DatabaseLock
     {
         return $this->lock($name, 0, $owner);
     }
@@ -318,9 +315,8 @@ class DatabaseStore implements LockProvider, Store
      * Remove an item from the cache.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function forget($key)
+    public function forget($key): bool
     {
         return $this->forgetMany([$key]);
     }
@@ -329,9 +325,8 @@ class DatabaseStore implements LockProvider, Store
      * Remove an item from the cache if it is expired.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function forgetIfExpired($key)
+    public function forgetIfExpired($key): bool
     {
         return $this->forgetManyIfExpired([$key]);
     }
@@ -390,10 +385,8 @@ class DatabaseStore implements LockProvider, Store
 
     /**
      * Get the underlying database connection.
-     *
-     * @return \Illuminate\Database\ConnectionInterface
      */
-    public function getConnection()
+    public function getConnection(): \Illuminate\Database\ConnectionInterface
     {
         return $this->connection;
     }
@@ -401,10 +394,9 @@ class DatabaseStore implements LockProvider, Store
     /**
      * Set the underlying database connection.
      *
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
      * @return $this
      */
-    public function setConnection($connection): static
+    public function setConnection(\Illuminate\Database\ConnectionInterface $connection): static
     {
         $this->connection = $connection;
 

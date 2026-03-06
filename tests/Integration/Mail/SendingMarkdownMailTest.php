@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Mail;
 
 use Illuminate\Mail\Mailable;
@@ -146,7 +148,7 @@ class SendingMarkdownMailTest extends TestCase
 
     public function testEmbeddedImageContentIdConsistencyAcrossMailerFailoverClones()
     {
-        Mail::to('test@mail.com')->send($mailable = new EmbedImageMailable);
+        Mail::to('test@mail.com')->send($mailable = new EmbedImageMailable());
 
         /** @var \Symfony\Component\Mime\Email $originalEmail */
         $originalEmail = app('mailer')->getSymfonyTransport()->messages()[0]->getOriginalMessage();

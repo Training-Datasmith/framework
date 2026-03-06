@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Filesystem;
 
 use Illuminate\Support\Facades\Storage;

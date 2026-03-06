@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Contracts\Database;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -44,10 +46,10 @@ class ModelIdentifier
      *
      * This may be either a single ID or an array of IDs.
      */
-    public $id, array $relations, /**
+        public $id, array $relations, /**
      * The connection name of the model.
      */
-    public $connection)
+        public $connection)
     {
         if ($class !== null && self::$useMorphMap) {
             $class = Relation::getMorphAlias($class);

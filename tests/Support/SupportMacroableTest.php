@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use BadMethodCallException;
@@ -17,7 +19,7 @@ class SupportMacroableTest extends TestCase
 
     private function createObjectForTrait()
     {
-        return new EmptyMacroable;
+        return new EmptyMacroable();
     }
 
     public function testRegisterMacro()
@@ -56,7 +58,7 @@ class SupportMacroableTest extends TestCase
         TestMacroable::macro('tryStatic', function () {
             return static::getProtectedStatic();
         });
-        $instance = new TestMacroable;
+        $instance = new TestMacroable();
 
         $result = $instance->tryInstance();
         $this->assertSame('instance', $result);
@@ -67,8 +69,8 @@ class SupportMacroableTest extends TestCase
 
     public function testClassBasedMacros()
     {
-        TestMacroable::mixin(new TestMixin);
-        $instance = new TestMacroable;
+        TestMacroable::mixin(new TestMixin());
+        $instance = new TestMacroable();
         $this->assertSame('instance-Adam', $instance->methodOne('Adam'));
     }
 
@@ -77,11 +79,11 @@ class SupportMacroableTest extends TestCase
         TestMacroable::macro('methodThree', function () {
             return 'bar';
         });
-        TestMacroable::mixin(new TestMixin, false);
-        $instance = new TestMacroable;
+        TestMacroable::mixin(new TestMixin(), false);
+        $instance = new TestMacroable();
         $this->assertSame('bar', $instance->methodThree());
 
-        TestMacroable::mixin(new TestMixin);
+        TestMacroable::mixin(new TestMixin());
         $this->assertSame('foo', $instance->methodThree());
     }
 
@@ -91,7 +93,7 @@ class SupportMacroableTest extends TestCase
             return 'flushMethod';
         });
 
-        $instance = new TestMacroable;
+        $instance = new TestMacroable();
 
         $this->assertSame('flushMethod', $instance->flushMethod());
 
@@ -108,7 +110,7 @@ class SupportMacroableTest extends TestCase
             return 'flushMethod';
         });
 
-        $instance = new TestMacroable;
+        $instance = new TestMacroable();
 
         $this->assertSame('flushMethod', $instance::flushMethod());
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Bus;
 
 use Closure;
@@ -12,9 +14,8 @@ trait Dispatchable
      * Dispatch the job with the given arguments.
      *
      * @param  mixed  ...$arguments
-     * @return \Illuminate\Foundation\Bus\PendingDispatch
      */
-    public static function dispatch(...$arguments)
+    public static function dispatch(...$arguments): \Illuminate\Foundation\Bus\PendingDispatch
     {
         return static::newPendingDispatch(new static(...$arguments));
     }
@@ -24,21 +25,20 @@ trait Dispatchable
      *
      * @param  bool|\Closure  $boolean
      * @param  mixed  ...$arguments
-     * @return \Illuminate\Foundation\Bus\PendingDispatch|\Illuminate\Support\Fluent
      */
-    public static function dispatchIf($boolean, ...$arguments)
+    public static function dispatchIf($boolean, ...$arguments): \Illuminate\Foundation\Bus\PendingDispatch|\Illuminate\Support\Fluent
     {
         if ($boolean instanceof Closure) {
             $dispatchable = new static(...$arguments);
 
             return value($boolean, $dispatchable)
                 ? static::newPendingDispatch($dispatchable)
-                : new Fluent;
+                : new Fluent();
         }
 
         return value($boolean)
             ? static::newPendingDispatch(new static(...$arguments))
-            : new Fluent;
+            : new Fluent();
     }
 
     /**
@@ -46,21 +46,20 @@ trait Dispatchable
      *
      * @param  bool|\Closure  $boolean
      * @param  mixed  ...$arguments
-     * @return \Illuminate\Foundation\Bus\PendingDispatch|\Illuminate\Support\Fluent
      */
-    public static function dispatchUnless($boolean, ...$arguments)
+    public static function dispatchUnless($boolean, ...$arguments): \Illuminate\Foundation\Bus\PendingDispatch|\Illuminate\Support\Fluent
     {
         if ($boolean instanceof Closure) {
             $dispatchable = new static(...$arguments);
 
             return ! value($boolean, $dispatchable)
                 ? static::newPendingDispatch($dispatchable)
-                : new Fluent;
+                : new Fluent();
         }
 
         return ! value($boolean)
             ? static::newPendingDispatch(new static(...$arguments))
-            : new Fluent;
+            : new Fluent();
     }
 
     /**
@@ -80,9 +79,8 @@ trait Dispatchable
      * Dispatch a command to its appropriate handler after the current process.
      *
      * @param  mixed  ...$arguments
-     * @return mixed
      */
-    public static function dispatchAfterResponse(...$arguments)
+    public static function dispatchAfterResponse(...$arguments): \Illuminate\Foundation\Bus\PendingDispatch
     {
         return self::dispatch(...$arguments)->afterResponse();
     }

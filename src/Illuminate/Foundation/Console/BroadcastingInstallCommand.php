@@ -1,20 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Composer\InstalledVersions;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Env;
-use Illuminate\Support\Facades\Process;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Illuminate\Support\artisan_binary;
+
+use Illuminate\Support\Env;
+use Illuminate\Support\Facades\Process;
+
 use function Illuminate\Support\php_binary;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
+
+use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'install:broadcasting')]
 class BroadcastingInstallCommand extends Command
@@ -146,7 +151,7 @@ class BroadcastingInstallCommand extends Command
         $content = file_get_contents($appBootstrapPath);
 
         if (str_contains($content, '// channels: ')) {
-            (new Filesystem)->replaceInFile(
+            (new Filesystem())->replaceInFile(
                 '// channels: ',
                 'channels: ',
                 $appBootstrapPath,
@@ -154,13 +159,13 @@ class BroadcastingInstallCommand extends Command
         } elseif (str_contains($content, 'channels: ')) {
             return;
         } elseif (str_contains($content, 'commands: __DIR__.\'/../routes/console.php\',')) {
-            (new Filesystem)->replaceInFile(
+            (new Filesystem())->replaceInFile(
                 'commands: __DIR__.\'/../routes/console.php\',',
                 'commands: __DIR__.\'/../routes/console.php\','.PHP_EOL.'        channels: __DIR__.\'/../routes/channels.php\',',
                 $appBootstrapPath,
             );
         } elseif (str_contains($content, '->withRouting(')) {
-            (new Filesystem)->replaceInFile(
+            (new Filesystem())->replaceInFile(
                 '->withRouting(',
                 '->withRouting('.PHP_EOL.'        channels: __DIR__.\'/../routes/channels.php\',',
                 $appBootstrapPath,
@@ -177,7 +182,7 @@ class BroadcastingInstallCommand extends Command
      */
     protected function enableBroadcastServiceProvider()
     {
-        $filesystem = new Filesystem;
+        $filesystem = new Filesystem();
 
         if (
             ! $filesystem->exists(app()->configPath('app.php')) ||
@@ -318,7 +323,7 @@ class BroadcastingInstallCommand extends Command
             ];
         }
 
-        $filePath = array_filter($filePaths, fn(string $path) => file_exists($path))[0] ?? null;
+        $filePath = array_filter($filePaths, file_exists(...))[0] ?? null;
 
         if (! $filePath) {
             $this->components->warn("Could not find file [{$filePaths[0]}]. Skipping automatic Echo configuration.");

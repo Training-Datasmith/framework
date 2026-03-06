@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Pagination;
 
 use Closure;
@@ -22,7 +24,9 @@ use Traversable;
  */
 abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlable, Stringable
 {
-    use ForwardsCalls, Tappable, TransformsToResourceCollection;
+    use ForwardsCalls;
+    use Tappable;
+    use TransformsToResourceCollection;
 
     /**
      * All of the items being paginated.
@@ -767,7 +771,6 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
     /**
      * Make dynamic calls into the collection.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

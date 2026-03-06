@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\Queue\Fixtures;
 
 use Illuminate\Bus\Queueable;
@@ -9,7 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class TimeOutNonBatchableJobWithTransaction implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public int $tries = 1;
     public int $timeout = 2;

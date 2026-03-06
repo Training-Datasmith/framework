@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Events;
 
 use Throwable;
@@ -30,14 +32,15 @@ class CommandFailed
     public function __construct(/**
      * The Redis command that failed.
      */
-    public $command, /**
+        public $command, /**
      * The array of command parameters.
      */
-    public $parameters, Throwable $exception, /**
+        public $parameters,
+        Throwable $exception, /**
      * The Redis connection instance.
      */
-    public $connection)
-    {
+        public $connection
+    ) {
         $this->exception = $exception;
         $this->connectionName = $this->connection->getName();
     }

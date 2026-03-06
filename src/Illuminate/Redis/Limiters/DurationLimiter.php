@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Limiters;
 
 use Illuminate\Contracts\Redis\LimiterTimeoutException;
@@ -46,8 +48,7 @@ class DurationLimiter
          * The number of seconds a slot should be maintained.
          */
         private $decay
-    )
-    {
+    ) {
     }
 
     /**
@@ -66,7 +67,7 @@ class DurationLimiter
 
         while (! $this->acquire()) {
             if (time() - $timeout >= $starting) {
-                throw new LimiterTimeoutException;
+                throw new LimiterTimeoutException();
             }
 
             Sleep::usleep($sleep * 1000);
@@ -85,7 +86,13 @@ class DurationLimiter
     public function acquire(): bool
     {
         $results = $this->redis->eval(
-            $this->luaScript(), 1, $this->name, microtime(true), time(), $this->decay, $this->maxLocks
+            $this->luaScript(),
+            1,
+            $this->name,
+            microtime(true),
+            time(),
+            $this->decay,
+            $this->maxLocks
         );
 
         $this->decaysAt = $results[1];
@@ -101,7 +108,13 @@ class DurationLimiter
     public function tooManyAttempts(): bool
     {
         [$this->decaysAt, $this->remaining] = $this->redis->eval(
-            $this->tooManyAttemptsLuaScript(), 1, $this->name, microtime(true), time(), $this->decay, $this->maxLocks
+            $this->tooManyAttemptsLuaScript(),
+            1,
+            $this->name,
+            microtime(true),
+            time(),
+            $this->decay,
+            $this->maxLocks
         );
 
         return $this->remaining <= 0;

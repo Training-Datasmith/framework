@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
-
 use function Illuminate\Support\enum_value;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+
+use PHPUnit\Framework\TestCase;
 
 include_once 'Enums.php';
 

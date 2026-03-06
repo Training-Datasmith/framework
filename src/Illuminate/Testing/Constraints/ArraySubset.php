@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing\Constraints;
 
 use ArrayObject;
 use PHPUnit\Framework\Constraint\Constraint;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use SebastianBergmann\Exporter\Exporter;
-use Traversable;
 
 class ArraySubset extends Constraint
 {
@@ -79,7 +80,7 @@ class ArraySubset extends Constraint
      */
     public function toString(): string
     {
-        return 'has the subset '.(new Exporter)->export($this->subset);
+        return 'has the subset '.(new Exporter())->export($this->subset);
     }
 
     /**

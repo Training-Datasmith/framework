@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Bus\Events;
 
 use Illuminate\Bus\Batch;

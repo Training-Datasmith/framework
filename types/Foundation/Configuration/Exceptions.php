@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -8,7 +10,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 $exceptions = new Exceptions(
     new Handler(
-        new Container,
+        new Container(),
     ),
 );
 

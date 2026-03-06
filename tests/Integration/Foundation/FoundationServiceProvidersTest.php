@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation;
 
 use Illuminate\Support\ServiceProvider;
@@ -23,7 +25,7 @@ class HeadServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        //
+
     }
 
     public function boot()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 use Illuminate\Filesystem\Filesystem;
@@ -44,8 +46,10 @@ class FileViewFinder implements ViewFinderInterface
     public function __construct(/**
      * The filesystem instance.
      */
-    protected \Illuminate\Filesystem\Filesystem $files, array $paths, ?array $extensions = null)
-    {
+        protected \Illuminate\Filesystem\Filesystem $files,
+        array $paths,
+        ?array $extensions = null
+    ) {
         $this->paths = array_map($this->resolvePath(...), $paths);
 
         if (isset($extensions)) {
@@ -76,9 +80,8 @@ class FileViewFinder implements ViewFinderInterface
      * Get the path to a template with a named path.
      *
      * @param  string  $name
-     * @return string
      */
-    protected function findNamespacedView($name)
+    protected function findNamespacedView($name): string
     {
         [$namespace, $view] = $this->parseNamespaceSegments($name);
 
@@ -252,10 +255,8 @@ class FileViewFinder implements ViewFinderInterface
 
     /**
      * Get the filesystem instance.
-     *
-     * @return \Illuminate\Filesystem\Filesystem
      */
-    public function getFilesystem()
+    public function getFilesystem(): \Illuminate\Filesystem\Filesystem
     {
         return $this->files;
     }
@@ -266,7 +267,7 @@ class FileViewFinder implements ViewFinderInterface
      * @param  string[]  $paths
      * @return $this
      */
-    public function setPaths($paths): static
+    public function setPaths(array $paths): static
     {
         $this->paths = $paths;
 
@@ -278,7 +279,7 @@ class FileViewFinder implements ViewFinderInterface
      *
      * @return string[]
      */
-    public function getPaths()
+    public function getPaths(): array
     {
         return $this->paths;
     }

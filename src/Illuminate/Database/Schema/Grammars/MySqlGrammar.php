@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema\Grammars;
 
 use Illuminate\Database\Query\Expression;
@@ -191,20 +193,20 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile a create table command.
-     *
-     * @return string
      */
-    public function compileCreate(Blueprint $blueprint, Fluent $command)
+    public function compileCreate(Blueprint $blueprint, Fluent $command): string
     {
         $sql = $this->compileCreateTable(
-            $blueprint, $command
+            $blueprint,
+            $command
         );
 
         // Once we have the primary SQL, we can add the encoding option to the SQL for
         // the table.  Then, we can check if a storage engine has been supplied for
         // the table. If so, we will add the engine declaration to the SQL query.
         $sql = $this->compileCreateEncoding(
-            $sql, $blueprint
+            $sql,
+            $blueprint
         );
 
         // Finally, we will append the engine configuration onto this SQL statement as
@@ -233,7 +235,8 @@ class MySqlGrammar extends Grammar
             $primaryKey->shouldBeSkipped = true;
         }
 
-        return sprintf('%s table %s (%s)',
+        return sprintf(
+            '%s table %s (%s)',
             $blueprint->temporary ? 'create temporary' : 'create',
             $this->wrapTable($blueprint),
             implode(', ', $tableStructure)
@@ -288,7 +291,8 @@ class MySqlGrammar extends Grammar
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('alter table %s add %s%s%s',
+        return sprintf(
+            'alter table %s add %s%s%s',
             $this->wrapTable($blueprint),
             $this->getColumn($blueprint, $command->column),
             $command->column->instant ? ', algorithm=instant' : '',
@@ -356,7 +360,8 @@ class MySqlGrammar extends Grammar
                 : null,
         ]));
 
-        return sprintf('alter table %s change %s %s %s',
+        return sprintf(
+            'alter table %s change %s %s %s',
             $this->wrapTable($blueprint),
             $this->wrap($command->from),
             $this->wrap($command->to),
@@ -369,7 +374,8 @@ class MySqlGrammar extends Grammar
     {
         $column = $command->column;
 
-        $sql = sprintf('alter table %s %s %s%s %s',
+        $sql = sprintf(
+            'alter table %s %s %s%s %s',
             $this->wrapTable($blueprint),
             is_null($column->renameTo) ? 'modify' : 'change',
             $this->wrap($column),
@@ -395,7 +401,8 @@ class MySqlGrammar extends Grammar
      */
     public function compilePrimary(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('alter table %s add primary key %s(%s)%s',
+        return sprintf(
+            'alter table %s add primary key %s(%s)%s',
             $this->wrapTable($blueprint),
             $command->algorithm ? 'using '.$command->algorithm : '',
             $this->columnize($command->columns),
@@ -405,40 +412,32 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile a unique key command.
-     *
-     * @return string
      */
-    public function compileUnique(Blueprint $blueprint, Fluent $command)
+    public function compileUnique(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileKey($blueprint, $command, 'unique');
     }
 
     /**
      * Compile a plain index key command.
-     *
-     * @return string
      */
-    public function compileIndex(Blueprint $blueprint, Fluent $command)
+    public function compileIndex(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileKey($blueprint, $command, 'index');
     }
 
     /**
      * Compile a fulltext index key command.
-     *
-     * @return string
      */
-    public function compileFullText(Blueprint $blueprint, Fluent $command)
+    public function compileFullText(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileKey($blueprint, $command, 'fulltext');
     }
 
     /**
      * Compile a spatial index key command.
-     *
-     * @return string
      */
-    public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
+    public function compileSpatialIndex(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileKey($blueprint, $command, 'spatial index');
     }
@@ -450,7 +449,8 @@ class MySqlGrammar extends Grammar
      */
     protected function compileKey(Blueprint $blueprint, Fluent $command, $type): string
     {
-        return sprintf('alter table %s add %s %s%s(%s)%s',
+        return sprintf(
+            'alter table %s add %s %s%s(%s)%s',
             $this->wrapTable($blueprint),
             $type,
             $this->wrap($command->index),
@@ -526,20 +526,16 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile a drop fulltext index command.
-     *
-     * @return string
      */
-    public function compileDropFullText(Blueprint $blueprint, Fluent $command)
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileDropIndex($blueprint, $command);
     }
 
     /**
      * Compile a drop spatial index command.
-     *
-     * @return string
      */
-    public function compileDropSpatialIndex(Blueprint $blueprint, Fluent $command)
+    public function compileDropSpatialIndex(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileDropIndex($blueprint, $command);
     }
@@ -585,7 +581,8 @@ class MySqlGrammar extends Grammar
      */
     public function compileRenameIndex(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('alter table %s rename index %s to %s',
+        return sprintf(
+            'alter table %s rename index %s to %s',
             $this->wrapTable($blueprint),
             $this->wrap($command->from),
             $this->wrap($command->to)
@@ -633,7 +630,8 @@ class MySqlGrammar extends Grammar
      */
     public function compileTableComment(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('alter table %s comment = %s',
+        return sprintf(
+            'alter table %s comment = %s',
             $this->wrapTable($blueprint),
             "'".str_replace("'", "''", $command->comment)."'"
         );
@@ -847,10 +845,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Create the column definition for a date-time (with time zone) type.
-     *
-     * @return string
      */
-    protected function typeDateTimeTz(Fluent $column)
+    protected function typeDateTimeTz(Fluent $column): string
     {
         return $this->typeDateTime($column);
     }
@@ -865,10 +861,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Create the column definition for a time (with time zone) type.
-     *
-     * @return string
      */
-    protected function typeTimeTz(Fluent $column)
+    protected function typeTimeTz(Fluent $column): string
     {
         return $this->typeTime($column);
     }
@@ -893,10 +887,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Create the column definition for a timestamp (with time zone) type.
-     *
-     * @return string
      */
-    protected function typeTimestampTz(Fluent $column)
+    protected function typeTimestampTz(Fluent $column): string
     {
         return $this->typeTimestamp($column);
     }
@@ -966,7 +958,8 @@ class MySqlGrammar extends Grammar
             $subtype = null;
         }
 
-        return sprintf('%s%s',
+        return sprintf(
+            '%s%s',
             $subtype ?? 'geometry',
             match (true) {
                 $column->srid && $this->connection->isMaria() => ' ref_system_id='.$column->srid,
@@ -978,10 +971,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Create the column definition for a spatial Geography type.
-     *
-     * @return string
      */
-    protected function typeGeography(Fluent $column)
+    protected function typeGeography(Fluent $column): string
     {
         return $this->typeGeometry($column);
     }

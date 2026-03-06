@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications\Console;
 
 use Illuminate\Console\MigrationGeneratorCommand;

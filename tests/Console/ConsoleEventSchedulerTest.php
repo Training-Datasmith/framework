@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Console;
 
 use Illuminate\Console\Application;
@@ -114,8 +116,7 @@ class ConsoleEventSchedulerTest extends TestCase
 
     public function testCreateNewArtisanCommandUsingCommandClassObject()
     {
-        $command = new class extends Command
-        {
+        $command = new class () extends Command {
             protected $signature = 'foo:bar';
 
             public function handle()

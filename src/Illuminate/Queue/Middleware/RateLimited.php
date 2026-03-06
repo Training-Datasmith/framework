@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Middleware;
 
 use Illuminate\Cache\RateLimiter;
@@ -71,7 +73,7 @@ class RateLimited
         return $this->handleJob(
             $job,
             $next,
-            Collection::wrap($limiterResponse)->map(fn($limit) => (object) [
+            Collection::wrap($limiterResponse)->map(fn ($limit) => (object) [
                 'key' => md5($this->limiterName.$limit->key),
                 'maxAttempts' => $limit->maxAttempts,
                 'decaySeconds' => $limit->decaySeconds,

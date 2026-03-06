@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 
@@ -7,7 +9,7 @@ use function PHPStan\Testing\assertType;
 
 $container = resolve(Container::class);
 
-assertType('stdClass', $container->instance('foo', new stdClass));
+assertType('stdClass', $container->instance('foo', new stdClass()));
 
 assertType('mixed', $container->get('foo'));
 assertType('Illuminate\Config\Repository', $container->get(Repository::class));

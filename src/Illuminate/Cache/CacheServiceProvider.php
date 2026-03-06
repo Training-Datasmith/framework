@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -13,15 +15,15 @@ class CacheServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     public function register(): void
     {
-        $this->app->singleton('cache', fn($app) => new CacheManager($app));
+        $this->app->singleton('cache', fn ($app): \Illuminate\Cache\CacheManager => new CacheManager($app));
 
-        $this->app->singleton('cache.store', fn($app) => $app['cache']->driver());
+        $this->app->singleton('cache.store', fn ($app) => $app['cache']->driver());
 
-        $this->app->singleton('cache.psr6', fn($app) => new Psr16Adapter($app['cache.store']));
+        $this->app->singleton('cache.psr6', fn ($app): \Symfony\Component\Cache\Adapter\Psr16Adapter => new Psr16Adapter($app['cache.store']));
 
-        $this->app->singleton('memcached.connector', fn() => new MemcachedConnector);
+        $this->app->singleton('memcached.connector', fn (): \Illuminate\Cache\MemcachedConnector => new MemcachedConnector());
 
-        $this->app->singleton(RateLimiter::class, fn($app) => new RateLimiter($app->make('cache')->driver(
+        $this->app->singleton(RateLimiter::class, fn ($app): \Illuminate\Cache\RateLimiter => new RateLimiter($app->make('cache')->driver(
             $app['config']->get('cache.limiter')
         )));
     }

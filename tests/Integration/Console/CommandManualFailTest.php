@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console;
 
 use Illuminate\Console\Application as Artisan;
@@ -29,7 +31,7 @@ class CommandManualFailTest extends TestCase
     {
         $this->expectException(ManuallyFailedException::class);
         $this->expectExceptionMessage('Whoops!');
-        $command = new Command;
+        $command = new Command();
         $command->fail('Whoops!');
     }
 
@@ -37,14 +39,14 @@ class CommandManualFailTest extends TestCase
     {
         $this->expectException(ManuallyFailedException::class);
         $this->expectExceptionMessage('Command failed manually.');
-        $command = new Command;
+        $command = new Command();
         $command->fail();
     }
 
     public function testThrowsTheOriginalThrowableInstance(): void
     {
         try {
-            $command = new Command;
+            $command = new Command();
             $command->fail($original = new \RuntimeException('Something went wrong.'));
 
             $this->fail('Command::fail() method must throw the original throwable instance.');

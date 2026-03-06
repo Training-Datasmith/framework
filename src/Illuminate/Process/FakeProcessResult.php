@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Illuminate\Contracts\Process\ProcessResult as ProcessResultContract;
@@ -28,11 +30,13 @@ class FakeProcessResult implements ProcessResultContract
     public function __construct(/**
      * The command string.
      */
-    protected string $command = '', /**
+        protected string $command = '', /**
      * The process exit code.
      */
-    protected int $exitCode = 0, array|string $output = '', array|string $errorOutput = '')
-    {
+        protected int $exitCode = 0,
+        array|string $output = '',
+        array|string $errorOutput = ''
+    ) {
         $this->output = $this->normalizeOutput($output);
         $this->errorOutput = $this->normalizeOutput($errorOutput);
     }
@@ -62,10 +66,8 @@ class FakeProcessResult implements ProcessResultContract
 
     /**
      * Get the original command executed by the process.
-     *
-     * @return string
      */
-    public function command()
+    public function command(): string
     {
         return $this->command;
     }
@@ -96,10 +98,8 @@ class FakeProcessResult implements ProcessResultContract
 
     /**
      * Get the exit code of the process.
-     *
-     * @return int
      */
-    public function exitCode()
+    public function exitCode(): int
     {
         return $this->exitCode;
     }
@@ -168,7 +168,7 @@ class FakeProcessResult implements ProcessResultContract
      *
      * @throws \Throwable
      */
-    public function throwIf(bool $condition, ?callable $callback = null)
+    public function throwIf(bool $condition, ?callable $callback = null): static
     {
         if ($condition) {
             return $this->throw($callback);

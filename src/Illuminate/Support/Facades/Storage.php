@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Facades;
 
 use Illuminate\Filesystem\Filesystem;
@@ -105,16 +107,16 @@ class Storage extends Facade
             $root = "{$root}_test_{$token}";
         }
 
-        (new Filesystem)->cleanDirectory($root);
+        (new Filesystem())->cleanDirectory($root);
 
         static::set($disk, $fake = static::createLocalDriver(
             self::buildDiskConfiguration($disk, $config, root: $root)
         ));
 
         return tap($fake, function ($fake): void {
-            $fake->buildTemporaryUrlsUsing(fn($path, $expiration) => URL::to($path.'?expiration='.$expiration->getTimestamp()));
+            $fake->buildTemporaryUrlsUsing(fn ($path, $expiration) => URL::to($path.'?expiration='.$expiration->getTimestamp()));
 
-            $fake->buildTemporaryUploadUrlsUsing(fn($path, $expiration) => ['url' => URL::to($path.'?expiration='.$expiration->getTimestamp()), 'headers' => []]);
+            $fake->buildTemporaryUploadUrlsUsing(fn ($path, $expiration): array => ['url' => URL::to($path.'?expiration='.$expiration->getTimestamp()), 'headers' => []]);
         });
     }
 
@@ -150,7 +152,8 @@ class Storage extends Facade
     {
         $originalConfig = static::$app['config']["filesystems.disks.{$disk}"] ?? [];
 
-        return array_merge([
+        return array_merge(
+            [
             'throw' => $originalConfig['throw'] ?? false],
             $config,
             ['root' => $root]

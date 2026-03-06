@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Database\Capsule\Manager as DB;
@@ -20,7 +22,7 @@ class ValidationExistsRuleTest extends TestCase
      */
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -316,7 +318,8 @@ class ValidationExistsRuleTest extends TestCase
     public function getIlluminateArrayTranslator()
     {
         return new Translator(
-            new ArrayLoader, 'en'
+            new ArrayLoader(),
+            'en'
         );
     }
 }

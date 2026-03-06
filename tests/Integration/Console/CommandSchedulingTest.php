@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
@@ -43,7 +45,7 @@ class CommandSchedulingTest extends TestCase
     {
         parent::setUp();
 
-        $this->fs = new Filesystem;
+        $this->fs = new Filesystem();
 
         $this->id = Str::random();
         $this->logfile = storage_path("logs/command_scheduling_test_{$this->id}.log");

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session;
 
 use BadMethodCallException;
@@ -18,8 +20,7 @@ class SymfonySessionDecorator implements SessionInterface
          * The underlying Laravel session store.
          */
         public readonly Session $store
-    )
-    {
+    ) {
     }
 
     /**

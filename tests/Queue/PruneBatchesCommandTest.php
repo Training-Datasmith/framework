@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Bus\BatchRepository;
@@ -15,10 +17,10 @@ class PruneBatchesCommandTest extends TestCase
 {
     public function testAllowPruningAllUnfinishedBatches()
     {
-        $container = new Application;
+        $container = new Application();
         $container->instance(BatchRepository::class, $repo = m::spy(DatabaseBatchRepository::class));
 
-        $command = new PruneBatchesCommand;
+        $command = new PruneBatchesCommand();
         $command->setLaravel($container);
 
         $command->run(new ArrayInput(['--unfinished' => 0]), new NullOutput());
@@ -28,10 +30,10 @@ class PruneBatchesCommandTest extends TestCase
 
     public function testAllowPruningAllCancelledBatches()
     {
-        $container = new Application;
+        $container = new Application();
         $container->instance(BatchRepository::class, $repo = m::spy(DatabaseBatchRepository::class));
 
-        $command = new PruneBatchesCommand;
+        $command = new PruneBatchesCommand();
         $command->setLaravel($container);
 
         $command->run(new ArrayInput(['--cancelled' => 0]), new NullOutput());

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Exception;
@@ -15,7 +17,7 @@ class SupportTimeboxTest extends TestCase
             $this->assertTrue(true);
         };
 
-        (new Timebox)->call($callback, 0);
+        (new Timebox())->call($callback, 0);
     }
 
     public function testMakeWaitsForMicroseconds()

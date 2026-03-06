@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Closure;
@@ -30,7 +32,8 @@ use InvalidArgumentException;
  */
 class BelongsToMany extends Relation
 {
-    use InteractsWithDictionary, InteractsWithPivotTable;
+    use InteractsWithDictionary;
+    use InteractsWithPivotTable;
 
     /**
      * The intermediate table for the relation.
@@ -163,7 +166,7 @@ class BelongsToMany extends Relation
             return $table;
         }
 
-        $model = new $table;
+        $model = new $table();
 
         if (! $model instanceof Model) {
             return $table;
@@ -219,7 +222,9 @@ class BelongsToMany extends Relation
     protected function addWhereConstraints(): static
     {
         $this->query->where(
-            $this->getQualifiedForeignPivotKeyName(), '=', $this->parent->{$this->parentKey}
+            $this->getQualifiedForeignPivotKeyName(),
+            '=',
+            $this->parent->{$this->parentKey}
         );
 
         return $this;
@@ -260,7 +265,8 @@ class BelongsToMany extends Relation
 
             if ($key !== null && isset($dictionary[$key])) {
                 $model->setRelation(
-                    $relation, $this->related->newCollection($dictionary[$key])
+                    $relation,
+                    $this->related->newCollection($dictionary[$key])
                 );
             }
         }
@@ -353,7 +359,7 @@ class BelongsToMany extends Relation
      * @param  string  $boolean
      * @return $this
      */
-    public function wherePivot($column, $operator = null, $value = null, $boolean = 'and')
+    public function wherePivot($column, $operator = null, $value = null, $boolean = 'and'): \Illuminate\Database\Eloquent\Builder
     {
         $this->pivotWheres[] = func_get_args();
 
@@ -416,7 +422,7 @@ class BelongsToMany extends Relation
      * @param  bool  $not
      * @return $this
      */
-    public function wherePivotIn($column, $values, $boolean = 'and', $not = false)
+    public function wherePivotIn($column, $values, $boolean = 'and', $not = false): \Illuminate\Database\Query\Builder
     {
         $this->pivotWhereIns[] = func_get_args();
 
@@ -511,7 +517,7 @@ class BelongsToMany extends Relation
      * @param  bool  $not
      * @return $this
      */
-    public function wherePivotNull($column, $boolean = 'and', $not = false)
+    public function wherePivotNull($column, $boolean = 'and', $not = false): \Illuminate\Database\Query\Builder
     {
         $this->pivotWhereNulls[] = func_get_args();
 
@@ -560,7 +566,7 @@ class BelongsToMany extends Relation
      * @param  string  $direction
      * @return $this
      */
-    public function orderByPivot($column, $direction = 'asc')
+    public function orderByPivot($column, $direction = 'asc'): \Illuminate\Database\Query\Builder
     {
         return $this->orderBy($this->qualifyPivotColumn($column), $direction);
     }
@@ -571,7 +577,7 @@ class BelongsToMany extends Relation
      * @param  string|\Illuminate\Contracts\Database\Query\Expression  $column
      * @return $this
      */
-    public function orderByPivotDesc($column)
+    public function orderByPivotDesc($column): \Illuminate\Database\Query\Builder
     {
         return $this->orderBy($this->qualifyPivotColumn($column), 'desc');
     }
@@ -693,7 +699,9 @@ class BelongsToMany extends Relation
         }
 
         return $this->where(
-            $this->getRelated()->getQualifiedKeyName(), '=', $this->parseId($id)
+            $this->getRelated()->getQualifiedKeyName(),
+            '=',
+            $this->parseId($id)
         )->first($columns);
     }
 
@@ -710,7 +718,9 @@ class BelongsToMany extends Relation
     public function findSole($id, $columns = ['*'])
     {
         return $this->where(
-            $this->getRelated()->getQualifiedKeyName(), '=', $this->parseId($id)
+            $this->getRelated()->getQualifiedKeyName(),
+            '=',
+            $this->parseId($id)
         )->sole($columns);
     }
 
@@ -761,7 +771,7 @@ class BelongsToMany extends Relation
             return $result;
         }
 
-        throw (new ModelNotFoundException)->setModel($this->related::class, $id);
+        throw (new ModelNotFoundException())->setModel($this->related::class, $id);
     }
 
     /**
@@ -842,7 +852,7 @@ class BelongsToMany extends Relation
             return $model;
         }
 
-        throw (new ModelNotFoundException)->setModel($this->related::class);
+        throw (new ModelNotFoundException())->setModel($this->related::class);
     }
 
     /**
@@ -994,9 +1004,8 @@ class BelongsToMany extends Relation
      * Chunk the results of the query.
      *
      * @param  int  $count
-     * @return bool
      */
-    public function chunk($count, callable $callback)
+    public function chunk($count, callable $callback): bool
     {
         return $this->prepareQueryBuilder()->chunk($count, function ($results, $page) use ($callback) {
             $this->hydratePivotRelation($results->all());
@@ -1057,9 +1066,8 @@ class BelongsToMany extends Relation
      * @param  string|null  $column
      * @param  string|null  $alias
      * @param  bool  $descending
-     * @return bool
      */
-    public function orderedChunkById($count, callable $callback, $column = null, $alias = null, $descending = false)
+    public function orderedChunkById($count, callable $callback, $column = null, $alias = null, $descending = false): bool
     {
         $column ??= $this->getRelated()->qualifyColumn(
             $this->getRelatedKeyName()
@@ -1171,7 +1179,7 @@ class BelongsToMany extends Relation
      *
      * @return \Illuminate\Database\Eloquent\Builder<TRelatedModel>
      */
-    protected function prepareQueryBuilder()
+    protected function prepareQueryBuilder(): \Illuminate\Database\Query\Builder
     {
         return $this->query->addSelect($this->shouldSelect());
     }
@@ -1233,10 +1241,8 @@ class BelongsToMany extends Relation
 
     /**
      * Determine if we should touch the parent on sync.
-     *
-     * @return bool
      */
-    protected function touchingParent()
+    protected function touchingParent(): bool
     {
         return $this->getRelated()->touches($this->guessInverseRelation());
     }
@@ -1309,7 +1315,7 @@ class BelongsToMany extends Relation
      */
     public function saveQuietly(Model $model, array $pivotAttributes = [], $touch = true)
     {
-        return Model::withoutEvents(fn() => $this->save($model, $pivotAttributes, $touch));
+        return Model::withoutEvents(fn (): \Illuminate\Database\Eloquent\Model => $this->save($model, $pivotAttributes, $touch));
     }
 
     /**
@@ -1341,7 +1347,7 @@ class BelongsToMany extends Relation
      */
     public function saveManyQuietly($models, array $pivotAttributes = [])
     {
-        return Model::withoutEvents(fn() => $this->saveMany($models, $pivotAttributes));
+        return Model::withoutEvents(fn () => $this->saveMany($models, $pivotAttributes));
     }
 
     /**
@@ -1423,7 +1429,7 @@ class BelongsToMany extends Relation
      * @param  int  $value
      * @return $this
      */
-    public function take($value)
+    public function take($value): static
     {
         return $this->limit($value);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 use Stringable;
@@ -16,8 +18,7 @@ class AppendableAttributeValue implements Stringable
          * The attribute value.
          */
         public $value
-    )
-    {
+    ) {
     }
 
     /**

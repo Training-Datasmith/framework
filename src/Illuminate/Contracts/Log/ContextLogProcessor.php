@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Contracts\Log;
 
 use Monolog\Processor\ProcessorInterface;

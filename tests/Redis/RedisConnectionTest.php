@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Redis;
 
 use Illuminate\Contracts\Events\Dispatcher;
@@ -437,11 +439,13 @@ class RedisConnectionTest extends TestCase
         foreach ($this->connections() as $redis) {
             $redis->hmset('hash', ['name' => 'mohamed', 'hobby' => 'diving']);
 
-            $this->assertEquals(['mohamed', 'diving'],
+            $this->assertEquals(
+                ['mohamed', 'diving'],
                 $redis->hmget('hash', 'name', 'hobby')
             );
 
-            $this->assertEquals(['mohamed', 'diving'],
+            $this->assertEquals(
+                ['mohamed', 'diving'],
                 $redis->hmget('hash', ['name', 'hobby'])
             );
 
@@ -545,7 +549,8 @@ class RedisConnectionTest extends TestCase
             $redis->executeRaw(['SET', 'test:raw:1', '1']);
 
             $this->assertEquals(
-                1, $redis->executeRaw(['GET', 'test:raw:1'])
+                1,
+                $redis->executeRaw(['GET', 'test:raw:1'])
             );
 
             $redis->flushall();
@@ -804,7 +809,7 @@ class RedisConnectionTest extends TestCase
         $host = env('REDIS_HOST', '127.0.0.1');
         $port = env('REDIS_PORT', 6379);
 
-        $connections[] = (new RedisManager(new Application, 'phpredis', [
+        $connections[] = (new RedisManager(new Application(), 'phpredis', [
             'cluster' => false,
             'default' => [
                 'url' => "redis://user@$host:$port",
@@ -816,7 +821,7 @@ class RedisConnectionTest extends TestCase
             ],
         ]))->connection();
 
-        $connections['persistent'] = (new RedisManager(new Application, 'phpredis', [
+        $connections['persistent'] = (new RedisManager(new Application(), 'phpredis', [
             'cluster' => false,
             'default' => [
                 'host' => $host,
@@ -829,7 +834,7 @@ class RedisConnectionTest extends TestCase
             ],
         ]))->connection();
 
-        $connections[] = (new RedisManager(new Application, 'phpredis', [
+        $connections[] = (new RedisManager(new Application(), 'phpredis', [
             'cluster' => false,
             'default' => [
                 'host' => $host,
@@ -840,7 +845,7 @@ class RedisConnectionTest extends TestCase
             ],
         ]))->connection();
 
-        $connections[] = (new RedisManager(new Application, 'phpredis', [
+        $connections[] = (new RedisManager(new Application(), 'phpredis', [
             'cluster' => false,
             'default' => [
                 'host' => $host,
@@ -852,7 +857,7 @@ class RedisConnectionTest extends TestCase
         ]))->connection();
 
         if (defined('Redis::COMPRESSION_LZF')) {
-            $connections['compression_lzf'] = (new RedisManager(new Application, 'phpredis', [
+            $connections['compression_lzf'] = (new RedisManager(new Application(), 'phpredis', [
                 'cluster' => false,
                 'default' => [
                     'host' => $host,
@@ -868,7 +873,7 @@ class RedisConnectionTest extends TestCase
         }
 
         if (defined('Redis::COMPRESSION_ZSTD')) {
-            $connections['compression_zstd'] = (new RedisManager(new Application, 'phpredis', [
+            $connections['compression_zstd'] = (new RedisManager(new Application(), 'phpredis', [
                 'cluster' => false,
                 'default' => [
                     'host' => $host,
@@ -882,7 +887,7 @@ class RedisConnectionTest extends TestCase
                 ],
             ]))->connection();
 
-            $connections['compression_zstd_default'] = (new RedisManager(new Application, 'phpredis', [
+            $connections['compression_zstd_default'] = (new RedisManager(new Application(), 'phpredis', [
                 'cluster' => false,
                 'default' => [
                     'host' => $host,
@@ -897,7 +902,7 @@ class RedisConnectionTest extends TestCase
                 ],
             ]))->connection();
 
-            $connections['compression_zstd_max'] = (new RedisManager(new Application, 'phpredis', [
+            $connections['compression_zstd_max'] = (new RedisManager(new Application(), 'phpredis', [
                 'cluster' => false,
                 'default' => [
                     'host' => $host,
@@ -914,7 +919,7 @@ class RedisConnectionTest extends TestCase
         }
 
         if (defined('Redis::COMPRESSION_LZ4')) {
-            $connections['compression_lz4'] = (new RedisManager(new Application, 'phpredis', [
+            $connections['compression_lz4'] = (new RedisManager(new Application(), 'phpredis', [
                 'cluster' => false,
                 'default' => [
                     'host' => $host,
@@ -928,7 +933,7 @@ class RedisConnectionTest extends TestCase
                 ],
             ]))->connection();
 
-            $connections['compression_lz4_default'] = (new RedisManager(new Application, 'phpredis', [
+            $connections['compression_lz4_default'] = (new RedisManager(new Application(), 'phpredis', [
                 'cluster' => false,
                 'default' => [
                     'host' => $host,
@@ -943,7 +948,7 @@ class RedisConnectionTest extends TestCase
                 ],
             ]))->connection();
 
-            $connections['compression_lz4_min'] = (new RedisManager(new Application, 'phpredis', [
+            $connections['compression_lz4_min'] = (new RedisManager(new Application(), 'phpredis', [
                 'cluster' => false,
                 'default' => [
                     'host' => $host,
@@ -958,7 +963,7 @@ class RedisConnectionTest extends TestCase
                 ],
             ]))->connection();
 
-            $connections['compression_lz4_max'] = (new RedisManager(new Application, 'phpredis', [
+            $connections['compression_lz4_max'] = (new RedisManager(new Application(), 'phpredis', [
                 'cluster' => false,
                 'default' => [
                     'host' => $host,

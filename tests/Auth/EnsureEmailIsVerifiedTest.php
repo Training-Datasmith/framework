@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Auth;
 
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;

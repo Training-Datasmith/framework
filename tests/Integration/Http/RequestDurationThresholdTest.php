@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Http;
 
 use Carbon\CarbonInterval;
@@ -87,7 +89,7 @@ class RequestDurationThresholdTest extends TestCase
         Carbon::setTestNow(now()->startOfDay());
         $kernel->handle($request = Request::create('http://localhost/test-route'));
         Carbon::setTestNow(now()->addMinute());
-        $kernel->terminate($request, new Response);
+        $kernel->terminate($request, new Response());
 
         $this->assertSame('Australia/Melbourne', $startedAt->timezone->getName());
     }
@@ -189,7 +191,7 @@ class RequestDurationThresholdTest extends TestCase
 
     public function testItHandlesCallingTerminateWithoutHandle()
     {
-        $this->app[Kernel::class]->terminate(Request::create('http://localhost/test-route'), new Response);
+        $this->app[Kernel::class]->terminate(Request::create('http://localhost/test-route'), new Response());
 
         // this is a placeholder just to show that the above did not throw an exception.
         $this->assertTrue(true);

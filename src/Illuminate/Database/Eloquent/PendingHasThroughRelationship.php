@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent;
 
 use BadMethodCallException;
@@ -30,8 +32,7 @@ class PendingHasThroughRelationship
          * The local relationship.
          */
         protected $localRelationship
-    )
-    {
+    ) {
     }
 
     /**
@@ -92,7 +93,6 @@ class PendingHasThroughRelationship
     /**
      * Handle dynamic method calls into the model.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)
@@ -102,7 +102,9 @@ class PendingHasThroughRelationship
         }
 
         throw new BadMethodCallException(sprintf(
-            'Call to undefined method %s::%s()', static::class, $method
+            'Call to undefined method %s::%s()',
+            static::class,
+            $method
         ));
     }
 }

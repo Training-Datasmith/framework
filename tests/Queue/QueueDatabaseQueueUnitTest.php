@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Carbon\Carbon;
@@ -52,7 +54,7 @@ class QueueDatabaseQueueUnitTest extends TestCase
         $uuid = Str::uuid()->toString();
 
         return [
-            [$uuid, new MyTestJob, 'MyTestJob', 'CallQueuedHandler'],
+            [$uuid, new MyTestJob(), 'MyTestJob', 'CallQueuedHandler'],
             [$uuid, fn () => 0, 'Closure', 'CallQueuedHandler'],
             [$uuid, 'foo', 'foo', 'foo'],
         ];
@@ -100,7 +102,7 @@ class QueueDatabaseQueueUnitTest extends TestCase
             return $uuid;
         });
 
-        $job = (new MyBatchableJob)->withBatchId('test-batch-id');
+        $job = (new MyBatchableJob())->withBatchId('test-batch-id');
 
         $queue = $this->getMockBuilder(DatabaseQueue::class)->onlyMethods(['currentTime'])->setConstructorArgs([$database = m::mock(Connection::class), 'table', 'default'])->getMock();
         $queue->expects($this->any())->method('currentTime')->willReturn('time');
@@ -122,7 +124,7 @@ class QueueDatabaseQueueUnitTest extends TestCase
     {
         $this->expectException('InvalidArgumentException');
 
-        $job = new stdClass;
+        $job = new stdClass();
         $job->invalid = "\xc3\x28";
 
         $queue = m::mock(Queue::class)->makePartial();

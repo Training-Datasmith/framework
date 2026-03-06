@@ -287,8 +287,7 @@ class DatabaseEloquentBelongsToManyCreateOrFirstTest extends TestCase
 
     public function testFirstOrCreateMethodFallsBackToCreateOrFirst(): void
     {
-        $source = new class() extends BelongsToManyCreateOrFirstTestSourceModel
-        {
+        $source = new class () extends BelongsToManyCreateOrFirstTestSourceModel {
             protected function newBelongsToMany(Builder $query, Model $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName = null): BelongsToMany
             {
                 $relation = m::mock(BelongsToMany::class)->makePartial();
@@ -358,8 +357,7 @@ class DatabaseEloquentBelongsToManyCreateOrFirstTest extends TestCase
 
     public function testUpdateOrCreateMethodCreatesNewRelated(): void
     {
-        $source = new class() extends BelongsToManyCreateOrFirstTestSourceModel
-        {
+        $source = new class () extends BelongsToManyCreateOrFirstTestSourceModel {
             protected function newBelongsToMany(Builder $query, Model $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName = null): BelongsToMany
             {
                 $relation = m::mock(BelongsToMany::class)->makePartial();
@@ -400,8 +398,7 @@ class DatabaseEloquentBelongsToManyCreateOrFirstTest extends TestCase
 
     public function testUpdateOrCreateMethodUpdatesExistingRelated(): void
     {
-        $source = new class() extends BelongsToManyCreateOrFirstTestSourceModel
-        {
+        $source = new class () extends BelongsToManyCreateOrFirstTestSourceModel {
             protected function newBelongsToMany(Builder $query, Model $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName = null): BelongsToMany
             {
                 $relation = m::mock(BelongsToMany::class)->makePartial();
@@ -462,7 +459,7 @@ class DatabaseEloquentBelongsToManyCreateOrFirstTest extends TestCase
     {
         $grammarClass = 'Illuminate\Database\Query\Grammars\\'.$database.'Grammar';
         $processorClass = 'Illuminate\Database\Query\Processors\\'.$database.'Processor';
-        $processor = new $processorClass;
+        $processor = new $processorClass();
         $connection = m::mock(Connection::class, ['getPostProcessor' => $processor]);
         $grammar = new $grammarClass($connection);
         $connection->shouldReceive('getQueryGrammar')->andReturn($grammar);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Notifications;
 
 use Carbon\Carbon;
@@ -13,7 +15,7 @@ class NotificationDatabaseChannelTest extends TestCase
 {
     public function testDatabaseChannelCreatesDatabaseRecordWithProperData()
     {
-        $notification = new NotificationDatabaseChannelTestNotification;
+        $notification = new NotificationDatabaseChannelTestNotification();
         $notification->id = 1;
         $notifiable = m::mock();
 
@@ -24,13 +26,13 @@ class NotificationDatabaseChannelTest extends TestCase
             'read_at' => null,
         ]);
 
-        $channel = new DatabaseChannel;
+        $channel = new DatabaseChannel();
         $channel->send($notifiable, $notification);
     }
 
     public function testCorrectPayloadIsSentToDatabase()
     {
-        $notification = new NotificationDatabaseChannelTestNotification;
+        $notification = new NotificationDatabaseChannelTestNotification();
         $notification->id = 1;
         $notifiable = m::mock();
 
@@ -42,13 +44,13 @@ class NotificationDatabaseChannelTest extends TestCase
             'something' => 'else',
         ]);
 
-        $channel = new ExtendedDatabaseChannel;
+        $channel = new ExtendedDatabaseChannel();
         $channel->send($notifiable, $notification);
     }
 
     public function testCustomizeTypeIsSentToDatabase()
     {
-        $notification = new NotificationDatabaseChannelCustomizeTypeTestNotification;
+        $notification = new NotificationDatabaseChannelCustomizeTypeTestNotification();
         $notification->id = 1;
         $notifiable = m::mock();
 
@@ -60,7 +62,7 @@ class NotificationDatabaseChannelTest extends TestCase
             'something' => 'else',
         ]);
 
-        $channel = new ExtendedDatabaseChannel;
+        $channel = new ExtendedDatabaseChannel();
         $channel->send($notifiable, $notification);
     }
 }

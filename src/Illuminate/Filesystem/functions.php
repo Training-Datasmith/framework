@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Filesystem;
 
 if (! function_exists('Illuminate\Filesystem\join_paths')) {

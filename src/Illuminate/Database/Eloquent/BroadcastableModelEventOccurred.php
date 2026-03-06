@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -10,7 +12,8 @@ use Illuminate\Support\Collection as BaseCollection;
 
 class BroadcastableModelEventOccurred implements ShouldBroadcast
 {
-    use InteractsWithSockets, SerializesModels;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     /**
      * The channels that the event should be broadcast on.
@@ -55,8 +58,7 @@ class BroadcastableModelEventOccurred implements ShouldBroadcast
          * The event name (created, updated, etc.).
          */
         protected $event
-    )
-    {
+    ) {
     }
 
     /**

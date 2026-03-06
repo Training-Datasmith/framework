@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cookie;
 
 use ArgumentCountError;
@@ -267,7 +269,7 @@ class CookieTest extends TestCase
 
     public function getCreator()
     {
-        return new CookieJar;
+        return new CookieJar();
     }
 
     private function getQueuedPropertyValue(CookieJar $cookieJar)

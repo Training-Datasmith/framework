@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\View;
 
 use ErrorException;
@@ -292,6 +294,6 @@ class ViewCompilerEngineTest extends TestCase
 
     protected function getEngine($filesystem = null)
     {
-        return new CompilerEngine(m::mock(CompilerInterface::class), $filesystem ?: new Filesystem);
+        return new CompilerEngine(m::mock(CompilerInterface::class), $filesystem ?: new Filesystem());
     }
 }

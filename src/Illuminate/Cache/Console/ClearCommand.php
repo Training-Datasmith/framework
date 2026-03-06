@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\Console;
 
-use Illuminate\Cache\CacheManager;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -32,11 +33,11 @@ class ClearCommand extends Command
     public function __construct(/**
      * The cache manager instance.
      */
-    protected \Illuminate\Cache\CacheManager $cache, /**
+        protected \Illuminate\Cache\CacheManager $cache, /**
      * The filesystem instance.
      */
-    protected \Illuminate\Filesystem\Filesystem $files)
-    {
+        protected \Illuminate\Filesystem\Filesystem $files
+    ) {
         parent::__construct();
     }
 
@@ -46,7 +47,8 @@ class ClearCommand extends Command
     public function handle(): int
     {
         $this->laravel['events']->dispatch(
-            'cache:clearing', [$this->argument('store'), $this->tags()]
+            'cache:clearing',
+            [$this->argument('store'), $this->tags()]
         );
 
         $successful = $this->cache()->flush();
@@ -60,7 +62,8 @@ class ClearCommand extends Command
         }
 
         $this->laravel['events']->dispatch(
-            'cache:cleared', [$this->argument('store'), $this->tags()]
+            'cache:cleared',
+            [$this->argument('store'), $this->tags()]
         );
 
         $this->components->info('Application cache cleared successfully.');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentMorphConstrainTest;
 
 use Illuminate\Database\Eloquent\Model;
@@ -29,16 +31,16 @@ class EloquentMorphConstrainTest extends DatabaseTestCase
         });
 
         $post1 = Post::create(['post_visible' => true]);
-        (new Comment)->commentable()->associate($post1)->save();
+        (new Comment())->commentable()->associate($post1)->save();
 
         $post2 = Post::create(['post_visible' => false]);
-        (new Comment)->commentable()->associate($post2)->save();
+        (new Comment())->commentable()->associate($post2)->save();
 
         $video1 = Video::create(['video_visible' => true]);
-        (new Comment)->commentable()->associate($video1)->save();
+        (new Comment())->commentable()->associate($video1)->save();
 
         $video2 = Video::create(['video_visible' => false]);
-        (new Comment)->commentable()->associate($video2)->save();
+        (new Comment())->commentable()->associate($video2)->save();
     }
 
     public function testMorphConstraints()

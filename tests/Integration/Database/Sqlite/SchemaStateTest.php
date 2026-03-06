@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\Sqlite;
 
 use Illuminate\Support\Facades\DB;
 use Orchestra\Testbench\Attributes\RequiresDatabase;
 use Orchestra\Testbench\Concerns\InteractsWithPublishedFiles;
-use Orchestra\Testbench\TestCase;
-use PHPUnit\Framework\Attributes\RequiresOperatingSystem;
 
 use function Orchestra\Testbench\remote;
+
+use Orchestra\Testbench\TestCase;
+
+use PHPUnit\Framework\Attributes\RequiresOperatingSystem;
 
 #[RequiresDatabase('sqlite')]
 class SchemaStateTest extends TestCase

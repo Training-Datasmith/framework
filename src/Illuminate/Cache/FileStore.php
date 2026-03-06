@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Exception;
@@ -12,7 +14,8 @@ use Illuminate\Support\InteractsWithTime;
 
 class FileStore implements Store, LockProvider
 {
-    use InteractsWithTime, RetrievesMultipleKeys;
+    use InteractsWithTime;
+    use RetrievesMultipleKeys;
 
     /**
      * The file cache lock directory.
@@ -45,8 +48,7 @@ class FileStore implements Store, LockProvider
          * The classes that should be allowed during unserialization.
          */
         protected $serializableClasses = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -72,7 +74,9 @@ class FileStore implements Store, LockProvider
         $this->ensureCacheDirectoryExists($path = $this->path($key));
 
         $result = $this->files->put(
-            $path, $this->expiration($seconds).serialize($value), true
+            $path,
+            $this->expiration($seconds).serialize($value),
+            true
         );
 
         if ($result !== false && $result > 0) {
@@ -190,9 +194,8 @@ class FileStore implements Store, LockProvider
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return bool
      */
-    public function forever($key, $value)
+    public function forever($key, $value): bool
     {
         return $this->put($key, $value, 0);
     }
@@ -224,7 +227,7 @@ class FileStore implements Store, LockProvider
      * @param  string  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function restoreLock($name, $owner)
+    public function restoreLock($name, $owner): \Illuminate\Cache\FileLock
     {
         return $this->lock($name, 0, $owner);
     }
@@ -272,9 +275,8 @@ class FileStore implements Store, LockProvider
      * Retrieve an item and expiry time from the cache by key.
      *
      * @param  string  $key
-     * @return array
      */
-    protected function getPayload($key)
+    protected function getPayload($key): array
     {
         $path = $this->path($key);
 
@@ -365,10 +367,8 @@ class FileStore implements Store, LockProvider
 
     /**
      * Get the Filesystem instance.
-     *
-     * @return \Illuminate\Filesystem\Filesystem
      */
-    public function getFilesystem()
+    public function getFilesystem(): \Illuminate\Filesystem\Filesystem
     {
         return $this->files;
     }

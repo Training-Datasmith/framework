@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Http\Middleware;
 
 use Illuminate\Http\Middleware\SetCacheHeaders as Cache;
@@ -39,10 +41,10 @@ class CacheTest extends TestCase
 
     public function testDoNotSetHeaderWhenMethodNotCacheable()
     {
-        $request = new Request;
+        $request = new Request();
         $request->setMethod('PUT');
 
-        $response = (new Cache)->handle($request, function () {
+        $response = (new Cache())->handle($request, function () {
             return new Response('Hello Laravel');
         }, 'max_age=120;s_maxage=60');
 
@@ -51,8 +53,8 @@ class CacheTest extends TestCase
 
     public function testDoNotSetHeaderWhenNoContent()
     {
-        $response = (new Cache)->handle(new Request, function () {
-            return new Response;
+        $response = (new Cache())->handle(new Request(), function () {
+            return new Response();
         }, 'max_age=120;s_maxage=60');
 
         $this->assertNull($response->getMaxAge());
@@ -61,7 +63,7 @@ class CacheTest extends TestCase
 
     public function testSetHeaderToFileResponseEvenWithNoContent()
     {
-        $response = (new Cache)->handle(new Request, function () {
+        $response = (new Cache())->handle(new Request(), function () {
             $filePath = __DIR__.'/../fixtures/test.txt';
 
             return new BinaryFileResponse($filePath);
@@ -72,7 +74,7 @@ class CacheTest extends TestCase
 
     public function testSetHeaderToDownloadResponseEvenWithNoContent()
     {
-        $response = (new Cache)->handle(new Request, function () {
+        $response = (new Cache())->handle(new Request(), function () {
             return new StreamedResponse(function () {
                 $filePath = __DIR__.'/../fixtures/test.txt';
                 readfile($filePath);
@@ -84,7 +86,7 @@ class CacheTest extends TestCase
 
     public function testAddHeaders()
     {
-        $response = (new Cache)->handle(new Request, function () {
+        $response = (new Cache())->handle(new Request(), function () {
             return new Response('some content');
         }, 'max_age=100;s_maxage=200;etag=ABC');
 
@@ -94,7 +96,7 @@ class CacheTest extends TestCase
 
     public function testAddHeadersUsingArray()
     {
-        $response = (new Cache)->handle(new Request, function () {
+        $response = (new Cache())->handle(new Request(), function () {
             return new Response('some content');
         }, ['max_age' => 100, 's_maxage' => 200, 'etag' => 'ABC']);
 
@@ -104,7 +106,7 @@ class CacheTest extends TestCase
 
     public function testGenerateEtag()
     {
-        $response = (new Cache)->handle(new Request, function () {
+        $response = (new Cache())->handle(new Request(), function () {
             return new Response('some content');
         }, 'etag;max_age=100;s_maxage=200');
 
@@ -114,7 +116,7 @@ class CacheTest extends TestCase
 
     public function testDoesNotOverrideEtag()
     {
-        $response = (new Cache)->handle(new Request, function () {
+        $response = (new Cache())->handle(new Request(), function () {
             return (new Response('some content'))->setEtag('XYZ');
         }, 'etag');
 
@@ -123,10 +125,10 @@ class CacheTest extends TestCase
 
     public function testIsNotModified()
     {
-        $request = new Request;
+        $request = new Request();
         $request->headers->set('If-None-Match', '"4f1b32bff4356281946800d355007128"');
 
-        $response = (new Cache)->handle($request, function () {
+        $response = (new Cache())->handle($request, function () {
             return new Response('some content');
         }, 'etag;max_age=100;s_maxage=200');
 
@@ -137,7 +139,7 @@ class CacheTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        (new Cache)->handle(new Request, function () {
+        (new Cache())->handle(new Request(), function () {
             return new Response('some content');
         }, 'invalid');
     }
@@ -146,7 +148,7 @@ class CacheTest extends TestCase
     {
         $time = time();
 
-        $response = (new Cache)->handle(new Request, function () {
+        $response = (new Cache())->handle(new Request(), function () {
             return new Response('some content');
         }, "last_modified=$time");
 
@@ -156,7 +158,7 @@ class CacheTest extends TestCase
     public function testLastModifiedStringDate()
     {
         $birthdate = '1973-04-09 10:10:10';
-        $response = (new Cache)->handle(new Request, function () {
+        $response = (new Cache())->handle(new Request(), function () {
             return new Response('some content');
         }, "last_modified=$birthdate");
 
@@ -167,7 +169,7 @@ class CacheTest extends TestCase
     {
         $time = time();
 
-        $response = (new Cache)->handle(new Request, function () {
+        $response = (new Cache())->handle(new Request(), function () {
             return new Response('some content');
         }, "last_modified=$time;");
 
@@ -176,7 +178,7 @@ class CacheTest extends TestCase
 
     public function testItDoesNotSetEtagHeadersForBinaryContent()
     {
-        $response = (new Cache)->handle(new Request, function () {
+        $response = (new Cache())->handle(new Request(), function () {
             return new BinaryFileResponse(__DIR__.'/../fixtures/test.txt');
         }, 'etag');
 

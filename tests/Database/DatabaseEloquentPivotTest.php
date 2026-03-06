@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Connection;
@@ -130,7 +132,7 @@ class DatabaseEloquentPivotTest extends TestCase
 
     public function testPivotModelTableNameIsSingular()
     {
-        $pivot = new Pivot;
+        $pivot = new Pivot();
 
         $this->assertSame('pivot', $pivot->getTable());
     }
@@ -141,7 +143,7 @@ class DatabaseEloquentPivotTest extends TestCase
         $parent->shouldReceive('getCreatedAtColumn')->andReturn('parent_created_at');
         $parent->shouldReceive('getUpdatedAtColumn')->andReturn('parent_updated_at');
 
-        $pivotWithParent = new Pivot;
+        $pivotWithParent = new Pivot();
         $pivotWithParent->pivotParent = $parent;
 
         $this->assertSame('parent_created_at', $pivotWithParent->getCreatedAtColumn());
@@ -150,9 +152,9 @@ class DatabaseEloquentPivotTest extends TestCase
 
     public function testPivotModelWithoutParentReturnsModelTimestampColumns()
     {
-        $model = new DummyModel;
+        $model = new DummyModel();
 
-        $pivotWithoutParent = new Pivot;
+        $pivotWithoutParent = new Pivot();
 
         $this->assertEquals($model->getCreatedAtColumn(), $pivotWithoutParent->getCreatedAtColumn());
         $this->assertEquals($model->getUpdatedAtColumn(), $pivotWithoutParent->getUpdatedAtColumn());
@@ -160,7 +162,7 @@ class DatabaseEloquentPivotTest extends TestCase
 
     public function testWithoutRelations()
     {
-        $original = new Pivot;
+        $original = new Pivot();
 
         $original->pivotParent = 'foo';
         $original->setRelation('bar', 'baz');
@@ -218,5 +220,4 @@ class DatabaseEloquentPivotTestJsonCastStub extends Pivot
 
 class DummyModel extends Model
 {
-    //
 }

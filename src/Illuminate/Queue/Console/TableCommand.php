@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Console;
 
 use Illuminate\Console\MigrationGeneratorCommand;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Illuminate\Filesystem\join_paths;
+
+use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'make:queue-table', aliases: ['queue:table'])]
 class TableCommand extends MigrationGeneratorCommand

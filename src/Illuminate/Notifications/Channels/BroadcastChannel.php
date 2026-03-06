@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications\Channels;
 
 use Illuminate\Contracts\Events\Dispatcher;
@@ -18,8 +20,7 @@ class BroadcastChannel
          * The event dispatcher.
          */
         protected \Illuminate\Contracts\Events\Dispatcher $events
-    )
-    {
+    ) {
     }
 
     /**
@@ -33,7 +34,9 @@ class BroadcastChannel
         $message = $this->getData($notifiable, $notification);
 
         $event = new BroadcastNotificationCreated(
-            $notifiable, $notification, is_array($message) ? $message : $message->data
+            $notifiable,
+            $notification,
+            is_array($message) ? $message : $message->data
         );
 
         if ($message instanceof BroadcastMessage) {

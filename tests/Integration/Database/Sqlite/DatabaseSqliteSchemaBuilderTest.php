@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\Sqlite;
 
 use Illuminate\Database\Schema\Blueprint;

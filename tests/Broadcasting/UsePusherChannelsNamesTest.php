@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Broadcasting;
 
 use Illuminate\Broadcasting\Broadcasters\Broadcaster;
@@ -12,7 +14,7 @@ class UsePusherChannelsNamesTest extends TestCase
     #[DataProvider('channelsProvider')]
     public function testChannelNameNormalization($requestChannelName, $normalizedName, $guarded)
     {
-        $broadcaster = new FakeBroadcasterUsingPusherChannelsNames;
+        $broadcaster = new FakeBroadcasterUsingPusherChannelsNames();
 
         $this->assertSame(
             $normalizedName,
@@ -22,7 +24,7 @@ class UsePusherChannelsNamesTest extends TestCase
 
     public function testChannelNameNormalizationSpecialCase()
     {
-        $broadcaster = new FakeBroadcasterUsingPusherChannelsNames;
+        $broadcaster = new FakeBroadcasterUsingPusherChannelsNames();
 
         $this->assertSame(
             'private-123',
@@ -32,7 +34,7 @@ class UsePusherChannelsNamesTest extends TestCase
 
     public function testChannelNamePatternMatching()
     {
-        $broadcaster = new FakeBroadcasterUsingPusherChannelsNames;
+        $broadcaster = new FakeBroadcasterUsingPusherChannelsNames();
 
         $this->assertEquals(
             0,
@@ -46,7 +48,7 @@ class UsePusherChannelsNamesTest extends TestCase
     #[DataProvider('channelsProvider')]
     public function testIsGuardedChannel($requestChannelName, $normalizedName, $guarded)
     {
-        $broadcaster = new FakeBroadcasterUsingPusherChannelsNames;
+        $broadcaster = new FakeBroadcasterUsingPusherChannelsNames();
 
         $this->assertSame(
             $guarded,
@@ -104,17 +106,17 @@ class FakeBroadcasterUsingPusherChannelsNames extends Broadcaster
 
     public function auth($request)
     {
-        //
+
     }
 
     public function validAuthenticationResponse($request, $result)
     {
-        //
+
     }
 
     public function broadcast(array $channels, $event, array $payload = [])
     {
-        //
+
     }
 
     public function testChannelNameMatchesPattern($channel, $pattern)

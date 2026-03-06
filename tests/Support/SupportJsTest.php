@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -54,8 +56,7 @@ class SupportJsTest extends TestCase
     {
         // JsonSerializable should take precedence over Arrayable, so we'll
         // implement both and make sure the correct data is used.
-        $data = new class() implements JsonSerializable, Arrayable
-        {
+        $data = new class () implements JsonSerializable, Arrayable {
             public $foo = 'not hello';
 
             public $bar = 'not world';
@@ -81,8 +82,7 @@ class SupportJsTest extends TestCase
     {
         // Jsonable should take precedence over JsonSerializable and Arrayable, so we'll
         // implement all three and make sure the correct data is used.
-        $data = new class() implements Jsonable, JsonSerializable, Arrayable
-        {
+        $data = new class () implements Jsonable, JsonSerializable, Arrayable {
             public $foo = 'not hello';
 
             public $bar = 'not world';
@@ -111,8 +111,7 @@ class SupportJsTest extends TestCase
 
     public function testArrayable()
     {
-        $data = new class() implements Arrayable
-        {
+        $data = new class () implements Arrayable {
             public $foo = 'not hello';
 
             public $bar = 'not world';
@@ -131,8 +130,7 @@ class SupportJsTest extends TestCase
 
     public function testHtmlable()
     {
-        $data = new class implements Htmlable
-        {
+        $data = new class () implements Htmlable {
             public function toHtml()
             {
                 return '<p>Hello, World!</p>';
@@ -141,8 +139,7 @@ class SupportJsTest extends TestCase
 
         $this->assertEquals("'\u003Cp\u003EHello, World!\u003C\/p\u003E'", (string) Js::from($data));
 
-        $data = new class implements Htmlable, Arrayable
-        {
+        $data = new class () implements Htmlable, Arrayable {
             public function toHtml()
             {
                 return '<p>Hello, World!</p>';
@@ -159,8 +156,7 @@ class SupportJsTest extends TestCase
             (string) Js::from($data)
         );
 
-        $data = new class implements Htmlable, Jsonable
-        {
+        $data = new class () implements Htmlable, Jsonable {
             public function toHtml()
             {
                 return '<p>Hello, World!</p>';
@@ -177,8 +173,7 @@ class SupportJsTest extends TestCase
             (string) Js::from($data)
         );
 
-        $data = new class implements Htmlable, JsonSerializable
-        {
+        $data = new class () implements Htmlable, JsonSerializable {
             public function toHtml()
             {
                 return '<p>Hello, World!</p>';

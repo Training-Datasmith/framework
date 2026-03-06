@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications\Messages;
 
 use Illuminate\Container\Container;
@@ -135,7 +137,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  string  $textView
      * @return $this
      */
-    public function text($textView, array $data = [])
+    public function text($textView, array $data = []): static
     {
         return $this->view([
             'html' => is_array($this->view) ? ($this->view['html'] ?? null) : $this->view,
@@ -390,7 +392,8 @@ class MailMessage extends SimpleMessage implements Renderable
     {
         if (isset($this->view)) {
             return Container::getInstance()->make('mailer')->render(
-                $this->view, $this->data()
+                $this->view,
+                $this->data()
             );
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\View;
 
 use Illuminate\View\Component;
@@ -12,7 +14,7 @@ class ViewComponentTest extends TestCase
 {
     public function testDataExposure()
     {
-        $component = new TestViewComponent;
+        $component = new TestViewComponent();
 
         $variables = $component->data();
 
@@ -23,8 +25,7 @@ class ViewComponentTest extends TestCase
 
     public function testIgnoredMethodsAreNotExposedToViewData()
     {
-        $component = new class extends Component
-        {
+        $component = new class () extends Component {
             protected $except = ['goodbye'];
 
             public function render()
@@ -59,7 +60,7 @@ class ViewComponentTest extends TestCase
 
     public function testAttributeParentInheritance(): void
     {
-        $component = new TestViewComponent;
+        $component = new TestViewComponent();
         $attributes = new ComponentAttributeBag(['class' => 'bar', 'type' => 'button']);
 
         $component->withAttributes(['class' => 'foo', 'attributes' => $attributes]);
@@ -89,7 +90,7 @@ class ViewComponentTest extends TestCase
 
     public function testPublicMethodsWithNoArgsAreConvertedToStringableCallablesInvokedAndNotCached()
     {
-        $component = new TestSampleViewComponent;
+        $component = new TestSampleViewComponent();
 
         $this->assertEquals(0, $component->counter);
         $this->assertEquals(0, TestSampleViewComponent::$publicStaticCounter);
@@ -121,7 +122,7 @@ class ViewComponentTest extends TestCase
 
     public function testItIgnoresExceptedMethodsAndProperties()
     {
-        $component = new TestExceptedViewComponent;
+        $component = new TestExceptedViewComponent();
         $variables = $component->data();
 
         // Ignored methods (with no args) are not invoked behind the scenes.
@@ -134,7 +135,7 @@ class ViewComponentTest extends TestCase
 
     public function testMethodsOverridePropertyValues()
     {
-        $component = new TestHelloPropertyHelloMethodComponent;
+        $component = new TestHelloPropertyHelloMethodComponent();
         $variables = $component->data();
         $this->assertArrayHasKey('hello', $variables);
         $this->assertSame('world', $variables['hello']());

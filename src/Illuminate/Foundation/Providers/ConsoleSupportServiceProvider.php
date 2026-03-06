@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Providers;
 
 use Illuminate\Contracts\Support\DeferrableProvider;

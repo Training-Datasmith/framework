@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Support\Fixtures;
 
 use Illuminate\Support\Manager;
@@ -13,6 +15,6 @@ class NullableManager extends Manager
      */
     public function getDefaultDriver()
     {
-        //
+
     }
 }

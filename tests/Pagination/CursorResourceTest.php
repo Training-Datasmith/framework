@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Pagination;
 
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -48,10 +50,8 @@ class CursorResourceTest extends TestCase
 
 class CursorResourceTestResource extends JsonResource
 {
-    //
 }
 
 class CursorResourceTestPaginator extends CursorPaginator
 {
-    //
 }

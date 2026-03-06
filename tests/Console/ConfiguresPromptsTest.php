@@ -1,20 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Console;
 
 use Illuminate\Console\Application;
 use Illuminate\Console\Command;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Console\View\Components\Factory;
+
+use function Laravel\Prompts\multiselect;
+
 use Laravel\Prompts\Prompt;
+
+use function Laravel\Prompts\select;
+
 use Mockery as m;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
-
-use function Laravel\Prompts\multiselect;
-use function Laravel\Prompts\select;
 
 class ConfiguresPromptsTest extends TestCase
 {
@@ -23,8 +29,7 @@ class ConfiguresPromptsTest extends TestCase
     {
         Prompt::fallbackWhen(true);
 
-        $command = new class($prompt) extends Command
-        {
+        $command = new class ($prompt) extends Command {
             public $answer;
 
             public function __construct(protected $prompt)
@@ -38,7 +43,9 @@ class ConfiguresPromptsTest extends TestCase
             }
         };
 
-        $this->runCommand($command, fn ($components) => $components
+        $this->runCommand(
+            $command,
+            fn ($components) => $components
             ->expects('choice')
             ->with('Test', $expectedOptions, $expectedDefault)
             ->andReturn($return)
@@ -64,8 +71,7 @@ class ConfiguresPromptsTest extends TestCase
     {
         Prompt::fallbackWhen(true);
 
-        $command = new class($prompt) extends Command
-        {
+        $command = new class ($prompt) extends Command {
             public $answer;
 
             public function __construct(protected $prompt)
@@ -79,7 +85,9 @@ class ConfiguresPromptsTest extends TestCase
             }
         };
 
-        $this->runCommand($command, fn ($components) => $components
+        $this->runCommand(
+            $command,
+            fn ($components) => $components
             ->expects('choice')
             ->with('Test', $expectedOptions, $expectedDefault, null, true)
             ->andReturn($return)
@@ -118,6 +126,6 @@ class ConfiguresPromptsTest extends TestCase
 
         $expectations($factory);
 
-        $command->run(new ArrayInput([]), new NullOutput);
+        $command->run(new ArrayInput([]), new NullOutput());
     }
 }

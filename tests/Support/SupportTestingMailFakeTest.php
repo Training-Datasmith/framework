@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -36,7 +38,7 @@ class SupportTestingMailFakeTest extends TestCase
                 ->andReturn('smtp');
         });
         $this->fake = new MailFake($this->mailManager);
-        $this->mailable = new MailableStub;
+        $this->mailable = new MailableStub();
     }
 
     public function testAssertSent()
@@ -83,7 +85,7 @@ class SupportTestingMailFakeTest extends TestCase
 
     public function testAssertSentWhenRecipientHasPreferredLocale()
     {
-        $user = new LocalizedRecipientStub;
+        $user = new LocalizedRecipientStub();
 
         $this->fake->to($user)->send($this->mailable);
 
@@ -301,7 +303,7 @@ class SupportTestingMailFakeTest extends TestCase
 
     public function testSendQueuesAMailableThatShouldBeQueued()
     {
-        $this->fake->to('taylor@laravel.com')->send(new QueueableMailableStub);
+        $this->fake->to('taylor@laravel.com')->send(new QueueableMailableStub());
 
         $this->fake->assertQueued(QueueableMailableStub::class);
 
@@ -361,7 +363,7 @@ class SupportTestingMailFakeTest extends TestCase
 
     public function testAssertQueuedWithClosure()
     {
-        $this->fake->to($user = new LocalizedRecipientStub)->queue($this->mailable);
+        $this->fake->to($user = new LocalizedRecipientStub())->queue($this->mailable);
 
         $this->fake->assertQueued(function (MailableStub $mail) use ($user) {
             return $mail->hasTo($user);
@@ -370,7 +372,7 @@ class SupportTestingMailFakeTest extends TestCase
 
     public function testAssertSentWithClosure()
     {
-        $this->fake->to($user = new LocalizedRecipientStub)->send($this->mailable);
+        $this->fake->to($user = new LocalizedRecipientStub())->send($this->mailable);
 
         $this->fake->assertSent(function (MailableStub $mail) use ($user) {
             return $mail->hasTo($user);

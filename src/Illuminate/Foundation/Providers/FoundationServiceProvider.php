@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Providers;
 
 use Illuminate\Console\Events\CommandFinished;
@@ -99,7 +101,7 @@ class FoundationServiceProvider extends AggregateServiceProvider
      */
     public function registerConsoleSchedule(): void
     {
-        $this->app->singleton(Schedule::class, fn($app) => $app->make(ConsoleKernel::class)->resolveConsoleSchedule());
+        $this->app->singleton(Schedule::class, fn ($app) => $app->make(ConsoleKernel::class)->resolveConsoleSchedule());
     }
 
     /**
@@ -133,7 +135,7 @@ class FoundationServiceProvider extends AggregateServiceProvider
      */
     public function registerRequestValidation(): void
     {
-        Request::macro('validate', fn(array $rules, ...$params) => tap(validator($this->all(), $rules, ...$params), function ($validator): void {
+        Request::macro('validate', fn (array $rules, ...$params) => tap(validator($this->all(), $rules, ...$params), function ($validator): void {
             if ($this->isPrecognitive()) {
                 $validator->after(Precognition::afterValidationHook($this))
                     ->setRules(
@@ -158,13 +160,13 @@ class FoundationServiceProvider extends AggregateServiceProvider
      */
     public function registerRequestSignatureValidation(): void
     {
-        Request::macro('hasValidSignature', fn($absolute = true) => URL::hasValidSignature($this, $absolute));
+        Request::macro('hasValidSignature', fn ($absolute = true) => URL::hasValidSignature($this, $absolute));
 
-        Request::macro('hasValidRelativeSignature', fn() => URL::hasValidSignature($this, $absolute = false));
+        Request::macro('hasValidRelativeSignature', fn () => URL::hasValidSignature($this, $absolute = false));
 
-        Request::macro('hasValidSignatureWhileIgnoring', fn($ignoreQuery = [], $absolute = true) => URL::hasValidSignature($this, $absolute, $ignoreQuery));
+        Request::macro('hasValidSignatureWhileIgnoring', fn ($ignoreQuery = [], $absolute = true) => URL::hasValidSignature($this, $absolute, $ignoreQuery));
 
-        Request::macro('hasValidRelativeSignatureWhileIgnoring', fn($ignoreQuery = []) => URL::hasValidSignature($this, $absolute = false, $ignoreQuery));
+        Request::macro('hasValidRelativeSignatureWhileIgnoring', fn ($ignoreQuery = []) => URL::hasValidSignature($this, $absolute = false, $ignoreQuery));
     }
 
     /**
@@ -212,7 +214,7 @@ class FoundationServiceProvider extends AggregateServiceProvider
 
         $this->app->instance(
             LoggedExceptionCollection::class,
-            new LoggedExceptionCollection
+            new LoggedExceptionCollection()
         );
 
         $this->app->make('events')->listen(MessageLogged::class, function ($event): void {

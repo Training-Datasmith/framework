@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Http;
 
 use Illuminate\Config\Repository;
@@ -213,30 +215,36 @@ class HtmlDumperTest extends TestCase
         // When editor name is provided...
         $config->set('app.editor', 'phpstorm');
         $this->assertSame(
-            'phpstorm://open?file=/my-work-directory/app/my-file&line=10', $resolveSourceHref()
+            'phpstorm://open?file=/my-work-directory/app/my-file&line=10',
+            $resolveSourceHref()
         );
 
         // When editor name is provided on array format...
         $config->set('app.editor', ['name' => 'phpstorm']);
         $this->assertSame(
-            'phpstorm://open?file=/my-work-directory/app/my-file&line=10', $resolveSourceHref()
+            'phpstorm://open?file=/my-work-directory/app/my-file&line=10',
+            $resolveSourceHref()
         );
 
         // When editor name and base path is provided on array format...
         $config->set('app.editor', ['name' => 'phpstorm', 'base_path' => '/my-docker-work-directory']);
         $this->assertSame(
-            'phpstorm://open?file=/my-docker-work-directory/app/my-file&line=10', $resolveSourceHref());
+            'phpstorm://open?file=/my-docker-work-directory/app/my-file&line=10',
+            $resolveSourceHref()
+        );
 
         // When href is provided on array format...
         $config->set('app.editor', ['href' => 'vscode://open?file={file}&line={line}']);
         $this->assertSame(
-            'vscode://open?file=/my-work-directory/app/my-file&line=10', $resolveSourceHref()
+            'vscode://open?file=/my-work-directory/app/my-file&line=10',
+            $resolveSourceHref()
         );
 
         // When href and base path is provided on array format...
         $config->set('app.editor', ['href' => 'vscode://open?file={file}&line={line}', 'base_path' => '/my-docker-work-directory']);
         $this->assertSame(
-            'vscode://open?file=/my-docker-work-directory/app/my-file&line=10', $resolveSourceHref()
+            'vscode://open?file=/my-docker-work-directory/app/my-file&line=10',
+            $resolveSourceHref()
         );
 
         // When editor name is provided...

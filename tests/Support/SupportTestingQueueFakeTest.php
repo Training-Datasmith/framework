@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use BadMethodCallException;
@@ -27,8 +29,8 @@ class SupportTestingQueueFakeTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->fake = new QueueFake(new Application);
-        $this->job = new JobStub;
+        $this->fake = new QueueFake(new Application());
+        $this->job = new JobStub();
     }
 
     public function testAssertPushed()
@@ -61,14 +63,14 @@ class SupportTestingQueueFakeTest extends TestCase
 
     public function testAssertPushedWithIgnore()
     {
-        $job = new JobStub;
+        $job = new JobStub();
 
         $manager = m::mock(QueueManager::class);
         $manager->shouldReceive('push')->once()->withArgs(function ($passedJob) use ($job) {
             return $passedJob === $job;
         });
 
-        $fake = new QueueFake(new Application, JobToFakeStub::class, $manager);
+        $fake = new QueueFake(new Application(), JobToFakeStub::class, $manager);
 
         $fake->push($job);
         $fake->push(new JobToFakeStub());
@@ -189,7 +191,7 @@ class SupportTestingQueueFakeTest extends TestCase
         $this->fake->push($this->job);
 
         $this->fake->push(function () {
-            //
+
         });
 
         try {
@@ -209,7 +211,7 @@ class SupportTestingQueueFakeTest extends TestCase
         $queue = 'my-test-queue';
         $this->fake->bulk([
             $this->job,
-            new JobStub,
+            new JobStub(),
         ], null, $queue);
 
         $this->fake->assertPushedOn($queue, JobStub::class);
@@ -219,7 +221,7 @@ class SupportTestingQueueFakeTest extends TestCase
     public function testAssertPushedWithChainUsingClassesOrObjectsArray()
     {
         $this->fake->push(new JobWithChainStub([
-            new JobStub,
+            new JobStub(),
         ]));
 
         $this->fake->assertPushedWithChain(JobWithChainStub::class, [
@@ -227,7 +229,7 @@ class SupportTestingQueueFakeTest extends TestCase
         ]);
 
         $this->fake->assertPushedWithChain(JobWithChainStub::class, [
-            new JobStub,
+            new JobStub(),
         ]);
     }
 
@@ -241,11 +243,11 @@ class SupportTestingQueueFakeTest extends TestCase
     public function testAssertPushedWithChainSameJobDifferentChains()
     {
         $this->fake->push(new JobWithChainStub([
-            new JobStub,
+            new JobStub(),
         ]));
         $this->fake->push(new JobWithChainStub([
-            new JobStub,
-            new JobStub,
+            new JobStub(),
+            new JobStub(),
         ]));
 
         $this->fake->assertPushedWithChain(JobWithChainStub::class, [
@@ -261,12 +263,12 @@ class SupportTestingQueueFakeTest extends TestCase
     public function testAssertPushedWithChainUsingCallback()
     {
         $this->fake->push(new JobWithChainAndParameterStub('first', [
-            new JobStub,
-            new JobStub,
+            new JobStub(),
+            new JobStub(),
         ]));
 
         $this->fake->push(new JobWithChainAndParameterStub('second', [
-            new JobStub,
+            new JobStub(),
         ]));
 
         $this->fake->assertPushedWithChain(JobWithChainAndParameterStub::class, [
@@ -298,7 +300,7 @@ class SupportTestingQueueFakeTest extends TestCase
         }
 
         $this->fake->push(new JobWithChainStub([
-            new JobStub,
+            new JobStub(),
         ]));
 
         try {
@@ -310,8 +312,8 @@ class SupportTestingQueueFakeTest extends TestCase
 
         try {
             $this->fake->assertPushedWithChain(JobWithChainStub::class, [
-                new JobStub,
-                new JobStub,
+                new JobStub(),
+                new JobStub(),
             ]);
             $this->fail();
         } catch (ExpectationFailedException $e) {
@@ -335,7 +337,9 @@ class SupportTestingQueueFakeTest extends TestCase
             $this->fake->undefinedMethod();
         } catch (BadMethodCallException $e) {
             $this->assertSame(sprintf(
-                'Call to undefined method %s::%s()', get_class($this->fake), 'undefinedMethod'
+                'Call to undefined method %s::%s()',
+                get_class($this->fake),
+                'undefinedMethod'
             ), $e->getMessage());
         }
     }
@@ -371,14 +375,14 @@ class SupportTestingQueueFakeTest extends TestCase
 
     public function testItDoesntFakeJobsPassedViaExcept()
     {
-        $job = new JobStub;
+        $job = new JobStub();
 
         $manager = m::mock(QueueManager::class);
         $manager->shouldReceive('push')->once()->withArgs(function ($passedJob) use ($job) {
             return $passedJob === $job;
         });
 
-        $fake = (new QueueFake(new Application, [], $manager))->except(JobStub::class);
+        $fake = (new QueueFake(new Application(), [], $manager))->except(JobStub::class);
 
         $fake->push($job);
         $fake->push(new JobToFakeStub());
@@ -395,7 +399,7 @@ class SupportTestingQueueFakeTest extends TestCase
 
         $job = new JobWithSerialization('hello');
 
-        $fake = new QueueFake(new Application);
+        $fake = new QueueFake(new Application());
         $fake->serializeAndRestore();
         $fake->push($job);
 
@@ -407,7 +411,7 @@ class SupportTestingQueueFakeTest extends TestCase
 
     public function testItCanFakePushedJobsWithClassAndPayload()
     {
-        $fake = new QueueFake(new Application, ['JobStub']);
+        $fake = new QueueFake(new Application(), ['JobStub']);
 
         $this->assertTrue($fake->shouldFakeJob('JobStub'));
 
@@ -421,7 +425,7 @@ class SupportTestingQueueFakeTest extends TestCase
     public function testAssertChainUsingClassesOrObjectsArray()
     {
         $job = new JobWithChainStub([
-            new JobStub,
+            new JobStub(),
         ]);
 
         $job->assertHasChain([
@@ -443,7 +447,7 @@ class SupportTestingQueueFakeTest extends TestCase
     public function testAssertChainErrorHandling()
     {
         $job = new JobWithChainStub([
-            new JobStub,
+            new JobStub(),
         ]);
 
         try {
@@ -455,8 +459,8 @@ class SupportTestingQueueFakeTest extends TestCase
 
         try {
             $job->assertHasChain([
-                new JobStub,
-                new JobStub,
+                new JobStub(),
+                new JobStub(),
             ]);
             $this->fail();
         } catch (ExpectationFailedException $e) {
@@ -524,7 +528,7 @@ class JobStub
 {
     public function handle()
     {
-        //
+
     }
 }
 
@@ -532,7 +536,7 @@ class JobToFakeStub
 {
     public function handle()
     {
-        //
+
     }
 }
 
@@ -547,7 +551,7 @@ class JobWithChainStub
 
     public function handle()
     {
-        //
+
     }
 }
 
@@ -565,7 +569,7 @@ class JobWithChainAndParameterStub
 
     public function handle()
     {
-        //
+
     }
 }
 

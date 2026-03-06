@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Concerns;
 
 use BadMethodCallException;
@@ -14,10 +16,12 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection as BaseCollection;
-use Illuminate\Support\Str;
-use InvalidArgumentException;
 
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\Str;
+
+use InvalidArgumentException;
 
 /** @mixin \Illuminate\Database\Eloquent\Builder */
 trait QueriesRelationships
@@ -58,7 +62,8 @@ trait QueriesRelationships
             : 'getRelationExistenceCountQuery';
 
         $hasQuery = $relation->{$method}(
-            $relation->getRelated()->newQueryWithoutRelationships(), $this
+            $relation->getRelated()->newQueryWithoutRelationships(),
+            $this
         );
 
         // Next we will call any given callback as an "anonymous" scope so they can get the
@@ -69,7 +74,11 @@ trait QueriesRelationships
         }
 
         return $this->addHasWhere(
-            $hasQuery, $relation, $operator, $count, $boolean
+            $hasQuery,
+            $relation,
+            $operator,
+            $count,
+            $boolean
         );
     }
 
@@ -281,10 +290,10 @@ trait QueriesRelationships
                     $belongsTo = $this->getBelongsToRelation($relation, $type);
 
                     if ($callback) {
-                        $callback = (fn($query) => $callback($query, $type));
+                        $callback = (fn ($query) => $callback($query, $type));
                     }
 
-                    $query->where($this->qualifyColumn($relation->getMorphType()), '=', (new $type)->getMorphClass())
+                    $query->where($this->qualifyColumn($relation->getMorphType()), '=', (new $type())->getMorphClass())
                         ->whereHas($belongsTo, $callback, $operator, $count);
                 });
             }
@@ -305,7 +314,7 @@ trait QueriesRelationships
      */
     protected function getBelongsToRelation(MorphTo $relation, $type)
     {
-        $belongsTo = Relation::noConstraints(fn() => $this->model->belongsTo(
+        $belongsTo = Relation::noConstraints(fn () => $this->model->belongsTo(
             $type,
             $relation->getForeignKeyName(),
             $relation->getOwnerKeyName()
@@ -673,7 +682,8 @@ trait QueriesRelationships
             }
 
             return $this->whereNot(fn ($query) => $query->whereNullSafeEquals(
-                $relation->qualifyColumn($relation->getMorphType()), $model
+                $relation->qualifyColumn($relation->getMorphType()),
+                $model
             ), null, null, $boolean);
         }
 
@@ -889,7 +899,9 @@ trait QueriesRelationships
             // as a sub-select. First, we'll get the "has" query and use that to get the relation
             // sub-query. We'll format this relationship name and append this column if needed.
             $query = $relation->getRelationExistenceQuery(
-                $relation->getRelated()->newQuery(), $this, new Expression($expression)
+                $relation->getRelated()->newQuery(),
+                $this,
+                new Expression($expression)
             )->setBindings([], 'select');
 
             $query->callScope($constraints);
@@ -1064,7 +1076,8 @@ trait QueriesRelationships
         return $this->withoutGlobalScopes(
             $from->removedScopes()
         )->mergeWheres(
-            $wheres, $whereBindings
+            $wheres,
+            $whereBindings
         );
     }
 
@@ -1073,7 +1086,7 @@ trait QueriesRelationships
      */
     protected function requalifyWhereTables(array $wheres, string $from, string $to): array
     {
-        return (new BaseCollection($wheres))->map(fn($where) => (new BaseCollection($where))->map(fn($value) => is_string($value) && str_starts_with($value, $from.'.')
+        return (new BaseCollection($wheres))->map(fn ($where): \Illuminate\Support\Collection => (new BaseCollection($where))->map(fn ($value): mixed => is_string($value) && str_starts_with($value, $from.'.')
             ? $to.'.'.Str::afterLast($value, '.')
             : $value))->toArray();
     }
@@ -1106,7 +1119,7 @@ trait QueriesRelationships
      */
     protected function getRelationWithoutConstraints($relation)
     {
-        return Relation::noConstraints(fn() => $this->getModel()->{$relation}());
+        return Relation::noConstraints(fn () => $this->getModel()->{$relation}());
     }
 
     /**

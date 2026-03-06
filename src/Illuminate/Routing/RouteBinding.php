@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Closure;
@@ -82,7 +84,7 @@ class RouteBinding
                 return $callback($value);
             }
 
-            throw (new ModelNotFoundException)->setModel($class);
+            throw (new ModelNotFoundException())->setModel($class);
         };
     }
 }

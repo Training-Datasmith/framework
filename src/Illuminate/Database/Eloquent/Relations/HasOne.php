@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Contracts\Database\Eloquent\SupportsPartialRelations;
@@ -19,7 +21,9 @@ use Illuminate\Database\Query\JoinClause;
  */
 class HasOne extends HasOneOrMany implements SupportsPartialRelations
 {
-    use ComparesRelatedModels, CanBeOneOfMany, SupportsDefaultModels;
+    use ComparesRelatedModels;
+    use CanBeOneOfMany;
+    use SupportsDefaultModels;
 
     /** @inheritDoc */
     public function getResults()

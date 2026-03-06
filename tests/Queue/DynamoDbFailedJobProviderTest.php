@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Aws\DynamoDb\DynamoDbClient;
@@ -131,7 +133,8 @@ class DynamoDbFailedJobProviderTest extends TestCase
                 'payload' => 'payload',
                 'exception' => 'exception',
                 'failed_at' => Carbon::createFromTimestamp($time)->format(DateTimeInterface::ISO8601),
-            ], $response
+            ],
+            $response
         );
     }
 

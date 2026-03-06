@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Passwords;
 
 use Illuminate\Contracts\Auth\PasswordBrokerFactory as FactoryContract;
@@ -27,8 +29,7 @@ class PasswordBrokerManager implements FactoryContract
          * The application instance.
          */
         protected $app
-    )
-    {
+    ) {
     }
 
     /**
@@ -138,7 +139,6 @@ class PasswordBrokerManager implements FactoryContract
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

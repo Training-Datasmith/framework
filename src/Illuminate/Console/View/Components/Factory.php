@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\View\Components;
 
 use InvalidArgumentException;
@@ -32,14 +34,12 @@ class Factory
          * The output interface implementation.
          */
         protected $output
-    )
-    {
+    ) {
     }
 
     /**
      * Dynamically handle calls into the component instance.
      *
-     * @param  array  $parameters
      * @return mixed
      * @throws \InvalidArgumentException
      */
@@ -48,7 +48,8 @@ class Factory
         $component = '\Illuminate\Console\View\Components\\'.ucfirst($method);
 
         throw_unless(class_exists($component), new InvalidArgumentException(sprintf(
-            'Console component [%s] not found.', $method
+            'Console component [%s] not found.',
+            $method
         )));
 
         return (new $component($this->output))->render(...$parameters);

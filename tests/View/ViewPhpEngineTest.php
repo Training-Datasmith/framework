@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\View;
 
 use Illuminate\Filesystem\Filesystem;
@@ -10,7 +12,7 @@ class ViewPhpEngineTest extends TestCase
 {
     public function testViewsMayBeProperlyRendered()
     {
-        $engine = new PhpEngine(new Filesystem);
+        $engine = new PhpEngine(new Filesystem());
         $this->assertSame('Hello World
 ', $engine->get(__DIR__.'/fixtures/basic.php'));
     }

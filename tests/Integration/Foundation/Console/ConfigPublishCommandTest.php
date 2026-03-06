@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation\Console;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
 use Illuminate\Support\ServiceProvider;
 use Orchestra\Testbench\Concerns\InteractsWithPublishedFiles;
-use Orchestra\Testbench\TestCase;
 
 use function Orchestra\Testbench\package_path;
+
+use Orchestra\Testbench\TestCase;
 
 class ConfigPublishCommandTest extends TestCase
 {
@@ -57,7 +60,8 @@ class ConfigPublishCommandTest extends TestCase
         ] as $file) {
             $this->assertFilenameExists("config-stubs/{$file}.php");
             $this->assertStringContainsString(
-                file_get_contents(package_path(['config', "{$file}.php"])), file_get_contents(config_path("{$file}.php"))
+                file_get_contents(package_path(['config', "{$file}.php"])),
+                file_get_contents(config_path("{$file}.php"))
             );
         }
 

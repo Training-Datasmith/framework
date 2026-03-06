@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation\Console;
 
 use Illuminate\Testing\Assert;
 use Orchestra\Testbench\Attributes\WithEnv;
-use Orchestra\Testbench\TestCase;
 
 use function Orchestra\Testbench\remote;
+
+use Orchestra\Testbench\TestCase;
 
 class AboutCommandTest extends TestCase
 {

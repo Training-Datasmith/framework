@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Routing\Fixtures;
 
 use Illuminate\Foundation\Application;

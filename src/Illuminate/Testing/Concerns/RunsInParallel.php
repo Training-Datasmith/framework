@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing\Concerns;
 
 use Illuminate\Contracts\Console\Kernel;
@@ -159,8 +161,7 @@ trait RunsInParallel
     {
         $applicationResolver = static::$applicationResolver ?: function () {
             if (trait_exists(\Tests\CreatesApplication::class)) {
-                $applicationCreator = new class
-                {
+                $applicationCreator = new class () {
                     use \Tests\CreatesApplication;
                 };
                 return $applicationCreator->createApplication();

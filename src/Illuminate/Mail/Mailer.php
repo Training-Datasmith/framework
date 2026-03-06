@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail;
 
 use Closure;
@@ -73,14 +75,15 @@ class Mailer implements MailerContract, MailQueueContract
     public function __construct(/**
      * The name that is configured for the mailer.
      */
-    protected string $name, /**
+        protected string $name, /**
      * The view factory instance.
      */
-    protected \Illuminate\Contracts\View\Factory $views, TransportInterface $transport, /**
+        protected \Illuminate\Contracts\View\Factory $views,
+        TransportInterface $transport, /**
      * The event dispatcher instance.
      */
-    protected ?\Illuminate\Contracts\Events\Dispatcher $events = null)
-    {
+        protected ?\Illuminate\Contracts\Events\Dispatcher $events = null
+    ) {
         $this->transport = $transport;
     }
 
@@ -132,9 +135,8 @@ class Mailer implements MailerContract, MailQueueContract
      *
      * @param  mixed  $users
      * @param  string|null  $name
-     * @return \Illuminate\Mail\PendingMail
      */
-    public function to($users, $name = null)
+    public function to($users, $name = null): \Illuminate\Mail\PendingMail
     {
         if (! is_null($name) && is_string($users)) {
             $users = new Address($users, $name);
@@ -148,9 +150,8 @@ class Mailer implements MailerContract, MailQueueContract
      *
      * @param  mixed  $users
      * @param  string|null  $name
-     * @return \Illuminate\Mail\PendingMail
      */
-    public function cc($users, $name = null)
+    public function cc($users, $name = null): \Illuminate\Mail\PendingMail
     {
         if (! is_null($name) && is_string($users)) {
             $users = new Address($users, $name);
@@ -164,9 +165,8 @@ class Mailer implements MailerContract, MailQueueContract
      *
      * @param  mixed  $users
      * @param  string|null  $name
-     * @return \Illuminate\Mail\PendingMail
      */
-    public function bcc($users, $name = null)
+    public function bcc($users, $name = null): \Illuminate\Mail\PendingMail
     {
         if (! is_null($name) && is_string($users)) {
             $users = new Address($users, $name);
@@ -217,7 +217,7 @@ class Mailer implements MailerContract, MailQueueContract
      * @param  string|array  $view
      * @return string
      */
-    public function render($view, array $data = [])
+    public function render($view, array $data = []): string|array
     {
         // First we need to parse the view, which could either be a string or an array
         // containing both an HTML and plain text versions of the view which should
@@ -493,7 +493,8 @@ class Mailer implements MailerContract, MailQueueContract
         }
 
         return $view->mailer($this->name)->later(
-            $delay, is_null($queue) ? $this->queue : $queue
+            $delay,
+            is_null($queue) ? $this->queue : $queue
         );
     }
 
@@ -548,7 +549,7 @@ class Mailer implements MailerContract, MailQueueContract
         try {
             return $this->transport->send($message, Envelope::create($message));
         } finally {
-            //
+
         }
     }
 
@@ -596,10 +597,8 @@ class Mailer implements MailerContract, MailQueueContract
 
     /**
      * Get the view factory instance.
-     *
-     * @return \Illuminate\Contracts\View\Factory
      */
-    public function getViewFactory()
+    public function getViewFactory(): \Illuminate\Contracts\View\Factory
     {
         return $this->views;
     }

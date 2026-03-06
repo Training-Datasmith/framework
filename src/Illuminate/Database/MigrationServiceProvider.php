@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Illuminate\Contracts\Events\Dispatcher;
@@ -91,7 +93,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
      */
     protected function registerCreator()
     {
-        $this->app->singleton('migration.creator', fn($app) => new MigrationCreator($app['files'], $app->basePath('stubs')));
+        $this->app->singleton('migration.creator', fn ($app): \Illuminate\Database\Migrations\MigrationCreator => new MigrationCreator($app['files'], $app->basePath('stubs')));
     }
 
     /**
@@ -115,7 +117,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
      */
     protected function registerMigrateCommand()
     {
-        $this->app->singleton(MigrateCommand::class, fn($app) => new MigrateCommand($app['migrator'], $app[Dispatcher::class]));
+        $this->app->singleton(MigrateCommand::class, fn ($app): \Illuminate\Database\Console\Migrations\MigrateCommand => new MigrateCommand($app['migrator'], $app[Dispatcher::class]));
     }
 
     /**
@@ -125,7 +127,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
      */
     protected function registerMigrateFreshCommand()
     {
-        $this->app->singleton(FreshCommand::class, fn($app) => new FreshCommand($app['migrator']));
+        $this->app->singleton(FreshCommand::class, fn ($app): \Illuminate\Database\Console\Migrations\FreshCommand => new FreshCommand($app['migrator']));
     }
 
     /**
@@ -135,7 +137,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
      */
     protected function registerMigrateInstallCommand()
     {
-        $this->app->singleton(InstallCommand::class, fn($app) => new InstallCommand($app['migration.repository']));
+        $this->app->singleton(InstallCommand::class, fn ($app): \Illuminate\Database\Console\Migrations\InstallCommand => new InstallCommand($app['migration.repository']));
     }
 
     /**
@@ -174,7 +176,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
      */
     protected function registerMigrateResetCommand()
     {
-        $this->app->singleton(ResetCommand::class, fn($app) => new ResetCommand($app['migrator']));
+        $this->app->singleton(ResetCommand::class, fn ($app): \Illuminate\Database\Console\Migrations\ResetCommand => new ResetCommand($app['migrator']));
     }
 
     /**
@@ -184,7 +186,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
      */
     protected function registerMigrateRollbackCommand()
     {
-        $this->app->singleton(RollbackCommand::class, fn($app) => new RollbackCommand($app['migrator']));
+        $this->app->singleton(RollbackCommand::class, fn ($app): \Illuminate\Database\Console\Migrations\RollbackCommand => new RollbackCommand($app['migrator']));
     }
 
     /**
@@ -194,7 +196,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
      */
     protected function registerMigrateStatusCommand()
     {
-        $this->app->singleton(StatusCommand::class, fn($app) => new StatusCommand($app['migrator']));
+        $this->app->singleton(StatusCommand::class, fn ($app): \Illuminate\Database\Console\Migrations\StatusCommand => new StatusCommand($app['migrator']));
     }
 
     /**

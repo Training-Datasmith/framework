@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Http;
 
 use Illuminate\Foundation\Concerns\ResolvesDumpSource;
@@ -18,14 +20,14 @@ class HtmlDumper extends BaseHtmlDumper
      *
      * @var string
      */
-    const EXPANDED_SEPARATOR = 'class=sf-dump-expanded>';
+    public const EXPANDED_SEPARATOR = 'class=sf-dump-expanded>';
 
     /**
      * Where the source should be placed on "non expanded" kind of dumps.
      *
      * @var string
      */
-    const NON_EXPANDED_SEPARATOR = "\n</pre><script>";
+    public const NON_EXPANDED_SEPARATOR = "\n</pre><script>";
 
     /**
      * If the dumper is currently dumping.
@@ -43,11 +45,11 @@ class HtmlDumper extends BaseHtmlDumper
     public function __construct(/**
      * The base path of the application.
      */
-    protected $basePath, /**
+        protected $basePath, /**
      * The compiled view path of the application.
      */
-    protected $compiledViewPath)
-    {
+        protected $compiledViewPath
+    ) {
         parent::__construct();
     }
 

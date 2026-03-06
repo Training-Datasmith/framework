@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use Closure;
@@ -31,8 +33,7 @@ class EloquentUserProvider implements UserProvider
          * The Eloquent user model.
          */
         protected $model
-    )
-    {
+    ) {
     }
 
     /**
@@ -62,7 +63,8 @@ class EloquentUserProvider implements UserProvider
         $model = $this->createModel();
 
         $retrievedModel = $this->newModelQuery($model)->where(
-            $model->getAuthIdentifierName(), $identifier
+            $model->getAuthIdentifierName(),
+            $identifier
         )->first();
 
         if (! $retrievedModel) {
@@ -190,15 +192,13 @@ class EloquentUserProvider implements UserProvider
     {
         $class = '\\'.ltrim($this->model, '\\');
 
-        return new $class;
+        return new $class();
     }
 
     /**
      * Gets the hasher implementation.
-     *
-     * @return \Illuminate\Contracts\Hashing\Hasher
      */
-    public function getHasher()
+    public function getHasher(): \Illuminate\Contracts\Hashing\Hasher
     {
         return $this->hasher;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\MariaDb;
 
 use PHPUnit\Framework\Attributes\RequiresOperatingSystem;

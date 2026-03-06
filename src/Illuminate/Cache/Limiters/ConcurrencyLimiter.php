@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\Limiters;
 
 use Illuminate\Support\Sleep;
@@ -33,8 +35,7 @@ class ConcurrencyLimiter
          * The number of seconds a slot should be maintained.
          */
         protected $releaseAfter
-    )
-    {
+    ) {
     }
 
     /**
@@ -56,7 +57,7 @@ class ConcurrencyLimiter
 
         while (! $slot = $this->acquire($id)) {
             if (time() - $timeout >= $starting) {
-                throw new LimiterTimeoutException;
+                throw new LimiterTimeoutException();
             }
 
             Sleep::usleep($sleep * 1000);

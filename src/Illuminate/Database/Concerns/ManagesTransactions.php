@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Concerns;
 
 use Closure;
@@ -40,7 +42,9 @@ trait ManagesTransactions
             // exception back out, and let the developer handle an uncaught exception.
             catch (Throwable $e) {
                 $this->handleTransactionException(
-                    $e, $currentAttempt, $attempts
+                    $e,
+                    $currentAttempt,
+                    $attempts
                 );
 
                 continue;
@@ -57,7 +61,9 @@ trait ManagesTransactions
                 $this->transactions = max(0, $this->transactions - 1);
             } catch (Throwable $e) {
                 $this->handleCommitTransactionException(
-                    $e, $currentAttempt, $attempts
+                    $e,
+                    $currentAttempt,
+                    $attempts
                 );
 
                 continue;
@@ -93,7 +99,8 @@ trait ManagesTransactions
             $this->transactions--;
 
             $this->transactionsManager?->rollback(
-                $this->getName(), $this->transactions
+                $this->getName(),
+                $this->transactions
             );
 
             throw new DeadlockException($e->getMessage(), is_int($e->getCode()) ? $e->getCode() : 0, $e);
@@ -129,7 +136,8 @@ trait ManagesTransactions
         $this->transactions++;
 
         $this->transactionsManager?->begin(
-            $this->getName(), $this->transactions
+            $this->getName(),
+            $this->transactions
         );
 
         $this->fireConnectionEvent('beganTransaction');
@@ -207,7 +215,9 @@ trait ManagesTransactions
         ];
 
         $this->transactionsManager?->commit(
-            $this->getName(), $levelBeingCommitted, $this->transactions
+            $this->getName(),
+            $levelBeingCommitted,
+            $this->transactions
         );
 
         $this->fireConnectionEvent('committed');
@@ -274,7 +284,8 @@ trait ManagesTransactions
         $this->transactions = $toLevel;
 
         $this->transactionsManager?->rollback(
-            $this->getName(), $this->transactions
+            $this->getName(),
+            $this->transactions
         );
 
         $this->fireConnectionEvent('rollingBack');
@@ -315,7 +326,8 @@ trait ManagesTransactions
             $this->transactions = 0;
 
             $this->transactionsManager?->rollback(
-                $this->getName(), $this->transactions
+                $this->getName(),
+                $this->transactions
             );
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentThroughTest;
 
 use Illuminate\Database\Eloquent\Model;
@@ -32,12 +34,12 @@ class EloquentThroughTest extends DatabaseTestCase
         });
 
         $post = tap(new Post(['public' => true]))->save();
-        $comment = tap((new Comment)->commentable()->associate($post))->save();
+        $comment = tap((new Comment())->commentable()->associate($post))->save();
         (new Like())->comment()->associate($comment)->save();
         (new Like())->comment()->associate($comment)->save();
 
         $otherCommentable = tap(new OtherCommentable())->save();
-        $comment2 = tap((new Comment)->commentable()->associate($otherCommentable))->save();
+        $comment2 = tap((new Comment())->commentable()->associate($otherCommentable))->save();
         (new Like())->comment()->associate($comment2)->save();
     }
 

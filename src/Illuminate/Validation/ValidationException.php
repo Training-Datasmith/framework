@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Exception;
@@ -39,10 +41,10 @@ class ValidationException extends Exception
     public function __construct($validator, /**
      * The recommended response to send to the client.
      */
-    public $response = null, /**
+        public $response = null, /**
      * The name of the error bag.
      */
-    public $errorBag = 'default')
+        public $errorBag = 'default')
     {
         parent::__construct(static::summarize($validator));
         $this->validator = $validator;

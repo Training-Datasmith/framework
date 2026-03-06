@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Exception;
@@ -128,8 +130,7 @@ class ThrottlesExceptionsWithRedisTest extends TestCase
             ->twice()
             ->with(m::type(RuntimeException::class));
 
-        $job = new class
-        {
+        $job = new class () {
             public function release()
             {
                 return $this;
@@ -154,7 +155,8 @@ class ThrottlesExceptionsWithRedisTest extends TestCase
 
 class CircuitBreakerWithRedisTestJob
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 
@@ -169,7 +171,7 @@ class CircuitBreakerWithRedisTestJob
     {
         static::$handled = true;
 
-        throw new Exception;
+        throw new Exception();
     }
 
     public function middleware()
@@ -180,7 +182,8 @@ class CircuitBreakerWithRedisTestJob
 
 class CircuitBreakerWithRedisSuccessfulJob
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 

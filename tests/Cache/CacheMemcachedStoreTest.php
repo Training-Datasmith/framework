@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cache;
 
 use Illuminate\Cache\MemcachedStore;
@@ -106,7 +108,7 @@ class CacheMemcachedStoreTest extends TestCase
 
     public function testGetAndSetPrefix()
     {
-        $store = new MemcachedStore(new Memcached, 'bar');
+        $store = new MemcachedStore(new Memcached(), 'bar');
         $this->assertSame('bar', $store->getPrefix());
         $store->setPrefix('foo');
         $this->assertSame('foo', $store->getPrefix());

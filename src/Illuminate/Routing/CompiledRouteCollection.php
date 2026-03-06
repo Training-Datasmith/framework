@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Container\Container;
@@ -39,20 +41,18 @@ class CompiledRouteCollection extends AbstractRouteCollection
     public function __construct(/**
      * The compiled routes collection.
      */
-    protected array $compiled, /**
+        protected array $compiled, /**
      * An array of the route attributes keyed by name.
      */
-    protected array $attributes)
-    {
-        $this->routes = new RouteCollection;
+        protected array $attributes
+    ) {
+        $this->routes = new RouteCollection();
     }
 
     /**
      * Add a Route instance to the collection.
-     *
-     * @return \Illuminate\Routing\Route
      */
-    public function add(Route $route)
+    public function add(Route $route): \Illuminate\Routing\Route
     {
         return $this->routes->add($route);
     }
@@ -64,7 +64,7 @@ class CompiledRouteCollection extends AbstractRouteCollection
      */
     public function refreshNameLookups(): void
     {
-        //
+
     }
 
     /**
@@ -74,7 +74,7 @@ class CompiledRouteCollection extends AbstractRouteCollection
      */
     public function refreshActionLookups(): void
     {
-        //
+
     }
 
     /**
@@ -88,7 +88,8 @@ class CompiledRouteCollection extends AbstractRouteCollection
     public function match(Request $request)
     {
         $matcher = new CompiledUrlMatcher(
-            $this->compiled, (new RequestContext)->fromRequest(
+            $this->compiled,
+            (new RequestContext())->fromRequest(
                 $trimmedRequest = $this->requestWithoutTrailingSlash($request)
             )
         );
@@ -103,7 +104,7 @@ class CompiledRouteCollection extends AbstractRouteCollection
             try {
                 return $this->routes->match($request);
             } catch (NotFoundHttpException) {
-                //
+
             }
         }
 
@@ -115,7 +116,7 @@ class CompiledRouteCollection extends AbstractRouteCollection
                     $route = $dynamicRoute;
                 }
             } catch (NotFoundHttpException|MethodNotAllowedHttpException) {
-                //
+
             }
         }
 
@@ -134,7 +135,8 @@ class CompiledRouteCollection extends AbstractRouteCollection
         $parts = explode('?', (string) $request->server->get('REQUEST_URI'), 2);
 
         $trimmedRequest->server->set(
-            'REQUEST_URI', rtrim($parts[0], '/').(isset($parts[1]) ? '?'.$parts[1] : '')
+            'REQUEST_URI',
+            rtrim($parts[0], '/').(isset($parts[1]) ? '?'.$parts[1] : '')
         );
 
         return $trimmedRequest;
@@ -207,7 +209,7 @@ class CompiledRouteCollection extends AbstractRouteCollection
     public function getRoutes()
     {
         return (new Collection($this->attributes))
-            ->map(fn(array $attributes) => $this->newRoute($attributes))
+            ->map(fn (array $attributes) => $this->newRoute($attributes))
             ->merge($this->routes->getRoutes())
             ->values()
             ->all();
@@ -221,8 +223,8 @@ class CompiledRouteCollection extends AbstractRouteCollection
     public function getRoutesByMethod()
     {
         return (new Collection($this->getRoutes()))
-            ->groupBy(fn(Route $route) => $route->methods())
-            ->map(fn(Collection $routes) => $routes->mapWithKeys(fn(Route $route) => [$route->getDomain().$route->uri => $route])->all())
+            ->groupBy(fn (Route $route) => $route->methods())
+            ->map(fn (Collection $routes) => $routes->mapWithKeys(fn (Route $route): array => [$route->getDomain().$route->uri => $route])->all())
             ->all();
     }
 
@@ -234,16 +236,14 @@ class CompiledRouteCollection extends AbstractRouteCollection
     public function getRoutesByName()
     {
         return (new Collection($this->getRoutes()))
-            ->keyBy(fn(Route $route) => $route->getName())
+            ->keyBy(fn (Route $route) => $route->getName())
             ->all();
     }
 
     /**
      * Resolve an array of attributes to a Route instance.
-     *
-     * @return \Illuminate\Routing\Route
      */
-    protected function newRoute(array $attributes)
+    protected function newRoute(array $attributes): \Illuminate\Routing\Route
     {
         if (empty($attributes['action']['prefix'] ?? '')) {
             $baseUri = $attributes['uri'];
@@ -251,7 +251,8 @@ class CompiledRouteCollection extends AbstractRouteCollection
             $prefix = trim($attributes['action']['prefix'], '/');
 
             $baseUri = trim(implode(
-                '/', array_slice(
+                '/',
+                array_slice(
                     explode('/', trim((string) $attributes['uri'], '/')),
                     count($prefix !== '' ? explode('/', $prefix) : [])
                 )

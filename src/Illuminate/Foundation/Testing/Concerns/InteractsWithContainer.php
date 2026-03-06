@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Testing\Concerns;
 
 use Closure;
@@ -122,8 +124,7 @@ trait InteractsWithContainer
 
         ViteFacade::clearResolvedInstance();
 
-        $this->swap(Vite::class, new class extends Vite
-        {
+        $this->swap(Vite::class, new class () extends Vite {
             public function __invoke($entrypoints, $buildDirectory = null): \Illuminate\Support\HtmlString
             {
                 return new HtmlString('');
@@ -223,7 +224,7 @@ trait InteractsWithContainer
             $this->originalMix = app(Mix::class);
         }
 
-        $this->swap(Mix::class, fn() => new HtmlString(''));
+        $this->swap(Mix::class, fn (): \Illuminate\Support\HtmlString => new HtmlString(''));
 
         return $this;
     }
@@ -253,8 +254,7 @@ trait InteractsWithContainer
             $this->originalDeferredCallbacksCollection = $this->app->make(DeferredCallbackCollection::class);
         }
 
-        $this->swap(DeferredCallbackCollection::class, new class extends DeferredCallbackCollection
-        {
+        $this->swap(DeferredCallbackCollection::class, new class () extends DeferredCallbackCollection {
             public function offsetSet(mixed $offset, mixed $value): void
             {
                 $value();

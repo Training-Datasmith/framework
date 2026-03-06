@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console;
 
 use Illuminate\Console\Contracts\NewLineAware;
@@ -34,7 +36,7 @@ class OutputStyle extends SymfonyStyle implements NewLineAware
     public function __construct(InputInterface $input, /**
      * The output instance.
      */
-    private readonly OutputInterface $output)
+        private readonly OutputInterface $output)
     {
         parent::__construct($input, $this->output);
     }
@@ -171,10 +173,8 @@ class OutputStyle extends SymfonyStyle implements NewLineAware
 
     /**
      * Get the underlying Symfony output implementation.
-     *
-     * @return \Symfony\Component\Console\Output\OutputInterface
      */
-    public function getOutput()
+    public function getOutput(): \Symfony\Component\Console\Output\OutputInterface
     {
         return $this->output;
     }

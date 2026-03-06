@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Illuminate\Contracts\Process\ProcessResult as ProcessResultContract;
@@ -16,8 +18,7 @@ class ProcessResult implements ProcessResultContract
          * The underlying process instance.
          */
         protected \Symfony\Component\Process\Process $process
-    )
-    {
+    ) {
     }
 
     /**
@@ -112,7 +113,7 @@ class ProcessResult implements ProcessResultContract
      *
      * @throws \Throwable
      */
-    public function throwIf(bool $condition, ?callable $callback = null)
+    public function throwIf(bool $condition, ?callable $callback = null): static
     {
         if ($condition) {
             return $this->throw($callback);

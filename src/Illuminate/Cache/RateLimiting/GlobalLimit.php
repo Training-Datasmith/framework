@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\RateLimiting;
 
 class GlobalLimit extends Limit

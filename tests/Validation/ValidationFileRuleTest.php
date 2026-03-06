@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Container\Container;
@@ -488,7 +490,8 @@ class ValidationFileRuleTest extends TestCase
 
         $container->bind('translator', function () {
             return new Translator(
-                new ArrayLoader, 'en'
+                new ArrayLoader(),
+                'en'
             );
         });
 

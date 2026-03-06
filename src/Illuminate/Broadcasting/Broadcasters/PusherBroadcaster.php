@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting\Broadcasters;
 
 use Illuminate\Broadcasting\BroadcastException;
@@ -27,8 +29,7 @@ class PusherBroadcaster extends Broadcaster
          * Indicates if JSONP callbacks are allowed on authorization.
          */
         protected bool $allowJsonp = false
-    )
-    {
+    ) {
     }
 
     /**
@@ -55,7 +56,9 @@ class PusherBroadcaster extends Broadcaster
         $decodedString = "{$request->socket_id}::user::{$encodedUser}";
 
         $auth = $settings['auth_key'].':'.hash_hmac(
-            'sha256', $decodedString, (string) $settings['secret']
+            'sha256',
+            $decodedString,
+            (string) $settings['secret']
         );
 
         return [
@@ -79,11 +82,12 @@ class PusherBroadcaster extends Broadcaster
         if (empty($request->channel_name) ||
             ($this->isGuardedChannel($request->channel_name) &&
             ! $this->retrieveUser($request, $channelName))) {
-            throw new AccessDeniedHttpException;
+            throw new AccessDeniedHttpException();
         }
 
         return parent::verifyUserCanAccessChannel(
-            $request, $channelName
+            $request,
+            $channelName
         );
     }
 
@@ -169,7 +173,7 @@ class PusherBroadcaster extends Broadcaster
      *
      * @return \Pusher\Pusher
      */
-    public function getPusher()
+    public function getPusher(): \Pusher\Pusher
     {
         return $this->pusher;
     }
@@ -179,7 +183,7 @@ class PusherBroadcaster extends Broadcaster
      *
      * @param  \Pusher\Pusher  $pusher
      */
-    public function setPusher($pusher): void
+    public function setPusher(\Pusher\Pusher $pusher): void
     {
         $this->pusher = $pusher;
     }

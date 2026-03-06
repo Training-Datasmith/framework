@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Closure;
-use Illuminate\Database\ConnectionResolverInterface;
 
 class DatabasePresenceVerifier implements DatabasePresenceVerifierInterface
 {
@@ -22,8 +23,7 @@ class DatabasePresenceVerifier implements DatabasePresenceVerifierInterface
          * The database connection instance.
          */
         protected \Illuminate\Database\ConnectionResolverInterface $db
-    )
-    {
+    ) {
     }
 
     /**

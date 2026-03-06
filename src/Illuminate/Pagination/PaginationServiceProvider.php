@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Pagination;
 
 use Illuminate\Support\ServiceProvider;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Filesystem;
 
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ class ServeFile
         protected array $config,
         protected bool $isProduction,
     ) {
-        //
+
     }
 
     /**

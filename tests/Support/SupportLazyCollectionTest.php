@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Carbon\CarbonInterval as Duration;
@@ -239,7 +241,9 @@ class SupportLazyCollectionTest extends TestCase
 
         Sleep::assertSlept(function (Duration $duration) {
             $this->assertEqualsWithDelta(
-                2_000_000, $duration->totalMicroseconds, 1_000
+                2_000_000,
+                $duration->totalMicroseconds,
+                1_000
             );
 
             return true;
@@ -269,7 +273,9 @@ class SupportLazyCollectionTest extends TestCase
             $expectation = $index == 1 ? 2_000_000 : 3_000_000;
 
             $this->assertEqualsWithDelta(
-                $expectation, $duration->totalMicroseconds, 1_000
+                $expectation,
+                $duration->totalMicroseconds,
+                1_000
             );
 
             return true;

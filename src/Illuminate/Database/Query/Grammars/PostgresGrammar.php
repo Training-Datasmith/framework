@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Query\Grammars;
 
 use Illuminate\Database\Query\Builder;
@@ -48,11 +50,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a basic where clause.
-     *
-     * @param  array  $where
-     * @return string
      */
-    protected function whereBasic(Builder $query, $where)
+    protected function whereBasic(Builder $query, array $where): string
     {
         if (str_contains(strtolower((string) $where['operator']), 'like')) {
             return sprintf(
@@ -366,10 +365,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile an update statement into SQL.
-     *
-     * @return string
      */
-    public function compileUpdate(Builder $query, array $values)
+    public function compileUpdate(Builder $query, array $values): string
     {
         if (isset($query->joins) || isset($query->limit)) {
             return $this->compileUpdateWithJoinsOrLimit($query, $values);
@@ -383,7 +380,7 @@ class PostgresGrammar extends Grammar
      */
     protected function compileUpdateColumns(Builder $query, array $values): string
     {
-        return (new Collection($values))->map(function ($value, $key) {
+        return (new Collection($values))->map(function ($value, $key): string {
             $column = last(explode('.', $key));
 
             if ($this->isJsonSelector($key)) {
@@ -403,7 +400,7 @@ class PostgresGrammar extends Grammar
 
         $sql .= ' on conflict ('.$this->columnize($uniqueBy).') do update set ';
 
-        $columns = (new Collection($update))->map(fn($value, $key) => is_numeric($key)
+        $columns = (new Collection($update))->map(fn ($value, $key): string => is_numeric($key)
             ? $this->wrap($value).' = '.$this->wrapValue('excluded').'.'.$this->wrap($value)
             : $this->wrap($key).' = '.$this->parameter($value))->implode(', ');
 
@@ -519,7 +516,7 @@ class PostgresGrammar extends Grammar
     public function prepareBindingsForUpdateFrom(array $bindings, array $values): array
     {
         $values = (new Collection($values))
-            ->map(fn($value, $column) => is_array($value) || ($this->isJsonSelector($column) && ! $this->isExpression($value))
+            ->map(fn ($value, $column) => is_array($value) || ($this->isJsonSelector($column) && ! $this->isExpression($value))
                 ? json_encode($value)
                 : $value)
             ->all();
@@ -553,7 +550,7 @@ class PostgresGrammar extends Grammar
     #[\Override]
     public function prepareBindingsForUpdate(array $bindings, array $values): array
     {
-        $values = (new Collection($values))->map(fn($value, $column) => is_array($value) || ($this->isJsonSelector($column) && ! $this->isExpression($value))
+        $values = (new Collection($values))->map(fn ($value, $column) => is_array($value) || ($this->isJsonSelector($column) && ! $this->isExpression($value))
             ? json_encode($value)
             : $value)->all();
 
@@ -568,10 +565,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a delete statement into SQL.
-     *
-     * @return string
      */
-    public function compileDelete(Builder $query)
+    public function compileDelete(Builder $query): string
     {
         if (isset($query->joins) || isset($query->limit)) {
             return $this->compileDeleteWithJoinsOrLimit($query);
@@ -640,7 +635,8 @@ class PostgresGrammar extends Grammar
     protected function wrapJsonBooleanSelector($value): string
     {
         $selector = str_replace(
-            '->>', '->',
+            '->>',
+            '->',
             $this->wrapJsonSelector($value)
         );
 
@@ -670,7 +666,7 @@ class PostgresGrammar extends Grammar
         return (new Collection($path))
             ->map(fn ($attribute) => $this->parseJsonPathArrayKeys($attribute))
             ->collapse()
-            ->map(fn($attribute) => filter_var($attribute, FILTER_VALIDATE_INT) !== false
+            ->map(fn ($attribute) => filter_var($attribute, FILTER_VALIDATE_INT) !== false
                 ? $attribute
                 : $quote.$attribute.$quote)
             ->all();
@@ -704,9 +700,8 @@ class PostgresGrammar extends Grammar
      *
      * @param  string  $sql
      * @param  array  $bindings
-     * @return string
      */
-    public function substituteBindingsIntoRawSql($sql, $bindings)
+    public function substituteBindingsIntoRawSql($sql, $bindings): string
     {
         $query = parent::substituteBindingsIntoRawSql($sql, $bindings);
 

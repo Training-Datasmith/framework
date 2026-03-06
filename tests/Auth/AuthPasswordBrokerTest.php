@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Auth;
 
 use Illuminate\Auth\Passwords\PasswordBroker;
@@ -71,7 +73,7 @@ class AuthPasswordBrokerTest extends TestCase
         $mocks['users']->shouldReceive('retrieveByCredentials')->once()->with(['creds'])->andReturn(null);
 
         $this->assertSame(PasswordBrokerContract::INVALID_USER, $broker->reset(['creds'], function () {
-            //
+
         }));
     }
 
@@ -83,7 +85,7 @@ class AuthPasswordBrokerTest extends TestCase
         $mocks['tokens']->shouldReceive('exists')->with($user, 'token')->andReturn(false);
 
         $this->assertSame(PasswordBrokerContract::INVALID_TOKEN, $broker->reset($creds, function () {
-            //
+
         }));
     }
 

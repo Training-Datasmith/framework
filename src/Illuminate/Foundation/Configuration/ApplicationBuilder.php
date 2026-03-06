@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Configuration;
 
 use Closure;
@@ -131,7 +133,8 @@ class ApplicationBuilder
      *
      * @return $this
      */
-    public function withRouting(?Closure $using = null,
+    public function withRouting(
+        ?Closure $using = null,
         array|string|null $web = null,
         array|string|null $api = null,
         ?string $commands = null,
@@ -139,8 +142,8 @@ class ApplicationBuilder
         ?string $pages = null,
         ?string $health = null,
         string $apiPrefix = 'api',
-        ?callable $then = null): static
-    {
+        ?callable $then = null
+    ): static {
         if (is_null($using) && (is_string($web) || is_array($web) || is_string($api) || is_array($api) || is_string($pages) || is_string($health)) || is_callable($then)) {
             $using = $this->buildRoutingCallback($web, $api, $pages, $health, $apiPrefix, $then);
 
@@ -171,13 +174,14 @@ class ApplicationBuilder
      *
      * @return \Closure
      */
-    protected function buildRoutingCallback(array|string|null $web,
+    protected function buildRoutingCallback(
+        array|string|null $web,
         array|string|null $api,
         ?string $pages,
         ?string $health,
         string $apiPrefix,
-        ?callable $then)
-    {
+        ?callable $then
+    ) {
         return function () use ($web, $api, $pages, $health, $apiPrefix, $then): void {
             if (is_string($api) || is_array($api)) {
                 if (is_array($api)) {
@@ -196,7 +200,7 @@ class ApplicationBuilder
                     $exception = null;
 
                     try {
-                        Event::dispatch(new DiagnosingHealth);
+                        Event::dispatch(new DiagnosingHealth());
                     } catch (\Throwable $e) {
                         if (app()->hasDebugModeEnabled()) {
                             throw $e;
@@ -249,7 +253,7 @@ class ApplicationBuilder
     public function withMiddleware(?callable $callback = null): static
     {
         $this->app->afterResolving(HttpKernel::class, function ($kernel) use ($callback): void {
-            $middleware = (new Middleware)
+            $middleware = (new Middleware())
                 ->redirectGuestsTo(fn (): string => route('login'));
 
             if (! is_null($callback)) {
@@ -280,7 +284,7 @@ class ApplicationBuilder
 
         $this->app->afterResolving(ConsoleKernel::class, function () use ($callback): void {
             if (! is_null($callback)) {
-                $callback(new Middleware);
+                $callback(new Middleware());
             }
         });
 
@@ -367,7 +371,7 @@ class ApplicationBuilder
      *
      * @return $this
      */
-    public function withBindings(array $bindings)
+    public function withBindings(array $bindings): static
     {
         return $this->registered(function ($app) use ($bindings): void {
             foreach ($bindings as $abstract => $concrete) {
@@ -381,7 +385,7 @@ class ApplicationBuilder
      *
      * @return $this
      */
-    public function withSingletons(array $singletons)
+    public function withSingletons(array $singletons): static
     {
         return $this->registered(function ($app) use ($singletons): void {
             foreach ($singletons as $abstract => $concrete) {
@@ -399,7 +403,7 @@ class ApplicationBuilder
      *
      * @return $this
      */
-    public function withScopedSingletons(array $scopedSingletons)
+    public function withScopedSingletons(array $scopedSingletons): static
     {
         return $this->registered(function ($app) use ($scopedSingletons): void {
             foreach ($scopedSingletons as $abstract => $concrete) {

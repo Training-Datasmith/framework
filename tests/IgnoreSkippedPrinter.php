@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests;
 
 use PHPUnit\Framework\TestResult;
@@ -9,6 +11,6 @@ class IgnoreSkippedPrinter extends DefaultResultPrinter
 {
     protected function printSkipped(TestResult $result): void
     {
-        //
+
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Concurrency;
 
 use Illuminate\Process\Factory as ProcessFactory;
@@ -47,7 +49,7 @@ class ConcurrencyManager extends MultipleInstanceManager
             throw new RuntimeException('Please install the "spatie/fork" Composer package in order to utilize the "fork" driver.');
         }
 
-        return new ForkDriver;
+        return new ForkDriver();
     }
 
     /**
@@ -55,7 +57,7 @@ class ConcurrencyManager extends MultipleInstanceManager
      */
     public function createSyncDriver(): \Illuminate\Concurrency\SyncDriver
     {
-        return new SyncDriver;
+        return new SyncDriver();
     }
 
     /**
@@ -90,7 +92,8 @@ class ConcurrencyManager extends MultipleInstanceManager
     public function getInstanceConfig($name)
     {
         return $this->app['config']->get(
-            'concurrency.driver.'.$name, ['driver' => $name],
+            'concurrency.driver.'.$name,
+            ['driver' => $name],
         );
     }
 }

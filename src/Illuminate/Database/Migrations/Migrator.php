@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Migrations;
 
 use Closure;
@@ -86,8 +88,7 @@ class Migrator
          * The event dispatcher instance.
          */
         protected ?\Illuminate\Contracts\Events\Dispatcher $events = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -105,7 +106,8 @@ class Migrator
         $files = $this->getMigrationFiles($paths);
 
         $this->requireFiles($migrations = $this->pendingMigrations(
-            $files, $this->repository->getRan()
+            $files,
+            $this->repository->getRan()
         ));
 
         // Once we have all these migrations that are outstanding we are ready to run
@@ -128,7 +130,8 @@ class Migrator
         $migrationsToSkip = $this->migrationsToSkip();
 
         return (new Collection($files))
-            ->reject(fn ($file): bool => in_array($migrationName = $this->getMigrationName($file), $ran) ||
+            ->reject(
+                fn ($file): bool => in_array($migrationName = $this->getMigrationName($file), $ran) ||
                 in_array($migrationName, $migrationsToSkip)
             )
             ->values()
@@ -312,7 +315,8 @@ class Migrator
             $rolledBack[] = $file;
 
             $this->runDown(
-                $file, $migration,
+                $file,
+                $migration,
                 $options['pretend'] ?? false
             );
         }
@@ -353,9 +357,8 @@ class Migrator
      * @param  string[]  $migrations
      * @param  string[]  $paths
      * @param  bool  $pretend
-     * @return array
      */
-    protected function resetMigrations(array $migrations, array $paths, $pretend = false)
+    protected function resetMigrations(array $migrations, array $paths, $pretend = false): array
     {
         // Since the getRan method that retrieves the migration name just gives us the
         // migration name, we will format the names into objects with the name as a
@@ -363,7 +366,9 @@ class Migrator
         $migrations = (new Collection($migrations))->map(fn ($m) => (object) ['migration' => $m])->all();
 
         return $this->rollbackMigrations(
-            $migrations, $paths, compact('pretend')
+            $migrations,
+            $paths,
+            compact('pretend')
         );
     }
 
@@ -503,7 +508,7 @@ class Migrator
     {
         $class = $this->getMigrationClass($file);
 
-        return new $class;
+        return new $class();
     }
 
     /**
@@ -516,7 +521,7 @@ class Migrator
         $class = $this->getMigrationClass($this->getMigrationName($path));
 
         if (class_exists($class) && realpath($path) == (new ReflectionClass($class))->getFileName()) {
-            return new $class;
+            return new $class();
         }
 
         $migration = static::$requiredPathCache[$path] ??= $this->files->getRequire($path);
@@ -527,7 +532,7 @@ class Migrator
                 : clone $migration;
         }
 
-        return new $class;
+        return new $class();
     }
 
     /**
@@ -550,7 +555,7 @@ class Migrator
             ->flatMap(fn ($path) => str_ends_with((string) $path, '.php') ? [$path] : $this->files->glob($path.'/*_*.php'))
             ->filter()
             ->values()
-            ->keyBy(fn ($file) => $this->getMigrationName($file))
+            ->keyBy(fn ($file): string => $this->getMigrationName($file))
             ->sortBy(fn ($file, $key): string => $key)
             ->all();
     }
@@ -702,10 +707,8 @@ class Migrator
 
     /**
      * Get the migration repository instance.
-     *
-     * @return \Illuminate\Database\Migrations\MigrationRepositoryInterface
      */
-    public function getRepository()
+    public function getRepository(): \Illuminate\Database\Migrations\MigrationRepositoryInterface
     {
         return $this->repository;
     }
@@ -738,10 +741,8 @@ class Migrator
 
     /**
      * Get the file system instance.
-     *
-     * @return \Illuminate\Filesystem\Filesystem
      */
-    public function getFilesystem()
+    public function getFilesystem(): \Illuminate\Filesystem\Filesystem
     {
         return $this->files;
     }

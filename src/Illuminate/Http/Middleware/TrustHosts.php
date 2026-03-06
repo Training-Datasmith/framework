@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Middleware;
 
 use Illuminate\Contracts\Foundation\Application;
@@ -29,8 +31,7 @@ class TrustHosts
          * The application instance.
          */
         protected \Illuminate\Contracts\Foundation\Application $app
-    )
-    {
+    ) {
     }
 
     /**

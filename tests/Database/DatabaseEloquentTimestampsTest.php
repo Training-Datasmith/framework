@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Capsule\Manager as DB;
@@ -14,7 +16,7 @@ class DatabaseEloquentTimestampsTest extends TestCase
     {
         parent::setUp();
 
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -166,7 +168,7 @@ class DatabaseEloquentTimestampsTest extends TestCase
             });
             $this->fail();
         } catch (RuntimeException) {
-            //
+
         }
 
         $this->assertTrue($user->timestamps);

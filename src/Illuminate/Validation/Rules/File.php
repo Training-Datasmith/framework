@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Rules;
 
 use Illuminate\Contracts\Validation\DataAwareRule;
@@ -14,7 +16,8 @@ use InvalidArgumentException;
 
 class File implements Rule, DataAwareRule, ValidatorAwareRule
 {
-    use Conditionable, Macroable;
+    use Conditionable;
+    use Macroable;
 
     /**
      * The MIME types that the given file should match. This array may also contain file extensions.

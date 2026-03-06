@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail\Transport;
 
 use Aws\Exception\AwsException;
@@ -29,7 +31,7 @@ class SesTransport extends AbstractTransport implements Stringable
     public function __construct(SesClient $ses, /**
      * The Amazon SES transmission options.
      */
-    protected $options = [])
+        protected $options = [])
     {
         $this->ses = $ses;
 
@@ -58,7 +60,8 @@ class SesTransport extends AbstractTransport implements Stringable
         try {
             $result = $this->ses->sendRawEmail(
                 array_merge(
-                    $options, [
+                    $options,
+                    [
                         'Source' => $message->getEnvelope()->getSender()->toString(),
                         'Destinations' => (new Collection($message->getEnvelope()->getRecipients()))
                             ->map

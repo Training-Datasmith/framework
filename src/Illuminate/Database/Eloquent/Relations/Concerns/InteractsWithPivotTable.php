@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations\Concerns;
 
 use BackedEnum;
@@ -115,7 +117,8 @@ trait InteractsWithPivotTable
         // touching until after the entire operation is complete so we don't fire a
         // ton of touch operations until we are totally done syncing the records.
         $changes = array_merge(
-            $changes, $this->attachNew($records, $current, false)
+            $changes,
+            $this->attachNew($records, $current, false)
         );
 
         // Once we have finished attaching or detaching the records, we will see if we
@@ -138,7 +141,7 @@ trait InteractsWithPivotTable
      */
     public function syncWithPivotValues($ids, array $values, bool $detaching = true)
     {
-        return $this->sync((new BaseCollection($this->parseIds($ids)))->mapWithKeys(fn($id) => [$id => $values]), $detaching);
+        return $this->sync((new BaseCollection($this->parseIds($ids)))->mapWithKeys(fn ($id): array => [$id => $values]), $detaching);
     }
 
     /**
@@ -258,7 +261,8 @@ trait InteractsWithPivotTable
             // inserted the records, we will touch the relationships if necessary and the
             // function will return. We can parse the IDs before inserting the records.
             $this->newPivotStatement()->insert($this->formatAttachRecords(
-                $this->parseIds($ids), $attributes
+                $this->parseIds($ids),
+                $attributes
             ));
         }
 
@@ -276,7 +280,8 @@ trait InteractsWithPivotTable
     protected function attachUsingCustomClass($ids, array $attributes)
     {
         $records = $this->formatAttachRecords(
-            $this->parseIds($ids), $attributes
+            $this->parseIds($ids),
+            $attributes
         );
 
         foreach ($records as $record) {
@@ -301,7 +306,10 @@ trait InteractsWithPivotTable
         // key in the array, with extra attributes to be placed in other columns.
         foreach ($ids as $key => $value) {
             $records[] = $this->formatAttachRecord(
-                $key, $value, $attributes, $hasTimestamps
+                $key,
+                $value,
+                $attributes,
+                $hasTimestamps
             );
         }
 
@@ -321,7 +329,8 @@ trait InteractsWithPivotTable
         [$id, $attributes] = $this->extractAttachIdAndAttributes($key, $value, $attributes);
 
         return array_merge(
-            $this->baseAttachRecord($id, $hasTimestamps), $this->castAttributes($attributes)
+            $this->baseAttachRecord($id, $hasTimestamps),
+            $this->castAttributes($attributes)
         );
     }
 
@@ -375,7 +384,7 @@ trait InteractsWithPivotTable
         $fresh = $this->parent->freshTimestamp();
 
         if ($this->using) {
-            $pivotModel = new $this->using;
+            $pivotModel = new $this->using();
 
             $fresh = $pivotModel->fromDateTime($fresh);
         }
@@ -480,7 +489,8 @@ trait InteractsWithPivotTable
     {
         return $this->newPivotQuery()
             ->when(! is_null($ids), fn ($query) => $query->whereIn(
-                $this->getQualifiedRelatedPivotKeyName(), $this->parseIds($ids)
+                $this->getQualifiedRelatedPivotKeyName(),
+                $this->parseIds($ids)
             ))
             ->get()
             ->map(function ($record) {
@@ -505,7 +515,11 @@ trait InteractsWithPivotTable
         $attributes = array_merge(array_column($this->pivotValues, 'value', 'column'), $attributes);
 
         $pivot = $this->related->newPivot(
-            $this->parent, $attributes, $this->table, $exists, $this->using
+            $this->parent,
+            $attributes,
+            $this->table,
+            $exists,
+            $this->using
         );
 
         return $pivot
@@ -577,7 +591,8 @@ trait InteractsWithPivotTable
     public function withPivot($columns)
     {
         $this->pivotColumns = array_merge(
-            $this->pivotColumns, is_array($columns) ? $columns : func_get_args()
+            $this->pivotColumns,
+            is_array($columns) ? $columns : func_get_args()
         );
 
         return $this;
@@ -624,7 +639,7 @@ trait InteractsWithPivotTable
      */
     protected function castKeys(array $keys): array
     {
-        return array_map(fn($v) => $this->castKey($v), $keys);
+        return array_map(fn ($v) => $this->castKey($v), $keys);
     }
 
     /**

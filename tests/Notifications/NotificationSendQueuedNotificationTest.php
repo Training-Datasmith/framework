@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Notifications;
 
 use Illuminate\Contracts\Database\ModelIdentifier;
@@ -31,7 +33,7 @@ class NotificationSendQueuedNotificationTest extends TestCase
         $identifier = new ModelIdentifier(NotifiableUser::class, [null], [], null);
         $serializedIdentifier = serialize($identifier);
 
-        $job = new SendQueuedNotifications(new NotifiableUser, 'notification');
+        $job = new SendQueuedNotifications(new NotifiableUser(), 'notification');
         $serialized = serialize($job);
 
         $this->assertStringContainsString($serializedIdentifier, $serialized);
@@ -39,7 +41,7 @@ class NotificationSendQueuedNotificationTest extends TestCase
 
     public function testSerializationOfNormalNotifiable()
     {
-        $notifiable = new AnonymousNotifiable;
+        $notifiable = new AnonymousNotifiable();
         $serializedNotifiable = serialize($notifiable);
 
         $job = new SendQueuedNotifications($notifiable, 'notification');
@@ -50,9 +52,8 @@ class NotificationSendQueuedNotificationTest extends TestCase
 
     public function testNotificationCanSetMaxExceptions()
     {
-        $notifiable = new NotifiableUser;
-        $notification = new class
-        {
+        $notifiable = new NotifiableUser();
+        $notification = new class () {
             public $maxExceptions = 23;
         };
 

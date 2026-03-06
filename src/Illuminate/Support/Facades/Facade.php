@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Facades;
 
 use Closure;
@@ -338,7 +340,6 @@ abstract class Facade
     /**
      * Handle dynamic, static calls to the object.
      *
-     * @param  array  $args
      * @return mixed
      * @throws \RuntimeException
      */

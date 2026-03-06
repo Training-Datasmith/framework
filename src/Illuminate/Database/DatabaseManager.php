@@ -1,19 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
-use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\Events\ConnectionEstablished;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ConfigurationUrlParser;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use PDO;
-use RuntimeException;
 
-use function Illuminate\Support\enum_value;
+use RuntimeException;
 
 /**
  * @mixin \Illuminate\Database\Connection
@@ -60,11 +63,11 @@ class DatabaseManager implements ConnectionResolverInterface
     public function __construct(/**
      * The application instance.
      */
-    protected $app, /**
+        protected $app, /**
      * The database connection factory instance.
      */
-    protected \Illuminate\Database\Connectors\ConnectionFactory $factory)
-    {
+        protected \Illuminate\Database\Connectors\ConnectionFactory $factory
+    ) {
         $this->reconnector = function ($connection): void {
             $connection->setPdo(
                 $this->reconnect($connection->getNameWithReadWriteType())->getRawPdo()
@@ -87,7 +90,8 @@ class DatabaseManager implements ConnectionResolverInterface
         // set the "fetch mode" for PDO which determines the query return types.
         if (! isset($this->connections[$name])) {
             $this->connections[$name] = $this->configure(
-                $this->makeConnection($database), $type
+                $this->makeConnection($database),
+                $type
             );
 
             $this->dispatchConnectionEstablishedEvent($this->connections[$name]);
@@ -115,7 +119,7 @@ class DatabaseManager implements ConnectionResolverInterface
      */
     public static function calculateDynamicConnectionName(array $config): string
     {
-        return 'dynamic_'.md5((new Collection($config))->map(fn($value, $key) => $key.(is_string($value) || is_int($value) ? $value : ''))->implode(''));
+        return 'dynamic_'.md5((new Collection($config))->map(fn ($value, $key): string => $key.(is_string($value) || is_int($value) ? $value : ''))->implode(''));
     }
 
     /**
@@ -135,7 +139,8 @@ class DatabaseManager implements ConnectionResolverInterface
         }
 
         $connection = $this->configure(
-            $this->factory->make($config, $name), null
+            $this->factory->make($config, $name),
+            null
         );
 
         $this->dispatchConnectionEstablishedEvent($connection);
@@ -199,7 +204,7 @@ class DatabaseManager implements ConnectionResolverInterface
             throw new InvalidArgumentException("Database connection [{$name}] not configured.");
         }
 
-        return (new ConfigurationUrlParser)
+        return (new ConfigurationUrlParser())
             ->parseConfiguration($config);
     }
 
@@ -328,15 +333,14 @@ class DatabaseManager implements ConnectionResolverInterface
 
     /**
      * Refresh the PDO connections on a given connection.
-     *
-     * @return \Illuminate\Database\Connection
      */
-    protected function refreshPdoConnections(string $name)
+    protected function refreshPdoConnections(string $name): \Illuminate\Database\Connection
     {
         [$database, $type] = $this->parseConnectionName($name);
 
         $fresh = $this->configure(
-            $this->makeConnection($database), $type
+            $this->makeConnection($database),
+            $type
         );
 
         return $this->connections[$name]
@@ -437,7 +441,6 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Dynamically pass methods to the default connection.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

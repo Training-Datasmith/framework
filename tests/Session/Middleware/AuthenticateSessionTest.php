@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Session\Middleware;
 
 use BadMethodCallException;
@@ -16,7 +18,7 @@ class AuthenticateSessionTest extends TestCase
 {
     public function test_handle_without_session()
     {
-        $request = new Request;
+        $request = new Request();
         $next = fn () => 'next-1';
 
         $authFactory = m::mock(AuthFactory::class);
@@ -29,7 +31,7 @@ class AuthenticateSessionTest extends TestCase
 
     public function test_handle_with_session_without_request_user()
     {
-        $request = new Request;
+        $request = new Request();
 
         // set session:
         $request->setLaravelSession(new Store('name', new ArraySessionHandler(1)));
@@ -45,15 +47,14 @@ class AuthenticateSessionTest extends TestCase
 
     public function test_handle_with_session_without_auth_password()
     {
-        $user = new class
-        {
+        $user = new class () {
             public function getAuthPassword()
             {
                 return null;
             }
         };
 
-        $request = new Request;
+        $request = new Request();
 
         // set session:
         $request->setLaravelSession(new Store('name', new ArraySessionHandler(1)));
@@ -72,15 +73,14 @@ class AuthenticateSessionTest extends TestCase
 
     public function test_handle_with_session_with_user_auth_password_on_request_via_remember_false()
     {
-        $user = new class
-        {
+        $user = new class () {
             public function getAuthPassword()
             {
                 return 'my-pass-(*&^%$#!@';
             }
         };
 
-        $request = new Request;
+        $request = new Request();
         $request->setUserResolver(fn () => $user);
 
         $session = new Store('name', new ArraySessionHandler(1));
@@ -102,8 +102,7 @@ class AuthenticateSessionTest extends TestCase
 
     public function test_handle_with_invalid_password_hash()
     {
-        $user = new class
-        {
+        $user = new class () {
             public function getAuthPassword()
             {
                 return 'my-pass-(*&^%$#!@';
@@ -151,8 +150,7 @@ class AuthenticateSessionTest extends TestCase
 
     public function test_handle_with_invalid_incookie_password_hash_via_remember_true()
     {
-        $user = new class
-        {
+        $user = new class () {
             public function getAuthPassword()
             {
                 return 'my-pass-(*&^%$#!@';
@@ -195,8 +193,7 @@ class AuthenticateSessionTest extends TestCase
 
     public function test_handle_with_valid_incookie_invalid_insession_hash_via_remember_true()
     {
-        $user = new class
-        {
+        $user = new class () {
             public function getAuthPassword()
             {
                 return 'my-pass-(*&^%$#!@';
@@ -240,8 +237,7 @@ class AuthenticateSessionTest extends TestCase
 
     public function test_handle_with_valid_password_in_session_cookie_is_empty_guard_has_user()
     {
-        $user = new class
-        {
+        $user = new class () {
             public function getAuthPassword()
             {
                 return 'my-pass-(*&^%$#!@';
@@ -280,8 +276,7 @@ class AuthenticateSessionTest extends TestCase
 
     public function test_handle_with_old_format_cookie_for_backward_compatibility()
     {
-        $user = new class
-        {
+        $user = new class () {
             public function getAuthPassword()
             {
                 return 'my-pass-(*&^%$#!@';
@@ -320,8 +315,7 @@ class AuthenticateSessionTest extends TestCase
 
     public function test_handle_with_old_format_cookie_and_legacy_guard()
     {
-        $user = new class
-        {
+        $user = new class () {
             public function getAuthPassword()
             {
                 return 'my-pass-(*&^%$#!@';
@@ -345,7 +339,7 @@ class AuthenticateSessionTest extends TestCase
         $authFactory->shouldReceive('getDefaultDriver')->andReturn('web');
         $authFactory->shouldReceive('user')->andReturn($user);
         // For legacy guards without hashPasswordForCookie method, we use fallback to raw hash
-        $authFactory->shouldReceive('hashPasswordForCookie')->andThrowExceptions([new BadMethodCallException]);
+        $authFactory->shouldReceive('hashPasswordForCookie')->andThrowExceptions([new BadMethodCallException()]);
 
         $middleware = new AuthenticateSession($authFactory);
         $response = $middleware->handle($request, fn () => 'next-9');

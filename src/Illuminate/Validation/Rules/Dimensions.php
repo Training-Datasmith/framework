@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Rules;
 
 use Illuminate\Support\Traits\Conditionable;
@@ -17,8 +19,7 @@ class Dimensions implements Stringable
          * The constraints for the dimensions rule.
          */
         protected array $constraints = []
-    )
-    {
+    ) {
     }
 
     /**

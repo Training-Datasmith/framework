@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Closure;
-use Symfony\Component\Process\Process;
 
 use function Illuminate\Support\artisan_binary;
+
 use function Illuminate\Support\php_binary;
+
+use Symfony\Component\Process\Process;
 
 class Listener
 {
@@ -48,8 +52,7 @@ class Listener
          * The command working path.
          */
         protected $commandPath
-    )
-    {
+    ) {
     }
 
     /**
@@ -148,7 +151,7 @@ class Listener
             "--sleep={$options->sleep}",
             "--tries={$options->maxTries}",
             $options->force ? '--force' : null,
-        ], fn(?string $value) => ! is_null($value));
+        ], fn (?string $value): bool => ! is_null($value));
     }
 
     /**

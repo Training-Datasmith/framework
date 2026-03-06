@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Routing;
 
 use Illuminate\Container\Container;
@@ -118,7 +120,7 @@ class ImplicitRouteBindingTest extends TestCase
         }];
 
         $route = new Route('GET', '/test', $action);
-        $route->parameters = ['user' => new ImplicitRouteBindingUser];
+        $route->parameters = ['user' => new ImplicitRouteBindingUser()];
 
         $route->prepareForSerialization();
 
@@ -130,5 +132,4 @@ class ImplicitRouteBindingTest extends TestCase
 
 class ImplicitRouteBindingUser extends Model
 {
-    //
 }

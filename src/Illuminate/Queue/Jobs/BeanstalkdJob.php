@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Jobs;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Queue\Job as JobContract;
-use Pheanstalk\Contract\JobIdInterface;
 use Pheanstalk\Pheanstalk;
 
 class BeanstalkdJob extends Job implements JobContract
@@ -20,10 +21,10 @@ class BeanstalkdJob extends Job implements JobContract
     public function __construct(Container $container, /**
      * The Pheanstalk instance.
      */
-    protected $pheanstalk, /**
+        protected $pheanstalk, /**
      * The Pheanstalk job instance.
      */
-    protected \Pheanstalk\Contract\JobIdInterface $job, $connectionName, $queue)
+        protected \Pheanstalk\Contract\JobIdInterface $job, $connectionName, $queue)
     {
         $this->queue = $queue;
         $this->container = $container;
@@ -109,7 +110,7 @@ class BeanstalkdJob extends Job implements JobContract
      *
      * @return \Pheanstalk\Contract\JobIdInterface
      */
-    public function getPheanstalkJob()
+    public function getPheanstalkJob(): \Pheanstalk\Contract\JobIdInterface
     {
         return $this->job;
     }

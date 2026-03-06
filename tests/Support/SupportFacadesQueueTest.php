@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Bus\Queueable;
@@ -21,7 +23,7 @@ class SupportFacadesQueueTest extends TestCase
 
         $this->queueManager = m::mock(Factory::class);
 
-        $container = new Container;
+        $container = new Container();
         $container->instance('queue', $this->queueManager);
         $container->alias('queue', QueueContract::class);
 
@@ -39,14 +41,14 @@ class SupportFacadesQueueTest extends TestCase
     public function testFakeFor()
     {
         Queue::fakeFor(function () {
-            (new QueueForStub)->pushJob();
+            (new QueueForStub())->pushJob();
 
             Queue::assertPushed(QueueJobStub::class);
         });
 
         $this->queueManager->shouldReceive('push')->once();
 
-        (new QueueForStub)->pushJob();
+        (new QueueForStub())->pushJob();
     }
 
     public function testFakeForSwapsQueueManager()
@@ -117,6 +119,6 @@ class QueueForStub
 {
     public function pushJob()
     {
-        Queue::push(new QueueJobStub);
+        Queue::push(new QueueJobStub());
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation;
 
 use Exception;
@@ -22,7 +24,7 @@ class FoundationHelpersTest extends TestCase
 {
     public function testCache()
     {
-        $app = new Application;
+        $app = new Application();
         $app['cache'] = $cache = m::mock(CacheRepository::class);
 
         // 1. cache()
@@ -47,7 +49,7 @@ class FoundationHelpersTest extends TestCase
 
     public function testEvents()
     {
-        $app = new Application;
+        $app = new Application();
         $app['events'] = $dispatcher = m::mock(Dispatcher::class);
 
         $dispatcher->shouldReceive('dispatch')->once()->with('a', 'b', 'c')->andReturn('foo');
@@ -56,7 +58,7 @@ class FoundationHelpersTest extends TestCase
 
     public function testMixDoesNotIncludeHost()
     {
-        $app = new Application;
+        $app = new Application();
         $app['config'] = m::mock(Repository::class);
         $app['config']->shouldReceive('get')->with('app.mix_url');
         $app['config']->shouldReceive('get')->with('app.mix_hot_proxy_url');
@@ -72,7 +74,7 @@ class FoundationHelpersTest extends TestCase
 
     public function testMixCachesManifestForSubsequentCalls()
     {
-        $app = new Application;
+        $app = new Application();
         $app['config'] = m::mock(Repository::class);
         $app['config']->shouldReceive('get')->with('app.mix_url');
         $app['config']->shouldReceive('get')->with('app.mix_hot_proxy_url');
@@ -88,7 +90,7 @@ class FoundationHelpersTest extends TestCase
 
     public function testMixAssetMissingStartingSlashHaveItAdded()
     {
-        $app = new Application;
+        $app = new Application();
         $app['config'] = m::mock(Repository::class);
         $app['config']->shouldReceive('get')->with('app.mix_url');
         $app['config']->shouldReceive('get')->with('app.mix_hot_proxy_url');
@@ -112,7 +114,7 @@ class FoundationHelpersTest extends TestCase
 
     public function testMixWithManifestDirectory()
     {
-        $app = new Application;
+        $app = new Application();
         $app['config'] = m::mock(Repository::class);
         $app['config']->shouldReceive('get')->with('app.mix_url');
         $app['config']->shouldReceive('get')->with('app.mix_hot_proxy_url');
@@ -245,7 +247,7 @@ class FoundationHelpersTest extends TestCase
 
     public function testMixIsSwappableForTests()
     {
-        (new Application)->instance(Mix::class, function () {
+        (new Application())->instance(Mix::class, function () {
             return 'expected';
         });
 
@@ -270,8 +272,7 @@ class FoundationHelpersTest extends TestCase
         app()->instance('request', $request = Request::create('/'));
 
         try {
-            abort($code = new class implements Responsable
-            {
+            abort($code = new class () implements Responsable {
                 public $request;
 
                 public function toResponse($request)

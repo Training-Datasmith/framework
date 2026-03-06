@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Testing;
 
 use Illuminate\Container\Container;
@@ -13,7 +15,7 @@ class ParallelTestingTest extends TestCase
     {
         parent::setUp();
 
-        Container::setInstance(new Container);
+        Container::setInstance(new Container());
 
         $_SERVER['LARAVEL_PARALLEL_TESTING'] = 1;
     }

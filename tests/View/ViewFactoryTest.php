@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\View;
 
 use Closure;
@@ -35,7 +37,7 @@ class ViewFactoryTest extends TestCase
         $factory->getFinder()->shouldReceive('find')->once()->with('view')->andReturn('path.php');
         $factory->getEngineResolver()->shouldReceive('resolve')->once()->with('php')->andReturn($engine = m::mock(Engine::class));
         $factory->getFinder()->shouldReceive('addExtension')->once()->with('php');
-        $factory->setDispatcher(new Dispatcher);
+        $factory->setDispatcher(new Dispatcher());
         $factory->creator('view', function ($view) {
             $_SERVER['__test.view'] = $view;
         });
@@ -77,7 +79,7 @@ class ViewFactoryTest extends TestCase
         $factory->getFinder()->shouldReceive('find')->once()->with('bar')->andThrow(InvalidArgumentException::class);
         $factory->getEngineResolver()->shouldReceive('resolve')->once()->with('php')->andReturn($engine = m::mock(Engine::class));
         $factory->getFinder()->shouldReceive('addExtension')->once()->with('php');
-        $factory->setDispatcher(new Dispatcher);
+        $factory->setDispatcher(new Dispatcher());
         $factory->creator('view', function ($view) {
             $_SERVER['__test.view'] = $view;
         });
@@ -136,7 +138,7 @@ class ViewFactoryTest extends TestCase
         $factory = $this->getFactory();
 
         $resolver = function () {
-            //
+
         };
 
         $factory->getFinder()->shouldReceive('addExtension')->once()->with('foo');
@@ -639,7 +641,7 @@ class ViewFactoryTest extends TestCase
     {
         $factory = $this->getFactory();
         $factory->getFinder()->shouldReceive('find')->andReturn(__DIR__.'/fixtures/component.php');
-        $factory->getEngineResolver()->shouldReceive('resolve')->andReturn(new PhpEngine(new Filesystem));
+        $factory->getEngineResolver()->shouldReceive('resolve')->andReturn(new PhpEngine(new Filesystem()));
         $factory->getDispatcher()->shouldReceive('hasListeners')->andReturn(false);
         $factory->startComponent('component', ['name' => 'Taylor']);
         $factory->slot('title');
@@ -655,7 +657,7 @@ class ViewFactoryTest extends TestCase
     {
         $factory = $this->getFactory();
         $factory->getFinder()->shouldReceive('find')->andReturn(__DIR__.'/fixtures/component.php');
-        $factory->getEngineResolver()->shouldReceive('resolve')->andReturn(new PhpEngine(new Filesystem));
+        $factory->getEngineResolver()->shouldReceive('resolve')->andReturn(new PhpEngine(new Filesystem()));
         $factory->getDispatcher()->shouldReceive('hasListeners')->andReturn(false);
         $factory->startComponent($factory->make('component'), ['name' => 'Taylor']);
         $factory->slot('title');
@@ -671,7 +673,7 @@ class ViewFactoryTest extends TestCase
     {
         $factory = $this->getFactory();
         $factory->getFinder()->shouldReceive('find')->andReturn(__DIR__.'/fixtures/component.php');
-        $factory->getEngineResolver()->shouldReceive('resolve')->andReturn(new PhpEngine(new Filesystem));
+        $factory->getEngineResolver()->shouldReceive('resolve')->andReturn(new PhpEngine(new Filesystem()));
         $factory->getDispatcher()->shouldReceive('hasListeners')->andReturn(false);
         $factory->startComponent(function ($data) use ($factory) {
             $this->assertArrayHasKey('name', $data);
@@ -698,7 +700,7 @@ class ViewFactoryTest extends TestCase
 
     public function testTranslation()
     {
-        $container = new Container;
+        $container = new Container();
         $container->instance('translator', $translator = m::mock(stdClass::class));
         $translator->shouldReceive('get')->with('Foo', ['name' => 'taylor'])->andReturn('Bar');
         $factory = $this->getFactory();
@@ -867,7 +869,7 @@ class ViewFactoryTest extends TestCase
         $this->expectException(ErrorException::class);
         $this->expectExceptionMessage('section exception message');
 
-        $engine = new CompilerEngine(m::mock(CompilerInterface::class), new Filesystem);
+        $engine = new CompilerEngine(m::mock(CompilerInterface::class), new Filesystem());
         $engine->getCompiler()->shouldReceive('getCompiledPath')->andReturnUsing(function ($path) {
             return $path;
         });
@@ -951,8 +953,7 @@ class ViewFactoryTest extends TestCase
     {
         $factory = $this->getFactory();
 
-        $data = (new class
-        {
+        $data = (new class () {
             public function generate()
             {
                 for ($count = 0; $count < 3; $count++) {

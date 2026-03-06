@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Concerns\CreatesMatchingTest;
@@ -178,12 +180,12 @@ class ViewMakeCommand extends GeneratorCommand
             (new Stringable($name))
                 ->replace('/', ' ')
                 ->explode(' ')
-                ->map(fn ($part) => (new Stringable($part))->ucfirst())
+                ->map(fn ($part): \Illuminate\Support\Stringable => (new Stringable($part))->ucfirst())
                 ->implode('\\')
         )
             ->replace(['-', '_'], ' ')
             ->explode(' ')
-            ->map(fn ($part) => (new Stringable($part))->ucfirst())
+            ->map(fn ($part): \Illuminate\Support\Stringable => (new Stringable($part))->ucfirst())
             ->implode('');
 
         return 'Tests\\Feature\\View\\'.$namespacedName;

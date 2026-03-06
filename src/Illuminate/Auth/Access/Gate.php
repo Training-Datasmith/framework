@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Access;
 
 use Closure;
@@ -11,12 +13,14 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use ReflectionClass;
-use ReflectionFunction;
 
-use function Illuminate\Support\enum_value;
+use ReflectionFunction;
 
 class Gate implements GateContract
 {
@@ -151,11 +155,10 @@ class Gate implements GateContract
      * @param  string|null  $message
      * @param  string|null  $code
      * @param  bool  $allowWhenResponseIs
-     * @return \Illuminate\Auth\Access\Response
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    protected function authorizeOnDemand($condition, $message, $code, $allowWhenResponseIs)
+    protected function authorizeOnDemand($condition, $message, $code, $allowWhenResponseIs): \Illuminate\Auth\Access\Response
     {
         $user = $this->resolveUser();
 
@@ -168,7 +171,9 @@ class Gate implements GateContract
         }
 
         return ($response instanceof Response ? $response : new Response(
-            (bool) $response === $allowWhenResponseIs, $message, $code
+            (bool) $response === $allowWhenResponseIs,
+            $message,
+            $code
         ))->authorize();
     }
 
@@ -249,7 +254,10 @@ class Gate implements GateContract
             $user = array_shift($arguments);
 
             $result = $this->callPolicyBefore(
-                $policy, $user, $ability, $arguments
+                $policy,
+                $user,
+                $ability,
+                $arguments
             );
 
             if (! is_null($result)) {
@@ -365,11 +373,10 @@ class Gate implements GateContract
      *
      * @param  \UnitEnum|string  $ability
      * @param  mixed  $arguments
-     * @return \Illuminate\Auth\Access\Response
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function authorize($ability, $arguments = [])
+    public function authorize($ability, $arguments = []): \Illuminate\Auth\Access\Response
     {
         return $this->inspect($ability, $arguments)->authorize();
     }
@@ -417,7 +424,9 @@ class Gate implements GateContract
         // back a non-null response, we will immediately return that result in order
         // to let the developers override all checks for some authorization cases.
         $result = $this->callBeforeCallbacks(
-            $user, $ability, $arguments
+            $user,
+            $ability,
+            $arguments
         );
 
         if (is_null($result)) {
@@ -428,7 +437,10 @@ class Gate implements GateContract
         // that are registered with the Gate, which allows a developer to do logging
         // if that is required for this application. Then we'll return the result.
         return tap($this->callAfterCallbacks(
-            $user, $ability, $arguments, $result
+            $user,
+            $ability,
+            $arguments,
+            $result
         ), function ($result) use ($user, $ability, $arguments): void {
             $this->dispatchGateEvaluatedEvent($user, $ability, $arguments, $result);
         });
@@ -617,7 +629,7 @@ class Gate implements GateContract
         }
 
         return function (): void {
-            //
+
         };
     }
 
@@ -683,9 +695,8 @@ class Gate implements GateContract
      * Guess the policy name for the given class.
      *
      * @param  string  $class
-     * @return array
      */
-    protected function guessPolicyName($class)
+    protected function guessPolicyName($class): array
     {
         if ($this->guessPolicyNamesUsingCallback) {
             return Arr::wrap(call_user_func($this->guessPolicyNamesUsingCallback, $class));
@@ -699,8 +710,8 @@ class Gate implements GateContract
             $classDirname = implode('\\', array_slice($classDirnameSegments, 0, $index));
 
             return $classDirname.'\\Policies\\'.class_basename($class).'Policy';
-        })->when(str_contains($classDirname, '\\Models\\'), fn($collection) => $collection->concat([str_replace('\\Models\\', '\\Policies\\', $classDirname).'\\'.class_basename($class).'Policy'])
-            ->concat([str_replace('\\Models\\', '\\Models\\Policies\\', $classDirname).'\\'.class_basename($class).'Policy']))->reverse()->values()->first(fn($class) => class_exists($class)) ?: [$classDirname.'\\Policies\\'.class_basename($class).'Policy']);
+        })->when(str_contains($classDirname, '\\Models\\'), fn ($collection): \Illuminate\Support\Collection => $collection->concat([str_replace('\\Models\\', '\\Policies\\', $classDirname).'\\'.class_basename($class).'Policy'])
+            ->concat([str_replace('\\Models\\', '\\Models\\Policies\\', $classDirname).'\\'.class_basename($class).'Policy']))->reverse()->values()->first(fn ($class): bool => class_exists($class)) ?: [$classDirname.'\\Policies\\'.class_basename($class).'Policy']);
     }
 
     /**
@@ -747,7 +758,10 @@ class Gate implements GateContract
             // running this policy method if necessary. This is used to when objects are
             // mapped to policy objects in the user's configurations or on this class.
             $result = $this->callPolicyBefore(
-                $policy, $user, $ability, $arguments
+                $policy,
+                $user,
+                $ability,
+                $arguments
             );
 
             // When we receive a non-null result from this before method, we will return it
@@ -858,10 +872,8 @@ class Gate implements GateContract
 
     /**
      * Get all of the defined policies.
-     *
-     * @return array
      */
-    public function policies()
+    public function policies(): array
     {
         return $this->policies;
     }

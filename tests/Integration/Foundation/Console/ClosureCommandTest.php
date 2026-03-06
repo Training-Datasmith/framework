@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation\Console;
 
 use Illuminate\Support\Facades\Artisan;

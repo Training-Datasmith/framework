@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Exceptions\Renderer\Mappers;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\ViewException;
 use ReflectionClass;
 use ReflectionProperty;
@@ -57,8 +58,7 @@ class BladeMapper
          * The Blade compiler instance.
          */
         protected \Illuminate\View\Compilers\BladeCompiler $bladeCompiler
-    )
-    {
+    ) {
     }
 
     /**
@@ -96,7 +96,7 @@ class BladeMapper
      */
     protected function findCompiledView(string $compiledPath)
     {
-        return once(fn () => $this->getKnownPaths())[$compiledPath] ?? null;
+        return once(fn (): array => $this->getKnownPaths())[$compiledPath] ?? null;
     }
 
     /**
@@ -149,10 +149,8 @@ class BladeMapper
 
     /**
      * Detect the line number in the original blade file.
-     *
-     * @return int
      */
-    protected function detectLineNumber(string $filename, int $compiledLineNumber)
+    protected function detectLineNumber(string $filename, int $compiledLineNumber): int
     {
         $map = $this->compileSourcemap((string) file_get_contents($filename));
 
@@ -183,10 +181,8 @@ class BladeMapper
 
     /**
      * Add line numbers to echo statements.
-     *
-     * @return string
      */
-    protected function addEchoLineNumbers(string $value)
+    protected function addEchoLineNumbers(string $value): string
     {
         $echoPairs = [['{{', '}}'], ['{{{', '}}}'], ['{!!', '!!}']];
 
@@ -208,10 +204,8 @@ class BladeMapper
 
     /**
      * Add line numbers to blade statements.
-     *
-     * @return string
      */
-    protected function addStatementLineNumbers(string $value)
+    protected function addStatementLineNumbers(string $value): string
     {
         $shouldInsertLineNumbers = preg_match_all(
             '/\B@(@?\w+(?:::\w+)?)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x',
@@ -233,10 +227,8 @@ class BladeMapper
 
     /**
      * Add line numbers to blade components.
-     *
-     * @return string
      */
-    protected function addBladeComponentLineNumbers(string $value)
+    protected function addBladeComponentLineNumbers(string $value): string
     {
         $shouldInsertLineNumbers = preg_match_all(
             '/<\s*x[-:]([\w\-:.]*)/mx',

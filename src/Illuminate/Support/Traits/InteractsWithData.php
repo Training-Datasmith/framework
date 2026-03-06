@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Traits;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
-use stdClass;
 
-use function Illuminate\Support\enum_value;
+use stdClass;
 
 trait InteractsWithData
 {
@@ -227,9 +231,8 @@ trait InteractsWithData
      *
      * @param  string  $key
      * @param  mixed  $default
-     * @return \Illuminate\Support\Stringable
      */
-    public function string($key, $default = null)
+    public function string($key, $default = null): \Illuminate\Support\Stringable
     {
         return Str::of($this->data($key, $default));
     }
@@ -274,9 +277,8 @@ trait InteractsWithData
      *
      * @param  string  $key
      * @param  int|float  $default
-     * @return float|int
      */
-    public function clamp($key, int|float $min, int|float $max, $default = 0)
+    public function clamp($key, int|float $min, int|float $max, $default = 0): int|float
     {
         return Number::clamp($this->data($key, $default), $min, $max);
     }
@@ -388,7 +390,7 @@ trait InteractsWithData
 
         $data = $this->all();
 
-        $placeholder = new stdClass;
+        $placeholder = new stdClass();
 
         foreach (is_array($keys) ? $keys : func_get_args() as $key) {
             $value = data_get($data, $key, $placeholder);

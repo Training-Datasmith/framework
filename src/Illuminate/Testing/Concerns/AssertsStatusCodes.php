@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing\Concerns;
 
 use Illuminate\Testing\Assert as PHPUnit;

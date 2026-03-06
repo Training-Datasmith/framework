@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console;
 
 use Illuminate\Console\Concerns\CreatesMatchingTest;
@@ -122,8 +124,8 @@ abstract class GeneratorCommand extends Command implements PromptsForMissingInpu
     public function __construct(/**
      * The filesystem instance.
      */
-    protected \Illuminate\Filesystem\Filesystem $files)
-    {
+        protected \Illuminate\Filesystem\Filesystem $files
+    ) {
         parent::__construct();
 
         if (in_array(CreatesMatchingTest::class, class_uses_recursive($this))) {
@@ -483,7 +485,7 @@ abstract class GeneratorCommand extends Command implements PromptsForMissingInpu
      *    4?: list<string|Suggestion>|\Closure(CompletionInput, CompletionSuggestions): list<string|Suggestion>
      * })[]
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['name', InputArgument::REQUIRED, 'The name of the '.strtolower($this->type)],
@@ -495,7 +497,7 @@ abstract class GeneratorCommand extends Command implements PromptsForMissingInpu
      *
      * @return array<string, string|array{string, string}|\Closure(): (array<int, string>|string|int|bool)>
      */
-    protected function promptForMissingArgumentsUsing()
+    protected function promptForMissingArgumentsUsing(): array
     {
         return [
             'name' => [

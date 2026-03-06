@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Database\Connection;
@@ -40,14 +42,16 @@ abstract class SchemaState
     public function __construct(/**
      * The connection instance.
      */
-    protected \Illuminate\Database\Connection $connection, ?Filesystem $files = null, ?callable $processFactory = null)
-    {
-        $this->files = $files ?: new Filesystem;
+        protected \Illuminate\Database\Connection $connection,
+        ?Filesystem $files = null,
+        ?callable $processFactory = null
+    ) {
+        $this->files = $files ?: new Filesystem();
 
-        $this->processFactory = $processFactory ?: (fn(...$arguments) => Process::fromShellCommandline(...$arguments)->setTimeout(null));
+        $this->processFactory = $processFactory ?: (fn (...$arguments): \Symfony\Component\Process\Process => Process::fromShellCommandline(...$arguments)->setTimeout(null));
 
         $this->handleOutputUsing(function (): void {
-            //
+
         });
     }
 

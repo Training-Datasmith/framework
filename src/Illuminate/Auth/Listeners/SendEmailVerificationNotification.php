@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Listeners;
 
 use Illuminate\Auth\Events\Registered;

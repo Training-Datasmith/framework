@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Console\Command;
@@ -13,7 +15,8 @@ use Symfony\Component\Console\Input\InputOption;
 #[AsCommand(name: 'migrate:refresh')]
 class RefreshCommand extends Command
 {
-    use ConfirmableTrait, Prohibitable;
+    use ConfirmableTrait;
+    use Prohibitable;
 
     /**
      * The console command name.

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cookie;
 
 use Illuminate\Contracts\Cookie\QueueingFactory as JarContract;
@@ -10,7 +12,8 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 class CookieJar implements JarContract
 {
-    use InteractsWithTime, Macroable;
+    use InteractsWithTime;
+    use Macroable;
 
     /**
      * The default path (if specified).

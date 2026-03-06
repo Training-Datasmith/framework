@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Concerns;
 
 trait ManagesTranslations
@@ -31,7 +33,8 @@ trait ManagesTranslations
     public function renderTranslation()
     {
         return $this->container->make('translator')->get(
-            trim(ob_get_clean()), $this->translationReplacements
+            trim(ob_get_clean()),
+            $this->translationReplacements
         );
     }
 }

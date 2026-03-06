@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 class MorphPivot extends Pivot
@@ -122,9 +124,12 @@ class MorphPivot extends Pivot
 
         return sprintf(
             '%s:%s:%s:%s:%s:%s',
-            $this->foreignKey, $this->getAttribute($this->foreignKey),
-            $this->relatedKey, $this->getAttribute($this->relatedKey),
-            $this->morphType, $this->morphClass
+            $this->foreignKey,
+            $this->getAttribute($this->foreignKey),
+            $this->relatedKey,
+            $this->getAttribute($this->relatedKey),
+            $this->morphType,
+            $this->morphClass
         );
     }
 
@@ -170,7 +175,7 @@ class MorphPivot extends Pivot
         foreach ($ids as $id) {
             $segments = explode(':', (string) $id);
 
-            $query->orWhere(fn($query) => $query->where($segments[0], $segments[1])
+            $query->orWhere(fn ($query): \Illuminate\Database\Eloquent\Builder => $query->where($segments[0], $segments[1])
                 ->where($segments[2], $segments[3])
                 ->where($segments[4], $segments[5]));
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Mail;
 
 use Illuminate\Contracts\Translation\HasLocalePreference;
@@ -35,30 +37,33 @@ class SendingMailWithLocaleTest extends TestCase
 
     public function testMailIsSentWithDefaultLocale()
     {
-        Mail::to('test@mail.com')->send(new TestMail);
+        Mail::to('test@mail.com')->send(new TestMail());
 
-        $this->assertStringContainsString('name',
+        $this->assertStringContainsString(
+            'name',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
 
     public function testMailIsSentWithSelectedLocale()
     {
-        Mail::to('test@mail.com')->locale('ar')->send(new TestMail);
+        Mail::to('test@mail.com')->locale('ar')->send(new TestMail());
 
-        $this->assertStringContainsString('esm',
+        $this->assertStringContainsString(
+            'esm',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
 
     public function testMailIsSentWithLocaleFromMailable()
     {
-        $mailable = new TestMail;
+        $mailable = new TestMail();
         $mailable->locale('ar');
 
         Mail::to('test@mail.com')->send($mailable);
 
-        $this->assertStringContainsString('esm',
+        $this->assertStringContainsString(
+            'esm',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
@@ -71,9 +76,10 @@ class SendingMailWithLocaleTest extends TestCase
             Carbon::setLocale($event->locale);
         });
 
-        Mail::to('test@mail.com')->locale('es')->send(new TimestampTestMail);
+        Mail::to('test@mail.com')->locale('es')->send(new TimestampTestMail());
 
-        Assert::assertMatchesRegularExpression('/nombre (en|dentro de) (un|1) d=C3=ADa/',
+        Assert::assertMatchesRegularExpression(
+            '/nombre (en|dentro de) (un|1) d=C3=ADa/',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
 
@@ -89,13 +95,14 @@ class SendingMailWithLocaleTest extends TestCase
             'email_locale' => 'ar',
         ]);
 
-        Mail::to($recipient)->send(new TestMail);
+        Mail::to($recipient)->send(new TestMail());
 
-        $this->assertStringContainsString('esm',
+        $this->assertStringContainsString(
+            'esm',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
 
-        $mailable = new Mailable;
+        $mailable = new Mailable();
         $mailable->to($recipient);
 
         $this->assertSame($recipient->email_locale, $mailable->locale);
@@ -108,9 +115,10 @@ class SendingMailWithLocaleTest extends TestCase
             'email_locale' => 'en',
         ]);
 
-        Mail::to($recipient)->locale('ar')->send(new TestMail);
+        Mail::to($recipient)->locale('ar')->send(new TestMail());
 
-        $this->assertStringContainsString('esm',
+        $this->assertStringContainsString(
+            'esm',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
@@ -127,9 +135,10 @@ class SendingMailWithLocaleTest extends TestCase
             'email_locale' => 'en',
         ]);
 
-        Mail::to($toRecipient)->cc($ccRecipient)->send(new TestMail);
+        Mail::to($toRecipient)->cc($ccRecipient)->send(new TestMail());
 
-        $this->assertStringContainsString('esm',
+        $this->assertStringContainsString(
+            'esm',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
@@ -147,25 +156,28 @@ class SendingMailWithLocaleTest extends TestCase
             ]),
         ];
 
-        Mail::to($recipients)->send(new TestMail);
+        Mail::to($recipients)->send(new TestMail());
 
-        $this->assertStringContainsString('name',
+        $this->assertStringContainsString(
+            'name',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
 
     public function testLocaleIsSetBackToDefaultAfterMailSent()
     {
-        Mail::to('test@mail.com')->locale('ar')->send(new TestMail);
-        Mail::to('test@mail.com')->send(new TestMail);
+        Mail::to('test@mail.com')->locale('ar')->send(new TestMail());
+        Mail::to('test@mail.com')->send(new TestMail());
 
         $this->assertSame('en', app('translator')->getLocale());
 
-        $this->assertStringContainsString('esm',
+        $this->assertStringContainsString(
+            'esm',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
 
-        $this->assertStringContainsString('name',
+        $this->assertStringContainsString(
+            'name',
             app('mailer')->getSymfonyTransport()->messages()[1]->toString()
         );
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cache;
 
 use ArrayIterator;
@@ -375,7 +377,7 @@ class CacheRepositoryTest extends TestCase
     {
         $this->expectException(BadMethodCallException::class);
 
-        $store = new FileStore(new Filesystem, '/usr');
+        $store = new FileStore(new Filesystem(), '/usr');
         $this->assertFalse(method_exists($store, 'tags'), 'Store should not support tagging.');
         (new Repository($store))->tags('foo');
     }
@@ -439,7 +441,7 @@ class CacheRepositoryTest extends TestCase
 
     public function testAtomicExecutesCallbackAndReturnsResult()
     {
-        $repo = new Repository(new ArrayStore);
+        $repo = new Repository(new ArrayStore());
 
         $result = $repo->withoutOverlapping('foo', function () {
             return 'bar';
@@ -486,7 +488,7 @@ class CacheRepositoryTest extends TestCase
 
     public function testAtomicThrowsOnLockTimeout()
     {
-        $repo = new Repository(new ArrayStore);
+        $repo = new Repository(new ArrayStore());
 
         $repo->getStore()->lock('foo', 10)->acquire();
 

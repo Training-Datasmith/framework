@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Translation\ArrayLoader;
@@ -11,12 +13,12 @@ class ValidatorAfterRuleTest extends TestCase
 {
     public function testAfterAcceptsArrayOfRules()
     {
-        $validator = new Validator(new Translator(new ArrayLoader, 'en'), [], []);
+        $validator = new Validator(new Translator(new ArrayLoader(), 'en'), [], []);
 
         $validator->after([
             fn ($validator) => $validator->errors()->add('closure', 'true'),
-            new InvokableAfterRule,
-            new AfterMethodRule,
+            new InvokableAfterRule(),
+            new AfterMethodRule(),
         ])->messages()->messages();
 
         $this->assertSame($validator->messages()->messages(), [
@@ -39,7 +41,7 @@ class AfterMethodRule
 {
     public function __invoke()
     {
-        //
+
     }
 
     public function after($validator)

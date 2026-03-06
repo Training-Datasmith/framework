@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation;
 
 use Illuminate\Contracts\Foundation\MaintenanceMode as MaintenanceModeContract;

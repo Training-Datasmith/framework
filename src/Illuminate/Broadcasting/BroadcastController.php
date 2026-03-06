@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting;
 
 use Illuminate\Http\Request;
@@ -38,6 +40,6 @@ class BroadcastController extends Controller
         }
 
         return Broadcast::resolveAuthenticatedUser($request)
-            ?? throw new AccessDeniedHttpException;
+            ?? throw new AccessDeniedHttpException();
     }
 }

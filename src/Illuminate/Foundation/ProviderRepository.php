@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation;
 
 use Exception;
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Filesystem\Filesystem;
 
 class ProviderRepository
@@ -26,8 +27,7 @@ class ProviderRepository
          * The path to the manifest file.
          */
         protected $manifestPath
-    )
-    {
+    ) {
     }
 
     /**
@@ -107,10 +107,8 @@ class ProviderRepository
 
     /**
      * Compile the application service manifest file.
-     *
-     * @return array
      */
-    protected function compileManifest(array $providers)
+    protected function compileManifest(array $providers): array
     {
         // The service manifest should contain a list of all of the providers for
         // the application so we can compare it on each request to the service
@@ -164,7 +162,8 @@ class ProviderRepository
         }
 
         $this->files->replace(
-            $this->manifestPath, '<?php return '.var_export($manifest, true).';'
+            $this->manifestPath,
+            '<?php return '.var_export($manifest, true).';'
         );
 
         return array_merge(['when' => []], $manifest);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Console\Command;
@@ -12,7 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 #[AsCommand('migrate:rollback')]
 class RollbackCommand extends BaseCommand
 {
-    use ConfirmableTrait, Prohibitable;
+    use ConfirmableTrait;
+    use Prohibitable;
 
     /**
      * The console command name.
@@ -34,8 +37,8 @@ class RollbackCommand extends BaseCommand
     public function __construct(/**
      * The migrator instance.
      */
-    protected \Illuminate\Database\Migrations\Migrator $migrator)
-    {
+        protected \Illuminate\Database\Migrations\Migrator $migrator
+    ) {
         parent::__construct();
     }
 
@@ -51,7 +54,8 @@ class RollbackCommand extends BaseCommand
 
         $this->migrator->usingConnection($this->option('database'), function (): void {
             $this->migrator->setOutput($this->output)->rollback(
-                $this->getMigrationPaths(), [
+                $this->getMigrationPaths(),
+                [
                     'pretend' => $this->option('pretend'),
                     'step' => (int) $this->option('step'),
                     'batch' => (int) $this->option('batch'),

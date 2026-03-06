@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console;
 
 use Closure;
@@ -7,6 +9,10 @@ use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Contracts\Console\Application as ApplicationContract;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
+
+use function Illuminate\Support\artisan_binary;
+use function Illuminate\Support\php_binary;
+
 use Illuminate\Support\ProcessUtils;
 use ReflectionClass;
 use Symfony\Component\Console\Application as SymfonyApplication;
@@ -16,11 +22,9 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
+
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-
-use function Illuminate\Support\artisan_binary;
-use function Illuminate\Support\php_binary;
 
 class Application extends SymfonyApplication implements ApplicationContract
 {
@@ -51,11 +55,12 @@ class Application extends SymfonyApplication implements ApplicationContract
     public function __construct(/**
      * The Laravel application instance.
      */
-    protected \Illuminate\Contracts\Container\Container $laravel, /**
+        protected \Illuminate\Contracts\Container\Container $laravel, /**
      * The event dispatcher instance.
      */
-    protected \Illuminate\Contracts\Events\Dispatcher $events, string $version)
-    {
+        protected \Illuminate\Contracts\Events\Dispatcher $events,
+        string $version
+    ) {
         parent::__construct('Laravel Framework', $version);
         $this->setAutoExit(false);
         $this->setCatchExceptions(false);
@@ -142,7 +147,8 @@ class Application extends SymfonyApplication implements ApplicationContract
         }
 
         return $this->run(
-            $input, $this->lastOutput = $outputBuffer ?: new BufferedOutput
+            $input,
+            $this->lastOutput = $outputBuffer ?: new BufferedOutput()
         );
     }
 
@@ -321,7 +327,7 @@ class Application extends SymfonyApplication implements ApplicationContract
      *
      * @return \Illuminate\Contracts\Foundation\Application
      */
-    public function getLaravel()
+    public function getLaravel(): \Illuminate\Contracts\Container\Container
     {
         return $this->laravel;
     }

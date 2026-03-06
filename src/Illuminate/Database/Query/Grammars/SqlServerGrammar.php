@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Query\Grammars;
 
 use Illuminate\Database\Query\Builder;
@@ -85,9 +87,8 @@ class SqlServerGrammar extends Grammar
      * Compile the "from" portion of the query.
      *
      * @param  string  $table
-     * @return string
      */
-    protected function compileFrom(Builder $query, $table)
+    protected function compileFrom(Builder $query, $table): string
     {
         $from = parent::compileFrom($query, $table);
 
@@ -275,9 +276,8 @@ class SqlServerGrammar extends Grammar
      *
      * @param  string  $table
      * @param  string  $where
-     * @return string
      */
-    protected function compileDeleteWithoutJoins(Builder $query, $table, $where)
+    protected function compileDeleteWithoutJoins(Builder $query, $table, $where): string
     {
         $sql = parent::compileDeleteWithoutJoins($query, $table, $where);
 
@@ -316,10 +316,8 @@ class SqlServerGrammar extends Grammar
      * Compile a row number clause.
      *
      * @param  string  $partition
-     * @param  string  $orders
-     * @return string
      */
-    protected function compileRowNumber($partition, $orders)
+    protected function compileRowNumber($partition, string $orders): string
     {
         if (empty($orders)) {
             $orders = 'order by (select 0)';
@@ -366,10 +364,8 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Compile an exists statement into SQL.
-     *
-     * @return string
      */
-    public function compileExists(Builder $query)
+    public function compileExists(Builder $query): string
     {
         $existsQuery = clone $query;
 
@@ -416,7 +412,7 @@ class SqlServerGrammar extends Grammar
         $sql .= 'on '.$on.' ';
 
         if ($update) {
-            $update = (new Collection($update))->map(fn($value, $key) => is_numeric($key)
+            $update = (new Collection($update))->map(fn ($value, $key): string => is_numeric($key)
                 ? $this->wrap($value).' = '.$this->wrap('laravel_source.'.$value)
                 : $this->wrap($key).' = '.$this->parameter($value))->implode(', ');
 

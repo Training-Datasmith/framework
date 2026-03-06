@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Http\Events;
 
 class RequestHandled
@@ -19,7 +21,6 @@ class RequestHandled
          * The response instance.
          */
         public $response
-    )
-    {
+    ) {
     }
 }

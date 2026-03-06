@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations\Concerns;
 
-use InvalidArgumentException;
-use UnitEnum;
-
 use function Illuminate\Support\enum_value;
+
+use InvalidArgumentException;
+
+use UnitEnum;
 
 trait InteractsWithDictionary
 {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Closure;
@@ -82,8 +84,7 @@ abstract class ServiceProvider
          * The application instance.
          */
         protected $app
-    )
-    {
+    ) {
     }
 
     /**
@@ -91,7 +92,7 @@ abstract class ServiceProvider
      */
     public function register(): void
     {
-        //
+
     }
 
     /**
@@ -151,7 +152,8 @@ abstract class ServiceProvider
             $config = $this->app->make('config');
 
             $config->set($key, array_merge(
-                require $path, $config->get($key, [])
+                require $path,
+                $config->get($key, [])
             ));
         }
     }
@@ -169,7 +171,8 @@ abstract class ServiceProvider
             $config = $this->app->make('config');
 
             $config->set($key, array_replace_recursive(
-                require $path, $config->get($key, [])
+                require $path,
+                $config->get($key, [])
             ));
         }
     }
@@ -359,7 +362,8 @@ abstract class ServiceProvider
         }
 
         static::$publishGroups[$group] = array_merge(
-            static::$publishGroups[$group], $paths
+            static::$publishGroups[$group],
+            $paths
         );
     }
 
@@ -376,7 +380,7 @@ abstract class ServiceProvider
             return $paths;
         }
 
-        return (new Collection(static::$publishes))->reduce(fn($paths, $p) => array_merge($paths, $p), []);
+        return (new Collection(static::$publishes))->reduce(fn ($paths, $p): array => array_merge($paths, $p), []);
     }
 
     /**
@@ -549,7 +553,7 @@ abstract class ServiceProvider
      */
     public static function defaultProviders()
     {
-        return new DefaultProviders;
+        return new DefaultProviders();
     }
 
     /**
@@ -614,7 +618,7 @@ return [
             ->when(
                 $strict,
                 static fn (Collection $providerCollection) => $providerCollection->reject(fn (string $p): bool => in_array($p, $providersToRemove, true)),
-                static fn (Collection $providerCollection) => $providerCollection->reject(fn (string $p) => Str::contains($p, $providersToRemove))
+                static fn (Collection $providerCollection) => $providerCollection->reject(fn (string $p): bool => Str::contains($p, $providersToRemove))
             )
             ->map(fn ($p): string => '    '.$p.'::class,')
             ->implode(PHP_EOL);

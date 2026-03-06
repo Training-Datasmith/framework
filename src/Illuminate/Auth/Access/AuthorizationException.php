@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Access;
 
 use Exception;
@@ -75,7 +77,7 @@ class AuthorizationException extends Exception
      *
      * @return $this
      */
-    public function asNotFound()
+    public function asNotFound(): static
     {
         return $this->withStatus(404);
     }
@@ -100,10 +102,8 @@ class AuthorizationException extends Exception
 
     /**
      * Create a deny response object from this exception.
-     *
-     * @return \Illuminate\Auth\Access\Response
      */
-    public function toResponse()
+    public function toResponse(): \Illuminate\Auth\Access\Response
     {
         return Response::deny($this->message, $this->code)->withStatus($this->status);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use BackedEnum;
@@ -68,7 +70,7 @@ class EncodedHtmlString extends HtmlString
             $value = $value->value;
         }
 
-        return (static::$encodeUsingFactory ?? (fn($value, $doubleEncode) => static::convert($value, doubleEncode: $doubleEncode)))($value, $this->doubleEncode);
+        return (static::$encodeUsingFactory ?? (fn ($value, bool $doubleEncode): string => static::convert($value, doubleEncode: $doubleEncode)))($value, $this->doubleEncode);
     }
 
     /**

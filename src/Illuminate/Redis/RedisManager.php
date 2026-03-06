@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis;
 
 use Closure;
@@ -9,9 +11,10 @@ use Illuminate\Redis\Connectors\PhpRedisConnector;
 use Illuminate\Redis\Connectors\PredisConnector;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ConfigurationUrlParser;
-use InvalidArgumentException;
 
 use function Illuminate\Support\enum_value;
+
+use InvalidArgumentException;
 
 /**
  * @mixin \Illuminate\Redis\Connections\Connection
@@ -58,8 +61,7 @@ class RedisManager implements Factory
          * The Redis server configurations.
          */
         protected array $config
-    )
-    {
+    ) {
     }
 
     /**
@@ -73,7 +75,8 @@ class RedisManager implements Factory
         $name = enum_value($name) ?: 'default';
 
         return $this->connections[$name] ?? $this->connections[$name] = $this->configure(
-            $this->resolve($name), $name
+            $this->resolve($name),
+            $name
         );
     }
 
@@ -114,7 +117,7 @@ class RedisManager implements Factory
     protected function resolveCluster($name)
     {
         return $this->connector()->connectToCluster(
-            array_map(fn($config) => $this->parseConnectionConfiguration($config), $this->config['clusters'][$name]),
+            array_map($this->parseConnectionConfiguration(...), $this->config['clusters'][$name]),
             $this->config['clusters']['options'] ?? [],
             $this->config['options'] ?? []
         );
@@ -150,8 +153,8 @@ class RedisManager implements Factory
         }
 
         return match ($this->driver) {
-            'predis' => new PredisConnector,
-            'phpredis' => new PhpRedisConnector,
+            'predis' => new PredisConnector(),
+            'phpredis' => new PhpRedisConnector(),
             default => null,
         };
     }
@@ -163,7 +166,7 @@ class RedisManager implements Factory
      */
     protected function parseConnectionConfiguration($config): array
     {
-        $parsed = (new ConfigurationUrlParser)->parseConfiguration($config);
+        $parsed = (new ConfigurationUrlParser())->parseConfiguration($config);
 
         $driver = strtolower($parsed['driver'] ?? '');
 
@@ -171,7 +174,7 @@ class RedisManager implements Factory
             $parsed['scheme'] = $driver;
         }
 
-        return array_filter($parsed, fn($key) => $key !== 'driver', ARRAY_FILTER_USE_KEY);
+        return array_filter($parsed, fn ($key): bool => $key !== 'driver', ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -240,7 +243,6 @@ class RedisManager implements Factory
     /**
      * Pass methods onto the default Redis connection.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

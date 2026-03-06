@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database\stubs;
 
 class TestValueObject
@@ -9,7 +11,7 @@ class TestValueObject
 
     public static function make(?array $test): self
     {
-        $self = new self;
+        $self = new self();
         if (! empty($test['myPropertyA'])) {
             $self->myPropertyA = $test['myPropertyA'];
         }

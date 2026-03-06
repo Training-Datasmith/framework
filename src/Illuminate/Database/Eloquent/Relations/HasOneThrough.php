@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Contracts\Database\Eloquent\SupportsPartialRelations;
@@ -21,7 +23,10 @@ use Illuminate\Database\Query\JoinClause;
  */
 class HasOneThrough extends HasOneOrManyThrough implements SupportsPartialRelations
 {
-    use ComparesRelatedModels, CanBeOneOfMany, InteractsWithDictionary, SupportsDefaultModels;
+    use ComparesRelatedModels;
+    use CanBeOneOfMany;
+    use InteractsWithDictionary;
+    use SupportsDefaultModels;
 
     /** @inheritDoc */
     public function getResults()
@@ -58,7 +63,8 @@ class HasOneThrough extends HasOneOrManyThrough implements SupportsPartialRelati
                 $value = $dictionary[$key];
 
                 $model->setRelation(
-                    $relation, reset($value)
+                    $relation,
+                    reset($value)
                 );
             }
         }

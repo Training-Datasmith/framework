@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Container\Container;
@@ -345,7 +347,8 @@ class SupportStringableTest extends TestCase
             'Iron Man',
             (string) $this->stringable('Tony')->whenNotExactly('Tony Stark', function ($stringable) {
                 return 'Iron Man';
-            }));
+            })
+        );
 
         $this->assertSame(
             'Swing and a miss...!',
@@ -353,7 +356,8 @@ class SupportStringableTest extends TestCase
                 return 'Iron Man';
             }, function ($stringable) {
                 return 'Swing and a miss...!';
-            }));
+            })
+        );
     }
 
     public function testWhenIs()
@@ -509,7 +513,7 @@ class SupportStringableTest extends TestCase
     {
         tap($this->stringable(), function ($stringable) {
             $this->assertSame($stringable, $stringable->whenEmpty(function () {
-                //
+
             }));
         });
 
@@ -571,12 +575,14 @@ class SupportStringableTest extends TestCase
             return $stringable->append($value)->append('true');
         }));
 
-        $this->assertSame('unless true fallbacks to default with value 1',
+        $this->assertSame(
+            'unless true fallbacks to default with value 1',
             (string) $this->stringable('unless true ')->unless(1, function ($stringable, $value) {
                 return $stringable->append($value);
             }, function ($stringable, $value) {
                 return $stringable->append('fallbacks to default with value ')->append($value);
-            }));
+            })
+        );
     }
 
     public function testUnlessFalsy()
@@ -585,12 +591,14 @@ class SupportStringableTest extends TestCase
             return $stringable->append($value);
         }));
 
-        $this->assertSame('gets the value 0',
+        $this->assertSame(
+            'gets the value 0',
             (string) $this->stringable('gets the value ')->unless(0, function ($stringable, $value) {
                 return $stringable->append($value);
             }, function ($stringable) {
                 return $stringable->append('fallbacks to default');
-            }));
+            })
+        );
     }
 
     public function testTrimmedOnlyWhereNecessary()
@@ -1022,7 +1030,8 @@ class SupportStringableTest extends TestCase
 
     public function testLimit()
     {
-        $this->assertSame('Laravel is...',
+        $this->assertSame(
+            'Laravel is...',
             (string) $this->stringable('Laravel is a free, open source PHP web application framework.')->limit(10)
         );
         $this->assertSame('这是一...', (string) $this->stringable('这是一段中文')->limit(6));
@@ -1348,8 +1357,7 @@ class SupportStringableTest extends TestCase
         $this->assertEquals("<p><em>hello world</em></p>\n", $this->stringable('*hello world*')->markdown());
         $this->assertEquals("<h1>hello world</h1>\n", $this->stringable('# hello world')->markdown());
 
-        $extension = new class implements ExtensionInterface
-        {
+        $extension = new class () implements ExtensionInterface {
             public bool $configured = false;
 
             public function register(EnvironmentBuilderInterface $environment): void
@@ -1366,8 +1374,7 @@ class SupportStringableTest extends TestCase
         $this->assertEquals("<em>hello world</em>\n", $this->stringable('*hello world*')->inlineMarkdown());
         $this->assertEquals("<a href=\"https://laravel.com\"><strong>Laravel</strong></a>\n", $this->stringable('[**Laravel**](https://laravel.com)')->inlineMarkdown());
 
-        $extension = new class implements ExtensionInterface
-        {
+        $extension = new class () implements ExtensionInterface {
             public bool $configured = false;
 
             public function register(EnvironmentBuilderInterface $environment): void
@@ -1584,7 +1591,7 @@ class SupportStringableTest extends TestCase
 
     public function testEncryptAndDecrypt()
     {
-        Container::setInstance($this->container = new Container);
+        Container::setInstance($this->container = new Container());
 
         $this->container->bind('encrypter', fn () => new Encrypter(str_repeat('b', 16)));
 

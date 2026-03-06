@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use ArrayAccess;
@@ -37,7 +39,7 @@ class SupportHelpersTest extends TestCase
     protected function tearDown(): void
     {
         if (is_dir(__DIR__.'/tmp')) {
-            (new Filesystem)->deleteDirectory(__DIR__.'/tmp');
+            (new Filesystem())->deleteDirectory(__DIR__.'/tmp');
         }
 
         parent::tearDown();
@@ -88,8 +90,7 @@ class SupportHelpersTest extends TestCase
 
     public function testBlankDoesntJsonSerializeModels()
     {
-        $model = new class extends Model
-        {
+        $model = new class () extends Model {
             public function jsonSerialize(): mixed
             {
                 throw new RuntimeException('Model should not be serialized');
@@ -135,7 +136,7 @@ class SupportHelpersTest extends TestCase
         $this->assertNull(when(0, fn () => null));
         $this->assertEquals('True', when([1, 2, 3, 4], 'True')); // Array
         $this->assertNull(when([], 'True')); // Empty Array = Falsy
-        $this->assertEquals('True', when(new StdClass, fn () => 'True')); // Object
+        $this->assertEquals('True', when(new StdClass(), fn () => 'True')); // Object
         $this->assertEquals('World', when(false, 'Hello', 'World'));
         $this->assertEquals('World', when(1 === 0, 'Hello', 'World')); // strict types
         $this->assertEquals('World', when(1 == '0', 'Hello', 'World')); // loose types
@@ -168,8 +169,7 @@ class SupportHelpersTest extends TestCase
 
     public function testValue()
     {
-        $callable = new class
-        {
+        $callable = new class () {
             public function __call($method, $arguments)
             {
                 return $arguments;
@@ -188,8 +188,8 @@ class SupportHelpersTest extends TestCase
 
     public function testObjectGet()
     {
-        $class = new stdClass;
-        $class->name = new stdClass;
+        $class = new stdClass();
+        $class->name = new stdClass();
         $class->name->first = 'Taylor';
 
         $this->assertSame('Taylor', object_get($class, 'name.first'));
@@ -198,8 +198,8 @@ class SupportHelpersTest extends TestCase
 
     public function testObjectGetDefaultValue()
     {
-        $class = new stdClass;
-        $class->name = new stdClass;
+        $class = new stdClass();
+        $class->name = new stdClass();
         $class->name->first = 'Taylor';
 
         $this->assertSame('default', object_get($class, 'name.family', 'default'));
@@ -208,7 +208,7 @@ class SupportHelpersTest extends TestCase
 
     public function testObjectGetWhenKeyIsNullOrEmpty()
     {
-        $object = new stdClass;
+        $object = new stdClass();
 
         $this->assertEquals($object, object_get($object, null));
         $this->assertEquals($object, object_get($object, false));
@@ -775,7 +775,7 @@ class SupportHelpersTest extends TestCase
                 SupportTestTraitTwo::class => SupportTestTraitTwo::class,
                 SupportTestTraitOne::class => SupportTestTraitOne::class,
             ],
-            class_uses_recursive(new SupportTestClassTwo)
+            class_uses_recursive(new SupportTestClassTwo())
         );
     }
 
@@ -840,7 +840,7 @@ class SupportHelpersTest extends TestCase
     {
         $this->expectException(LogicException::class);
 
-        throw_if(true, new LogicException);
+        throw_if(true, new LogicException());
     }
 
     public function testThrowDefaultException()
@@ -894,7 +894,7 @@ class SupportHelpersTest extends TestCase
     {
         $this->expectException(LogicException::class);
 
-        throw_unless(false, new LogicException);
+        throw_unless(false, new LogicException());
     }
 
     public function testThrowUnlessDefaultException()
@@ -922,7 +922,7 @@ class SupportHelpersTest extends TestCase
 
     public function testThrowReturnIfNotThrown()
     {
-        $this->assertSame('foo', throw_unless('foo', new RuntimeException));
+        $this->assertSame('foo', throw_unless('foo', new RuntimeException()));
     }
 
     public function testThrowWithString()
@@ -937,8 +937,7 @@ class SupportHelpersTest extends TestCase
     {
         $this->assertNull(optional(null)->something());
 
-        $this->assertEquals(10, optional(new class
-        {
+        $this->assertEquals(10, optional(new class () {
             public function something()
             {
                 return 10;
@@ -1016,12 +1015,10 @@ class SupportHelpersTest extends TestCase
 
         $this->assertNull(optional(null)->present()->something());
 
-        $this->assertSame('$10.00', optional(new class
-        {
+        $this->assertSame('$10.00', optional(new class () {
             public function present()
             {
-                return new class
-                {
+                return new class () {
                     public function something()
                     {
                         return '$10.00';
@@ -1040,7 +1037,7 @@ class SupportHelpersTest extends TestCase
                 return $attempts;
             }
 
-            throw new RuntimeException;
+            throw new RuntimeException();
         }, 100);
 
         // Make sure we made two attempts
@@ -1063,7 +1060,7 @@ class SupportHelpersTest extends TestCase
                 return $attempts;
             }
 
-            throw new RuntimeException;
+            throw new RuntimeException();
         }, function ($attempt, $exception) {
             $this->assertInstanceOf(RuntimeException::class, $exception);
 
@@ -1091,7 +1088,7 @@ class SupportHelpersTest extends TestCase
                 return $attempts;
             }
 
-            throw new RuntimeException;
+            throw new RuntimeException();
         }, 100, function ($ex) {
             return true;
         });
@@ -1116,7 +1113,7 @@ class SupportHelpersTest extends TestCase
                 return $attempts;
             }
 
-            throw new RuntimeException;
+            throw new RuntimeException();
         }, 100, function ($ex) {
             return false;
         });
@@ -1131,7 +1128,7 @@ class SupportHelpersTest extends TestCase
                 return $attempts;
             }
 
-            throw new RuntimeException;
+            throw new RuntimeException();
         });
 
         // Make sure we made four attempts
@@ -1286,7 +1283,7 @@ class SupportHelpersTest extends TestCase
 
     public function testWriteArrayOfEnvVariablesToFile()
     {
-        $filesystem = new Filesystem;
+        $filesystem = new Filesystem();
         $path = __DIR__.'/tmp/env-test-file';
         $filesystem->put($path, implode(PHP_EOL, [
             'APP_NAME=Laravel',
@@ -1327,7 +1324,7 @@ class SupportHelpersTest extends TestCase
 
     public function testWriteArrayOfEnvVariablesToFileAndOverwrite()
     {
-        $filesystem = new Filesystem;
+        $filesystem = new Filesystem();
         $path = __DIR__.'/tmp/env-test-file';
         $filesystem->put($path, implode(PHP_EOL, [
             'APP_NAME=Laravel',
@@ -1364,7 +1361,7 @@ class SupportHelpersTest extends TestCase
 
     public function testWillNotOverwriteArrayOfVariables()
     {
-        $filesystem = new Filesystem;
+        $filesystem = new Filesystem();
         $path = __DIR__.'/tmp/env-test-file';
         $filesystem->put($path, implode(PHP_EOL, [
             'APP_NAME=Laravel',
@@ -1401,7 +1398,7 @@ class SupportHelpersTest extends TestCase
 
     public function testWriteVariableToFile()
     {
-        $filesystem = new Filesystem;
+        $filesystem = new Filesystem();
         $path = __DIR__.'/tmp/env-test-file';
         $filesystem->put($path, implode(PHP_EOL, [
             'APP_NAME=Laravel',
@@ -1434,7 +1431,7 @@ class SupportHelpersTest extends TestCase
 
     public function testWillNotOverwriteVariable()
     {
-        $filesystem = new Filesystem;
+        $filesystem = new Filesystem();
         $path = __DIR__.'/tmp/env-test-file';
         $filesystem->put($path, implode(PHP_EOL, [
             'APP_NAME=Laravel',
@@ -1468,7 +1465,7 @@ class SupportHelpersTest extends TestCase
 
     public function testWriteVariableToFileAndOverwrite()
     {
-        $filesystem = new Filesystem;
+        $filesystem = new Filesystem();
         $path = __DIR__.'/tmp/env-test-file';
         $filesystem->put($path, implode(PHP_EOL, [
             'APP_NAME=Laravel',
@@ -1616,7 +1613,7 @@ class SupportHelpersTest extends TestCase
         }
 
         $instance = lazy(SupportLazyClass::class, function (SupportLazyClass $instance) {
-            //
+
         });
 
         $this->assertFalse(SupportLazyClass::$constructorCalled);
@@ -1824,7 +1821,7 @@ class SupportHelpersTest extends TestCase
         }
 
         $instance = lazy(function (SupportLazyClass $instance) {
-            //
+
         });
 
         $this->assertFalse(SupportLazyClass::$constructorCalled);
@@ -1845,7 +1842,7 @@ class SupportHelpersTest extends TestCase
         $this->expectExceptionMessage('The first parameter of the given Closure is missing a type hint.');
 
         lazy(function ($instance) {
-            //
+
         });
     }
 
@@ -2076,7 +2073,7 @@ class SupportHelpersTest extends TestCase
         }
 
         $instance = proxy(SupportLazyClass::class, function (SupportLazyClass $proxy) {
-            //
+
         });
 
         $this->assertFalse(SupportLazyClass::$constructorCalled);
@@ -2155,7 +2152,7 @@ class SupportHelpersTest extends TestCase
         }
 
         $instance = proxy(function (SupportLazyClass $proxy) {
-            //
+
         });
 
         $this->assertFalse(SupportLazyClass::$constructorCalled);
@@ -2176,7 +2173,7 @@ class SupportHelpersTest extends TestCase
         $this->expectExceptionMessage('The first parameter of the given Closure is missing a type hint.');
 
         proxy(function ($proxy) {
-            //
+
         });
     }
 
@@ -2223,7 +2220,6 @@ class SupportHelpersTest extends TestCase
 
 trait SupportTestTraitOne
 {
-    //
 }
 
 trait SupportTestTraitTwo
@@ -2238,12 +2234,10 @@ class SupportTestClassOne
 
 class SupportTestClassTwo extends SupportTestClassOne
 {
-    //
 }
 
 trait SupportTestTraitThree
 {
-    //
 }
 
 class SupportTestClassThree extends SupportTestClassTwo

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 class NamespacedItemResolver
@@ -78,7 +80,8 @@ class NamespacedItemResolver
         $itemSegments = explode('.', $item);
 
         $groupAndItem = array_slice(
-            $this->parseBasicSegments($itemSegments), 1
+            $this->parseBasicSegments($itemSegments),
+            1
         );
 
         return array_merge([$namespace], $groupAndItem);

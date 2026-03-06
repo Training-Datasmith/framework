@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Http\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\TrimStrings;
@@ -13,13 +15,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_no_zero_width_space_character_returns_the_same_string()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => 'This title does not contain any zero-width space',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title does not contain any zero-width space', $req->title);
@@ -31,13 +33,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_leading_zero_width_space_character_is_trimmed()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => '​This title contains a zero-width space at the beginning',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title contains a zero-width space at the beginning', $req->title);
@@ -46,7 +48,7 @@ class TrimStringsTest extends TestCase
 
     public function test_trim_strings_can_globally_ignore_certain_inputs()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'globally_ignored_title' => ' test title ',
@@ -54,7 +56,7 @@ class TrimStringsTest extends TestCase
 
         TrimStrings::except(['globally_ignored_title']);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals(' test title ', $req->globally_ignored_title);
@@ -66,13 +68,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_trailing_zero_width_space_character_is_trimmed()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => 'This title contains a zero-width space at the end​',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title contains a zero-width space at the end', $req->title);
@@ -84,13 +86,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_leading_zero_width_non_breakable_space_character_is_trimmed()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => '﻿This title contains a zero-width non-breakable space at the beginning',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title contains a zero-width non-breakable space at the beginning', $req->title);
@@ -102,13 +104,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_leading_multiple_zero_width_non_breakable_space_characters_are_trimmed()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => '﻿﻿This title contains a zero-width non-breakable space at the beginning',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title contains a zero-width non-breakable space at the beginning', $req->title);
@@ -120,13 +122,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_combination_of_leading_and_trailing_zero_width_non_breakable_space_and_zero_width_space_characters_are_trimmed()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => '﻿​﻿This title contains a combination of zero-width non-breakable space and zero-width spaces characters at the beginning and the end​',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title contains a combination of zero-width non-breakable space and zero-width spaces characters at the beginning and the end', $req->title);
@@ -138,13 +140,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_leading_invisible_characters_are_trimmed()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => '‎This title contains a invisible character at the beginning',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title contains a invisible character at the beginning', $req->title);
@@ -156,13 +158,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_trailing_invisible_characters_are_trimmed()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => 'This title contains a invisible character at the end‎',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title contains a invisible character at the end', $req->title);
@@ -174,13 +176,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_leading_multiple_invisible_characters_are_trimmed()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => '‎‎This title contains a invisible character at the beginning',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title contains a invisible character at the beginning', $req->title);
@@ -192,13 +194,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_trailing_multiple_invisible_characters_are_trimmed()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => 'This title contains a invisible character at the end‎‎',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title contains a invisible character at the end', $req->title);
@@ -210,13 +212,13 @@ class TrimStringsTest extends TestCase
      */
     public function test_combination_of_leading_and_trailing_multiple_invisible_characters_are_trimmed()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'title' => '‎‎This title contains a combination of a invisible character at beginning and the end‎‎',
         ]);
 
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
 
         $middleware->handle($request, function ($req) {
             $this->assertEquals('This title contains a combination of a invisible character at beginning and the end', $req->title);
@@ -225,7 +227,7 @@ class TrimStringsTest extends TestCase
 
     public function test_trim_strings_can_ignore_nested_attributes_using_wildcards()
     {
-        $request = new Request;
+        $request = new Request();
 
         $request->merge([
             'users' => [
@@ -249,8 +251,7 @@ class TrimStringsTest extends TestCase
             ],
         ]);
 
-        $middleware = new class extends TrimStrings
-        {
+        $middleware = new class () extends TrimStrings {
             protected $except = [
                 'users.*.name',
                 'orders.*.items.*.meta.title',

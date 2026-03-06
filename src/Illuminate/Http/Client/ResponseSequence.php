@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Client;
 
 use Closure;
@@ -32,8 +34,7 @@ class ResponseSequence
          * The responses in the sequence.
          */
         protected array $responses
-    )
-    {
+    ) {
     }
 
     /**
@@ -42,7 +43,7 @@ class ResponseSequence
      * @param  string|array|null  $body
      * @return $this
      */
-    public function push($body = null, int $status = 200, array $headers = [])
+    public function push($body = null, int $status = 200, array $headers = []): static
     {
         return $this->pushResponse(
             Factory::response($body, $status, $headers)
@@ -54,7 +55,7 @@ class ResponseSequence
      *
      * @return $this
      */
-    public function pushStatus(int $status, array $headers = [])
+    public function pushStatus(int $status, array $headers = []): static
     {
         return $this->pushResponse(
             Factory::response('', $status, $headers)
@@ -66,7 +67,7 @@ class ResponseSequence
      *
      * @return $this
      */
-    public function pushFile(string $filePath, int $status = 200, array $headers = [])
+    public function pushFile(string $filePath, int $status = 200, array $headers = []): static
     {
         $string = file_get_contents($filePath);
 
@@ -81,7 +82,7 @@ class ResponseSequence
      * @param  string|null  $message
      * @return $this
      */
-    public function pushFailedConnection($message = null)
+    public function pushFailedConnection($message = null): static
     {
         return $this->pushResponse(
             Factory::failedConnection($message)
@@ -120,7 +121,7 @@ class ResponseSequence
      *
      * @return $this
      */
-    public function dontFailWhenEmpty()
+    public function dontFailWhenEmpty(): static
     {
         return $this->whenEmpty(Factory::response());
     }

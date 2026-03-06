@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 class MemcachedLock extends Lock
@@ -15,8 +17,11 @@ class MemcachedLock extends Lock
     public function __construct(/**
      * The Memcached instance.
      */
-    protected $memcached, $name, $seconds, $owner = null)
-    {
+        protected $memcached,
+        $name,
+        $seconds,
+        $owner = null
+    ) {
         parent::__construct($name, $seconds, $owner);
     }
 
@@ -26,7 +31,9 @@ class MemcachedLock extends Lock
     public function acquire(): bool
     {
         return $this->memcached->add(
-            $this->name, $this->owner, $this->seconds
+            $this->name,
+            $this->owner,
+            $this->seconds
         );
     }
 

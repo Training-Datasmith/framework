@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Cache;
 
 use BadMethodCallException;
@@ -438,8 +440,7 @@ class MemoizedStoreTest extends TestCase
             $exceptions[] = $e;
         });
         Config::set('cache.stores.no-lock', ['driver' => 'no-lock']);
-        Cache::extend('no-lock', fn () => Cache::repository(new class implements Store
-        {
+        Cache::extend('no-lock', fn () => Cache::repository(new class () implements Store {
             public function get($key)
             {
                 return Cache::get(...func_get_args());

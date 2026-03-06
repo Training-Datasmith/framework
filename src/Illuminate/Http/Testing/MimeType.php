@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Testing;
 
 use Illuminate\Support\Arr;
@@ -17,10 +19,10 @@ class MimeType
      *
      * @return \Symfony\Component\Mime\MimeTypesInterface
      */
-    public static function getMimeTypes()
+    public static function getMimeTypes(): \Symfony\Component\Mime\MimeTypes
     {
         if (self::$mime === null) {
-            self::$mime = new MimeTypes;
+            self::$mime = new MimeTypes();
         }
 
         return self::$mime;

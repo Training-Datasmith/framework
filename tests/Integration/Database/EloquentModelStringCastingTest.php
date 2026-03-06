@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
@@ -37,7 +39,7 @@ class EloquentModelStringCastingTest extends DatabaseTestCase
         $this->assertSame(['json_key' => 'json_value'], $model->getOriginal('json_attributes'));
         $this->assertSame(['json_key' => 'json_value'], $model->getAttribute('json_attributes'));
 
-        $stdClass = new stdClass;
+        $stdClass = new stdClass();
         $stdClass->json_key = 'json_value';
         $this->assertEquals($stdClass, $model->getOriginal('object_attributes'));
         $this->assertEquals($stdClass, $model->getAttribute('object_attributes'));

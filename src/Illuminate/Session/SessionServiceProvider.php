@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session;
 
 use Illuminate\Contracts\Cache\Factory as CacheFactory;
@@ -17,7 +19,7 @@ class SessionServiceProvider extends ServiceProvider
 
         $this->registerSessionDriver();
 
-        $this->app->singleton(StartSession::class, fn($app) => new StartSession($app->make(SessionManager::class), fn() => $app->make(CacheFactory::class)));
+        $this->app->singleton(StartSession::class, fn ($app): \Illuminate\Session\Middleware\StartSession => new StartSession($app->make(SessionManager::class), fn () => $app->make(CacheFactory::class)));
     }
 
     /**
@@ -27,7 +29,7 @@ class SessionServiceProvider extends ServiceProvider
      */
     protected function registerSessionManager()
     {
-        $this->app->singleton('session', fn($app) => new SessionManager($app));
+        $this->app->singleton('session', fn ($app): \Illuminate\Session\SessionManager => new SessionManager($app));
     }
 
     /**
@@ -37,10 +39,12 @@ class SessionServiceProvider extends ServiceProvider
      */
     protected function registerSessionDriver()
     {
-        $this->app->singleton('session.store', 
+        $this->app->singleton(
+            'session.store',
             // First, we will create the session manager which is responsible for the
             // creation of the various session drivers when they are needed by the
             // application instance, and will resolve them on a lazy load basis.
-            fn($app) => $app->make('session')->driver());
+            fn ($app) => $app->make('session')->driver()
+        );
     }
 }

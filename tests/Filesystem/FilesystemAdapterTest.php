@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Filesystem;
 
 use Carbon\Carbon;
@@ -433,7 +435,7 @@ class FilesystemAdapterTest extends TestCase
     #[RequiresPhpExtension('ftp')]
     public function testCreateFtpDriver()
     {
-        $filesystem = new FilesystemManager(new Application);
+        $filesystem = new FilesystemManager(new Application());
 
         $driver = $filesystem->createFtpDriver([
             'host' => 'ftp.example.com',
@@ -682,8 +684,7 @@ class FilesystemAdapterTest extends TestCase
 
     public function testProvidesTemporaryUrls()
     {
-        $localAdapter = new class($this->tempDir) extends LocalFilesystemAdapter
-        {
+        $localAdapter = new class ($this->tempDir) extends LocalFilesystemAdapter {
             public function getTemporaryUrl($path, Carbon $expiration, $options): string
             {
                 return $path.$expiration->toString().implode('', $options);
@@ -707,7 +708,7 @@ class FilesystemAdapterTest extends TestCase
 
     public function testProvidesTemporaryUrlsForS3Adapter()
     {
-        $filesystem = new FilesystemManager(new Application);
+        $filesystem = new FilesystemManager(new Application());
         $filesystemAdapter = $filesystem->createS3Driver([
             'region' => 'us-west-1',
             'bucket' => 'laravel',
@@ -718,7 +719,7 @@ class FilesystemAdapterTest extends TestCase
 
     public function testUsesRightSeperatorForS3Adapter()
     {
-        $filesystem = new FilesystemManager(new Application);
+        $filesystem = new FilesystemManager(new Application());
         $filesystemAdapter = $filesystem->createS3Driver([
             'region' => 'us-west-1',
             'bucket' => 'laravel',
@@ -756,7 +757,7 @@ class FilesystemAdapterTest extends TestCase
 
     public function testUsesRightSeperatorForS3AdapterWithoutDoublePrefixing()
     {
-        $filesystem = new FilesystemManager(new Application);
+        $filesystem = new FilesystemManager(new Application());
         $filesystemAdapter = $filesystem->createS3Driver([
             'region' => 'us-west-1',
             'bucket' => 'laravel',
@@ -792,8 +793,7 @@ class FilesystemAdapterTest extends TestCase
 
     public function testProvidesTemporaryUploadUrls()
     {
-        $localAdapter = new class($this->tempDir) extends LocalFilesystemAdapter
-        {
+        $localAdapter = new class ($this->tempDir) extends LocalFilesystemAdapter {
             public function temporaryUploadUrl($path, $expiration, $options): array
             {
                 return [

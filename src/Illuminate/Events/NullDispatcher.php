@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Events;
 
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
@@ -17,8 +19,7 @@ class NullDispatcher implements DispatcherContract
          * The underlying event dispatcher instance.
          */
         protected \Illuminate\Contracts\Events\Dispatcher $dispatcher
-    )
-    {
+    ) {
     }
 
     /**
@@ -30,7 +31,7 @@ class NullDispatcher implements DispatcherContract
      */
     public function dispatch($event, $payload = [], $halt = false): void
     {
-        //
+
     }
 
     /**
@@ -41,7 +42,7 @@ class NullDispatcher implements DispatcherContract
      */
     public function push($event, $payload = []): void
     {
-        //
+
     }
 
     /**
@@ -52,7 +53,7 @@ class NullDispatcher implements DispatcherContract
      */
     public function until($event, $payload = []): void
     {
-        //
+
     }
 
     /**
@@ -118,7 +119,6 @@ class NullDispatcher implements DispatcherContract
     /**
      * Dynamically pass method calls to the underlying dispatcher.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

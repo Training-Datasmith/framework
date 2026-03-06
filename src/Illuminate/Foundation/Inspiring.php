@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation;
 
 use Illuminate\Support\Collection;
@@ -51,10 +53,8 @@ class Inspiring
      * May McGinnis always control the board. #LaraconUS2015
      *
      * RIP Charlie - Feb 6, 2018
-     *
-     * @return string
      */
-    public static function quote()
+    public static function quote(): string
     {
         return static::formatForConsole(static::quotes()->random());
     }

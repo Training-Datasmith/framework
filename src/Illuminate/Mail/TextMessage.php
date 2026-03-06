@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail;
 
 use Illuminate\Support\Traits\ForwardsCalls;
@@ -21,8 +23,7 @@ class TextMessage
          * The underlying message instance.
          */
         protected $message
-    )
-    {
+    ) {
     }
 
     /**
@@ -50,7 +51,6 @@ class TextMessage
     /**
      * Dynamically pass missing methods to the underlying message instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

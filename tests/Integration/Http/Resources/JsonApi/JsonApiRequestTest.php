@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Http\Resources\JsonApi;
 
 use Illuminate\Http\Resources\JsonApi\JsonApiRequest;

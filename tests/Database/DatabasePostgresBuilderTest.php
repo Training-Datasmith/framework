@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Connection;
@@ -289,6 +291,6 @@ class DatabasePostgresBuilderTest extends TestCase
 
     protected function getGrammar()
     {
-        return new PostgresGrammar;
+        return new PostgresGrammar();
     }
 }

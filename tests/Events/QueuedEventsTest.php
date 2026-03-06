@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Events;
 
 use Illuminate\Bus\Dispatcher as BusDispatcher;
@@ -25,7 +27,7 @@ class QueuedEventsTest extends TestCase
 {
     public function testQueuedEventHandlersAreQueued()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
         $queue = m::mock(Queue::class);
 
         $queue->shouldReceive('connection')->once()->with(null)->andReturnSelf();
@@ -42,9 +44,9 @@ class QueuedEventsTest extends TestCase
 
     public function testCustomizedQueuedEventHandlersAreQueued()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -58,9 +60,9 @@ class QueuedEventsTest extends TestCase
 
     public function testQueueIsSetByGetQueue()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -74,7 +76,7 @@ class QueuedEventsTest extends TestCase
 
     public function testQueueIsSetByGetConnection()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
         $queue = m::mock(Queue::class);
 
         $queue->shouldReceive('connection')->once()->with('some_other_connection')->andReturnSelf();
@@ -91,7 +93,7 @@ class QueuedEventsTest extends TestCase
 
     public function testDelayIsSetByWithDelay()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
         $queue = m::mock(Queue::class);
 
         $queue->shouldReceive('connection')->once()->with(null)->andReturnSelf();
@@ -108,9 +110,9 @@ class QueuedEventsTest extends TestCase
 
     public function testQueueIsSetByGetQueueDynamically()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -124,7 +126,7 @@ class QueuedEventsTest extends TestCase
 
     public function testQueueIsSetByGetConnectionDynamically()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
         $queueManager = $this->createMock(QueueManager::class);
         $queue = $this->createMock(Queue::class);
 
@@ -150,7 +152,7 @@ class QueuedEventsTest extends TestCase
 
     public function testDelayIsSetByWithDelayDynamically()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
         $queue = m::mock(Queue::class);
 
         $queue->shouldReceive('connection')->once()->with(null)->andReturnSelf();
@@ -167,9 +169,9 @@ class QueuedEventsTest extends TestCase
 
     public function testQueuePropagateRetryUntilAndMaxExceptions()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -185,9 +187,9 @@ class QueuedEventsTest extends TestCase
 
     public function testQueuePropagateTries()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -203,9 +205,9 @@ class QueuedEventsTest extends TestCase
 
     public function testQueuePropagateMessageGroupProperty()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -221,9 +223,9 @@ class QueuedEventsTest extends TestCase
 
     public function testQueuePropagateMessageGroupMethodOverProperty()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -239,9 +241,9 @@ class QueuedEventsTest extends TestCase
 
     public function testQueuePropagateDeduplicationIdMethod()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -259,9 +261,9 @@ class QueuedEventsTest extends TestCase
 
     public function testQueuePropagateDeduplicatorMethodOverDeduplicationIdMethod()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -279,9 +281,9 @@ class QueuedEventsTest extends TestCase
 
     public function testQueuePropagateMiddleware()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -300,10 +302,10 @@ class QueuedEventsTest extends TestCase
 
     public function testDispatchesOnQueueDefinedWithEnum()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
         $queue = m::mock(Queue::class);
 
-        $fakeQueue = new QueueFake(new Container);
+        $fakeQueue = new QueueFake(new Container());
 
         $d->setQueueResolver(function () use ($fakeQueue) {
             return $fakeQueue;
@@ -317,7 +319,7 @@ class QueuedEventsTest extends TestCase
 
     public function testQueuePropagatesShouldBeUnique()
     {
-        $container = new Container;
+        $container = new Container();
         $d = new Dispatcher($container);
 
         $fakeQueue = new QueueFake($container);
@@ -346,7 +348,7 @@ class QueuedEventsTest extends TestCase
 
     public function testUniqueListenerNotQueuedWhenLockNotAcquired()
     {
-        $container = new Container;
+        $container = new Container();
         $d = new Dispatcher($container);
 
         $fakeQueue = new QueueFake($container);
@@ -370,7 +372,7 @@ class QueuedEventsTest extends TestCase
 
     public function testQueuePropagatesShouldBeUniqueUntilProcessing()
     {
-        $container = new Container;
+        $container = new Container();
         $d = new Dispatcher($container);
 
         $fakeQueue = new QueueFake($container);
@@ -397,7 +399,7 @@ class QueuedEventsTest extends TestCase
 
     public function testQueuePropagatesUniqueIdFromMethod()
     {
-        $container = new Container;
+        $container = new Container();
         $d = new Dispatcher($container);
 
         $fakeQueue = new QueueFake($container);
@@ -436,7 +438,7 @@ class QueuedEventsTest extends TestCase
 
     public function testUniqueLockIsAcquiredWithListenerClassName()
     {
-        $container = new Container;
+        $container = new Container();
         $d = new Dispatcher($container);
 
         $fakeQueue = new QueueFake($container);
@@ -465,7 +467,7 @@ class QueuedEventsTest extends TestCase
 
     public function testUniqueViaUsesListenerCacheRepository()
     {
-        $container = new Container;
+        $container = new Container();
         $d = new Dispatcher($container);
 
         $fakeQueue = new QueueFake($container);
@@ -499,7 +501,7 @@ class QueuedEventsTest extends TestCase
 
     public function testUniqueLockIsReleasedOnProcessingWithListenerClassName()
     {
-        $container = new Container;
+        $container = new Container();
         $cache = m::mock(Cache::class);
         $lock = m::mock(Lock::class);
 
@@ -532,7 +534,7 @@ class QueuedEventsTest extends TestCase
 
     public function testUniqueUntilProcessingLockIsReleasedBeforeHandling()
     {
-        $container = new Container;
+        $container = new Container();
         $cache = m::mock(Cache::class);
         $lock = m::mock(Lock::class);
 
@@ -573,7 +575,7 @@ class TestDispatcherQueuedHandler implements ShouldQueue
 {
     public function handle()
     {
-        //
+
     }
 }
 
@@ -587,7 +589,7 @@ class TestDispatcherConnectionQueuedHandler implements ShouldQueue
 
     public function handle()
     {
-        //
+
     }
 }
 
@@ -597,7 +599,7 @@ class TestDispatcherGetQueue implements ShouldQueue
 
     public function handle()
     {
-        //
+
     }
 
     public function viaQueue()
@@ -612,7 +614,7 @@ class TestDispatcherGetConnection implements ShouldQueue
 
     public function handle()
     {
-        //
+
     }
 
     public function viaConnection()
@@ -627,7 +629,7 @@ class TestDispatcherGetDelay implements ShouldQueue
 
     public function handle()
     {
-        //
+
     }
 
     public function withDelay()
@@ -652,7 +654,7 @@ class TestDispatcherOptions implements ShouldQueue
 
     public function handle()
     {
-        //
+
     }
 }
 
@@ -662,7 +664,7 @@ class TestDispatcherWithMessageGroupProperty implements ShouldQueue
 
     public function handle()
     {
-        //
+
     }
 }
 
@@ -672,7 +674,7 @@ class TestDispatcherWithMessageGroupMethod implements ShouldQueue
 
     public function handle()
     {
-        //
+
     }
 
     public function messageGroup($event)
@@ -685,7 +687,7 @@ class TestDispatcherWithDeduplicationIdMethod implements ShouldQueue
 {
     public function handle()
     {
-        //
+
     }
 
     public function deduplicationId($payload, $queue)
@@ -698,7 +700,7 @@ class TestDispatcherWithDeduplicatorMethod implements ShouldQueue
 {
     public function handle()
     {
-        //
+
     }
 
     public function deduplicationId($payload, $queue)
@@ -721,7 +723,7 @@ class TestDispatcherMiddleware implements ShouldQueue
 
     public function handle($a, $b)
     {
-        //
+
     }
 }
 
@@ -746,7 +748,7 @@ class TestDispatcherGetConnectionDynamically implements ShouldQueue
 {
     public function handle()
     {
-        //
+
     }
 
     public function viaConnection($event)
@@ -765,7 +767,7 @@ class TestDispatcherGetQueueDynamically implements ShouldQueue
 
     public function handle()
     {
-        //
+
     }
 
     public function viaQueue($event)
@@ -784,7 +786,7 @@ class TestDispatcherGetDelayDynamically implements ShouldQueue
 
     public function handle()
     {
-        //
+
     }
 
     public function withDelay($event)
@@ -818,7 +820,7 @@ class TestDispatcherShouldBeUnique implements ShouldQueue, ShouldBeUnique
 
     public function handle()
     {
-        //
+
     }
 }
 
@@ -846,7 +848,7 @@ class TestDispatcherUniqueIdFromMethod implements ShouldQueue, ShouldBeUnique
 {
     public function handle()
     {
-        //
+
     }
 
     public function uniqueId($event)
@@ -861,7 +863,7 @@ class TestDispatcherShouldBeUniqueWithCustomCache implements ShouldQueue, Should
 
     public function handle()
     {
-        //
+
     }
 
     public function uniqueId()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail;
 
 use Illuminate\Config\Repository as ConfigRepository;
@@ -232,7 +234,8 @@ class Mailable implements MailableContract, Renderable
         $queueName = property_exists($this, 'queue') ? $this->queue : null;
 
         return $queue->connection($connection)->pushOn(
-            $queueName ?: null, $this->newQueuedJob()
+            $queueName ?: null,
+            $this->newQueuedJob()
         );
     }
 
@@ -253,7 +256,9 @@ class Mailable implements MailableContract, Renderable
         $job->delay($delay);
 
         return $queue->connection($connection)->laterOn(
-            $queueName ?: null, $delay, $job
+            $queueName ?: null,
+            $delay,
+            $job
         );
     }
 
@@ -290,7 +295,8 @@ class Mailable implements MailableContract, Renderable
             $this->prepareMailableForDelivery();
 
             return Container::getInstance()->make('mailer')->render(
-                $this->buildView(), $this->buildViewData()
+                $this->buildView(),
+                $this->buildViewData()
             );
         });
     }
@@ -420,8 +426,11 @@ class Mailable implements MailableContract, Renderable
     protected function markdownRenderer()
     {
         return tap(Container::getInstance()->make(Markdown::class), function ($markdown): void {
-            $markdown->theme($this->theme ?: Container::getInstance()->get(ConfigRepository::class)->get(
-                'mail.markdown.theme', 'default')
+            $markdown->theme(
+                $this->theme ?: Container::getInstance()->get(ConfigRepository::class)->get(
+                    'mail.markdown.theme',
+                    'default'
+                )
             );
         });
     }
@@ -489,7 +498,9 @@ class Mailable implements MailableContract, Renderable
 
         foreach ($this->rawAttachments as $attachment) {
             $message->attachData(
-                $attachment['data'], $attachment['name'], $attachment['options']
+                $attachment['data'],
+                $attachment['name'],
+                $attachment['options']
             );
         }
 
@@ -605,7 +616,7 @@ class Mailable implements MailableContract, Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function from($address, $name = null)
+    public function from($address, $name = null): static
     {
         return $this->setAddress($address, $name, 'from');
     }
@@ -629,7 +640,7 @@ class Mailable implements MailableContract, Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function to($address, $name = null)
+    public function to($address, $name = null): static
     {
         if (! $this->locale && $address instanceof HasLocalePreference) {
             $this->locale($address->preferredLocale());
@@ -657,7 +668,7 @@ class Mailable implements MailableContract, Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function cc($address, $name = null)
+    public function cc($address, $name = null): static
     {
         return $this->setAddress($address, $name, 'cc');
     }
@@ -681,7 +692,7 @@ class Mailable implements MailableContract, Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function bcc($address, $name = null)
+    public function bcc($address, $name = null): static
     {
         return $this->setAddress($address, $name, 'bcc');
     }
@@ -705,7 +716,7 @@ class Mailable implements MailableContract, Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function replyTo($address, $name = null)
+    public function replyTo($address, $name = null): static
     {
         return $this->setAddress($address, $name, 'replyTo');
     }
@@ -783,7 +794,7 @@ class Mailable implements MailableContract, Renderable
     {
         if (is_array($recipient)) {
             if (array_values($recipient) === $recipient) {
-                return (object) array_map(fn($email) => compact('email'), $recipient);
+                return (object) array_map(fn ($email): array => compact('email'), $recipient);
             }
             return (object) $recipient;
         }
@@ -1058,7 +1069,7 @@ class Mailable implements MailableContract, Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function attachFromStorage($path, $name = null, array $options = [])
+    public function attachFromStorage($path, $name = null, array $options = []): static
     {
         return $this->attachFromStorageDisk(null, $path, $name, $options);
     }
@@ -1253,7 +1264,7 @@ class Mailable implements MailableContract, Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function assertHasTo($address, $name = null)
+    public function assertHasTo($address, $name = null): static
     {
         return $this->assertTo($address, $name);
     }
@@ -1438,7 +1449,7 @@ class Mailable implements MailableContract, Renderable
      */
     public function assertSeeInOrderInHtml($strings, $escape = true): static
     {
-        $strings = $escape ? array_map(fn($string) => EncodedHtmlString::convert($string, withQuote: true), $strings) : $strings;
+        $strings = $escape ? array_map(fn ($string): string => EncodedHtmlString::convert($string, withQuote: true), $strings) : $strings;
 
         [$html] = $this->renderForAssertions();
 
@@ -1637,7 +1648,8 @@ class Mailable implements MailableContract, Renderable
             $this->prepareMailableForDelivery();
 
             $html = Container::getInstance()->make('mailer')->render(
-                $view = $this->buildView(), $this->buildViewData()
+                $view = $this->buildView(),
+                $this->buildViewData()
             );
 
             if (is_array($view) && isset($view[1])) {
@@ -1648,7 +1660,8 @@ class Mailable implements MailableContract, Renderable
 
             if (! empty($text) && ! $text instanceof Htmlable) {
                 $text = Container::getInstance()->make('mailer')->render(
-                    $text, $this->buildViewData()
+                    $text,
+                    $this->buildViewData()
                 );
             }
 
@@ -1837,7 +1850,6 @@ class Mailable implements MailableContract, Renderable
     /**
      * Dynamically bind parameters to the message.
      *
-     * @param  array  $parameters
      * @return $this
      * @throws \BadMethodCallException
      */

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Passwords;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -22,9 +24,9 @@ class PasswordResetServiceProvider extends ServiceProvider implements Deferrable
      */
     protected function registerPasswordBroker()
     {
-        $this->app->singleton('auth.password', fn($app) => new PasswordBrokerManager($app));
+        $this->app->singleton('auth.password', fn ($app): \Illuminate\Auth\Passwords\PasswordBrokerManager => new PasswordBrokerManager($app));
 
-        $this->app->bind('auth.password.broker', fn($app) => $app->make('auth.password')->broker());
+        $this->app->bind('auth.password.broker', fn ($app) => $app->make('auth.password')->broker());
     }
 
     /**

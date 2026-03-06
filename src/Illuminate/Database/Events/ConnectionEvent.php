@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Events;
 
 abstract class ConnectionEvent
@@ -19,8 +21,8 @@ abstract class ConnectionEvent
     public function __construct(/**
      * The database connection instance.
      */
-    public $connection)
-    {
+        public $connection
+    ) {
         $this->connectionName = $this->connection->getName();
     }
 }

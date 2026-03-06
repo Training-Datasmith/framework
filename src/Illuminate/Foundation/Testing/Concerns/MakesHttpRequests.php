@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Testing\Concerns;
 
 use BackedEnum;
@@ -185,8 +187,7 @@ trait MakesHttpRequests
         }
 
         foreach ((array) $middleware as $abstract) {
-            $this->app->instance($abstract, new class
-            {
+            $this->app->instance($abstract, new class () {
                 public function handle($request, $next)
                 {
                     return $next($request);
@@ -557,8 +558,13 @@ trait MakesHttpRequests
         $files = array_merge($files, $this->extractFilesFromDataArray($parameters));
 
         $symfonyRequest = SymfonyRequest::create(
-            $this->prepareUrlForRequest($uri), $method, $parameters,
-            $cookies, $files, array_replace($this->serverVariables, $server), $content
+            $this->prepareUrlForRequest($uri),
+            $method,
+            $parameters,
+            $cookies,
+            $files,
+            array_replace($this->serverVariables, $server),
+            $content
         );
 
         $response = $kernel->handle(
@@ -709,7 +715,7 @@ trait MakesHttpRequests
             $response->withExceptions(
                 $this->app->bound(LoggedExceptionCollection::class)
                     ? $this->app->make(LoggedExceptionCollection::class)
-                    : new LoggedExceptionCollection
+                    : new LoggedExceptionCollection()
             );
         });
     }

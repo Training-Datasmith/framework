@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 use Illuminate\Contracts\Support\Htmlable;
@@ -23,8 +25,9 @@ class ComponentSlot implements Htmlable, Stringable
     public function __construct(/**
      * The slot contents.
      */
-    protected $contents = '', array $attributes = [])
-    {
+        protected $contents = '',
+        array $attributes = []
+    ) {
         $this->withAttributes($attributes);
     }
 

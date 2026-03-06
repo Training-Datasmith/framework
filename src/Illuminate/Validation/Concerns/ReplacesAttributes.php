@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Concerns;
 
 use Illuminate\Support\Arr;

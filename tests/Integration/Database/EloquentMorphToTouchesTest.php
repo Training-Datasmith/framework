@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentMorphToTouchesTest;
 
 use DB;
@@ -27,7 +29,7 @@ class EloquentMorphToTouchesTest extends DatabaseTestCase
 
     public function testNotNull()
     {
-        $comment = (new Comment)->commentable()->associate(Post::first());
+        $comment = (new Comment())->commentable()->associate(Post::first());
 
         DB::enableQueryLog();
 
@@ -60,5 +62,4 @@ class Comment extends Model
 
 class Post extends Model
 {
-    //
 }

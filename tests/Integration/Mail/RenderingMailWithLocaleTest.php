@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Mail;
 
 use Illuminate\Mail\Mailable;
@@ -25,14 +27,14 @@ class RenderingMailWithLocaleTest extends TestCase
 
     public function testMailableRendersInDefaultLocale()
     {
-        $mail = new RenderedTestMail;
+        $mail = new RenderedTestMail();
 
         $this->assertStringContainsString('name', $mail->render());
     }
 
     public function testMailableRendersInSelectedLocale()
     {
-        $mail = (new RenderedTestMail)->locale('es');
+        $mail = (new RenderedTestMail())->locale('es');
 
         $this->assertStringContainsString('nombre', $mail->render());
     }
@@ -41,7 +43,7 @@ class RenderingMailWithLocaleTest extends TestCase
     {
         $this->app->setLocale('es');
 
-        $mail = new RenderedTestMail;
+        $mail = new RenderedTestMail();
 
         $this->assertStringContainsString('nombre', $mail->render());
     }

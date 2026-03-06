@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 use Illuminate\Console\Application;
@@ -23,10 +25,8 @@ class CommandBuilder
 
     /**
      * Build the command for running the event in the foreground.
-     *
-     * @return string
      */
-    protected function buildForegroundCommand(Event $event)
+    protected function buildForegroundCommand(Event $event): string
     {
         $output = ProcessUtils::escapeArgument($event->output);
 
@@ -37,10 +37,8 @@ class CommandBuilder
 
     /**
      * Build the command for running the event in the background.
-     *
-     * @return string
      */
-    protected function buildBackgroundCommand(Event $event)
+    protected function buildBackgroundCommand(Event $event): string
     {
         $output = ProcessUtils::escapeArgument($event->output);
 
@@ -52,7 +50,8 @@ class CommandBuilder
             return 'start /b cmd /v:on /c "('.$event->command.' & '.$finished.' ^!ERRORLEVEL^!)'.$redirect.$output.' 2>&1"';
         }
 
-        return $this->ensureCorrectUser($event,
+        return $this->ensureCorrectUser(
+            $event,
             '('.$event->command.$redirect.$output.' 2>&1 ; '.$finished.' "$?") > '
             .ProcessUtils::escapeArgument($event->getDefaultOutput()).' 2>&1 &'
         );

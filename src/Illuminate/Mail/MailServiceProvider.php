@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -23,9 +25,9 @@ class MailServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerIlluminateMailer()
     {
-        $this->app->singleton('mail.manager', fn($app) => new MailManager($app));
+        $this->app->singleton('mail.manager', fn ($app): \Illuminate\Mail\MailManager => new MailManager($app));
 
-        $this->app->bind('mailer', fn($app) => $app->make('mail.manager')->mailer());
+        $this->app->bind('mailer', fn ($app) => $app->make('mail.manager')->mailer());
     }
 
     /**

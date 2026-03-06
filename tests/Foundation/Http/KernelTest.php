@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Http;
 
 use Illuminate\Events\Dispatcher;
@@ -109,11 +111,10 @@ class KernelTest extends TestCase
         $events = new Dispatcher($app);
         $app->instance('events', $events);
         $kernel = new Kernel($app, $this->getRouter());
-        $app->instance('terminating-middleware', new class($called)
-        {
+        $app->instance('terminating-middleware', new class ($called) {
             public function __construct(private &$called)
             {
-                //
+
             }
 
             public function handle($request, $next)
@@ -150,7 +151,7 @@ class KernelTest extends TestCase
      */
     protected function getApplication()
     {
-        return new Application;
+        return new Application();
     }
 
     /**
@@ -158,6 +159,6 @@ class KernelTest extends TestCase
      */
     protected function getRouter()
     {
-        return new Router(new Dispatcher);
+        return new Router(new Dispatcher());
     }
 }

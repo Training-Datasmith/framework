@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Bus;
 
 use Illuminate\Bus\UniqueLock;
@@ -30,8 +32,7 @@ class PendingDispatch
          * The job.
          */
         protected $job
-    )
-    {
+    ) {
     }
 
     /**
@@ -219,7 +220,6 @@ class PendingDispatch
     /**
      * Dynamically proxy methods to the underlying job.
      *
-     * @param  array  $parameters
      * @return $this
      */
     public function __call(string $method, array $parameters)
@@ -242,8 +242,7 @@ class PendingDispatch
 
         if ($this->afterResponse) {
             app(Dispatcher::class)->dispatchAfterResponse($this->job);
-        }
-        else {
+        } else {
             app(Dispatcher::class)->dispatch($this->job);
         }
 

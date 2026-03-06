@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Support\Fixtures;
 
 use Illuminate\Support\MultipleInstanceManager as BaseMultipleInstanceManager;
@@ -10,8 +12,7 @@ class MultipleInstanceManager extends BaseMultipleInstanceManager
 
     protected function createFooDriver(array $config)
     {
-        return new class($config)
-        {
+        return new class ($config) {
             public $config;
 
             public function __construct($config)
@@ -23,8 +24,7 @@ class MultipleInstanceManager extends BaseMultipleInstanceManager
 
     protected function createBarDriver(array $config)
     {
-        return new class($config)
-        {
+        return new class ($config) {
             public $config;
 
             public function __construct($config)
@@ -36,8 +36,7 @@ class MultipleInstanceManager extends BaseMultipleInstanceManager
 
     protected function createMysqlDatabaseConnectionDriver(array $config)
     {
-        return new class($config)
-        {
+        return new class ($config) {
             public function __construct(public $config)
             {
             }

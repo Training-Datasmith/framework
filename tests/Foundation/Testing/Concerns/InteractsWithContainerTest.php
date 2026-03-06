@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Testing\Concerns;
 
 use Illuminate\Foundation\Mix;
@@ -36,7 +38,7 @@ class InteractsWithContainerTest extends TestCase
 
     public function testWithViteRestoresOriginalHandlerAndReturnsInstance()
     {
-        $handler = new stdClass;
+        $handler = new stdClass();
         $this->app->instance(Vite::class, $handler);
 
         $this->withoutVite();
@@ -64,7 +66,7 @@ class InteractsWithContainerTest extends TestCase
 
     public function testWithMixRestoresOriginalHandlerAndReturnsInstance()
     {
-        $handler = new stdClass;
+        $handler = new stdClass();
         $this->app->instance(Mix::class, $handler);
 
         $this->withoutMix();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
@@ -7,14 +9,17 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Env;
 use Illuminate\Support\InteractsWithTime;
+
+use function Illuminate\Support\php_binary;
+
 use Illuminate\Support\Stringable;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+
 use Symfony\Component\Process\Process;
 
-use function Illuminate\Support\php_binary;
 use function Termwind\terminal;
 
 #[AsCommand(name: 'serve')]
@@ -302,7 +307,7 @@ class ServeCommand extends Command
         $this->outputBuffer = (string) $lines->pop();
 
         $lines
-            ->map(fn ($line): string => trim((string) $line))
+            ->map(fn ($line): string => trim($line))
             ->filter()
             ->each(function ($line): void {
                 if ((new Stringable($line))->contains('Development Server (http')) {

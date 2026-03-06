@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Types\Query\Builder;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -61,7 +63,7 @@ function test(Builder $query, EloquentBuilder $userQuery): void
         assertType('int', $page);
     });
     assertType('Illuminate\Database\Query\Builder', $query->pipe(function () {
-        //
+
     }));
     assertType('Illuminate\Database\Query\Builder', $query->pipe(fn () => null));
     assertType('Illuminate\Database\Query\Builder', $query->pipe(fn ($query) => $query));

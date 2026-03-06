@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection as BaseCollection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
-use SplFileObject;
 
-use function Illuminate\Support\enum_value;
+use SplFileObject;
 
 class ModelInspector
 {
@@ -94,7 +98,7 @@ class ModelInspector
         $indexes = $schema->getIndexes($table);
 
         return (new BaseCollection($columns))
-            ->map(fn ($column): array => [
+            ->map(fn (array $column): array => [
                 'name' => $column['name'],
                 'type' => $column['type'],
                 'increments' => $column['auto_increment'],
@@ -238,7 +242,7 @@ class ModelInspector
         $listeners = $this->app->make('events')->getRawListeners();
 
         // Get the Eloquent observers for this model...
-        $listeners = array_filter($listeners, fn($v, $key) => Str::startsWith($key, 'eloquent.') && Str::endsWith($key, $model::class), ARRAY_FILTER_USE_BOTH);
+        $listeners = array_filter($listeners, fn ($v, $key): bool => Str::startsWith($key, 'eloquent.') && Str::endsWith($key, $model::class), ARRAY_FILTER_USE_BOTH);
 
         // Format listeners Eloquent verb => Observer methods...
         $extractVerb = function ($key): string {

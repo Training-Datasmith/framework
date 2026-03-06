@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Eloquent\Model;
@@ -60,7 +62,7 @@ class EloquentDeleteTest extends DatabaseTestCase
     {
         $role = Role::create([]);
         $this->assertInstanceOf(Role::class, $role);
-        Role::observe(new RoleObserver);
+        Role::observe(new RoleObserver());
 
         $role->delete();
         $this->assertNull(RoleObserver::$model);

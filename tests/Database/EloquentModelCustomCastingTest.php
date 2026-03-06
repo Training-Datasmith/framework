@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Brick\Math\BigNumber;
@@ -22,7 +24,7 @@ class EloquentModelCustomCastingTest extends TestCase
 {
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -505,7 +507,7 @@ class AddressDto
 {
     public function __construct(public string $lineOne, public string $lineTwo)
     {
-        //
+
     }
 }
 

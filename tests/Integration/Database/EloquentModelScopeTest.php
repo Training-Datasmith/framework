@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -10,21 +12,21 @@ class EloquentModelScopeTest extends DatabaseTestCase
 {
     public function testModelHasScope()
     {
-        $model = new TestScopeModel1;
+        $model = new TestScopeModel1();
 
         $this->assertTrue($model->hasNamedScope('exists'));
     }
 
     public function testModelDoesNotHaveScope()
     {
-        $model = new TestScopeModel1;
+        $model = new TestScopeModel1();
 
         $this->assertFalse($model->hasNamedScope('doesNotExist'));
     }
 
     public function testModelHasAttributedScope()
     {
-        $model = new TestScopeModel1;
+        $model = new TestScopeModel1();
 
         $this->assertTrue($model->hasNamedScope('existsAsWell'));
     }

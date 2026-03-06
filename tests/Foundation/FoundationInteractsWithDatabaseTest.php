@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation;
 
 use Illuminate\Database\Connection;
@@ -155,7 +157,7 @@ class FoundationInteractsWithDatabaseTest extends TestCase
         $this->mockCountBuilder(true);
 
         $this->assertDatabaseCount(ProductStub::class, 1);
-        $this->assertDatabaseCount(new ProductStub, 1);
+        $this->assertDatabaseCount(new ProductStub(), 1);
     }
 
     public function testAssertDatabaseEmpty()
@@ -163,7 +165,7 @@ class FoundationInteractsWithDatabaseTest extends TestCase
         $this->mockCountBuilder(false);
 
         $this->assertDatabaseEmpty(ProductStub::class);
-        $this->assertDatabaseEmpty(new ProductStub);
+        $this->assertDatabaseEmpty(new ProductStub());
     }
 
     public function testAssertTableEntriesCountWrong()
@@ -370,16 +372,16 @@ class FoundationInteractsWithDatabaseTest extends TestCase
     public function testGetTableNameFromModel()
     {
         $this->assertEquals($this->table, $this->getTable(ProductStub::class));
-        $this->assertEquals($this->table, $this->getTable(new ProductStub));
+        $this->assertEquals($this->table, $this->getTable(new ProductStub()));
         $this->assertEquals($this->table, $this->getTable($this->table));
-        $this->assertEquals('all_products', $this->getTable((new ProductStub)->setTable('all_products')));
+        $this->assertEquals('all_products', $this->getTable((new ProductStub())->setTable('all_products')));
     }
 
     public function testGetTableConnectionNameFromModel()
     {
         $this->assertSame(null, $this->getTableConnection(ProductStub::class));
-        $this->assertSame(null, $this->getTableConnection(new ProductStub));
-        $this->assertSame('mysql', $this->getTableConnection((new ProductStub)->setConnection('mysql')));
+        $this->assertSame(null, $this->getTableConnection(new ProductStub()));
+        $this->assertSame('mysql', $this->getTableConnection((new ProductStub())->setConnection('mysql')));
     }
 
     public function testGetTableCustomizedDeletedAtColumnName()
@@ -390,8 +392,7 @@ class FoundationInteractsWithDatabaseTest extends TestCase
 
     public function testExpectsDatabaseQueryCount()
     {
-        $case = new class('foo') extends TestingTestCase
-        {
+        $case = new class ('foo') extends TestingTestCase {
             use CreatesApplication;
 
             public function testExpectsDatabaseQueryCount()
@@ -404,8 +405,7 @@ class FoundationInteractsWithDatabaseTest extends TestCase
         $case->testExpectsDatabaseQueryCount();
         $case->tearDown();
 
-        $case = new class('foo') extends TestingTestCase
-        {
+        $case = new class ('foo') extends TestingTestCase {
             use CreatesApplication;
 
             public function testExpectsDatabaseQueryCount()
@@ -424,8 +424,7 @@ class FoundationInteractsWithDatabaseTest extends TestCase
             $this->assertSame("Expected 3 database queries on the [testing] connection. 0 occurred.\nFailed asserting that 0 is identical to 3.", $e->getMessage());
         }
 
-        $case = new class('foo') extends TestingTestCase
-        {
+        $case = new class ('foo') extends TestingTestCase {
             use CreatesApplication;
 
             public function testExpectsDatabaseQueryCount()
@@ -451,8 +450,7 @@ class FoundationInteractsWithDatabaseTest extends TestCase
             $this->assertSame("Expected 3 database queries on the [testing] connection. 4 occurred.\nFailed asserting that 4 is identical to 3.", $e->getMessage());
         }
 
-        $case = new class('foo') extends TestingTestCase
-        {
+        $case = new class ('foo') extends TestingTestCase {
             use CreatesApplication;
 
             public function testExpectsDatabaseQueryCount()
@@ -527,5 +525,5 @@ class ProductStub extends Model
 
 class CustomProductStub extends ProductStub
 {
-    const DELETED_AT = 'trashed_at';
+    public const DELETED_AT = 'trashed_at';
 }

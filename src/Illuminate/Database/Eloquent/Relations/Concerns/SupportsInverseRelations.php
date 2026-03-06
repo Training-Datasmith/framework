@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
@@ -40,7 +42,7 @@ trait SupportsInverseRelations
         }
 
         if ($this->inverseRelationship === null && $relation) {
-            $this->query->afterQuery(fn($result) => $this->inverseRelationship
+            $this->query->afterQuery(fn ($result) => $this->inverseRelationship
                 ? $this->applyInverseRelationToCollection($result, $this->getParent())
                 : $result);
         }

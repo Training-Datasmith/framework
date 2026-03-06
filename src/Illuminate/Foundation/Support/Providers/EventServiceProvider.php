@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Support\Providers;
 
 use Illuminate\Auth\Events\Registered;
@@ -80,7 +82,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+
     }
 
     /**
@@ -103,7 +105,7 @@ class EventServiceProvider extends ServiceProvider
         if ($this->app->eventsAreCached()) {
             $cache = require $this->app->getCachedEventsPath();
 
-            return $cache[$this::class] ?? [];
+            return $cache[static::class] ?? [];
         }
         return array_merge_recursive(
             $this->discoveredEvents(),
@@ -139,8 +141,8 @@ class EventServiceProvider extends ServiceProvider
     public function discoverEvents()
     {
         return (new LazyCollection($this->discoverEventsWithin()))
-            ->flatMap(fn($directory) => glob($directory, GLOB_ONLYDIR))
-            ->reject(fn($directory) => ! is_dir($directory))
+            ->flatMap(fn ($directory) => glob($directory, GLOB_ONLYDIR))
+            ->reject(fn ($directory): bool => ! is_dir($directory))
             ->pipe(fn ($directories): array => DiscoverEvents::within(
                 $directories->all(),
                 $this->eventDiscoveryBasePath(),

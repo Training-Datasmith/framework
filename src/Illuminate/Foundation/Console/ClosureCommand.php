@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
-use Closure;
 use Illuminate\Console\Command;
 use Illuminate\Console\ManuallyFailedException;
 use Illuminate\Support\Facades\Schedule;
@@ -33,7 +34,7 @@ class ClosureCommand extends Command
     public function __construct($signature, /**
      * The command callback.
      */
-    protected \Closure $callback)
+        protected \Closure $callback)
     {
         $this->signature = $signature;
 
@@ -57,7 +58,8 @@ class ClosureCommand extends Command
 
         try {
             return (int) $this->laravel->call(
-                $this->callback->bindTo($this, $this), $parameters
+                $this->callback->bindTo($this, $this),
+                $parameters
             );
         } catch (ManuallyFailedException $e) {
             $this->components->error($e->getMessage());
@@ -69,10 +71,9 @@ class ClosureCommand extends Command
     /**
      * Set the description for the command.
      *
-     * @param  string  $description
      * @return $this
      */
-    public function purpose($description)
+    public function purpose(string $description): static
     {
         return $this->describe($description);
     }

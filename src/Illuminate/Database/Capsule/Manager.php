@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Capsule;
 
 use Illuminate\Container\Container;
@@ -26,7 +28,7 @@ class Manager
      */
     public function __construct(?Container $container = null)
     {
-        $this->setupContainer($container ?: new Container);
+        $this->setupContainer($container ?: new Container());
 
         // Once we have the container setup, we will setup the default configuration
         // options in the container "config" binding. This will make the database
@@ -181,7 +183,6 @@ class Manager
     /**
      * Dynamically pass methods to the default connection.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public static function __callStatic(string $method, array $parameters)

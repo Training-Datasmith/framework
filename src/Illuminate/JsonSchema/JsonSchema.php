@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\JsonSchema;
 
 use Closure;
@@ -20,6 +22,6 @@ class JsonSchema
      */
     public static function __callStatic(string $name, mixed $arguments): Type
     {
-        return (new JsonSchemaTypeFactory)->$name(...$arguments);
+        return (new JsonSchemaTypeFactory())->$name(...$arguments);
     }
 }

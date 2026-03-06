@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Closure;
@@ -19,7 +21,10 @@ use Stringable;
 
 class Uri implements Htmlable, JsonSerializable, Responsable, Stringable
 {
-    use Conditionable, Dumpable, Macroable, Tappable;
+    use Conditionable;
+    use Dumpable;
+    use Macroable;
+    use Tappable;
 
     /**
      * The URI instance.
@@ -184,7 +189,7 @@ class Uri implements Htmlable, JsonSerializable, Responsable, Stringable
     {
         $path = $this->path();
 
-        return $path === '/' ? new Collection : new Collection(explode('/', $path));
+        return $path === '/' ? new Collection() : new Collection(explode('/', $path));
     }
 
     /**
@@ -340,10 +345,8 @@ class Uri implements Htmlable, JsonSerializable, Responsable, Stringable
 
     /**
      * Get the URI as a Stringable instance.
-     *
-     * @return \Illuminate\Support\Stringable
      */
-    public function toStringable()
+    public function toStringable(): \Illuminate\Support\Stringable
     {
         return Str::of($this->value());
     }

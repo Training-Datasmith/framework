@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Events;
 
 class VendorTagPublished
@@ -19,7 +21,6 @@ class VendorTagPublished
          * The publishable paths registered by the tag.
          */
         public $paths
-    )
-    {
+    ) {
     }
 }

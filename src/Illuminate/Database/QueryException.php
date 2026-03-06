@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Illuminate\Support\Facades\DB;
@@ -19,20 +21,21 @@ class QueryException extends PDOException
     public function __construct(/**
      * The database connection name.
      */
-    public $connectionName, /**
+        public $connectionName, /**
      * The SQL for the query.
      */
-    protected $sql, /**
+        protected $sql, /**
      * The bindings for the query.
      */
-    protected array $bindings, Throwable $previous, /**
+        protected array $bindings,
+        Throwable $previous, /**
      * The connection details for the query (host, port, database, etc.).
      */
-    protected array $connectionDetails = [], /**
+        protected array $connectionDetails = [], /**
      * The PDO read / write type for the executed query.
      */
-    public $readWriteType = null)
-    {
+        public $readWriteType = null
+    ) {
         parent::__construct('', 0, $previous);
         $this->code = $previous->getCode();
         $this->message = $this->formatMessage($this->connectionName, $this->sql, $this->bindings, $previous);
@@ -116,20 +119,16 @@ class QueryException extends PDOException
 
     /**
      * Get the bindings for the query.
-     *
-     * @return array
      */
-    public function getBindings()
+    public function getBindings(): array
     {
         return $this->bindings;
     }
 
     /**
      * Get information about the connection such as host, port, database, etc.
-     *
-     * @return array
      */
-    public function getConnectionDetails()
+    public function getConnectionDetails(): array
     {
         return $this->connectionDetails;
     }

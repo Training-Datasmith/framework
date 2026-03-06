@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Illuminate\Database\Query\Grammars\MariaDbGrammar as QueryGrammar;
@@ -77,6 +79,6 @@ class MariaDbConnection extends MySqlConnection
      */
     protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\MariaDbProcessor
     {
-        return new MariaDbProcessor;
+        return new MariaDbProcessor();
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 
@@ -7,7 +9,6 @@ use function PHPStan\Testing\assertType;
 
 class CustomNotification extends DatabaseNotification
 {
-    //
 }
 
 /**
@@ -15,7 +16,6 @@ class CustomNotification extends DatabaseNotification
  */
 class CustomNotificationCollection extends DatabaseNotificationCollection
 {
-    //
 }
 
 $databaseNotificationsCollection = DatabaseNotification::all();

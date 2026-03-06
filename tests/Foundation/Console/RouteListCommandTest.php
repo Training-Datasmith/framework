@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Console;
 
 use Illuminate\Console\Application;
@@ -26,8 +28,7 @@ class RouteListCommandTest extends TestCase
 
         $router = new Router(m::mock('Illuminate\Events\Dispatcher'));
 
-        $kernel = new class($laravel, $router) extends Kernel
-        {
+        $kernel = new class ($laravel, $router) extends Kernel {
             protected $middlewareGroups = [
                 'web' => ['Middleware 1', 'Middleware 2', 'Middleware 5'],
                 'auth' => ['Middleware 3', 'Middleware 4'],

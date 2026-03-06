@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing;
 
 use Illuminate\Contracts\Container\Container;
@@ -71,8 +73,7 @@ class ParallelTesting
          * The container instance.
          */
         protected \Illuminate\Contracts\Container\Container $container
-    )
-    {
+    ) {
     }
 
     /**

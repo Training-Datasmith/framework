@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session;
 
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -45,8 +46,7 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
          * The container instance.
          */
         protected ?\Illuminate\Contracts\Container\Container $container = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -127,7 +127,7 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
      * @param  array<string, mixed>  $payload
      * @return bool|null
      */
-    protected function performInsert($sessionId, $payload)
+    protected function performInsert($sessionId, array $payload)
     {
         try {
             return $this->getQuery()->insert(Arr::set($payload, 'id', $sessionId));
@@ -263,7 +263,7 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
      * @param  \Illuminate\Contracts\Foundation\Application  $container
      * @return $this
      */
-    public function setContainer($container): static
+    public function setContainer(?\Illuminate\Contracts\Container\Container $container): static
     {
         $this->container = $container;
 

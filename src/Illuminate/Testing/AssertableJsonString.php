@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing;
 
 use ArrayAccess;
@@ -8,11 +10,13 @@ use Countable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Illuminate\Testing\Assert as PHPUnit;
-use JsonSerializable;
 
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\Str;
+use Illuminate\Testing\Assert as PHPUnit;
+
+use JsonSerializable;
 
 class AssertableJsonString implements ArrayAccess, Countable
 {
@@ -31,8 +35,8 @@ class AssertableJsonString implements ArrayAccess, Countable
     public function __construct(/**
      * The original encoded json.
      */
-    public $json)
-    {
+        public $json
+    ) {
         if ($this->json instanceof JsonSerializable) {
             $this->decoded = $this->json->jsonSerialize();
         } elseif ($this->json instanceof Jsonable) {
@@ -65,14 +69,16 @@ class AssertableJsonString implements ArrayAccess, Countable
     {
         if (! is_null($key)) {
             PHPUnit::assertCount(
-                $count, data_get($this->decoded, $key),
+                $count,
+                data_get($this->decoded, $key),
                 "Failed to assert that the response count matched the expected {$count}"
             );
 
             return $this;
         }
 
-        PHPUnit::assertCount($count,
+        PHPUnit::assertCount(
+            $count,
             $this->decoded,
             "Failed to assert that the response count matched the expected {$count}"
         );
@@ -301,7 +307,10 @@ class AssertableJsonString implements ArrayAccess, Countable
     public function assertSubset(array $data, bool $strict = false): static
     {
         PHPUnit::assertArraySubset(
-            $data, $this->decoded, $strict, $this->assertJsonMessage($data)
+            $data,
+            $this->decoded,
+            $strict,
+            $this->assertJsonMessage($data)
         );
 
         return $this;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Closure;
@@ -89,7 +91,7 @@ class PruneCommandTest extends TestCase
 
     public function testPrunableSoftDeletedModelWithPrunableRecords()
     {
-        $db = new DB;
+        $db = new DB();
         $db->addConnection([
             'driver' => 'sqlite',
             'database' => ':memory:',
@@ -168,7 +170,7 @@ class PruneCommandTest extends TestCase
 
     public function testTheCommandMayBePretended()
     {
-        $db = new DB;
+        $db = new DB();
         $db->addConnection([
             'driver' => 'sqlite',
             'database' => ':memory:',
@@ -202,7 +204,7 @@ class PruneCommandTest extends TestCase
 
     public function testTheCommandMayBePretendedOnSoftDeletedModel()
     {
-        $db = new DB;
+        $db = new DB();
         $db->addConnection([
             'driver' => 'sqlite',
             'database' => ':memory:',
@@ -257,7 +259,7 @@ class PruneCommandTest extends TestCase
     protected function artisan($arguments)
     {
         $input = new ArrayInput($arguments);
-        $output = new BufferedOutput;
+        $output = new BufferedOutput();
 
         tap(new PruneCommand())
             ->setLaravel(Application::getInstance())

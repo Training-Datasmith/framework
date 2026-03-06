@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Testing;
 
 use Illuminate\Config\Repository;
@@ -176,7 +178,11 @@ class DatabaseTruncationTest extends TestCase
     }
 
     private function arrangeConnection(
-        ?array &$actual, array $allTables, string $prefix = '', ?string $builder = null, ?array $schemas = []
+        ?array &$actual,
+        array $allTables,
+        string $prefix = '',
+        ?string $builder = null,
+        ?array $schemas = []
     ): Connection {
         $actual = [];
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Closure;
@@ -44,8 +46,8 @@ abstract class MultipleInstanceManager
     public function __construct(/**
      * The application instance.
      */
-    protected $app)
-    {
+        protected $app
+    ) {
         $this->config = $this->app->make('config');
     }
 
@@ -205,7 +207,6 @@ abstract class MultipleInstanceManager
     /**
      * Dynamically call the default instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

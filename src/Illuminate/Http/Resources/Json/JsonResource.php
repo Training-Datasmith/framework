@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Resources\Json;
 
 use ArrayAccess;
@@ -17,7 +19,8 @@ use JsonSerializable;
 
 class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRoutable
 {
-    use ConditionallyLoadsAttributes, DelegatesToResource;
+    use ConditionallyLoadsAttributes;
+    use DelegatesToResource;
 
     /**
      * The resource instance.
@@ -225,7 +228,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
      */
     public function withResponse(Request $request, JsonResponse $response): void
     {
-        //
+
     }
 
     /**

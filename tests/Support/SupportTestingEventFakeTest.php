@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Contracts\Events\Dispatcher;
@@ -34,7 +36,7 @@ class SupportTestingEventFakeTest extends TestCase
 
     public function testAssertDispatchedWithClosure()
     {
-        $this->fake->dispatch(new EventStub);
+        $this->fake->dispatch(new EventStub());
 
         $this->fake->assertDispatched(function (EventStub $event) {
             return true;
@@ -116,7 +118,7 @@ class SupportTestingEventFakeTest extends TestCase
 
     public function testAssertNotDispatchedWithClosure()
     {
-        $this->fake->dispatch(new EventStub);
+        $this->fake->dispatch(new EventStub());
 
         try {
             $this->fake->assertNotDispatched(function (EventStub $event) {
@@ -167,10 +169,8 @@ class SupportTestingEventFakeTest extends TestCase
 
 class EventStub
 {
-    //
 }
 
 class ListenerStub
 {
-    //
 }

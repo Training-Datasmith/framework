@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Testing\Concerns;
 
 use Closure;
@@ -78,8 +80,7 @@ trait InteractsWithExceptionHandling
                 : $currentExceptionHandler;
         }
 
-        $exceptionHandler = new class($this->originalExceptionHandler, $except) implements ExceptionHandler, WithoutExceptionHandlingHandler
-        {
+        $exceptionHandler = new class ($this->originalExceptionHandler, $except) implements ExceptionHandler, WithoutExceptionHandlingHandler {
             /**
              * Create a new class instance.
              *
@@ -98,7 +99,7 @@ trait InteractsWithExceptionHandling
              */
             public function report(Throwable $e): void
             {
-                //
+
             }
 
             /**
@@ -128,7 +129,9 @@ trait InteractsWithExceptionHandling
 
                 if ($e instanceof NotFoundHttpException) {
                     throw new NotFoundHttpException(
-                        "{$request->method()} {$request->url()}", $e, is_int($e->getCode()) ? $e->getCode() : 0
+                        "{$request->method()} {$request->url()}",
+                        $e,
+                        is_int($e->getCode()) ? $e->getCode() : 0
                     );
                 }
 
@@ -142,7 +145,7 @@ trait InteractsWithExceptionHandling
              */
             public function renderForConsole($output, Throwable $e): void
             {
-                (new ConsoleApplication)->renderThrowable($e, $output);
+                (new ConsoleApplication())->renderThrowable($e, $output);
             }
         };
 

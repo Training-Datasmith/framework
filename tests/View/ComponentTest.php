@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\View;
 
 use Closure;
@@ -29,7 +31,7 @@ class ComponentTest extends TestCase
 
         $this->config = m::mock(Config::class);
 
-        $container = new Container;
+        $container = new Container();
 
         $this->viewFactory = m::mock(Factory::class);
 
@@ -58,7 +60,7 @@ class ComponentTest extends TestCase
         $this->viewFactory->shouldReceive('exists')->once()->andReturn(false);
         $this->viewFactory->shouldReceive('addNamespace')->once()->with('__components', '/tmp');
 
-        $component = new TestInlineViewComponent;
+        $component = new TestInlineViewComponent();
         $this->assertSame('__components::57b7a54afa0eb51fd9b88eec031c9e9e', $component->resolveView());
     }
 
@@ -67,7 +69,7 @@ class ComponentTest extends TestCase
         $view = m::mock(View::class);
         $this->viewFactory->shouldReceive('make')->once()->with('alert', [], [])->andReturn($view);
 
-        $component = new TestRegularViewComponentUsingViewHelper;
+        $component = new TestRegularViewComponentUsingViewHelper();
 
         $this->assertSame($view, $component->resolveView());
     }
@@ -78,8 +80,7 @@ class ComponentTest extends TestCase
         $this->viewFactory->shouldReceive('exists')->once()->andReturn(false);
         $this->viewFactory->shouldReceive('addNamespace')->once()->with('__components', '/tmp');
 
-        $component = new class() extends Component
-        {
+        $component = new class () extends Component {
             protected $title;
 
             public function __construct($title = 'World')
@@ -113,7 +114,7 @@ class ComponentTest extends TestCase
         $view = m::mock(View::class);
         $this->viewFactory->shouldReceive('make')->once()->with('alert', [], [])->andReturn($view);
 
-        $component = new TestRegularViewComponentUsingViewMethod;
+        $component = new TestRegularViewComponentUsingViewMethod();
 
         $this->assertSame($view, $component->resolveView());
     }
@@ -123,14 +124,14 @@ class ComponentTest extends TestCase
         $this->viewFactory->shouldReceive('exists')->once()->andReturn(true);
         $this->viewFactory->shouldReceive('addNamespace')->never();
 
-        $component = new TestRegularViewNameViewComponent;
+        $component = new TestRegularViewNameViewComponent();
 
         $this->assertSame('alert', $component->resolveView());
     }
 
     public function testHtmlableGetReturned()
     {
-        $component = new TestHtmlableReturningViewComponent;
+        $component = new TestHtmlableReturningViewComponent();
 
         $view = $component->resolveView();
 
@@ -151,8 +152,7 @@ class ComponentTest extends TestCase
         $component = TestInlineViewComponentWhereRenderDependsOnProps::resolve(['content' => 'foo']);
         $this->assertSame('foo', $component->render());
 
-        $component = new class extends Component
-        {
+        $component = new class () extends Component {
             public $content;
 
             public function __construct($a = null, $b = null)
@@ -183,7 +183,7 @@ class ComponentTest extends TestCase
 
     public function testResolveComponentsUsing()
     {
-        $component = new TestInlineViewComponent;
+        $component = new TestInlineViewComponent();
 
         Component::resolveComponentsUsing(function ($class, $data) use ($component) {
             $this->assertSame(Component::class, $class, 'It takes the component class name as the first parameter.');
@@ -197,7 +197,7 @@ class ComponentTest extends TestCase
 
     public function testBladeViewCacheWithRegularViewNameViewComponent()
     {
-        $component = new TestRegularViewNameViewComponent;
+        $component = new TestRegularViewNameViewComponent();
 
         $this->viewFactory->shouldReceive('exists')->twice()->andReturn(true);
 
@@ -222,7 +222,7 @@ class ComponentTest extends TestCase
 
     public function testBladeViewCacheWithInlineViewComponent()
     {
-        $component = new TestInlineViewComponent;
+        $component = new TestInlineViewComponent();
 
         $this->viewFactory->shouldReceive('exists')->twice()->andReturn(false);
 
@@ -296,8 +296,8 @@ class ComponentTest extends TestCase
 
     public function testFactoryGetsSharedBetweenComponents()
     {
-        $regular = new TestRegularViewNameViewComponent;
-        $inline = new TestInlineViewComponent;
+        $regular = new TestRegularViewNameViewComponent();
+        $inline = new TestInlineViewComponent();
 
         $getFactory = fn ($component) => (fn () => $component->factory())->call($component);
 

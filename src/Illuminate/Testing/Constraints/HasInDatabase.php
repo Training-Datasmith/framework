@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing\Constraints;
 
 use Illuminate\Contracts\Database\Query\Expression;
@@ -29,8 +31,7 @@ class HasInDatabase extends Constraint
          * The data that will be used to narrow the search in the database table.
          */
         protected array $data
-    )
-    {
+    ) {
     }
 
     /**
@@ -54,7 +55,9 @@ class HasInDatabase extends Constraint
     {
         return sprintf(
             "a row in the table [%s] matches the attributes %s.\n\n%s",
-            $table, $this->toString(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), $this->getAdditionalInfo($table)
+            $table,
+            $this->toString(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
+            $this->getAdditionalInfo($table)
         );
     }
 

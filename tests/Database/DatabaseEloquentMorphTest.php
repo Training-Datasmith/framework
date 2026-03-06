@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Exception;
@@ -36,9 +38,9 @@ class DatabaseEloquentMorphTest extends TestCase
         $relation->getQuery()->shouldReceive('whereIn')->once()->with('table.morph_id', [1, 2]);
         $relation->getQuery()->shouldReceive('where')->once()->with('table.morph_type', get_class($relation->getParent()));
 
-        $model1 = new EloquentMorphResetModelStub;
+        $model1 = new EloquentMorphResetModelStub();
         $model1->id = 1;
-        $model2 = new EloquentMorphResetModelStub;
+        $model2 = new EloquentMorphResetModelStub();
         $model2->id = 2;
         $relation->addEagerConstraints([$model1, $model2]);
     }
@@ -60,9 +62,9 @@ class DatabaseEloquentMorphTest extends TestCase
         $relation->getQuery()->shouldReceive('whereIntegerInRaw')->once()->with('table.morph_id', [1, 2]);
         $relation->getQuery()->shouldReceive('where')->once()->with('table.morph_type', get_class($relation->getParent()));
 
-        $model1 = new EloquentMorphResetModelStub;
+        $model1 = new EloquentMorphResetModelStub();
         $model1->id = 1;
-        $model2 = new EloquentMorphResetModelStub;
+        $model2 = new EloquentMorphResetModelStub();
         $model2->id = 2;
         $relation->addEagerConstraints([$model1, $model2]);
     }
@@ -534,5 +536,4 @@ class DatabaseEloquentMorphTest extends TestCase
 
 class EloquentMorphResetModelStub extends Model
 {
-    //
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Illuminate\Contracts\Validation\Rule as RuleContract;
@@ -41,8 +43,7 @@ class ClosureValidationRule implements RuleContract, ValidatorAwareRule
          * The callback that validates the attribute.
          */
         public $callback
-    )
-    {
+    ) {
     }
 
     /**
@@ -55,7 +56,7 @@ class ClosureValidationRule implements RuleContract, ValidatorAwareRule
     {
         $this->failed = false;
 
-        $this->callback->__invoke($attribute, $value, function ($attribute, $message = null) {
+        $this->callback->__invoke($attribute, $value, function ($attribute, $message = null): \Illuminate\Translation\PotentiallyTranslatedString {
             $this->failed = true;
 
             return $this->pendingPotentiallyTranslatedString($attribute, $message);

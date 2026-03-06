@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Traits;
 
 use BadMethodCallException;
@@ -64,7 +66,9 @@ trait ForwardsCalls
     protected static function throwBadMethodCallException($method): never
     {
         throw new BadMethodCallException(sprintf(
-            'Call to undefined method %s::%s()', static::class, $method
+            'Call to undefined method %s::%s()',
+            static::class,
+            $method
         ));
     }
 }

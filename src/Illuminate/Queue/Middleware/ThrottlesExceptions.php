@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Middleware;
 
 use Illuminate\Cache\RateLimiter;
@@ -86,8 +88,7 @@ class ThrottlesExceptions
          * The number of seconds until the maximum attempts are reset.
          */
         protected $decaySeconds = 600
-    )
-    {
+    ) {
     }
 
     /**

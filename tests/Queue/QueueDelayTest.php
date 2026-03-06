@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Bus\Queueable;
@@ -13,7 +15,7 @@ class QueueDelayTest extends TestCase
     {
         Queue::fake();
 
-        $job = new TestJob;
+        $job = new TestJob();
 
         dispatch($job);
 
@@ -24,7 +26,7 @@ class QueueDelayTest extends TestCase
     {
         Queue::fake();
 
-        $job = new TestJob;
+        $job = new TestJob();
 
         dispatch($job->withoutDelay());
 
@@ -35,7 +37,7 @@ class QueueDelayTest extends TestCase
     {
         Queue::fake();
 
-        $job = new TestJob;
+        $job = new TestJob();
 
         dispatch($job)->withoutDelay();
 

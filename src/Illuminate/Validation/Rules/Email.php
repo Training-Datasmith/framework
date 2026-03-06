@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Rules;
 
 use Illuminate\Contracts\Validation\DataAwareRule;
@@ -13,7 +15,8 @@ use InvalidArgumentException;
 
 class Email implements Rule, DataAwareRule, ValidatorAwareRule
 {
-    use Conditionable, Macroable;
+    use Conditionable;
+    use Macroable;
 
     public bool $validateMxRecord = false;
     public bool $preventSpoofing = false;
@@ -91,7 +94,7 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
             ? call_user_func(static::$defaultCallback)
             : static::$defaultCallback;
 
-        return $email instanceof static ? $email : new static;
+        return $email instanceof static ? $email : new static();
     }
 
     /**
@@ -115,7 +118,7 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
      *
      * @return $this
      */
-    public function strict()
+    public function strict(): static
     {
         return $this->rfcCompliant(true);
     }

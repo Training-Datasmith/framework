@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Support\Traits\ReflectsClosures;
@@ -12,38 +14,38 @@ class SupportReflectsClosuresTest extends TestCase
     {
         $this->assertParameterTypes([ExampleParameter::class], function (ExampleParameter $one) {
             // assert the Closure isn't actually executed
-            throw new RuntimeException;
+            throw new RuntimeException();
         });
 
         $this->assertParameterTypes([], function () {
-            //
+
         });
 
         $this->assertParameterTypes([null], function ($one) {
-            //
+
         });
 
         $this->assertParameterTypes([null, ExampleParameter::class], function ($one, ?ExampleParameter $two = null) {
-            //
+
         });
 
         $this->assertParameterTypes([null, ExampleParameter::class], function (string $one, ?ExampleParameter $two) {
-            //
+
         });
 
         // Because the parameter is variadic, the closure will always receive an array.
         $this->assertParameterTypes([null], function (ExampleParameter ...$vars) {
-            //
+
         });
     }
 
     public function testItReturnsTheFirstParameterType()
     {
         $type = ReflectsClosuresClass::reflectFirst(function (ExampleParameter $a) {
-            //
+
         });
 
-        $this->assertInstanceOf($type, new ExampleParameter);
+        $this->assertInstanceOf($type, new ExampleParameter());
     }
 
     public function testItThrowsWhenNoParameters()
@@ -51,7 +53,7 @@ class SupportReflectsClosuresTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         ReflectsClosuresClass::reflectFirst(function () {
-            //
+
         });
     }
 
@@ -60,14 +62,14 @@ class SupportReflectsClosuresTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         ReflectsClosuresClass::reflectFirst(function ($a, ExampleParameter $b) {
-            //
+
         });
     }
 
     public function testItWorksWithUnionTypes()
     {
         $types = ReflectsClosuresClass::reflectFirstAll(function (ExampleParameter $a, $b) {
-            //
+
         });
 
         $this->assertEquals([
@@ -89,7 +91,7 @@ class SupportReflectsClosuresTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $types = ReflectsClosuresClass::reflectFirstAll(function ($a, $b) {
-            //
+
         });
     }
 
@@ -98,7 +100,7 @@ class SupportReflectsClosuresTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $types = ReflectsClosuresClass::reflectFirstAll(function () {
-            //
+
         });
     }
 
@@ -116,26 +118,24 @@ class ReflectsClosuresClass
 
     public static function reflect($closure)
     {
-        return array_values((new static)->closureParameterTypes($closure));
+        return array_values((new static())->closureParameterTypes($closure));
     }
 
     public static function reflectFirst($closure)
     {
-        return (new static)->firstClosureParameterType($closure);
+        return (new static())->firstClosureParameterType($closure);
     }
 
     public static function reflectFirstAll($closure)
     {
-        return (new static)->firstClosureParameterTypes($closure);
+        return (new static())->firstClosureParameterTypes($closure);
     }
 }
 
 class ExampleParameter
 {
-    //
 }
 
 class AnotherExampleParameter
 {
-    //
 }

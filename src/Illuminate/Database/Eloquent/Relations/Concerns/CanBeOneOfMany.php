@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations\Concerns;
 
 use Closure;
@@ -150,7 +152,7 @@ trait CanBeOneOfMany
      */
     public function latestOfMany($column = 'id', $relation = null)
     {
-        return $this->ofMany(Collection::wrap($column)->mapWithKeys(fn($column) => [$column => 'MAX'])->all(), 'MAX', $relation);
+        return $this->ofMany(Collection::wrap($column)->mapWithKeys(fn ($column): array => [$column => 'MAX'])->all(), 'MAX', $relation);
     }
 
     /**
@@ -162,7 +164,7 @@ trait CanBeOneOfMany
      */
     public function oldestOfMany($column = 'id', $relation = null)
     {
-        return $this->ofMany(Collection::wrap($column)->mapWithKeys(fn($column) => [$column => 'MIN'])->all(), 'MIN', $relation);
+        return $this->ofMany(Collection::wrap($column)->mapWithKeys(fn ($column): array => [$column => 'MIN'])->all(), 'MIN', $relation);
     }
 
     /**

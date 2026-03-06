@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Client\Promises;
 
 use GuzzleHttp\Promise\PromiseInterface;
@@ -72,7 +74,6 @@ class FluentPromise implements PromiseInterface
     /**
      * Proxy requests to the underlying promise interface and update the local promise.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

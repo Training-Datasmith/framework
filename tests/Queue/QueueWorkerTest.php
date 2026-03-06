@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Exception;
@@ -34,7 +36,7 @@ class QueueWorkerTest extends TestCase
         $this->events = m::spy(Dispatcher::class);
         $this->exceptionHandler = m::spy(ExceptionHandler::class);
 
-        Container::setInstance($container = new Container);
+        Container::setInstance($container = new Container());
 
         $container->instance(Dispatcher::class, $this->events);
         $container->instance(ExceptionHandler::class, $this->exceptionHandler);
@@ -51,8 +53,8 @@ class QueueWorkerTest extends TestCase
 
     public function testJobCanBeFired()
     {
-        $worker = $this->getWorker('default', ['queue' => [$job = new WorkerFakeJob]]);
-        $worker->runNextJob('default', 'queue', new WorkerOptions);
+        $worker = $this->getWorker('default', ['queue' => [$job = new WorkerFakeJob()]]);
+        $worker->runNextJob('default', 'queue', new WorkerOptions());
         $this->assertTrue($job->fired);
         $this->events->shouldHaveReceived('dispatch')->with(m::type(JobPopping::class))->once();
         $this->events->shouldHaveReceived('dispatch')->with(m::type(JobPopped::class))->once();
@@ -62,8 +64,8 @@ class QueueWorkerTest extends TestCase
 
     public function testJobPoppingEvent()
     {
-        $worker = $this->getWorker('default', ['queue' => [$job = new WorkerFakeJob]]);
-        $worker->runNextJob('default', 'queue', new WorkerOptions);
+        $worker = $this->getWorker('default', ['queue' => [$job = new WorkerFakeJob()]]);
+        $worker->runNextJob('default', 'queue', new WorkerOptions());
         $this->assertTrue($job->fired);
 
         $this->events->shouldHaveReceived('dispatch')->with(m::on(function ($event) {
@@ -75,12 +77,12 @@ class QueueWorkerTest extends TestCase
 
     public function testWorkerCanWorkUntilQueueIsEmpty()
     {
-        $workerOptions = new WorkerOptions;
+        $workerOptions = new WorkerOptions();
         $workerOptions->stopWhenEmpty = true;
 
         $worker = $this->getWorker('default', ['queue' => [
-            $firstJob = new WorkerFakeJob,
-            $secondJob = new WorkerFakeJob,
+            $firstJob = new WorkerFakeJob(),
+            $secondJob = new WorkerFakeJob(),
         ]]);
 
         $status = $worker->daemon('default', 'queue', $workerOptions);
@@ -96,11 +98,11 @@ class QueueWorkerTest extends TestCase
 
     public function testWorkerStopsWhenMemoryExceeded()
     {
-        $workerOptions = new WorkerOptions;
+        $workerOptions = new WorkerOptions();
 
         $worker = $this->getWorker('default', ['queue' => [
-            $firstJob = new WorkerFakeJob,
-            $secondJob = new WorkerFakeJob,
+            $firstJob = new WorkerFakeJob(),
+            $secondJob = new WorkerFakeJob(),
         ]]);
         $worker->stopOnMemoryExceeded = true;
 
@@ -136,26 +138,26 @@ class QueueWorkerTest extends TestCase
     public function testJobCanBeFiredBasedOnPriority()
     {
         $worker = $this->getWorker('default', [
-            'high' => [$highJob = new WorkerFakeJob, $secondHighJob = new WorkerFakeJob], 'low' => [$lowJob = new WorkerFakeJob],
+            'high' => [$highJob = new WorkerFakeJob(), $secondHighJob = new WorkerFakeJob()], 'low' => [$lowJob = new WorkerFakeJob()],
         ]);
 
-        $worker->runNextJob('default', 'high,low', new WorkerOptions);
+        $worker->runNextJob('default', 'high,low', new WorkerOptions());
         $this->assertTrue($highJob->fired);
         $this->assertFalse($secondHighJob->fired);
         $this->assertFalse($lowJob->fired);
 
-        $worker->runNextJob('default', 'high,low', new WorkerOptions);
+        $worker->runNextJob('default', 'high,low', new WorkerOptions());
         $this->assertTrue($secondHighJob->fired);
         $this->assertFalse($lowJob->fired);
 
-        $worker->runNextJob('default', 'high,low', new WorkerOptions);
+        $worker->runNextJob('default', 'high,low', new WorkerOptions());
         $this->assertTrue($lowJob->fired);
     }
 
     public function testExceptionIsReportedIfConnectionThrowsExceptionOnJobPop()
     {
         $worker = new InsomniacWorker(
-            new WorkerFakeManager('default', new BrokenQueueConnection('default', $e = new RuntimeException)),
+            new WorkerFakeManager('default', new BrokenQueueConnection('default', $e = new RuntimeException())),
             $this->events,
             $this->exceptionHandler,
             function () {
@@ -177,7 +179,7 @@ class QueueWorkerTest extends TestCase
 
     public function testJobIsReleasedOnException()
     {
-        $e = new RuntimeException;
+        $e = new RuntimeException();
 
         $job = new WorkerFakeJob(function () use ($e) {
             throw $e;
@@ -195,7 +197,7 @@ class QueueWorkerTest extends TestCase
 
     public function testJobIsNotReleasedIfItHasExceededMaxAttempts()
     {
-        $e = new RuntimeException;
+        $e = new RuntimeException();
 
         $job = new WorkerFakeJob(function ($job) use ($e) {
             // In normal use this would be incremented by being popped off the queue
@@ -218,7 +220,7 @@ class QueueWorkerTest extends TestCase
 
     public function testJobIsNotReleasedIfItHasExpired()
     {
-        $e = new RuntimeException;
+        $e = new RuntimeException();
 
         $job = new WorkerFakeJob(function ($job) use ($e) {
             // In normal use this would be incremented by being popped off the queue
@@ -338,7 +340,7 @@ class QueueWorkerTest extends TestCase
                 return array_shift($this->maintenanceFlags);
             }
 
-            throw new LoopBreakerException;
+            throw new LoopBreakerException();
         };
 
         $worker = $this->getWorker('default', ['queue' => [$firstJob, $secondJob]], $maintenanceModeChecker);
@@ -373,17 +375,17 @@ class QueueWorkerTest extends TestCase
     public function testWorkerPicksJobUsingCustomCallbacks()
     {
         $worker = $this->getWorker('default', [
-            'default' => [$defaultJob = new WorkerFakeJob], 'custom' => [$customJob = new WorkerFakeJob],
+            'default' => [$defaultJob = new WorkerFakeJob()], 'custom' => [$customJob = new WorkerFakeJob()],
         ]);
 
-        $worker->runNextJob('default', 'default', new WorkerOptions);
-        $worker->runNextJob('default', 'default', new WorkerOptions);
+        $worker->runNextJob('default', 'default', new WorkerOptions());
+        $worker->runNextJob('default', 'default', new WorkerOptions());
 
         $this->assertTrue($defaultJob->fired);
         $this->assertFalse($customJob->fired);
 
         $worker2 = $this->getWorker('default', [
-            'default' => [$defaultJob = new WorkerFakeJob], 'custom' => [$customJob = new WorkerFakeJob],
+            'default' => [$defaultJob = new WorkerFakeJob()], 'custom' => [$customJob = new WorkerFakeJob()],
         ]);
 
         $worker2->setName('myworker');
@@ -392,8 +394,8 @@ class QueueWorkerTest extends TestCase
             return $pop('custom');
         });
 
-        $worker2->runNextJob('default', 'default', new WorkerOptions);
-        $worker2->runNextJob('default', 'default', new WorkerOptions);
+        $worker2->runNextJob('default', 'default', new WorkerOptions());
+        $worker2->runNextJob('default', 'default', new WorkerOptions());
 
         $this->assertFalse($defaultJob->fired);
         $this->assertTrue($customJob->fired);
@@ -421,7 +423,7 @@ class QueueWorkerTest extends TestCase
 
     public function testJobReleasedEvent()
     {
-        $e = new RuntimeException;
+        $e = new RuntimeException();
 
         $job = new WorkerFakeJob(function () use ($e) {
             throw $e;
@@ -462,7 +464,7 @@ class QueueWorkerTest extends TestCase
 
     private function workerOptions(array $overrides = [])
     {
-        $options = new WorkerOptions;
+        $options = new WorkerOptions();
 
         foreach ($overrides as $key => $value) {
             $options->{$key} = $value;
@@ -584,7 +586,7 @@ class WorkerFakeJob implements QueueJobContract
     public function __construct($callback = null)
     {
         $this->callback = $callback ?: function () {
-            //
+
         };
     }
 
@@ -723,5 +725,4 @@ class WorkerFakeJob implements QueueJobContract
 
 class LoopBreakerException extends RuntimeException
 {
-    //
 }

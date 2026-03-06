@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Concerns;
 
 use Closure;
@@ -362,7 +364,11 @@ trait HasRelationships
         $ownerKey = $ownerKey ?: $instance->getKeyName();
 
         return $this->newBelongsTo(
-            $instance->newQuery(), $this, $foreignKey, $ownerKey, $relation
+            $instance->newQuery(),
+            $this,
+            $foreignKey,
+            $ownerKey,
+            $relation
         );
     }
 
@@ -401,7 +407,9 @@ trait HasRelationships
         $name = $name ?: $this->guessBelongsToRelation();
 
         [$type, $id] = $this->getMorphs(
-            Str::snake($name), $type, $id
+            Str::snake($name),
+            $type,
+            $id
         );
 
         // If the type value is null it is probably safe to assume we're eager loading
@@ -424,7 +432,12 @@ trait HasRelationships
     protected function morphEagerTo($name, $type, $id, $ownerKey)
     {
         return $this->newMorphTo(
-            $this->newQuery()->setEagerLoads([]), $this, $id, $ownerKey, $type, $name
+            $this->newQuery()->setEagerLoads([]),
+            $this,
+            $id,
+            $ownerKey,
+            $type,
+            $name
         );
     }
 
@@ -445,7 +458,12 @@ trait HasRelationships
         );
 
         return $this->newMorphTo(
-            $instance->newQuery(), $this, $id, $ownerKey ?? $instance->getKeyName(), $type, $name
+            $instance->newQuery(),
+            $this,
+            $id,
+            $ownerKey ?? $instance->getKeyName(),
+            $type,
+            $name
         );
     }
 
@@ -533,7 +551,10 @@ trait HasRelationships
         $localKey = $localKey ?: $this->getKeyName();
 
         return $this->newHasMany(
-            $instance->newQuery(), $this, $instance->qualifyColumn($foreignKey), $localKey
+            $instance->newQuery(),
+            $this,
+            $instance->qualifyColumn($foreignKey),
+            $localKey
         );
     }
 
@@ -896,7 +917,7 @@ trait HasRelationships
      */
     protected function guessBelongsToManyRelation()
     {
-        $caller = Arr::first(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), fn($trace) => ! in_array(
+        $caller = Arr::first(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), fn ($trace): bool => ! in_array(
             $trace['function'],
             array_merge(static::$manyMethods, ['guessBelongsToManyRelation'])
         ));
@@ -1015,7 +1036,7 @@ trait HasRelationships
      */
     protected function newRelatedInstance($class)
     {
-        return tap(new $class, function ($instance): void {
+        return tap(new $class(), function ($instance): void {
             if (! $instance->getConnectionName()) {
                 $instance->setConnection($this->connection);
             }
@@ -1032,7 +1053,7 @@ trait HasRelationships
      */
     protected function newRelatedThroughInstance($class)
     {
-        return new $class;
+        return new $class();
     }
 
     /**

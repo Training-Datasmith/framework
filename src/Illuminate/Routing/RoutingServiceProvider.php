@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -38,7 +40,7 @@ class RoutingServiceProvider extends ServiceProvider
      */
     protected function registerRouter()
     {
-        $this->app->singleton('router', fn($app) => new Router($app['events'], $app));
+        $this->app->singleton('router', fn ($app): \Illuminate\Routing\Router => new Router($app['events'], $app));
     }
 
     /**
@@ -57,9 +59,12 @@ class RoutingServiceProvider extends ServiceProvider
             $app->instance('routes', $routes);
 
             return new UrlGenerator(
-                $routes, $app->rebinding(
-                    'request', $this->requestRebinder()
-                ), $app['config']['app.asset_url']
+                $routes,
+                $app->rebinding(
+                    'request',
+                    $this->requestRebinder()
+                ),
+                $app['config']['app.asset_url']
             );
         });
 
@@ -67,7 +72,7 @@ class RoutingServiceProvider extends ServiceProvider
             // Next we will set a few service resolvers on the URL generator so it can
             // get the information it needs to function. This just provides some of
             // the convenience features to this URL generator like "signed" URLs.
-            $url->setSessionResolver(fn() => $this->app['session'] ?? null);
+            $url->setSessionResolver(fn () => $this->app['session'] ?? null);
 
             $url->setKeyResolver(function (): array {
                 $config = $this->app->make('config');
@@ -129,7 +134,7 @@ class RoutingServiceProvider extends ServiceProvider
         $this->app->bind(ServerRequestInterface::class, function ($app) {
             if (class_exists(PsrHttpFactory::class)) {
                 $illuminateRequest = $app->make('request');
-                $request = (new PsrHttpFactory)->createRequest($illuminateRequest);
+                $request = (new PsrHttpFactory())->createRequest($illuminateRequest);
 
                 if ($illuminateRequest->getContentTypeFormat() !== 'json' && $illuminateRequest->request->count() === 0) {
                     return $request;
@@ -153,7 +158,7 @@ class RoutingServiceProvider extends ServiceProvider
     {
         $this->app->bind(ResponseInterface::class, function () {
             if (class_exists(PsrHttpFactory::class)) {
-                return (new PsrHttpFactory)->createResponse(new Response);
+                return (new PsrHttpFactory())->createResponse(new Response());
             }
 
             throw new BindingResolutionException('Unable to resolve PSR response. Please install the "symfony/psr-http-message-bridge" package.');
@@ -167,7 +172,7 @@ class RoutingServiceProvider extends ServiceProvider
      */
     protected function registerResponseFactory()
     {
-        $this->app->singleton(ResponseFactoryContract::class, fn($app) => new ResponseFactory($app[ViewFactoryContract::class], $app['redirect']));
+        $this->app->singleton(ResponseFactoryContract::class, fn ($app): \Illuminate\Routing\ResponseFactory => new ResponseFactory($app[ViewFactoryContract::class], $app['redirect']));
     }
 
     /**
@@ -177,7 +182,7 @@ class RoutingServiceProvider extends ServiceProvider
      */
     protected function registerCallableDispatcher()
     {
-        $this->app->singleton(CallableDispatcherContract::class, fn($app) => new CallableDispatcher($app));
+        $this->app->singleton(CallableDispatcherContract::class, fn ($app): \Illuminate\Routing\CallableDispatcher => new CallableDispatcher($app));
     }
 
     /**
@@ -187,6 +192,6 @@ class RoutingServiceProvider extends ServiceProvider
      */
     protected function registerControllerDispatcher()
     {
-        $this->app->singleton(ControllerDispatcherContract::class, fn($app) => new ControllerDispatcher($app));
+        $this->app->singleton(ControllerDispatcherContract::class, fn ($app): \Illuminate\Routing\ControllerDispatcher => new ControllerDispatcher($app));
     }
 }

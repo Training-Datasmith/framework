@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Queue;
 
 use Illuminate\Bus\UniqueLock;

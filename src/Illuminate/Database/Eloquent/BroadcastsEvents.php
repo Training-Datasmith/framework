@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent;
 
 use Illuminate\Support\Arr;
@@ -43,7 +45,9 @@ trait BroadcastsEvents
     public function broadcastCreated($channels = null)
     {
         return $this->broadcastIfBroadcastChannelsExistForEvent(
-            $this->newBroadcastableModelEvent('created'), 'created', $channels
+            $this->newBroadcastableModelEvent('created'),
+            'created',
+            $channels
         );
     }
 
@@ -56,7 +60,9 @@ trait BroadcastsEvents
     public function broadcastUpdated($channels = null)
     {
         return $this->broadcastIfBroadcastChannelsExistForEvent(
-            $this->newBroadcastableModelEvent('updated'), 'updated', $channels
+            $this->newBroadcastableModelEvent('updated'),
+            'updated',
+            $channels
         );
     }
 
@@ -69,7 +75,9 @@ trait BroadcastsEvents
     public function broadcastTrashed($channels = null)
     {
         return $this->broadcastIfBroadcastChannelsExistForEvent(
-            $this->newBroadcastableModelEvent('trashed'), 'trashed', $channels
+            $this->newBroadcastableModelEvent('trashed'),
+            'trashed',
+            $channels
         );
     }
 
@@ -82,7 +90,9 @@ trait BroadcastsEvents
     public function broadcastRestored($channels = null)
     {
         return $this->broadcastIfBroadcastChannelsExistForEvent(
-            $this->newBroadcastableModelEvent('restored'), 'restored', $channels
+            $this->newBroadcastableModelEvent('restored'),
+            'restored',
+            $channels
         );
     }
 
@@ -95,7 +105,9 @@ trait BroadcastsEvents
     public function broadcastDeleted($channels = null)
     {
         return $this->broadcastIfBroadcastChannelsExistForEvent(
-            $this->newBroadcastableModelEvent('deleted'), 'deleted', $channels
+            $this->newBroadcastableModelEvent('deleted'),
+            'deleted',
+            $channels
         );
     }
 
@@ -165,7 +177,7 @@ trait BroadcastsEvents
      */
     public function broadcastConnection(): void
     {
-        //
+
     }
 
     /**
@@ -173,7 +185,7 @@ trait BroadcastsEvents
      */
     public function broadcastQueue(): void
     {
-        //
+
     }
 
     /**

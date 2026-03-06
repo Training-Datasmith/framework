@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\View;
 
 use ArrayAccess;
@@ -66,7 +68,7 @@ class ViewTest extends TestCase
         }));
 
         $this->assertSame('contents', $view->render(function () {
-            //
+
         }));
     }
 
@@ -144,7 +146,7 @@ class ViewTest extends TestCase
 
     public function testViewConstructedWithObjectData()
     {
-        $view = $this->getView(new DataObjectStub);
+        $view = $this->getView(new DataObjectStub());
         $this->assertInstanceOf(ArrayAccess::class, $view);
         $this->assertTrue($view->offsetExists('foo'));
         $this->assertSame('bar', $view->offsetGet('foo'));

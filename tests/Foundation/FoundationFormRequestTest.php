@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation;
 
 use Exception;
@@ -151,8 +153,7 @@ class FoundationFormRequestTest extends TestCase
 
     public function testAfterMethod()
     {
-        $request = new class extends FormRequest
-        {
+        $request = new class () extends FormRequest {
             public $value = 'value-from-request';
 
             public function rules()
@@ -162,11 +163,10 @@ class FoundationFormRequestTest extends TestCase
 
             protected function failedValidation(Validator $validator)
             {
-                throw new class($validator) extends Exception
-                {
+                throw new class ($validator) extends Exception {
                     public function __construct(public $validator)
                     {
-                        //
+
                     }
                 };
             }
@@ -180,7 +180,7 @@ class FoundationFormRequestTest extends TestCase
                 ];
             }
         };
-        $request->setContainer($container = new Container);
+        $request->setContainer($container = new Container());
         $container->instance(\Illuminate\Contracts\Validation\Factory::class, (new \Illuminate\Validation\Factory(
             new \Illuminate\Translation\Translator(new \Illuminate\Translation\ArrayLoader(), 'en')
         ))->setContainer($container));
@@ -262,7 +262,7 @@ class FoundationFormRequestTest extends TestCase
      */
     protected function createRequest($payload = [], $class = FoundationTestFormRequestStub::class)
     {
-        $container = tap(new Container, function ($container) {
+        $container = tap(new Container(), function ($container) {
             $container->instance(
                 ValidationFactoryContract::class,
                 $this->createValidationFactory($container)
@@ -474,7 +474,7 @@ class AfterValidationRule
 {
     public function __construct(private $value)
     {
-        //
+
     }
 
     public function after($validator)
@@ -487,7 +487,7 @@ class InjectedDependency
 {
     public function __construct(public $value)
     {
-        //
+
     }
 }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Routing;
 
 use Illuminate\Contracts\Support\Responsable;
@@ -11,7 +13,7 @@ class ResponsableTest extends TestCase
     public function testResponsableObjectsAreRendered()
     {
         Route::get('/responsable', function () {
-            return new TestResponsableResponse;
+            return new TestResponsableResponse();
         });
 
         $response = $this->get('/responsable');

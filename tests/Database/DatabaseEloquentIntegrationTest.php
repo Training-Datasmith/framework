@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use DateTimeInterface;
@@ -39,7 +41,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
      */
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -977,7 +979,10 @@ class DatabaseEloquentIntegrationTest extends TestCase
         EloquentTestNonIncrementingSecond::query()->eachById(
             function (EloquentTestNonIncrementingSecond $user, $i) use (&$users) {
                 $users[] = [$user->name, $i];
-            }, 2, 'name');
+            },
+            2,
+            'name'
+        );
         $this->assertSame([[' First', 0], [' Second', 1], [' Third', 2]], $users);
     }
 
@@ -1468,7 +1473,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
     public function testHasOnMorphToRelationship()
     {
         $post = EloquentTestPost::create(['name' => 'Morph Post', 'user_id' => 1]);
-        (new EloquentTestPhoto)->imageable()->associate($post)->fill(['name' => 'Morph Photo'])->save();
+        (new EloquentTestPhoto())->imageable()->associate($post)->fill(['name' => 'Morph Photo'])->save();
 
         $photos = EloquentTestPhoto::has('imageable')->get();
 
@@ -1705,7 +1710,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
     public function testEmptyMorphToRelationship()
     {
-        $photo = new EloquentTestPhoto;
+        $photo = new EloquentTestPhoto();
 
         $this->assertNull($photo->imageable);
     }
@@ -1786,7 +1791,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
                 $this->connection()->transaction(function () use ($user) {
                     $user->email = 'otwell@laravel.com';
                     $user->save();
-                    throw new Exception;
+                    throw new Exception();
                 });
             } catch (Exception) {
                 // ignore the exception
@@ -1833,7 +1838,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
     public function testToArrayIncludesDefaultFormattedTimestamps()
     {
-        $model = new EloquentTestUser;
+        $model = new EloquentTestUser();
 
         $model->setRawAttributes([
             'created_at' => '2012-12-04',
@@ -1848,7 +1853,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
     public function testToArrayIncludesCustomFormattedTimestamps()
     {
-        $model = new EloquentTestUserWithCustomDateSerialization;
+        $model = new EloquentTestUserWithCustomDateSerialization();
 
         $model->setRawAttributes([
             'created_at' => '2012-12-04',
@@ -2096,7 +2101,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
     public function testTimestampsUsingDefaultDateFormat()
     {
-        $model = new EloquentTestUser;
+        $model = new EloquentTestUser();
         $model->setDateFormat('Y-m-d H:i:s'); // Default MySQL/PostgreSQL/SQLite date format
         $model->setRawAttributes([
             'created_at' => '2017-11-14 08:23:19',
@@ -2107,7 +2112,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
     public function testTimestampsUsingDefaultSqlServerDateFormat()
     {
-        $model = new EloquentTestUser;
+        $model = new EloquentTestUser();
         $model->setDateFormat('Y-m-d H:i:s.v'); // Default SQL Server date format
         $model->setRawAttributes([
             'created_at' => '2017-11-14 08:23:19.000',
@@ -2121,7 +2126,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
     public function testTimestampsUsingCustomDateFormat()
     {
         // Simulating using custom precisions with timestamps(4)
-        $model = new EloquentTestUser;
+        $model = new EloquentTestUser();
         $model->setDateFormat('Y-m-d H:i:s.u'); // Custom date format
         $model->setRawAttributes([
             'created_at' => '2017-11-14 08:23:19.0000',
@@ -2135,7 +2140,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
     public function testTimestampsUsingOldSqlServerDateFormat()
     {
-        $model = new EloquentTestUser;
+        $model = new EloquentTestUser();
         $model->setDateFormat('Y-m-d H:i:s.000'); // Old SQL Server date format
         $model->setRawAttributes([
             'created_at' => '2017-11-14 08:23:19.000',
@@ -2146,7 +2151,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
     public function testTimestampsUsingOldSqlServerDateFormatFallbackToDefaultParsing()
     {
-        $model = new EloquentTestUser;
+        $model = new EloquentTestUser();
         $model->setDateFormat('Y-m-d H:i:s.000'); // Old SQL Server date format
         $model->setRawAttributes([
             'updated_at' => '2017-11-14 08:23:19.734',
@@ -2163,7 +2168,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
     public function testSpecialFormats()
     {
-        $model = new EloquentTestUser;
+        $model = new EloquentTestUser();
         $model->setDateFormat('!Y-d-m \\Y');
         $model->setRawAttributes([
             'updated_at' => '2017-05-11 Y',

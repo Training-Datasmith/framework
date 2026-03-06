@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Client;
 
 use Closure;
@@ -37,7 +39,8 @@ use Throwable;
  */
 class PendingRequest
 {
-    use Conditionable, Macroable;
+    use Conditionable;
+    use Macroable;
 
     /**
      * The Guzzle client instance.
@@ -244,8 +247,9 @@ class PendingRequest
     public function __construct(/**
      * The factory instance.
      */
-    protected ?\Illuminate\Http\Client\Factory $factory = null, $middleware = [])
-    {
+        protected ?\Illuminate\Http\Client\Factory $factory = null,
+        $middleware = []
+    ) {
         $this->middleware = new Collection($middleware);
 
         $this->asJson();
@@ -301,7 +305,7 @@ class PendingRequest
      *
      * @return $this
      */
-    public function asJson()
+    public function asJson(): static
     {
         return $this->bodyFormat('json')->contentType('application/json');
     }
@@ -311,7 +315,7 @@ class PendingRequest
      *
      * @return $this
      */
-    public function asForm()
+    public function asForm(): static
     {
         return $this->bodyFormat('form_params')->contentType('application/x-www-form-urlencoded');
     }
@@ -744,7 +748,7 @@ class PendingRequest
      * @param  callable|bool  $condition
      * @return $this
      */
-    public function throwIf($condition)
+    public function throwIf($condition): static
     {
         if (is_callable($condition)) {
             $this->throwIfCallback = $condition;
@@ -1073,7 +1077,8 @@ class PendingRequest
 
             if (is_array($options[$this->bodyFormat])) {
                 $options[$this->bodyFormat] = array_merge(
-                    $options[$this->bodyFormat], $this->pendingFiles
+                    $options[$this->bodyFormat],
+                    $this->pendingFiles
                 );
             }
         } else {
@@ -1107,7 +1112,7 @@ class PendingRequest
                     }
 
                     // Otherwise, treat it as multiple values for the same field name...
-                    return (new Collection($value))->map(fn($item) => ['name' => $key.'[]', 'contents' => $item]);
+                    return (new Collection($value))->map(fn ($item): array => ['name' => $key.'[]', 'contents' => $item]);
                 }
 
                 return [['name' => $key, 'contents' => $value]];
@@ -1132,7 +1137,7 @@ class PendingRequest
 
                 return $this->runAfterResponseCallbacks($response);
             })
-            ->otherwise(function (Throwable $e) {
+            ->otherwise(function (Throwable $e): \Illuminate\Http\Client\ConnectionException|\Illuminate\Http\Client\Response|\Throwable {
                 if ($e instanceof StrayRequestException) {
                     throw $e;
                 }
@@ -1150,7 +1155,7 @@ class PendingRequest
 
                 return $e instanceof RequestException && $e->hasResponse() ? $this->populateResponse($this->newResponse($e->getResponse())) : $e;
             })
-            ->then(fn(Response|Throwable $response) => $this->handlePromiseResponse($response, $method, $url, $options, $attempt));
+            ->then(fn (Response|Throwable $response): mixed => $this->handlePromiseResponse($response, $method, $url, $options, $attempt));
     }
 
     /**
@@ -1380,7 +1385,7 @@ class PendingRequest
      */
     public function buildBeforeSendingHandler()
     {
-        return fn($handler) => fn($request, $options) => $handler($this->runBeforeSendingCallbacks($request, $options), $options);
+        return fn ($handler): \Closure => fn ($request, array $options) => $handler($this->runBeforeSendingCallbacks($request, $options), $options);
     }
 
     /**
@@ -1390,7 +1395,7 @@ class PendingRequest
      */
     public function buildRecorderHandler()
     {
-        return fn($handler) => function ($request, $options) use ($handler) {
+        return fn ($handler): \Closure => function ($request, $options) use ($handler) {
             $promise = $handler($request, $options);
 
             return $promise->then(function ($response) use ($request, $options) {
@@ -1415,8 +1420,8 @@ class PendingRequest
      */
     public function buildStubHandler()
     {
-        return fn($handler) => function ($request, array $options) use ($handler) {
-            $response = ($this->stubCallbacks ?? new Collection)
+        return fn ($handler): \Closure => function ($request, array $options) use ($handler) {
+            $response = ($this->stubCallbacks ?? new Collection())
                 ->map
                 ->__invoke(
                     (new Request($request))
@@ -1709,7 +1714,8 @@ class PendingRequest
         $request = (new Request($e->getRequest()))->setRequestAttributes($this->attributes);
 
         $this->factory?->recordRequestResponsePair(
-            $request, null
+            $request,
+            null
         );
 
         $this->dispatchConnectionFailedEvent($request, $exception);
@@ -1730,7 +1736,8 @@ class PendingRequest
         $request = (new Request($e->getRequest()))->setRequestAttributes($this->attributes);
 
         $this->factory?->recordRequestResponsePair(
-            $request, null
+            $request,
+            null
         );
 
         $this->dispatchConnectionFailedEvent($request, $exception);
@@ -1784,10 +1791,8 @@ class PendingRequest
 
     /**
      * Get the pending request options.
-     *
-     * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }

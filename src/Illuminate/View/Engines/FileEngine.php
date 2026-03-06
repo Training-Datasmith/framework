@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Engines;
 
 use Illuminate\Contracts\View\Engine;
@@ -15,8 +17,7 @@ class FileEngine implements Engine
          * The filesystem instance.
          */
         protected \Illuminate\Filesystem\Filesystem $files
-    )
-    {
+    ) {
     }
 
     /**
@@ -25,7 +26,7 @@ class FileEngine implements Engine
      * @param  string  $path
      * @return string
      */
-    public function get($path, array $data = [])
+    public function get($path, array $data = []): string|false
     {
         return $this->files->get($path);
     }

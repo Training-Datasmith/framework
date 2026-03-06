@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Exception;
@@ -18,7 +20,7 @@ class DatabaseTransactionsTest extends TestCase
      */
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -62,7 +64,7 @@ class DatabaseTransactionsTest extends TestCase
 
     public function testTransactionIsRecordedAndCommitted()
     {
-        $transactionManager = m::mock(new DatabaseTransactionsManager);
+        $transactionManager = m::mock(new DatabaseTransactionsManager());
         $transactionManager->shouldReceive('begin')->once()->with('default', 1);
         $transactionManager->shouldReceive('commit')->once()->with('default', 1, 0);
 
@@ -81,7 +83,7 @@ class DatabaseTransactionsTest extends TestCase
 
     public function testTransactionIsRecordedAndCommittedUsingTheSeparateMethods()
     {
-        $transactionManager = m::mock(new DatabaseTransactionsManager);
+        $transactionManager = m::mock(new DatabaseTransactionsManager());
         $transactionManager->shouldReceive('begin')->once()->with('default', 1);
         $transactionManager->shouldReceive('commit')->once()->with('default', 1, 0);
 
@@ -100,7 +102,7 @@ class DatabaseTransactionsTest extends TestCase
 
     public function testNestedTransactionIsRecordedAndCommitted()
     {
-        $transactionManager = m::mock(new DatabaseTransactionsManager);
+        $transactionManager = m::mock(new DatabaseTransactionsManager());
         $transactionManager->shouldReceive('begin')->once()->with('default', 1);
         $transactionManager->shouldReceive('begin')->once()->with('default', 2);
         $transactionManager->shouldReceive('commit')->once()->with('default', 2, 1);
@@ -127,7 +129,7 @@ class DatabaseTransactionsTest extends TestCase
 
     public function testNestedTransactionIsRecordeForDifferentConnectionsdAndCommitted()
     {
-        $transactionManager = m::mock(new DatabaseTransactionsManager);
+        $transactionManager = m::mock(new DatabaseTransactionsManager());
         $transactionManager->shouldReceive('begin')->once()->with('default', 1);
         $transactionManager->shouldReceive('begin')->once()->with('second_connection', 1);
         $transactionManager->shouldReceive('begin')->once()->with('second_connection', 2);
@@ -163,7 +165,7 @@ class DatabaseTransactionsTest extends TestCase
 
     public function testTransactionIsRolledBack()
     {
-        $transactionManager = m::mock(new DatabaseTransactionsManager);
+        $transactionManager = m::mock(new DatabaseTransactionsManager());
         $transactionManager->shouldReceive('begin')->once()->with('default', 1);
         $transactionManager->shouldReceive('rollback')->once()->with('default', 0);
         $transactionManager->shouldNotReceive('commit');
@@ -180,7 +182,7 @@ class DatabaseTransactionsTest extends TestCase
                     'value' => 2,
                 ]);
 
-                throw new Exception;
+                throw new Exception();
             });
         } catch (Throwable) {
         }
@@ -188,7 +190,7 @@ class DatabaseTransactionsTest extends TestCase
 
     public function testTransactionIsRolledBackUsingSeparateMethods()
     {
-        $transactionManager = m::mock(new DatabaseTransactionsManager);
+        $transactionManager = m::mock(new DatabaseTransactionsManager());
         $transactionManager->shouldReceive('begin')->once()->with('default', 1);
         $transactionManager->shouldReceive('rollback')->once()->with('default', 0);
         $transactionManager->shouldNotReceive('commit', 1, 0);
@@ -210,7 +212,7 @@ class DatabaseTransactionsTest extends TestCase
 
     public function testNestedTransactionsAreRolledBack()
     {
-        $transactionManager = m::mock(new DatabaseTransactionsManager);
+        $transactionManager = m::mock(new DatabaseTransactionsManager());
         $transactionManager->shouldReceive('begin')->once()->with('default', 1);
         $transactionManager->shouldReceive('begin')->once()->with('default', 2);
         $transactionManager->shouldReceive('rollback')->once()->with('default', 1);
@@ -234,7 +236,7 @@ class DatabaseTransactionsTest extends TestCase
                         'value' => 2,
                     ]);
 
-                    throw new Exception;
+                    throw new Exception();
                 });
             });
         } catch (Throwable) {

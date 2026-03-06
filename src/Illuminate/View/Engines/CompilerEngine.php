@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Engines;
 
 use Illuminate\Database\RecordNotFoundException;
@@ -7,7 +9,6 @@ use Illuminate\Database\RecordsNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Str;
-use Illuminate\View\Compilers\CompilerInterface;
 use Illuminate\View\ViewException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
@@ -34,19 +35,19 @@ class CompilerEngine extends PhpEngine
     public function __construct(/**
      * The Blade compiler instance.
      */
-    protected \Illuminate\View\Compilers\CompilerInterface $compiler, ?Filesystem $files = null)
-    {
-        parent::__construct($files ?: new Filesystem);
+        protected \Illuminate\View\Compilers\CompilerInterface $compiler,
+        ?Filesystem $files = null
+    ) {
+        parent::__construct($files ?: new Filesystem());
     }
 
     /**
      * Get the evaluated contents of the view.
      *
      * @param  string  $path
-     * @return string
      * @throws \Illuminate\View\ViewException
      */
-    public function get($path, array $data = [])
+    public function get($path, array $data = []): string
     {
         $this->lastCompiled[] = $path;
 
@@ -115,10 +116,8 @@ class CompilerEngine extends PhpEngine
 
     /**
      * Get the compiler implementation.
-     *
-     * @return \Illuminate\View\Compilers\CompilerInterface
      */
-    public function getCompiler()
+    public function getCompiler(): \Illuminate\View\Compilers\CompilerInterface
     {
         return $this->compiler;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Console\OutputStyle;
@@ -25,7 +27,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->db = $db = new DB;
+        $this->db = $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -44,7 +46,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
 
         $db->setAsGlobal();
 
-        $container = new Container;
+        $container = new Container();
         $container->instance('db', $db->getDatabaseManager());
         $container->bind('db.schema', function ($app) {
             return $app['db']->connection()->getSchemaBuilder();
@@ -55,7 +57,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
         $this->migrator = new Migrator(
             $repository = new DatabaseMigrationRepository($db->getDatabaseManager(), 'migrations'),
             $db->getDatabaseManager(),
-            new Filesystem
+            new Filesystem()
         );
 
         $output = m::mock(OutputStyle::class);

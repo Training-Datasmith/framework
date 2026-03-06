@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Contracts\Cache\LockProvider;
@@ -15,7 +17,7 @@ class NullStore extends TaggableStore implements LockProvider
      */
     public function get($key): void
     {
-        //
+
     }
 
     /**
@@ -85,7 +87,7 @@ class NullStore extends TaggableStore implements LockProvider
      * @param  string  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function restoreLock($name, $owner)
+    public function restoreLock($name, $owner): \Illuminate\Cache\NoLock
     {
         return $this->lock($name, 0, $owner);
     }

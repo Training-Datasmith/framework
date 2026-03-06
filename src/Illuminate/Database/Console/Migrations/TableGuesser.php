@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Migrations;
 
 class TableGuesser
 {
-    const CREATE_PATTERNS = [
+    public const CREATE_PATTERNS = [
         '/^create_(\w+)_table$/',
         '/^create_(\w+)$/',
     ];
 
-    const CHANGE_PATTERNS = [
+    public const CHANGE_PATTERNS = [
         '/.+_(to|from|in)_(\w+)_table$/',
         '/.+_(to|from|in)_(\w+)$/',
     ];

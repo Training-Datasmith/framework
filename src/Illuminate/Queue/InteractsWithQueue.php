@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use DateTimeInterface;
@@ -89,7 +91,7 @@ trait InteractsWithQueue
      */
     public function withFakeQueueInteractions()
     {
-        $this->job = new FakeJob;
+        $this->job = new FakeJob();
 
         return $this;
     }
@@ -185,7 +187,8 @@ trait InteractsWithQueue
             PHPUnit::assertEquals(
                 $exception->getMessage(),
                 $this->job->failedWith->getMessage(),
-                'Expected exception message ['.$exception->getMessage().'] but job failed with exception message ['.$this->job->failedWith->getMessage().'].');
+                'Expected exception message ['.$exception->getMessage().'] but job failed with exception message ['.$this->job->failedWith->getMessage().'].'
+            );
         }
 
         return $this;

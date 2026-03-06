@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use ArrayAccess;
@@ -15,8 +17,7 @@ class ProcessPoolResults implements ArrayAccess
          * The results of the processes.
          */
         protected array $results
-    )
-    {
+    ) {
     }
 
     /**

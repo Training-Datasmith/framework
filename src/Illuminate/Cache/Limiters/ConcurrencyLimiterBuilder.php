@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\Limiters;
 
 use Illuminate\Support\InteractsWithTime;
@@ -51,8 +53,7 @@ class ConcurrencyLimiterBuilder
          * The name of the lock.
          */
         public $name
-    )
-    {
+    ) {
     }
 
     /**

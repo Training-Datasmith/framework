@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing\Fluent;
 
 use Closure;
@@ -13,13 +15,13 @@ use PHPUnit\Framework\Assert as PHPUnit;
 
 class AssertableJson implements Arrayable
 {
-    use Concerns\Has,
-        Concerns\Matching,
-        Concerns\Debugging,
-        Concerns\Interaction,
-        Conditionable,
-        Macroable,
-        Tappable;
+    use Concerns\Has;
+    use Concerns\Matching;
+    use Concerns\Debugging;
+    use Concerns\Interaction;
+    use Conditionable;
+    use Macroable;
+    use Tappable;
 
     /**
      * Create a new fluent, assertable JSON data instance.
@@ -33,8 +35,7 @@ class AssertableJson implements Arrayable
          * The "dot" path to the current scope.
          */
         private ?string $path = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -89,7 +90,9 @@ class AssertableJson implements Arrayable
 
         $path = $this->dotPath();
 
-        PHPUnit::assertNotEmpty($props, $path === ''
+        PHPUnit::assertNotEmpty(
+            $props,
+            $path === ''
             ? 'Cannot scope directly onto the first element of the root level because it is empty.'
             : sprintf('Cannot scope directly onto the first element of property [%s] because it is empty.', $path)
         );
@@ -112,7 +115,9 @@ class AssertableJson implements Arrayable
 
         $path = $this->dotPath();
 
-        PHPUnit::assertNotEmpty($props, $path === ''
+        PHPUnit::assertNotEmpty(
+            $props,
+            $path === ''
             ? 'Cannot scope directly onto each element of the root level because it is empty.'
             : sprintf('Cannot scope directly onto each element of property [%s] because it is empty.', $path)
         );
@@ -144,10 +149,8 @@ class AssertableJson implements Arrayable
 
     /**
      * Get the instance as an array.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->props;
     }

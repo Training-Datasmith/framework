@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Support\Once;
@@ -17,8 +19,7 @@ class OnceTest extends TestCase
 
     public function testResultMemoization()
     {
-        $instance = new class
-        {
+        $instance = new class () {
             public function rand()
             {
                 return once(fn () => rand(1, PHP_INT_MAX));
@@ -33,8 +34,7 @@ class OnceTest extends TestCase
 
     public function testCallableIsCalledOnce()
     {
-        $instance = new class
-        {
+        $instance = new class () {
             public int $count = 0;
 
             public function increment()
@@ -87,8 +87,7 @@ class OnceTest extends TestCase
 
     public function testIsNotMemoizedWhenCallableUsesChanges()
     {
-        $instance = new class()
-        {
+        $instance = new class () {
             public function rand(string $letter)
             {
                 return once(function () use ($letter) {
@@ -132,8 +131,7 @@ class OnceTest extends TestCase
 
     public function testInvokables()
     {
-        $invokable = new class
-        {
+        $invokable = new class () {
             public static $count = 0;
 
             public function __invoke()
@@ -142,8 +140,7 @@ class OnceTest extends TestCase
             }
         };
 
-        $instance = new class($invokable)
-        {
+        $instance = new class ($invokable) {
             public function __construct(protected $invokable)
             {
             }
@@ -165,8 +162,7 @@ class OnceTest extends TestCase
 
     public function testFirstClassCallableSyntax()
     {
-        $instance = new class
-        {
+        $instance = new class () {
             public function rand()
             {
                 return once(MyClass::staticRand(...));
@@ -181,8 +177,7 @@ class OnceTest extends TestCase
 
     public function testFirstClassCallableSyntaxWithArraySyntax()
     {
-        $instance = new class
-        {
+        $instance = new class () {
             public function rand()
             {
                 return once([MyClass::class, 'staticRand']);
@@ -291,16 +286,14 @@ class OnceTest extends TestCase
 
     public function testResultIsMemoizedWhenCalledFromMethodsWithSameName()
     {
-        $instanceA = new class
-        {
+        $instanceA = new class () {
             public function rand()
             {
                 return once(fn () => rand(1, PHP_INT_MAX));
             }
         };
 
-        $instanceB = new class
-        {
+        $instanceB = new class () {
             public function rand()
             {
                 return once(fn () => rand(1, PHP_INT_MAX));
@@ -315,8 +308,7 @@ class OnceTest extends TestCase
 
     public function testRecursiveOnceCalls()
     {
-        $instance = new class
-        {
+        $instance = new class () {
             public function rand()
             {
                 return once(fn () => once(fn () => rand(1, PHP_INT_MAX)));
@@ -346,8 +338,7 @@ class OnceTest extends TestCase
 
     public function testMemoizationNullValues()
     {
-        $instance = new class
-        {
+        $instance = new class () {
             public $i = 0;
 
             public function null()

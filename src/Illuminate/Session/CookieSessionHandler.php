@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session;
 
-use Illuminate\Contracts\Cookie\QueueingFactory as CookieJar;
 use Illuminate\Support\InteractsWithTime;
 use SessionHandlerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,8 +38,7 @@ class CookieSessionHandler implements SessionHandlerInterface
          * Indicates whether the session should be expired when the browser closes.
          */
         protected $expireOnClose = false
-    )
-    {
+    ) {
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Closure;
@@ -18,7 +20,7 @@ class Onceable
         public ?object $object,
         public $callable,
     ) {
-        //
+
     }
 
     /**

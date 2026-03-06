@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Configuration;
 
 use Illuminate\Container\Container;
@@ -126,7 +128,7 @@ class MiddlewareTest extends TestCase
     public function testTrustProxies()
     {
         $configuration = new Middleware();
-        $middleware = new TrustProxies;
+        $middleware = new TrustProxies();
 
         $reflection = new ReflectionClass($middleware);
         $method = $reflection->getMethod('proxies');
@@ -160,7 +162,7 @@ class MiddlewareTest extends TestCase
     public function testTrustHeaders()
     {
         $configuration = new Middleware();
-        $middleware = new TrustProxies;
+        $middleware = new TrustProxies();
 
         $reflection = new ReflectionClass($middleware);
         $method = $reflection->getMethod('headers');
@@ -181,10 +183,12 @@ class MiddlewareTest extends TestCase
 
         $this->assertEquals(Request::HEADER_X_FORWARDED_FOR, $method->invoke($middleware));
 
-        $configuration->trustProxies([
+        $configuration->trustProxies(
+            [
             '192.168.1.3',
             '192.168.1.4',
-        ], Request::HEADER_X_FORWARDED_FOR |
+        ],
+            Request::HEADER_X_FORWARDED_FOR |
             Request::HEADER_X_FORWARDED_HOST |
             Request::HEADER_X_FORWARDED_PORT
         );
@@ -198,8 +202,7 @@ class MiddlewareTest extends TestCase
     {
         $app = m::mock(Application::class);
         $configuration = new Middleware();
-        $middleware = new class($app) extends TrustHosts
-        {
+        $middleware = new class ($app) extends TrustHosts {
             protected function allSubdomainsOfApplicationUrl()
             {
                 return '^(.+\.)?laravel\.test$';

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Eloquent\Model;
@@ -30,7 +32,7 @@ class EloquentPushTest extends DatabaseTestCase
 
     public function testPushMethodSavesTheRelationshipsRecursively()
     {
-        $user = new UserX;
+        $user = new UserX();
         $user->name = 'Test';
         $user->save();
         $user->posts()->create(['title' => 'Test title']);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Support\ConfigurationUrlParser;
@@ -11,7 +13,7 @@ class ConfigurationUrlParserTest extends TestCase
     #[DataProvider('databaseUrls')]
     public function testDatabaseUrlsAreParsed($config, $expectedOutput)
     {
-        $this->assertEquals($expectedOutput, (new ConfigurationUrlParser)->parseConfiguration($config));
+        $this->assertEquals($expectedOutput, (new ConfigurationUrlParser())->parseConfiguration($config));
     }
 
     public function testDriversAliases()
@@ -41,7 +43,7 @@ class ConfigurationUrlParserTest extends TestCase
 
         $this->assertEquals([
             'driver' => 'mysql',
-        ], (new ConfigurationUrlParser)->parseConfiguration('some-particular-alias://null'));
+        ], (new ConfigurationUrlParser())->parseConfiguration('some-particular-alias://null'));
     }
 
     public static function databaseUrls()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing\Console;
 
 use Illuminate\Console\Concerns\CreatesMatchingTest;

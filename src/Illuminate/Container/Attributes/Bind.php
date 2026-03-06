@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Container\Attributes;
 
 use Attribute;
-use InvalidArgumentException;
-use UnitEnum;
 
 use function Illuminate\Support\enum_value;
+
+use InvalidArgumentException;
+
+use UnitEnum;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 class Bind

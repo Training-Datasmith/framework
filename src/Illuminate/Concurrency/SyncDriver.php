@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Concurrency;
 
 use Closure;
 use Illuminate\Contracts\Concurrency\Driver;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Defer\DeferredCallback;
 
 use function Illuminate\Support\defer;
+
+use Illuminate\Support\Defer\DeferredCallback;
 
 class SyncDriver implements Driver
 {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation\Support\Providers;
 
 use Illuminate\Foundation\Application;
@@ -31,10 +33,10 @@ class RouteServiceProviderTest extends TestCase
                 }
             )
             ->withMiddleware(function (Middleware $middleware) {
-                //
+
             })
             ->withExceptions(function (Exceptions $exceptions) {
-                //
+
             })->create();
     }
 

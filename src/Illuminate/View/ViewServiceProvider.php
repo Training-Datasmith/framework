@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 use Illuminate\Container\Container;
@@ -32,7 +34,7 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function registerFactory(): void
     {
-        $this->app->singleton('view', function ($app) {
+        $this->app->singleton('view', function ($app): \Illuminate\View\Factory {
             // Next we need to grab the engine resolver instance that will be used by the
             // environment. The resolver will be used by an environment to get each of
             // the various engine implementations such as plain PHP or Blade engine.
@@ -74,7 +76,7 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function registerViewFinder(): void
     {
-        $this->app->bind('view.finder', fn($app) => new FileViewFinder($app['files'], $app['config']['view.paths']));
+        $this->app->bind('view.finder', fn ($app): \Illuminate\View\FileViewFinder => new FileViewFinder($app['files'], $app['config']['view.paths']));
     }
 
     /**
@@ -82,7 +84,7 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function registerBladeCompiler(): void
     {
-        $this->app->singleton('blade.compiler', fn($app) => tap(new BladeCompiler(
+        $this->app->singleton('blade.compiler', fn ($app) => tap(new BladeCompiler(
             $app['files'],
             $app['config']['view.compiled'],
             $app['config']->get('view.relative_hash', false) ? $app->basePath() : '',
@@ -100,7 +102,7 @@ class ViewServiceProvider extends ServiceProvider
     public function registerEngineResolver(): void
     {
         $this->app->singleton('view.engine.resolver', function (): \Illuminate\View\Engines\EngineResolver {
-            $resolver = new EngineResolver;
+            $resolver = new EngineResolver();
 
             // Next, we will register the various view engines with the resolver so that the
             // environment will resolve the engines needed for various views based on the
@@ -120,7 +122,7 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function registerFileEngine($resolver): void
     {
-        $resolver->register('file', fn() => new FileEngine(Container::getInstance()->make('files')));
+        $resolver->register('file', fn (): \Illuminate\View\Engines\FileEngine => new FileEngine(Container::getInstance()->make('files')));
     }
 
     /**
@@ -130,7 +132,7 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function registerPhpEngine($resolver): void
     {
-        $resolver->register('php', fn() => new PhpEngine(Container::getInstance()->make('files')));
+        $resolver->register('php', fn (): \Illuminate\View\Engines\PhpEngine => new PhpEngine(Container::getInstance()->make('files')));
     }
 
     /**

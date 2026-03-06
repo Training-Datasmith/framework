@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Access;
 
 trait HandlesAuthorization
@@ -9,9 +11,8 @@ trait HandlesAuthorization
      *
      * @param  string|null  $message
      * @param  mixed  $code
-     * @return \Illuminate\Auth\Access\Response
      */
-    protected function allow($message = null, $code = null)
+    protected function allow($message = null, $code = null): \Illuminate\Auth\Access\Response
     {
         return Response::allow($message, $code);
     }
@@ -21,9 +22,8 @@ trait HandlesAuthorization
      *
      * @param  string|null  $message
      * @param  mixed  $code
-     * @return \Illuminate\Auth\Access\Response
      */
-    protected function deny($message = null, $code = null)
+    protected function deny($message = null, $code = null): \Illuminate\Auth\Access\Response
     {
         return Response::deny($message, $code);
     }

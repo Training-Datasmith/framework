@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Pipeline;
 
 use Illuminate\Contracts\Pipeline\Hub as PipelineHubContract;

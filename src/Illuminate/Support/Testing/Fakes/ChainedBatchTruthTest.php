@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Support\Testing\Fakes;
+declare(strict_types=1);
 
-use Closure;
+namespace Illuminate\Support\Testing\Fakes;
 
 class ChainedBatchTruthTest
 {
@@ -16,8 +16,7 @@ class ChainedBatchTruthTest
          * The underlying truth test.
          */
         protected \Closure $callback
-    )
-    {
+    ) {
     }
 
     /**

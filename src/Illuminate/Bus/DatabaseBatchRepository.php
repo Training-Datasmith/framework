@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Bus;
 
 use Carbon\CarbonImmutable;
@@ -29,8 +31,7 @@ class DatabaseBatchRepository implements PrunableBatchRepository
          * The database table to use to store batch information.
          */
         protected string $table
-    )
-    {
+    ) {
     }
 
     /**
@@ -47,7 +48,7 @@ class DatabaseBatchRepository implements PrunableBatchRepository
             ->limit($limit)
             ->when($before, fn ($q) => $q->where('id', '<', $before))
             ->get()
-            ->map(fn($batch) => $this->toBatch($batch))
+            ->map(fn ($batch) => $this->toBatch($batch))
             ->all();
     }
 
@@ -110,7 +111,7 @@ class DatabaseBatchRepository implements PrunableBatchRepository
      */
     public function decrementPendingJobs(string $batchId, string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
-        $values = $this->updateAtomicValues($batchId, fn($batch) => [
+        $values = $this->updateAtomicValues($batchId, fn ($batch): array => [
             'pending_jobs' => $batch->pending_jobs - 1,
             'failed_jobs' => $batch->failed_jobs,
             'failed_job_ids' => json_encode(array_values(array_diff((array) json_decode((string) $batch->failed_job_ids, true), [$jobId]))),
@@ -127,7 +128,7 @@ class DatabaseBatchRepository implements PrunableBatchRepository
      */
     public function incrementFailedJobs(string $batchId, string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
-        $values = $this->updateAtomicValues($batchId, fn($batch) => [
+        $values = $this->updateAtomicValues($batchId, fn ($batch): array => [
             'pending_jobs' => $batch->pending_jobs,
             'failed_jobs' => $batch->failed_jobs + 1,
             'failed_job_ids' => json_encode(array_values(array_unique(array_merge((array) json_decode((string) $batch->failed_job_ids, true), [$jobId])))),
@@ -308,9 +309,8 @@ class DatabaseBatchRepository implements PrunableBatchRepository
      * Convert the given raw batch to a Batch object.
      *
      * @param  object  $batch
-     * @return \Illuminate\Bus\Batch
      */
-    protected function toBatch($batch)
+    protected function toBatch($batch): \Illuminate\Bus\Batch
     {
         return $this->factory->make(
             $this,
@@ -329,10 +329,8 @@ class DatabaseBatchRepository implements PrunableBatchRepository
 
     /**
      * Get the underlying database connection.
-     *
-     * @return \Illuminate\Database\Connection
      */
-    public function getConnection()
+    public function getConnection(): \Illuminate\Database\Connection
     {
         return $this->connection;
     }

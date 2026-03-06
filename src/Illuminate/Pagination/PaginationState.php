@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Pagination;
 
 class PaginationState
@@ -27,6 +29,6 @@ class PaginationState
 
         Paginator::queryStringResolver(fn () => $app['request']->query());
 
-        CursorPaginator::currentCursorResolver(fn($cursorName = 'cursor') => Cursor::fromEncoded($app['request']->input($cursorName)));
+        CursorPaginator::currentCursorResolver(fn ($cursorName = 'cursor'): ?\Illuminate\Pagination\Cursor => Cursor::fromEncoded($app['request']->input($cursorName)));
     }
 }

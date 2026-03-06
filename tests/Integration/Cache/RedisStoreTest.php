@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Cache;
 
 use DateTime;
@@ -37,7 +39,7 @@ class RedisStoreTest extends TestCase
         $store->clear();
 
         while ((microtime(true) - time()) > 0.5 && (microtime(true) - time()) < 0.6) {
-            //
+
         }
 
         $store->put('hello', 'world', 1);
@@ -52,7 +54,7 @@ class RedisStoreTest extends TestCase
         // for a non-flakey test we need to account for the millisecond.
         // see: https://redis.io/commands/expire/
         while ((microtime(true) - $putAt) < 1.001) {
-            //
+
         }
 
         $this->assertNull($store->get('hello'));

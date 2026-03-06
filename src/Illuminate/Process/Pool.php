@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Illuminate\Support\Collection;
@@ -31,8 +33,9 @@ class Pool
     public function __construct(/**
      * The process factory instance.
      */
-    protected \Illuminate\Process\Factory $factory, callable $callback)
-    {
+        protected \Illuminate\Process\Factory $factory,
+        callable $callback
+    ) {
         $this->callback = $callback;
     }
 
@@ -65,7 +68,7 @@ class Pool
                         throw new InvalidArgumentException('Process pool must only contain pending processes.');
                     }
                 })
-                ->mapWithKeys(fn($pendingProcess, $key) => [$key => $pendingProcess->start(output: $output ? function ($type, $buffer) use ($key, $output): void {
+                ->mapWithKeys(fn ($pendingProcess, $key): array => [$key => $pendingProcess->start(output: $output ? function ($type, $buffer) use ($key, $output): void {
                     $output($type, $buffer, $key);
                 } : null)])
                 ->all()
@@ -84,10 +87,8 @@ class Pool
 
     /**
      * Start and wait for the processes to finish.
-     *
-     * @return \Illuminate\Process\ProcessPoolResults
      */
-    public function wait()
+    public function wait(): \Illuminate\Process\ProcessPoolResults
     {
         return $this->start()->wait();
     }
@@ -95,7 +96,6 @@ class Pool
     /**
      * Dynamically proxy methods calls to a new pending process.
      *
-     * @param  array  $parameters
      * @return \Illuminate\Process\PendingProcess
      */
     public function __call(string $method, array $parameters)

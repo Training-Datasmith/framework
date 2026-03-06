@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Console\PromptsForMissingInput as PromptsForMissingInputContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 use function Laravel\Prompts\text;
+
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+
+use Symfony\Component\Console\Output\OutputInterface;
 
 trait PromptsForMissingInput
 {
@@ -85,15 +89,13 @@ trait PromptsForMissingInput
      */
     protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)
     {
-        //
+
     }
 
     /**
      * Whether the input contains any options that differ from the default values.
-     *
-     * @return bool
      */
-    protected function didReceiveOptions(InputInterface $input)
+    protected function didReceiveOptions(InputInterface $input): bool
     {
         return (new Collection($this->getDefinition()->getOptions()))
             ->reject(fn ($option): bool => $input->getOption($option->getName()) === $option->getDefault())

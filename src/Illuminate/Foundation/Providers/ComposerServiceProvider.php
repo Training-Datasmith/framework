@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Providers;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -13,7 +15,7 @@ class ComposerServiceProvider extends ServiceProvider implements DeferrableProvi
      */
     public function register(): void
     {
-        $this->app->singleton('composer', fn($app) => new Composer($app['files'], $app->basePath()));
+        $this->app->singleton('composer', fn ($app): \Illuminate\Support\Composer => new Composer($app['files'], $app->basePath()));
     }
 
     /**

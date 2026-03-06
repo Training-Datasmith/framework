@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console;
 
 use Illuminate\Cache\ArrayStore;
@@ -24,8 +26,7 @@ class CallbackSchedulingTest extends TestCase
     {
         parent::setUp();
 
-        $cache = new class implements Factory
-        {
+        $cache = new class () implements Factory {
             public $store;
 
             public function __construct()
@@ -86,7 +87,7 @@ class CallbackSchedulingTest extends TestCase
 
         // We'll trigger an exception in an "after" hook to test exception handling
         $event->after(function () {
-            throw new RuntimeException;
+            throw new RuntimeException();
         });
 
         // Because exceptions are caught by the ScheduleRunCommand, we need to listen for

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Support\Providers;
 
 use Closure;
@@ -69,7 +71,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+
     }
 
     /**
@@ -161,13 +163,14 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Pass dynamic methods onto the router instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)
     {
         return $this->forwardCallTo(
-            $this->app->make(Router::class), $method, $parameters
+            $this->app->make(Router::class),
+            $method,
+            $parameters
         );
     }
 }

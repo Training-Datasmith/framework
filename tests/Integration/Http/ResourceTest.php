@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Http;
 
 use Illuminate\Database\Eloquent\Model;
@@ -55,8 +57,7 @@ class ResourceTest extends TestCase
 {
     public function testResourceMayBeConvetedToArray()
     {
-        $resource = new class((new User)->forceFill(['id' => 1, 'name' => 'Taylor Otwell'])) extends JsonResource
-        {
+        $resource = new class ((new User())->forceFill(['id' => 1, 'name' => 'Taylor Otwell'])) extends JsonResource {
             public function toArray(Request $request)
             {
                 return [
@@ -107,7 +108,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -182,7 +184,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertJson([
@@ -200,7 +203,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -250,7 +254,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -330,7 +335,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -356,7 +362,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -379,7 +386,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -402,7 +410,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -426,7 +435,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -454,7 +464,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -479,7 +490,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -507,7 +519,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -536,7 +549,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -565,7 +579,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -593,7 +608,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -621,7 +637,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -644,7 +661,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -662,13 +680,14 @@ class ResourceTest extends TestCase
     {
         Route::get('/', function () {
             $post = new Post(['id' => 5]);
-            $post->setRelation('pivot', new Subscription);
+            $post->setRelation('pivot', new Subscription());
 
             return new PostResourceWithOptionalPivotRelationship($post);
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -698,7 +717,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -719,7 +739,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -743,7 +764,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -762,13 +784,14 @@ class ResourceTest extends TestCase
     {
         Route::get('/', function () {
             $post = new Post(['id' => 5]);
-            $post->setRelation('accessor', new Subscription);
+            $post->setRelation('accessor', new Subscription());
 
             return new PostResourceWithOptionalPivotRelationship($post);
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -819,7 +842,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -841,7 +865,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -858,7 +883,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertJson([
@@ -880,7 +906,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertJson([
@@ -904,7 +931,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $this->assertEquals(
@@ -922,7 +950,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $this->assertEquals(
@@ -936,14 +965,17 @@ class ResourceTest extends TestCase
         Route::get('/', function () {
             $paginator = new LengthAwarePaginator(
                 collect([new Post(['id' => 5, 'title' => 'Test Title', 'reading_time' => 3.0])]),
-                10, 15, 1
+                10,
+                15,
+                1
             );
 
             return PostResourceWithJsonOptions::collection($paginator);
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $this->assertEquals(
@@ -963,7 +995,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $this->assertEquals(
@@ -982,7 +1015,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(202);
@@ -1003,7 +1037,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(201);
@@ -1019,7 +1054,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1039,14 +1075,17 @@ class ResourceTest extends TestCase
         Route::get('/', function () {
             $paginator = new LengthAwarePaginator(
                 collect([new Post(['id' => 5, 'title' => 'Test Title'])]),
-                10, 15, 1
+                10,
+                15,
+                1
             );
 
             return new PostCollectionResource($paginator);
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1081,14 +1120,18 @@ class ResourceTest extends TestCase
         Route::get('/', function () {
             $collection = collect([new Post(['id' => 2, 'title' => 'Laravel Nova'])]);
             $paginator = new LengthAwarePaginator(
-                $collection, 3, 1, 2
+                $collection,
+                3,
+                1,
+                2
             );
 
             return PostCollectionResource::make($paginator)->preserveQuery();
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/?framework=laravel&author=Otwell&page=2', ['Accept' => 'application/json']
+            '/?framework=laravel&author=Otwell&page=2',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1123,14 +1166,18 @@ class ResourceTest extends TestCase
         Route::get('/', function () {
             $collection = collect([new Post(['id' => 2, 'title' => 'Laravel Nova'])]);
             $paginator = new LengthAwarePaginator(
-                $collection, 3, 1, 2
+                $collection,
+                3,
+                1,
+                2
             );
 
             return PostCollectionResource::make($paginator)->withQuery(['author' => 'Taylor']);
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/?framework=laravel&author=Otwell&page=2', ['Accept' => 'application/json']
+            '/?framework=laravel&author=Otwell&page=2',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1165,14 +1212,17 @@ class ResourceTest extends TestCase
         Route::get('/', function () {
             $paginator = new CursorPaginator(
                 collect([new Post(['id' => 5, 'title' => 'Test Title']), new Post(['id' => 6, 'title' => 'Hello'])]),
-                1, null, ['parameters' => ['id']]
+                1,
+                null,
+                ['parameters' => ['id']]
             );
 
             return new PostCollectionResource($paginator);
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1204,14 +1254,18 @@ class ResourceTest extends TestCase
         Route::get('/', function () {
             $collection = collect([new Post(['id' => 5, 'title' => 'Test Title']), new Post(['id' => 6, 'title' => 'Hello'])]);
             $paginator = new CursorPaginator(
-                $collection, 1, null, ['parameters' => ['id']]
+                $collection,
+                1,
+                null,
+                ['parameters' => ['id']]
             );
 
             return PostCollectionResource::make($paginator)->preserveQuery();
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/?framework=laravel&author=Otwell', ['Accept' => 'application/json']
+            '/?framework=laravel&author=Otwell',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1241,14 +1295,18 @@ class ResourceTest extends TestCase
         Route::get('/', function () {
             $collection = collect([new Post(['id' => 5, 'title' => 'Test Title']), new Post(['id' => 6, 'title' => 'Hello'])]);
             $paginator = new CursorPaginator(
-                $collection, 1, null, ['parameters' => ['id']]
+                $collection,
+                1,
+                null,
+                ['parameters' => ['id']]
             );
 
             return PostCollectionResource::make($paginator)->withQuery(['author' => 'Taylor']);
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/?framework=laravel&author=Otwell', ['Accept' => 'application/json']
+            '/?framework=laravel&author=Otwell',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1278,12 +1336,15 @@ class ResourceTest extends TestCase
         Route::get('/', function () {
             return new EmptyPostCollectionResource(new LengthAwarePaginator(
                 collect([new Post(['id' => 5, 'title' => 'Test Title'])]),
-                10, 15, 1
+                10,
+                15,
+                1
             ));
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1324,7 +1385,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1344,7 +1406,8 @@ class ResourceTest extends TestCase
             return new ReallyEmptyPostResource($createdPost);
         });
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
         $this->assertTrue($createdPost->is($response->getOriginalContent()));
     }
@@ -1359,7 +1422,8 @@ class ResourceTest extends TestCase
             return new EmptyPostCollectionResource(new LengthAwarePaginator($createdPosts, 10, 15, 1));
         });
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
         $createdPosts->each(function ($post) use ($response) {
             $this->assertTrue($response->getOriginalContent()->contains($post));
@@ -1484,7 +1548,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1517,7 +1582,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1537,7 +1603,8 @@ class ResourceTest extends TestCase
         });
 
         $response = $this->withoutExceptionHandling()->get(
-            '/', ['Accept' => 'application/json']
+            '/',
+            ['Accept' => 'application/json']
         );
 
         $response->assertStatus(200);
@@ -1547,8 +1614,7 @@ class ResourceTest extends TestCase
 
     public function testLeadingMergeKeyedValueIsMergedCorrectly()
     {
-        $filter = new class
-        {
+        $filter = new class () {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -1569,28 +1635,27 @@ class ResourceTest extends TestCase
     public function testPostTooLargeException()
     {
         $request = new Request(server: ['CONTENT_LENGTH' => '4']);
-        $post = new ValidatePostSize;
+        $post = new ValidatePostSize();
         $post->handle($request, fn () => null);
 
         $this->expectException(PostTooLargeException::class);
         $this->expectExceptionMessage('The POST data is too large.');
 
         $request = new Request(server: ['CONTENT_LENGTH' => '2147483640']);
-        $post = new ValidatePostSize;
+        $post = new ValidatePostSize();
         $post->handle($request, fn () => null);
     }
 
     public function testLeadingMergeKeyedValueIsMergedCorrectlyWhenFirstValueIsMissing()
     {
-        $filter = new class
-        {
+        $filter = new class () {
             use ConditionallyLoadsAttributes;
 
             public function work()
             {
                 return $this->filter([
                     new MergeValue([
-                        0 => new MissingValue,
+                        0 => new MissingValue(),
                         'name' => 'mohamed',
                         'location' => 'hurghada',
                     ]),
@@ -1607,8 +1672,7 @@ class ResourceTest extends TestCase
 
     public function testLeadingMergeValueIsMergedCorrectly()
     {
-        $filter = new class
-        {
+        $filter = new class () {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -1633,8 +1697,7 @@ class ResourceTest extends TestCase
 
     public function testMergeValuesMayBeMissing()
     {
-        $filter = new class
-        {
+        $filter = new class () {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -1659,8 +1722,7 @@ class ResourceTest extends TestCase
 
     public function testInitialMergeValuesMayBeMissing()
     {
-        $filter = new class
-        {
+        $filter = new class () {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -1685,8 +1747,7 @@ class ResourceTest extends TestCase
 
     public function testMergeValueCanMergeJsonSerializable()
     {
-        $filter = new class
-        {
+        $filter = new class () {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -1717,8 +1778,7 @@ class ResourceTest extends TestCase
 
     public function testMergeValueCanMergeCollectionOfJsonSerializable()
     {
-        $filter = new class
-        {
+        $filter = new class () {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -1744,8 +1804,7 @@ class ResourceTest extends TestCase
 
     public function testAllMergeValuesMayBeMissing()
     {
-        $filter = new class
-        {
+        $filter = new class () {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -1770,8 +1829,7 @@ class ResourceTest extends TestCase
 
     public function testMergeValuesMayFallbackToDefaults()
     {
-        $filter = new class
-        {
+        $filter = new class () {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -1793,8 +1851,7 @@ class ResourceTest extends TestCase
 
     public function testNestedMerges()
     {
-        $filter = new class
-        {
+        $filter = new class () {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -1845,17 +1902,17 @@ class ResourceTest extends TestCase
         $this->assertJsonResourceResponse([
             1 => 'John',
             2 => 'Hank',
-            'foo' => new MissingValue,
+            'foo' => new MissingValue(),
         ], ['data' => ['John', 'Hank']]);
 
         $this->assertJsonResourceResponse([
             1 => 'John',
-            'foo' => new MissingValue,
+            'foo' => new MissingValue(),
             3 => 'Hank',
         ], ['data' => ['John', 'Hank']]);
 
         $this->assertJsonResourceResponse([
-            'foo' => new MissingValue,
+            'foo' => new MissingValue(),
             2 => 'John',
             3 => 'Hank',
         ], ['data' => ['John', 'Hank']]);
@@ -1903,14 +1960,17 @@ class ResourceTest extends TestCase
             Route::get('/', function () {
                 $paginator = new LengthAwarePaginator(
                     collect([new Post(['id' => 5, 'title' => 'Test Title', 'reading_time' => 3.0])]),
-                    10, 15, 1
+                    10,
+                    15,
+                    1
                 );
 
                 return PostResourceWithJsonOptions::collection($paginator);
             });
 
             $response = $this->withoutExceptionHandling()->get(
-                '/', ['Accept' => 'application/json']
+                '/',
+                ['Accept' => 'application/json']
             );
 
             $response->assertStatus(200);
@@ -1921,8 +1981,7 @@ class ResourceTest extends TestCase
 
     public function testResourceSkipsWrappingWhenDataKeyExists()
     {
-        $resource = new class(['id' => 5, 'title' => 'Test', 'data' => 'some data']) extends JsonResource
-        {
+        $resource = new class (['id' => 5, 'title' => 'Test', 'data' => 'some data']) extends JsonResource {
             public static $wrap = 'data';
         };
 
@@ -1938,8 +1997,7 @@ class ResourceTest extends TestCase
 
     public function testResourceWrapsWhenDataKeyDoesNotExist()
     {
-        $resource = new class(['id' => 5, 'title' => 'Test']) extends JsonResource
-        {
+        $resource = new class (['id' => 5, 'title' => 'Test']) extends JsonResource {
             public static $wrap = 'data';
         };
 
@@ -1956,8 +2014,7 @@ class ResourceTest extends TestCase
 
     public function testResourceCanOverridesWrapping()
     {
-        $resource = new class(['id' => 5, 'title' => 'Test', 'data' => 'some data']) extends JsonResource
-        {
+        $resource = new class (['id' => 5, 'title' => 'Test', 'data' => 'some data']) extends JsonResource {
             public static $wrap = 'results';
             public static bool $forceWrapping = true;
         };
@@ -1978,8 +2035,7 @@ class ResourceTest extends TestCase
 
     public function testResourceCollectionCanOverridesWrapping()
     {
-        $resource = new class([new class(['id' => 5, 'title' => 'Test', 'data' => 'some data']) extends JsonResource
-        {
+        $resource = new class ([new class (['id' => 5, 'title' => 'Test', 'data' => 'some data']) extends JsonResource {
             public static $wrap = null;
         },
         ]) extends ResourceCollection {
@@ -2004,8 +2060,7 @@ class ResourceTest extends TestCase
 
     public function testPaginatedResourceCollectionCanOverridesWrapping()
     {
-        $resource = new class(new LengthAwarePaginator([new class(['id' => 5, 'title' => 'Test', 'data' => 'some data']) extends JsonResource
-        {
+        $resource = new class (new LengthAwarePaginator([new class (['id' => 5, 'title' => 'Test', 'data' => 'some data']) extends JsonResource {
             public static $wrap = null;
         },
         ], 10, 2)) extends ResourceCollection {
@@ -2033,8 +2088,7 @@ class ResourceTest extends TestCase
 
     public function testEmptyPaginatedResourceCollectionCanOverridesWrapping()
     {
-        $resource = new class(new LengthAwarePaginator([], 10, 2)) extends ResourceCollection
-        {
+        $resource = new class (new LengthAwarePaginator([], 10, 2)) extends ResourceCollection {
             public static $wrap = 'results';
         };
 
@@ -2052,8 +2106,7 @@ class ResourceTest extends TestCase
 
     public function testResourceForceWrapOverridesDataKeyCheck()
     {
-        $resource = new class(['id' => 5, 'title' => 'Test', 'data' => 'some data']) extends JsonResource
-        {
+        $resource = new class (['id' => 5, 'title' => 'Test', 'data' => 'some data']) extends JsonResource {
             public static $wrap = 'data';
             public static bool $forceWrapping = true;
         };

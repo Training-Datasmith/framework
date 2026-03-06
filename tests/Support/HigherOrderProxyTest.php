@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Support\Collection;
@@ -26,15 +28,13 @@ class HigherOrderProxyTest extends TestCase
     public function test_call_proxies_method_call_to_items()
     {
         $items = new Collection([
-            new class
-            {
+            new class () {
                 public function shout($s)
                 {
                     return strtoupper($s);
                 }
             },
-            new class
-            {
+            new class () {
                 public function shout($s)
                 {
                     return strtoupper($s).'!';
@@ -51,8 +51,7 @@ class HigherOrderProxyTest extends TestCase
 
     public function test_call_forwards_and_returns_target()
     {
-        $target = new class
-        {
+        $target = new class () {
             public $count = 0;
 
             public function increment($by = 1)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Concerns;
 
 use Illuminate\Container\Container;
@@ -87,7 +89,7 @@ trait BuildsQueries
      */
     public function chunkMap(callable $callback, $count = 1000): \Illuminate\Support\Collection
     {
-        $collection = new Collection;
+        $collection = new Collection();
 
         $this->chunk($count, function ($items) use ($collection, $callback): void {
             $items->each(function ($item) use ($collection, $callback): void {
@@ -397,7 +399,7 @@ trait BuildsQueries
         $count = $result->count();
 
         if ($count === 0) {
-            throw new RecordsNotFoundException;
+            throw new RecordsNotFoundException();
         }
 
         if ($count > 1) {
@@ -545,7 +547,11 @@ trait BuildsQueries
     protected function paginator($items, $total, $perPage, $currentPage, $options)
     {
         return Container::getInstance()->makeWith(LengthAwarePaginator::class, compact(
-            'items', 'total', 'perPage', 'currentPage', 'options'
+            'items',
+            'total',
+            'perPage',
+            'currentPage',
+            'options'
         ));
     }
 
@@ -561,7 +567,10 @@ trait BuildsQueries
     protected function simplePaginator($items, $perPage, $currentPage, $options)
     {
         return Container::getInstance()->makeWith(Paginator::class, compact(
-            'items', 'perPage', 'currentPage', 'options'
+            'items',
+            'perPage',
+            'currentPage',
+            'options'
         ));
     }
 
@@ -577,7 +586,10 @@ trait BuildsQueries
     protected function cursorPaginator($items, $perPage, $cursor, $options)
     {
         return Container::getInstance()->makeWith(CursorPaginator::class, compact(
-            'items', 'perPage', 'cursor', 'options'
+            'items',
+            'perPage',
+            'cursor',
+            'options'
         ));
     }
 

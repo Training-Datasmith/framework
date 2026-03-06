@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation;
 
 use Illuminate\Database\Migrations\Migrator;
@@ -16,7 +18,7 @@ class Cloud
      */
     public static function bootstrapperBootstrapping(Application $app, string $bootstrapper): void
     {
-        //
+
     }
 
     /**

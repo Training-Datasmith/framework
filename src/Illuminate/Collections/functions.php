@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 if (! function_exists('Illuminate\Support\enum_value')) {

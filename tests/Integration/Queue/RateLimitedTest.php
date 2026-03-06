@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Illuminate\Bus\Dispatcher;
@@ -63,7 +65,7 @@ class RateLimitedTest extends TestCase
         $cache->shouldReceive('add')->andReturn(true, true);
         $cache->shouldReceive('increment')->andReturn(1);
         $cache->shouldReceive('has')->andReturn(true);
-        $cache->shouldReceive('getStore')->andReturn(new ArrayStore);
+        $cache->shouldReceive('getStore')->andReturn(new ArrayStore());
 
         $rateLimiter = new RateLimiter($cache);
         $this->app->instance(RateLimiter::class, $rateLimiter);
@@ -89,7 +91,7 @@ class RateLimitedTest extends TestCase
         $job->shouldReceive('isDeletedOrReleased')->once()->andReturn(true);
 
         $instance->call($job, [
-            'command' => serialize($command = new RateLimitedTestJob),
+            'command' => serialize($command = new RateLimitedTestJob()),
         ]);
 
         $this->assertFalse(RateLimitedTestJob::$handled);
@@ -179,7 +181,7 @@ class RateLimitedTest extends TestCase
         $job->shouldReceive('delete')->once();
 
         $instance->call($job, [
-            'command' => serialize($command = new $class),
+            'command' => serialize($command = new $class()),
         ]);
 
         $this->assertTrue($class::$handled);
@@ -198,7 +200,7 @@ class RateLimitedTest extends TestCase
         $job->shouldReceive('isDeletedOrReleased')->once()->andReturn(true);
 
         $instance->call($job, [
-            'command' => serialize($command = new $class),
+            'command' => serialize($command = new $class()),
         ]);
 
         $this->assertFalse($class::$handled);
@@ -217,7 +219,7 @@ class RateLimitedTest extends TestCase
         $job->shouldReceive('isDeletedOrReleased')->once()->andReturn(true);
 
         $instance->call($job, [
-            'command' => serialize($command = new $class),
+            'command' => serialize($command = new $class()),
         ]);
 
         $this->assertFalse($class::$handled);
@@ -236,7 +238,7 @@ class RateLimitedTest extends TestCase
         $job->shouldReceive('delete')->once();
 
         $instance->call($job, [
-            'command' => serialize($command = new $class),
+            'command' => serialize($command = new $class()),
         ]);
 
         $this->assertFalse($class::$handled);
@@ -244,10 +246,9 @@ class RateLimitedTest extends TestCase
 
     public function testItCanLimitPerMinute()
     {
-        Container::getInstance()->instance(RateLimiter::class, $limiter = new RateLimiter(new Repository(new ArrayStore)));
+        Container::getInstance()->instance(RateLimiter::class, $limiter = new RateLimiter(new Repository(new ArrayStore())));
         $limiter->for('test', fn () => Limit::perMinute(3));
-        $jobFactory = fn () => new class
-        {
+        $jobFactory = fn () => new class () {
             public $released = false;
 
             public function release()
@@ -288,10 +289,9 @@ class RateLimitedTest extends TestCase
 
     public function testItCanLimitPerSecond()
     {
-        Container::getInstance()->instance(RateLimiter::class, $limiter = new RateLimiter(new Repository(new ArrayStore)));
+        Container::getInstance()->instance(RateLimiter::class, $limiter = new RateLimiter(new Repository(new ArrayStore())));
         $limiter->for('test', fn () => Limit::perSecond(3));
-        $jobFactory = fn () => new class
-        {
+        $jobFactory = fn () => new class () {
             public $released = false;
 
             public function release()
@@ -333,7 +333,8 @@ class RateLimitedTest extends TestCase
 
 class RateLimitedTestJob
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 
@@ -392,7 +393,8 @@ enum UnitEnumNamedRateLimited
 
 class RateLimitedTestJobUsingBackedEnum
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 
@@ -409,7 +411,8 @@ class RateLimitedTestJobUsingBackedEnum
 
 class RateLimitedTestJobUsingUnitEnum
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 

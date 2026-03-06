@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Routing;
 
 use Illuminate\Database\Eloquent\Model;
@@ -29,5 +31,4 @@ class RouteSignatureParametersTest extends TestCase
 
 class SignatureParametersUser extends Model
 {
-    //
 }

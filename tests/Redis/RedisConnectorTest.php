@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Redis;
 
 use Illuminate\Foundation\Application;
@@ -47,7 +49,7 @@ class RedisConnectorTest extends TestCase
         $host = env('REDIS_HOST', '127.0.0.1');
         $port = env('REDIS_PORT', 6379);
 
-        $predis = new RedisManager(new Application, 'predis', [
+        $predis = new RedisManager(new Application(), 'predis', [
             'cluster' => false,
             'options' => [
                 'prefix' => 'test_',
@@ -64,7 +66,7 @@ class RedisConnectorTest extends TestCase
         $this->assertEquals($host, $parameters->host);
         $this->assertEquals($port, $parameters->port);
 
-        $phpRedis = new RedisManager(new Application, 'phpredis', [
+        $phpRedis = new RedisManager(new Application(), 'phpredis', [
             'cluster' => false,
             'options' => [
                 'prefix' => 'test_',
@@ -85,7 +87,7 @@ class RedisConnectorTest extends TestCase
         $host = env('REDIS_HOST', '127.0.0.1');
         $port = env('REDIS_PORT', 6379);
 
-        $predis = new RedisManager(new Application, 'predis', [
+        $predis = new RedisManager(new Application(), 'predis', [
             'cluster' => false,
             'options' => [
                 'prefix' => 'test_',
@@ -102,7 +104,7 @@ class RedisConnectorTest extends TestCase
         $this->assertEquals($host, $parameters->host);
         $this->assertEquals($port, $parameters->port);
 
-        $phpRedis = new RedisManager(new Application, 'phpredis', [
+        $phpRedis = new RedisManager(new Application(), 'phpredis', [
             'cluster' => false,
             'options' => [
                 'prefix' => 'test_',
@@ -123,7 +125,7 @@ class RedisConnectorTest extends TestCase
         $host = env('REDIS_HOST', '127.0.0.1');
         $port = env('REDIS_PORT', 6379);
 
-        $predis = new RedisManager(new Application, 'predis', [
+        $predis = new RedisManager(new Application(), 'predis', [
             'cluster' => false,
             'options' => [
                 'prefix' => 'test_',
@@ -142,7 +144,7 @@ class RedisConnectorTest extends TestCase
         $this->assertEquals($host, $parameters->host);
         $this->assertEquals($port, $parameters->port);
 
-        $phpRedis = new RedisManager(new Application, 'phpredis', [
+        $phpRedis = new RedisManager(new Application(), 'phpredis', [
             'cluster' => false,
             'options' => [
                 'prefix' => 'test_',
@@ -167,7 +169,7 @@ class RedisConnectorTest extends TestCase
         $username = 'testuser';
         $password = 'testpw';
 
-        $predis = new RedisManager(new Application, 'predis', [
+        $predis = new RedisManager(new Application(), 'predis', [
             'default' => [
                 'host' => $host,
                 'port' => $port,
@@ -188,7 +190,7 @@ class RedisConnectorTest extends TestCase
         $host = env('REDIS_HOST', '127.0.0.1');
         $port = env('REDIS_PORT', 6379);
 
-        $predis = new RedisManager(new Application, 'predis', [
+        $predis = new RedisManager(new Application(), 'predis', [
             'cluster' => false,
             'options' => [
                 'replication' => 'sentinel',
@@ -214,7 +216,7 @@ class RedisConnectorTest extends TestCase
         $host = env('REDIS_HOST', '127.0.0.1');
         $port = env('REDIS_PORT', 6379);
 
-        $predis1 = new RedisManager(new Application, 'predis', [
+        $predis1 = new RedisManager(new Application(), 'predis', [
             'cluster' => false,
             'options' => [
                 'prefix' => 'test_',
@@ -233,7 +235,7 @@ class RedisConnectorTest extends TestCase
         $predisClient1 = $predis1->client();
         $this->assertEquals('test_default_options_', $predisClient1->getOptions()->prefix->getPrefix());
 
-        $predis2 = new RedisManager(new Application, 'predis', [
+        $predis2 = new RedisManager(new Application(), 'predis', [
             'cluster' => false,
             'options' => [
                 'prefix' => 'test_',
@@ -253,7 +255,7 @@ class RedisConnectorTest extends TestCase
         $predisClient2 = $predis2->client();
         $this->assertEquals('test_default_config_', $predisClient2->getOptions()->prefix->getPrefix());
 
-        $phpRedis1 = new RedisManager(new Application, 'phpredis', [
+        $phpRedis1 = new RedisManager(new Application(), 'phpredis', [
             'cluster' => false,
             'options' => [
                 'prefix' => 'test_',
@@ -272,7 +274,7 @@ class RedisConnectorTest extends TestCase
         $phpRedisClient1 = $phpRedis1->connection()->client();
         $this->assertEquals('test_default_options_', $phpRedisClient1->getOption(Redis::OPT_PREFIX));
 
-        $phpRedis2 = new RedisManager(new Application, 'phpredis', [
+        $phpRedis2 = new RedisManager(new Application(), 'phpredis', [
             'cluster' => false,
             'options' => [
                 'prefix' => 'test_',

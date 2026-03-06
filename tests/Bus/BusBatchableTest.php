@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Bus;
 
 use Illuminate\Bus\Batchable;
@@ -13,15 +15,14 @@ class BusBatchableTest extends TestCase
 {
     public function test_batch_may_be_retrieved()
     {
-        $class = new class
-        {
+        $class = new class () {
             use Batchable;
         };
 
         $this->assertSame($class, $class->withBatchId('test-batch-id'));
         $this->assertSame('test-batch-id', $class->batchId);
 
-        Container::setInstance($container = new Container);
+        Container::setInstance($container = new Container());
 
         $repository = m::mock(BatchRepository::class);
         $repository->shouldReceive('find')->once()->with('test-batch-id')->andReturn('test-batch');
@@ -34,8 +35,7 @@ class BusBatchableTest extends TestCase
 
     public function test_with_fake_batch_sets_and_returns_fake()
     {
-        $job = new class
-        {
+        $job = new class () {
             use Batchable;
         };
 
@@ -51,8 +51,7 @@ class BusBatchableTest extends TestCase
 
     public function test_batching_reflects_cancelled_state()
     {
-        $job = new class
-        {
+        $job = new class () {
             use Batchable;
         };
 

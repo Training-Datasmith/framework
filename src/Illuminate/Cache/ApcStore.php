@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 class ApcStore extends TaggableStore
@@ -20,8 +22,7 @@ class ApcStore extends TaggableStore
          * A string that should be prepended to keys.
          */
         protected $prefix = ''
-    )
-    {
+    ) {
     }
 
     /**
@@ -41,9 +42,8 @@ class ApcStore extends TaggableStore
      * @param  string  $key
      * @param  mixed  $value
      * @param  int  $seconds
-     * @return bool
      */
-    public function put($key, $value, $seconds)
+    public function put($key, $value, $seconds): bool
     {
         return $this->apc->put($this->prefix.$key, $value, $seconds);
     }
@@ -55,7 +55,7 @@ class ApcStore extends TaggableStore
      * @param  int  $value
      * @return int|false
      */
-    public function increment($key, $value = 1)
+    public function increment($key, $value = 1): int|false
     {
         return $this->apc->increment($this->prefix.$key, $value);
     }
@@ -67,7 +67,7 @@ class ApcStore extends TaggableStore
      * @param  int  $value
      * @return int|false
      */
-    public function decrement($key, $value = 1)
+    public function decrement($key, $value = 1): int|false
     {
         return $this->apc->decrement($this->prefix.$key, $value);
     }
@@ -88,19 +88,16 @@ class ApcStore extends TaggableStore
      * Remove an item from the cache.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function forget($key)
+    public function forget($key): bool
     {
         return $this->apc->delete($this->prefix.$key);
     }
 
     /**
      * Remove all items from the cache.
-     *
-     * @return bool
      */
-    public function flush()
+    public function flush(): bool
     {
         return $this->apc->flush();
     }

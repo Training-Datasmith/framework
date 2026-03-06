@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Query\Processors;
 
 use Illuminate\Database\Query\Builder;
@@ -15,7 +17,7 @@ class MySqlProcessor extends Processor
      */
     public function processColumnListing($results): array
     {
-        return array_map(fn($result) => ((object) $result)->column_name, $results);
+        return array_map(fn ($result) => ((object) $result)->column_name, $results);
     }
 
     /**

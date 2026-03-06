@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Closure;
@@ -36,8 +38,7 @@ class QueueManager implements FactoryContract, MonitorContract
          * The application instance.
          */
         protected $app
-    )
-    {
+    ) {
     }
 
     /**
@@ -358,7 +359,6 @@ class QueueManager implements FactoryContract, MonitorContract
     /**
      * Dynamically pass calls to the default connection.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

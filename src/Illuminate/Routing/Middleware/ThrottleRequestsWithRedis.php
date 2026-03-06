@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing\Middleware;
 
 use Closure;
@@ -29,7 +31,7 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
     public function __construct(RateLimiter $limiter, /**
      * The Redis factory implementation.
      */
-    protected \Redis $redis)
+        protected \Redis $redis)
     {
         parent::__construct($limiter);
     }
@@ -82,7 +84,10 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
     protected function tooManyAttempts($key, $maxAttempts, $decaySeconds)
     {
         $limiter = new DurationLimiter(
-            $this->getRedisConnection(), $key, $maxAttempts, $decaySeconds
+            $this->getRedisConnection(),
+            $key,
+            $maxAttempts,
+            $decaySeconds
         );
 
         return tap($limiter->tooManyAttempts(), function () use ($key, $limiter): void {
@@ -103,7 +108,10 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
     protected function hit($key, $maxAttempts, $decaySeconds)
     {
         $limiter = new DurationLimiter(
-            $this->getRedisConnection(), $key, $maxAttempts, $decaySeconds
+            $this->getRedisConnection(),
+            $key,
+            $maxAttempts,
+            $decaySeconds
         );
 
         $limiter->acquire();

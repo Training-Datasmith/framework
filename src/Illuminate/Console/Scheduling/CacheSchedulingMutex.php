@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 use DateTimeInterface;
@@ -47,7 +49,9 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
         }
 
         return $this->cache->store($this->store)->add(
-            $mutexName, true, 3600
+            $mutexName,
+            true,
+            3600
         );
     }
 

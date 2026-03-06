@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Log\Context;
 
 use __PHP_Incomplete_Class;
@@ -17,7 +19,9 @@ use Throwable;
 
 class Repository
 {
-    use Conditionable, Macroable, SerializesModels;
+    use Conditionable;
+    use Macroable;
+    use SerializesModels;
 
     /**
      * The contextual data.
@@ -48,8 +52,7 @@ class Repository
          * The event dispatcher instance.
          */
         protected \Illuminate\Contracts\Events\Dispatcher $events
-    )
-    {
+    ) {
     }
 
     /**
@@ -137,11 +140,10 @@ class Repository
     /**
      * Retrieve the given key's value and then forget it.
      *
-     * @param  string  $key
      * @param  mixed  $default
      * @return mixed
      */
-    public function pull($key, $default = null)
+    public function pull(string $key, $default = null)
     {
         return tap($this->get($key, $default), function () use ($key): void {
             $this->forget($key);
@@ -151,11 +153,10 @@ class Repository
     /**
      * Retrieve the given key's hidden value and then forget it.
      *
-     * @param  string  $key
      * @param  mixed  $default
      * @return mixed
      */
-    public function pullHidden($key, $default = null)
+    public function pullHidden(string $key, $default = null)
     {
         return tap($this->getHidden($key, $default), function () use ($key): void {
             $this->forgetHidden($key);
@@ -436,7 +437,7 @@ class Repository
      *
      * @return $this
      */
-    public function decrement(string $key, int $amount = 1)
+    public function decrement(string $key, int $amount = 1): static
     {
         return $this->increment($key, $amount * -1);
     }

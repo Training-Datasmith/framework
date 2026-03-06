@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session;
 
 use Illuminate\Support\Manager;
@@ -27,7 +29,7 @@ class SessionManager extends Manager
      */
     protected function createNullDriver()
     {
-        return $this->buildSession(new NullSessionHandler);
+        return $this->buildSession(new NullSessionHandler());
     }
 
     /**
@@ -76,7 +78,9 @@ class SessionManager extends Manager
         $lifetime = $this->config->get('session.lifetime');
 
         return $this->buildSession(new FileSessionHandler(
-            $this->container->make('files'), $this->config->get('session.files'), $lifetime
+            $this->container->make('files'),
+            $this->config->get('session.files'),
+            $lifetime
         ));
     }
 
@@ -92,7 +96,10 @@ class SessionManager extends Manager
         $lifetime = $this->config->get('session.lifetime');
 
         return $this->buildSession(new DatabaseSessionHandler(
-            $this->getDatabaseConnection(), $table, $lifetime, $this->container
+            $this->getDatabaseConnection(),
+            $table,
+            $lifetime,
+            $this->container
         ));
     }
 
@@ -184,9 +191,8 @@ class SessionManager extends Manager
      * Build the session instance.
      *
      * @param  \SessionHandlerInterface  $handler
-     * @return \Illuminate\Session\Store
      */
-    protected function buildSession($handler)
+    protected function buildSession($handler): \Illuminate\Session\EncryptedStore|\Illuminate\Session\Store
     {
         return $this->config->get('session.encrypt')
             ? $this->buildEncryptedSession($handler)

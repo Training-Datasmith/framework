@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Carbon\CarbonInterval;
@@ -19,21 +21,23 @@ use Illuminate\Database\Query\Grammars\Grammar as QueryGrammar;
 use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Database\Schema\Builder as SchemaBuilder;
 use Illuminate\Support\Arr;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\InteractsWithTime;
 use Illuminate\Support\Traits\Macroable;
 use PDO;
 use PDOStatement;
-use RuntimeException;
 
-use function Illuminate\Support\enum_value;
+use RuntimeException;
 
 class Connection implements ConnectionInterface
 {
-    use DetectsConcurrencyErrors,
-        DetectsLostConnections,
-        Concerns\ManagesTransactions,
-        InteractsWithTime,
-        Macroable;
+    use DetectsConcurrencyErrors;
+    use DetectsLostConnections;
+    use Concerns\ManagesTransactions;
+    use InteractsWithTime;
+    use Macroable;
 
     /**
      * The active PDO connection used for reads.
@@ -199,17 +203,17 @@ class Connection implements ConnectionInterface
     public function __construct(/**
      * The active PDO connection.
      */
-    protected $pdo, /**
+        protected $pdo, /**
      * The name of the connected database.
      */
-    protected $database = '', /**
+        protected $database = '', /**
      * The table prefix for the connection.
      */
-    protected $tablePrefix = '', /**
+        protected $tablePrefix = '', /**
      * The database connection configuration options.
      */
-    protected array $config = [])
-    {
+        protected array $config = []
+    ) {
         // We need to initialize a query grammar and the query post processors
         // which are both very important parts of the database abstractions
         // so we initialize these to their default values while starting.
@@ -249,7 +253,7 @@ class Connection implements ConnectionInterface
      */
     protected function getDefaultSchemaGrammar()
     {
-        //
+
     }
 
     /**
@@ -265,7 +269,7 @@ class Connection implements ConnectionInterface
      */
     protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\Processor
     {
-        return new Processor;
+        return new Processor();
     }
 
     /**
@@ -298,7 +302,9 @@ class Connection implements ConnectionInterface
     public function query(): \Illuminate\Database\Query\Builder
     {
         return new QueryBuilder(
-            $this, $this->getQueryGrammar(), $this->getPostProcessor()
+            $this,
+            $this->getQueryGrammar(),
+            $this->getPostProcessor()
         );
     }
 
@@ -337,7 +343,7 @@ class Connection implements ConnectionInterface
         $record = (array) $record;
 
         if (count($record) > 1) {
-            throw new MultipleColumnsSelectedException;
+            throw new MultipleColumnsSelectedException();
         }
 
         return array_first($record);
@@ -428,7 +434,7 @@ class Connection implements ConnectionInterface
      */
     public function cursor($query, $bindings = [], $useReadPdo = true)
     {
-        $statement = $this->run($query, $bindings, function ($query, array $bindings) use ($useReadPdo) {
+        $statement = $this->run($query, $bindings, function ($query, array $bindings) use ($useReadPdo): array|\PDOStatement {
             if ($this->pretending()) {
                 return [];
             }
@@ -440,7 +446,8 @@ class Connection implements ConnectionInterface
                 ->prepare($query));
 
             $this->bindValues(
-                $statement, $this->prepareBindings($bindings)
+                $statement,
+                $this->prepareBindings($bindings)
             );
 
             // Next, we'll execute the query against the database and return the statement
@@ -741,7 +748,10 @@ class Connection implements ConnectionInterface
             $result = $this->runQueryCallback($query, $bindings, $callback);
         } catch (QueryException $e) {
             $result = $this->handleQueryException(
-                $e, $query, $bindings, $callback
+                $e,
+                $query,
+                $bindings,
+                $callback
             );
         }
 
@@ -749,7 +759,9 @@ class Connection implements ConnectionInterface
         // then log the query, bindings, and execution time so we will report them on
         // the event that the developer needs them. We'll log time in milliseconds.
         $this->logQuery(
-            $query, $bindings, $this->getElapsedTime($start)
+            $query,
+            $bindings,
+            $this->getElapsedTime($start)
         );
 
         return $result;
@@ -909,7 +921,10 @@ class Connection implements ConnectionInterface
         }
 
         return $this->tryAgainIfCausedByLostConnection(
-            $e, $query, $bindings, $callback
+            $e,
+            $query,
+            $bindings,
+            $callback
         );
     }
 
@@ -917,12 +932,10 @@ class Connection implements ConnectionInterface
      * Handle a query exception that occurred during query execution.
      *
      * @param  string  $query
-     * @param  array  $bindings
      * @return mixed
-     *
      * @throws \Illuminate\Database\QueryException
      */
-    protected function tryAgainIfCausedByLostConnection(QueryException $e, $query, $bindings, Closure $callback)
+    protected function tryAgainIfCausedByLostConnection(QueryException $e, $query, array $bindings, Closure $callback)
     {
         if ($this->causedByLostConnection($e->getPrevious())) {
             $this->reconnect();

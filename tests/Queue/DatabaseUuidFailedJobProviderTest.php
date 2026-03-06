@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Database\Capsule\Manager as DB;
@@ -180,7 +182,7 @@ class DatabaseUuidFailedJobProviderTest extends TestCase
 
     protected function getFailedJobProvider(string $database = 'default', string $table = 'failed_jobs')
     {
-        $db = new DB;
+        $db = new DB();
         $db->addConnection([
             'driver' => 'sqlite',
             'database' => ':memory:',

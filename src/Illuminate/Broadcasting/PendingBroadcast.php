@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting;
 
 use Illuminate\Contracts\Events\Dispatcher;
@@ -22,8 +24,7 @@ class PendingBroadcast
          * The event instance.
          */
         protected $event
-    )
-    {
+    ) {
     }
 
     /**

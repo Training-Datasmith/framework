@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Notifications;
 
 use Illuminate\Broadcasting\PrivateChannel;
@@ -15,7 +17,7 @@ class NotificationBroadcastChannelTest extends TestCase
 {
     public function testDatabaseChannelCreatesDatabaseRecordWithProperData()
     {
-        $notification = new NotificationBroadcastChannelTestNotification;
+        $notification = new NotificationBroadcastChannelTestNotification();
         $notification->id = 1;
         $notifiable = m::mock();
 
@@ -27,12 +29,14 @@ class NotificationBroadcastChannelTest extends TestCase
 
     public function testNotificationIsBroadcastedOnCustomChannels()
     {
-        $notification = new CustomChannelsTestNotification;
+        $notification = new CustomChannelsTestNotification();
         $notification->id = 1;
         $notifiable = m::mock();
 
         $event = new BroadcastNotificationCreated(
-            $notifiable, $notification, $notification->toArray($notifiable)
+            $notifiable,
+            $notification,
+            $notification->toArray($notifiable)
         );
 
         $channels = $event->broadcastOn();
@@ -42,12 +46,14 @@ class NotificationBroadcastChannelTest extends TestCase
 
     public function testNotificationIsBroadcastedWithCustomEventName()
     {
-        $notification = new CustomEventNameTestNotification;
+        $notification = new CustomEventNameTestNotification();
         $notification->id = 1;
         $notifiable = m::mock();
 
         $event = new BroadcastNotificationCreated(
-            $notifiable, $notification, $notification->toArray($notifiable)
+            $notifiable,
+            $notification,
+            $notification->toArray($notifiable)
         );
 
         $eventName = $event->broadcastType();
@@ -57,12 +63,14 @@ class NotificationBroadcastChannelTest extends TestCase
 
     public function testNotificationIsBroadcastedWithCustomDataType()
     {
-        $notification = new CustomEventNameTestNotification;
+        $notification = new CustomEventNameTestNotification();
         $notification->id = 1;
         $notifiable = m::mock();
 
         $event = new BroadcastNotificationCreated(
-            $notifiable, $notification, $notification->toArray($notifiable)
+            $notifiable,
+            $notification,
+            $notification->toArray($notifiable)
         );
 
         $data = $event->broadcastWith();
@@ -72,7 +80,7 @@ class NotificationBroadcastChannelTest extends TestCase
 
     public function testNotificationIsBroadcastedNow()
     {
-        $notification = new TestNotificationBroadCastedNow;
+        $notification = new TestNotificationBroadCastedNow();
         $notification->id = 1;
         $notifiable = m::mock();
 
@@ -86,12 +94,14 @@ class NotificationBroadcastChannelTest extends TestCase
 
     public function testNotificationIsBroadcastedWithCustomAdditionalPayload()
     {
-        $notification = new CustomBroadcastWithTestNotification;
+        $notification = new CustomBroadcastWithTestNotification();
         $notification->id = 1;
         $notifiable = m::mock();
 
         $event = new BroadcastNotificationCreated(
-            $notifiable, $notification, $notification->toArray($notifiable)
+            $notifiable,
+            $notification,
+            $notification->toArray($notifiable)
         );
 
         $data = $event->broadcastWith();

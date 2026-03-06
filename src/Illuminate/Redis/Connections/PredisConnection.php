@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Connections;
 
 use Closure;
@@ -58,7 +60,7 @@ class PredisConnection extends Connection implements ConnectionContract
     protected function parseParametersForEvent(array $parameters)
     {
         return (new Collection($parameters))
-            ->transform(fn($parameter) => $parameter instanceof ArrayableArgument
+            ->transform(fn ($parameter) => $parameter instanceof ArrayableArgument
                 ? $parameter->toArray()
                 : $parameter)->all();
     }

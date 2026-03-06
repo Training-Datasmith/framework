@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Container\Container;
@@ -18,8 +20,7 @@ class CallableDispatcher implements CallableDispatcherContract
          * The container instance.
          */
         protected \Illuminate\Container\Container $container
-    )
-    {
+    ) {
     }
 
     /**
@@ -37,9 +38,8 @@ class CallableDispatcher implements CallableDispatcherContract
      * Resolve the parameters for the callable.
      *
      * @param  callable  $callable
-     * @return array
      */
-    protected function resolveParameters(Route $route, $callable)
+    protected function resolveParameters(Route $route, $callable): array
     {
         return $this->resolveMethodDependencies($route->parametersWithoutNulls(), new ReflectionFunction($callable));
     }

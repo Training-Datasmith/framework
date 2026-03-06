@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 use ArrayIterator;
-use Closure;
 use Illuminate\Contracts\Support\DeferringDisplayableValue;
 use Illuminate\Support\Enumerable;
 use IteratorAggregate;
@@ -20,8 +21,7 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
          * The callable instance to resolve the variable value.
          */
         protected \Closure $callable
-    )
-    {
+    ) {
     }
 
     /**
@@ -29,7 +29,7 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
      *
      * @return \Illuminate\Contracts\Support\Htmlable|string
      */
-    public function resolveDisplayableValue()
+    public function resolveDisplayableValue(): mixed
     {
         return $this->__invoke();
     }
@@ -57,7 +57,6 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
     /**
      * Dynamically proxy method access to the variable.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

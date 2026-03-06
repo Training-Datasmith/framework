@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console;
 
 use Illuminate\Bus\Queueable;
@@ -84,7 +86,8 @@ class JobSchedulingTest extends TestCase
 
 class JobWithDefaultQueue implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue;
+    use Queueable;
+    use InteractsWithQueue;
 
     public function __construct()
     {
@@ -94,7 +97,8 @@ class JobWithDefaultQueue implements ShouldQueue
 
 class JobWithDefaultQueueTwo implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue;
+    use Queueable;
+    use InteractsWithQueue;
 
     public function __construct()
     {
@@ -104,12 +108,14 @@ class JobWithDefaultQueueTwo implements ShouldQueue
 
 class JobWithoutDefaultQueue implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue;
+    use Queueable;
+    use InteractsWithQueue;
 }
 
 class JobWithDefaultConnection implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue;
+    use Queueable;
+    use InteractsWithQueue;
 
     public function __construct()
     {
@@ -119,5 +125,6 @@ class JobWithDefaultConnection implements ShouldQueue
 
 class JobWithoutDefaultConnection implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue;
+    use Queueable;
+    use InteractsWithQueue;
 }

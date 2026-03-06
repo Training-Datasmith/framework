@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Notifications;
 
 use Illuminate\Database\Eloquent\Casts\AsStringable;
@@ -25,7 +27,7 @@ class DatabaseNotificationTest extends TestCase
 
         $user = UuidUserFactoryStub::new()->create();
 
-        $user->notify(new NotificationStub);
+        $user->notify(new NotificationStub());
 
         Notification::assertSentTo($user, NotificationStub::class, function ($notification, $channels, $notifiable) use ($user) {
             return $notifiable === $user;
@@ -53,7 +55,8 @@ class UuidUserFactoryStub extends \Orchestra\Testbench\Factories\UserFactory
 
 class UuidUserStub extends \Illuminate\Foundation\Auth\User
 {
-    use HasUuids, Notifiable;
+    use HasUuids;
+    use Notifiable;
 
     protected $table = 'users';
 

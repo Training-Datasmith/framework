@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Log\Context\Events;
 
 class ContextDehydrating
@@ -14,7 +16,6 @@ class ContextDehydrating
          * The context instance.
          */
         public $context
-    )
-    {
+    ) {
     }
 }

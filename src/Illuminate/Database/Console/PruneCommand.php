@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console;
 
 use Illuminate\Console\Command;
@@ -89,7 +91,7 @@ class PruneCommand extends Command
      */
     protected function pruneModel(string $model)
     {
-        $instance = new $model;
+        $instance = new $model();
 
         $chunkSize = property_exists($instance, 'prunableChunkSize')
             ? $instance->prunableChunkSize
@@ -133,7 +135,7 @@ class PruneCommand extends Command
                 );
             })
             ->when(! empty($except), fn ($models) => $models->reject(fn ($model): bool => in_array($model, $except)))
-            ->filter(fn (string $model) => $this->isPrunable($model))
+            ->filter(fn (string $model): bool => $this->isPrunable($model))
             ->values();
     }
 
@@ -161,7 +163,7 @@ class PruneCommand extends Command
      */
     protected function pretendToPrune($model)
     {
-        $instance = new $model;
+        $instance = new $model();
 
         $count = $instance->prunable()
             ->when($model::isSoftDeletable(), function ($query): void {

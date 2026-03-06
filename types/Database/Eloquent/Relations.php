@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Types\Relations;
 
 use Illuminate\Database\Eloquent\Model;

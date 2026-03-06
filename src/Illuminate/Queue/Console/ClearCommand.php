@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Console;
 
 use Illuminate\Console\Command;
@@ -71,7 +73,8 @@ class ClearCommand extends Command
     protected function getQueue($connection)
     {
         return $this->option('queue') ?: $this->laravel['config']->get(
-            "queue.connections.{$connection}.queue", 'default'
+            "queue.connections.{$connection}.queue",
+            'default'
         );
     }
 

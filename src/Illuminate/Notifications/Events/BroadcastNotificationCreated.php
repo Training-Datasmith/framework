@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications\Events;
 
 use Illuminate\Broadcasting\PrivateChannel;
@@ -12,7 +14,8 @@ use Illuminate\Support\Collection;
 
 class BroadcastNotificationCreated implements ShouldBroadcast
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new event instance.

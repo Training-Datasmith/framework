@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Auth;
 
 use Closure;
@@ -14,66 +16,66 @@ class AuthorizesResourcesTest extends TestCase
 {
     public function testCreateMethod()
     {
-        $controller = new AuthorizesResourcesController;
+        $controller = new AuthorizesResourcesController();
 
         $this->assertHasMiddleware($controller, 'create', 'can:create,App\User');
 
-        $controller = new AuthorizesResourcesWithArrayController;
+        $controller = new AuthorizesResourcesWithArrayController();
 
         $this->assertHasMiddleware($controller, 'create', 'can:create,App\User,App\Post');
     }
 
     public function testStoreMethod()
     {
-        $controller = new AuthorizesResourcesController;
+        $controller = new AuthorizesResourcesController();
 
         $this->assertHasMiddleware($controller, 'store', 'can:create,App\User');
 
-        $controller = new AuthorizesResourcesWithArrayController;
+        $controller = new AuthorizesResourcesWithArrayController();
 
         $this->assertHasMiddleware($controller, 'store', 'can:create,App\User,App\Post');
     }
 
     public function testShowMethod()
     {
-        $controller = new AuthorizesResourcesController;
+        $controller = new AuthorizesResourcesController();
 
         $this->assertHasMiddleware($controller, 'show', 'can:view,user');
 
-        $controller = new AuthorizesResourcesWithArrayController;
+        $controller = new AuthorizesResourcesWithArrayController();
 
         $this->assertHasMiddleware($controller, 'show', 'can:view,user,post');
     }
 
     public function testEditMethod()
     {
-        $controller = new AuthorizesResourcesController;
+        $controller = new AuthorizesResourcesController();
 
         $this->assertHasMiddleware($controller, 'edit', 'can:update,user');
 
-        $controller = new AuthorizesResourcesWithArrayController;
+        $controller = new AuthorizesResourcesWithArrayController();
 
         $this->assertHasMiddleware($controller, 'edit', 'can:update,user,post');
     }
 
     public function testUpdateMethod()
     {
-        $controller = new AuthorizesResourcesController;
+        $controller = new AuthorizesResourcesController();
 
         $this->assertHasMiddleware($controller, 'update', 'can:update,user');
 
-        $controller = new AuthorizesResourcesWithArrayController;
+        $controller = new AuthorizesResourcesWithArrayController();
 
         $this->assertHasMiddleware($controller, 'update', 'can:update,user,post');
     }
 
     public function testDestroyMethod()
     {
-        $controller = new AuthorizesResourcesController;
+        $controller = new AuthorizesResourcesController();
 
         $this->assertHasMiddleware($controller, 'destroy', 'can:delete,user');
 
-        $controller = new AuthorizesResourcesWithArrayController;
+        $controller = new AuthorizesResourcesWithArrayController();
 
         $this->assertHasMiddleware($controller, 'destroy', 'can:delete,user,post');
     }
@@ -88,7 +90,7 @@ class AuthorizesResourcesTest extends TestCase
      */
     protected function assertHasMiddleware($controller, $method, $middleware)
     {
-        $router = new Router(new Dispatcher);
+        $router = new Router(new Dispatcher());
 
         $router->aliasMiddleware('can', AuthorizesResourcesMiddleware::class);
         $router->get($method)->uses(get_class($controller).'@'.$method);
@@ -112,37 +114,37 @@ class AuthorizesResourcesController extends Controller
 
     public function index()
     {
-        //
+
     }
 
     public function create()
     {
-        //
+
     }
 
     public function store()
     {
-        //
+
     }
 
     public function show()
     {
-        //
+
     }
 
     public function edit()
     {
-        //
+
     }
 
     public function update()
     {
-        //
+
     }
 
     public function destroy()
     {
-        //
+
     }
 }
 
@@ -157,37 +159,37 @@ class AuthorizesResourcesWithArrayController extends Controller
 
     public function index()
     {
-        //
+
     }
 
     public function create()
     {
-        //
+
     }
 
     public function store()
     {
-        //
+
     }
 
     public function show()
     {
-        //
+
     }
 
     public function edit()
     {
-        //
+
     }
 
     public function update()
     {
-        //
+
     }
 
     public function destroy()
     {
-        //
+
     }
 }
 

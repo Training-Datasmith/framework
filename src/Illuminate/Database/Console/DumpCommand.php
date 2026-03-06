@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console;
 
 use Illuminate\Console\Command;
@@ -49,7 +51,8 @@ class DumpCommand extends Command
         $connection = $connections->connection($database = $this->input->getOption('database'));
 
         $this->schemaState($connection)->dump(
-            $connection, $path = $this->path($connection)
+            $connection,
+            $path = $this->path($connection)
         );
 
         $dispatcher->dispatch(new SchemaDumped($connection, $path));
@@ -57,8 +60,9 @@ class DumpCommand extends Command
         $info = 'Database schema dumped';
 
         if ($this->option('prune')) {
-            (new Filesystem)->deleteDirectory(
-                $path = database_path('migrations'), preserve: false
+            (new Filesystem())->deleteDirectory(
+                $path = database_path('migrations'),
+                preserve: false
             );
 
             $info .= ' and pruned';
@@ -93,7 +97,7 @@ class DumpCommand extends Command
     protected function path(Connection $connection)
     {
         return tap($this->option('path') ?: database_path('schema/'.$connection->getName().'-schema.sql'), function ($path): void {
-            (new Filesystem)->ensureDirectoryExists(dirname($path));
+            (new Filesystem())->ensureDirectoryExists(dirname($path));
         });
     }
 }

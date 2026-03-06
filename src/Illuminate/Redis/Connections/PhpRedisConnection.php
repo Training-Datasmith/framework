@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Connections;
 
 use Closure;
@@ -30,7 +32,7 @@ class PhpRedisConnection extends Connection implements ConnectionContract
     public function __construct($client, ?callable $connector = null, /**
      * The connection configuration array.
      */
-    protected array $config = [])
+        protected array $config = [])
     {
         $this->client = $client;
         $this->connector = $connector;
@@ -54,7 +56,7 @@ class PhpRedisConnection extends Connection implements ConnectionContract
      */
     public function mget(array $keys): array
     {
-        return array_map(fn($value) => $value !== false ? $value : null, $this->command('mget', [$keys]));
+        return array_map(fn ($value): mixed => $value !== false ? $value : null, $this->command('mget', [$keys]));
     }
 
     /**
@@ -291,7 +293,8 @@ class PhpRedisConnection extends Connection implements ConnectionContract
      */
     public function scan($cursor, array $options = []): array|false
     {
-        $result = $this->client->scan($cursor,
+        $result = $this->client->scan(
+            $cursor,
             $options['match'] ?? '*',
             $options['count'] ?? 10
         );
@@ -310,7 +313,9 @@ class PhpRedisConnection extends Connection implements ConnectionContract
      */
     public function zscan(string $key, $cursor, array $options = []): array|false
     {
-        $result = $this->client->zscan($key, $cursor,
+        $result = $this->client->zscan(
+            $key,
+            $cursor,
             $options['match'] ?? '*',
             $options['count'] ?? 10
         );
@@ -329,7 +334,9 @@ class PhpRedisConnection extends Connection implements ConnectionContract
      */
     public function hscan(string $key, $cursor, array $options = []): array|false
     {
-        $result = $this->client->hscan($key, $cursor,
+        $result = $this->client->hscan(
+            $key,
+            $cursor,
             $options['match'] ?? '*',
             $options['count'] ?? 10
         );
@@ -348,7 +355,9 @@ class PhpRedisConnection extends Connection implements ConnectionContract
      */
     public function sscan(string $key, $cursor, array $options = []): array|false
     {
-        $result = $this->client->sscan($key, $cursor,
+        $result = $this->client->sscan(
+            $key,
+            $cursor,
             $options['match'] ?? '*',
             $options['count'] ?? 10
         );
@@ -448,7 +457,7 @@ class PhpRedisConnection extends Connection implements ConnectionContract
      */
     public function createSubscription($channels, Closure $callback, $method = 'subscribe'): void
     {
-        //
+
     }
 
     /**
@@ -509,10 +518,9 @@ class PhpRedisConnection extends Connection implements ConnectionContract
      * Pass other method calls down to the underlying client.
      *
      * @param  string  $method
-     * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call($method, array $parameters)
     {
         return parent::__call(strtolower($method), $parameters);
     }

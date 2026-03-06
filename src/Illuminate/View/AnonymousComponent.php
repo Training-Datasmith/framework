@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 class AnonymousComponent extends Component
@@ -19,8 +21,7 @@ class AnonymousComponent extends Component
          * The component data.
          */
         protected $data
-    )
-    {
+    ) {
     }
 
     /**

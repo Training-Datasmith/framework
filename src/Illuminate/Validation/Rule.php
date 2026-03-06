@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -167,7 +169,7 @@ class Rule
      */
     public static function date(): \Illuminate\Validation\Rules\Date
     {
-        return new Date;
+        return new Date();
     }
 
     /**
@@ -175,7 +177,7 @@ class Rule
      */
     public static function dateTime(): Date
     {
-        return (new Date)->format('Y-m-d H:i:s');
+        return (new Date())->format('Y-m-d H:i:s');
     }
 
     /**
@@ -183,7 +185,7 @@ class Rule
      */
     public static function email(): \Illuminate\Validation\Rules\Email
     {
-        return new Email;
+        return new Email();
     }
 
     /**
@@ -201,7 +203,7 @@ class Rule
      */
     public static function file(): \Illuminate\Validation\Rules\File
     {
-        return new File;
+        return new File();
     }
 
     /**
@@ -227,7 +229,7 @@ class Rule
      */
     public static function numeric(): \Illuminate\Validation\Rules\Numeric
     {
-        return new Numeric;
+        return new Numeric();
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -16,7 +18,7 @@ class UriQueryString implements Arrayable, Stringable
      */
     public function __construct(protected Uri $uri)
     {
-        //
+
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console;
 
 use Illuminate\Console\Application as Artisan;
@@ -87,7 +89,7 @@ class ConsoleApplicationTest extends TestCase
     {
         $this->assertFalse($this->app->resolved(Schedule::class));
 
-        $this->app[Kernel::class]->registerCommand(new ScheduleCommandStub);
+        $this->app[Kernel::class]->registerCommand(new ScheduleCommandStub());
 
         $this->assertFalse($this->app->resolved(Schedule::class));
 
@@ -118,7 +120,7 @@ class FooCommandStub extends Command
 
     public function handle()
     {
-        //
+
     }
 }
 
@@ -131,7 +133,7 @@ class ZondaCommandStub extends Command
 
     public function handle()
     {
-        //
+
     }
 }
 
@@ -141,6 +143,6 @@ class ScheduleCommandStub extends Command
 
     public function handle(Schedule $schedule)
     {
-        //
+
     }
 }

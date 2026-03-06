@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Resources\JsonApi\Concerns;
 
 use Generator;
@@ -172,7 +174,7 @@ trait ResolvesJsonApiElements
 
         return [
             ...(new Collection($this->filter($this->loadedRelationshipIdentifiers)))
-                ->map(fn($relation) => ! is_null($relation) ? $relation : ['data' => null])->all(),
+                ->map(fn ($relation): mixed => ! is_null($relation) ? $relation : ['data' => null])->all(),
         ];
     }
 
@@ -253,7 +255,7 @@ trait ResolvesJsonApiElements
 
                 return transform(
                     [$relatedResource->resolveResourceType($request), $relatedResource->resolveResourceIdentifier($request)],
-                    function ($uniqueKey) use ($request, $relatedModel, $relatedResource, $isUnique): array {
+                    function (array $uniqueKey) use ($request, $relatedModel, $relatedResource, $isUnique): array {
                         $this->loadedRelationshipsMap[] = [$relatedResource, ...$uniqueKey, $isUnique];
 
                         $this->compileIncludedNestedRelationshipsMap($request, $relatedModel, $relatedResource);
@@ -278,7 +280,7 @@ trait ResolvesJsonApiElements
 
         if ($relatedModel instanceof Pivot ||
             in_array(AsPivot::class, class_uses_recursive($relatedModel), true)) {
-            yield $relationName => new MissingValue;
+            yield $relationName => new MissingValue();
             return;
         }
 
@@ -286,7 +288,7 @@ trait ResolvesJsonApiElements
 
         yield $relationName => ['data' => transform(
             [$relatedResource->resolveResourceType($request), $relatedResource->resolveResourceIdentifier($request)],
-            function ($uniqueKey) use ($relatedModel, $relatedResource, $request): array {
+            function (array $uniqueKey) use ($relatedModel, $relatedResource, $request): array {
                 $this->loadedRelationshipsMap[] = [$relatedResource, ...$uniqueKey, true];
 
                 $this->compileIncludedNestedRelationshipsMap($request, $relatedModel, $relatedResource);
@@ -319,19 +321,19 @@ trait ResolvesJsonApiElements
     public function resolveIncludedResourceObjects(JsonApiRequest $request): Collection
     {
         if (! $this->resource instanceof Model) {
-            return new Collection;
+            return new Collection();
         }
 
         $this->compileResourceRelationships($request);
 
-        $relations = new Collection;
+        $relations = new Collection();
         $index = 0;
 
         // Track visited objects by instance + type to prevent infinite loops from circular
         // references created by "chaperone()". We use object instances rather than type
         // and ID for any possible cases like BelongsToMany with different pivot data.
         // We'll track types to allow the same models with different resource types.
-        $visitedObjects = new WeakMap;
+        $visitedObjects = new WeakMap();
 
         $visitedObjects[$this->resource] = [
             $this->resolveResourceType($request) => true,

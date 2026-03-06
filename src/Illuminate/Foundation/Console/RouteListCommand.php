@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Closure;
@@ -71,8 +73,8 @@ class RouteListCommand extends Command
     public function __construct(/**
      * The router instance.
      */
-    protected \Illuminate\Routing\Router $router)
-    {
+        protected \Illuminate\Routing\Router $router
+    ) {
         parent::__construct();
     }
 
@@ -100,10 +102,8 @@ class RouteListCommand extends Command
 
     /**
      * Compile the routes into a displayable format.
-     *
-     * @return array
      */
-    protected function getRoutes()
+    protected function getRoutes(): array
     {
         $routes = (new Collection($this->router->getRoutes()))
             ->map(fn (\Illuminate\Routing\Route $route) => $this->getRouteInformation($route))
@@ -167,7 +167,7 @@ class RouteListCommand extends Command
      */
     protected function pluckColumns(array $routes): array
     {
-        return array_map(fn($route) => Arr::only($route, $this->getColumns()), $routes);
+        return array_map(fn ($route): array => Arr::only($route, $this->getColumns()), $routes);
     }
 
     /**
@@ -353,7 +353,8 @@ class RouteListCommand extends Command
             $spaces = str_repeat(' ', max($maxMethod + 6 - mb_strlen($method), 0));
 
             $dots = str_repeat('.', max(
-                $terminalWidth - mb_strlen($method.$spaces.$uri.$action) - 6 - ($action ? 1 : 0), 0
+                $terminalWidth - mb_strlen($method.$spaces.$uri.$action) - 6 - ($action ? 1 : 0),
+                0
             ));
 
             $dots = empty($dots) ? $dots : " $dots";
@@ -441,7 +442,7 @@ class RouteListCommand extends Command
     public static function getTerminalWidth()
     {
         return is_null(static::$terminalWidthResolver)
-            ? (new Terminal)->getWidth()
+            ? (new Terminal())->getWidth()
             : call_user_func(static::$terminalWidthResolver);
     }
 

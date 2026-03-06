@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Container\Container;
@@ -33,7 +35,7 @@ class QueueDatabaseQueueIntegrationTest extends TestCase
 
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -48,7 +50,7 @@ class QueueDatabaseQueueIntegrationTest extends TestCase
 
         $this->queue = new DatabaseQueue($this->connection(), $this->table);
 
-        $this->container = new Container;
+        $this->container = new Container();
 
         $this->container->instance('events', new Dispatcher($this->container));
 

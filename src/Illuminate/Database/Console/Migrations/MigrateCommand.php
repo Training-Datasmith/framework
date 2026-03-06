@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Console\ConfirmableTrait;
@@ -10,12 +12,14 @@ use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Database\SQLiteDatabaseDoesNotExistException;
 use Illuminate\Database\SqlServerConnection;
 use Illuminate\Support\Str;
+
+use function Laravel\Prompts\confirm;
+
 use PDOException;
 use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Throwable;
 
-use function Laravel\Prompts\confirm;
+use Throwable;
 
 #[AsCommand(name: 'migrate')]
 class MigrateCommand extends BaseCommand implements Isolatable
@@ -51,11 +55,11 @@ class MigrateCommand extends BaseCommand implements Isolatable
     public function __construct(/**
      * The migrator instance.
      */
-    protected \Illuminate\Database\Migrations\Migrator $migrator, /**
+        protected \Illuminate\Database\Migrations\Migrator $migrator, /**
      * The event dispatcher instance.
      */
-    protected \Illuminate\Contracts\Events\Dispatcher $dispatcher)
-    {
+        protected \Illuminate\Contracts\Events\Dispatcher $dispatcher
+    ) {
         parent::__construct();
     }
 
@@ -124,7 +128,7 @@ class MigrateCommand extends BaseCommand implements Isolatable
         if (! $this->repositoryExists()) {
             $this->components->info('Preparing database.');
 
-            $this->components->task('Creating migration table', fn() => $this->callSilent('migrate:install', array_filter([
+            $this->components->task('Creating migration table', fn (): bool => $this->callSilent('migrate:install', array_filter([
                 '--database' => $this->option('database'),
             ])) == 0);
 

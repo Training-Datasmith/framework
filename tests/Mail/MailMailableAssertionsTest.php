@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Mail;
 
 use Illuminate\Mail\Mailable;
@@ -10,14 +12,14 @@ class MailMailableAssertionsTest extends TestCase
 {
     public function testMailableAssertSeeInTextPassesWhenPresent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $mailable->assertSeeInText('First Item');
     }
 
     public function testMailableAssertSeeInTextFailsWhenAbsent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -26,14 +28,14 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertDontSeeInTextPassesWhenAbsent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $mailable->assertDontSeeInText('Fourth Item');
     }
 
     public function testMailableAssertDontSeeInTextFailsWhenPresent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -42,7 +44,7 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertSeeInHtmlPassesWhenPresent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $mailable->assertSeeInHtml('Fourth & Fifth Item');
 
@@ -51,7 +53,7 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertSeeInHtmlFailsWhenAbsent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -60,14 +62,14 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertDontSeeInHtmlPassesWhenAbsent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $mailable->assertDontSeeInHtml('<li>Fourth Item</li>');
     }
 
     public function testMailableAssertDontSeeInHtmlEscapedFailsWhenPresent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -76,7 +78,7 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertDontSeeInHtmlUnescapedFailsWhenPresent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -85,7 +87,7 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertSeeInOrderTextPassesWhenPresentInOrder(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $mailable->assertSeeInOrderInText([
             'First Item',
@@ -96,7 +98,7 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertSeeInOrderTextFailsWhenAbsentInOrder(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -109,7 +111,7 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertInOrderHtmlPassesWhenPresentInOrder(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $mailable->assertSeeInOrderInHtml([
             'Third Item',
@@ -126,7 +128,7 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertInOrderHtmlFailsWhenAbsentInOrder(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -139,14 +141,14 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertSeeInTextWithApostrophePassesWhenPresent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $mailable->assertSeeInText("It's a wonderful day");
     }
 
     public function testMailableAssertSeeInTextWithApostropheFailsWhenAbsent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -155,14 +157,14 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertDontSeeInTextWithApostrophePassesWhenAbsent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $mailable->assertDontSeeInText("It's not a wonderful day");
     }
 
     public function testMailableAssertDontSeeInTextWithApostropheFailsWhenPresent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -171,7 +173,7 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertSeeInHtmlWithApostropheFailsWhenAbsent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -180,14 +182,14 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertDontSeeInHtmlWithApostrophePassesWhenAbsent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $mailable->assertDontSeeInHtml("<li>It's not a wonderful day</li>");
     }
 
     public function testMailableAssertDontSeeInHtmlWithApostropheFailsWhenPresent(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 
@@ -196,14 +198,14 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertSeeInHtmlWithBladeEscapedApostrophePassesWhenPresent(): void
     {
-        $mailable = new MailableAssertionsBladeEscapedStub;
+        $mailable = new MailableAssertionsBladeEscapedStub();
 
         $mailable->assertSeeInHtml("It's a wonderful day");
     }
 
     public function testMailableAssertSeeInOrderInHtmlWithApostrophePassesWhenPresentInOrder(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $mailable->assertSeeInOrderInHtml([
             'First Item',
@@ -219,7 +221,7 @@ class MailMailableAssertionsTest extends TestCase
 
     public function testMailableAssertSeeInOrderInHtmlWithApostropheFailsWhenAbsentInOrder(): void
     {
-        $mailable = new MailableAssertionsStub;
+        $mailable = new MailableAssertionsStub();
 
         $this->expectException(AssertionFailedError::class);
 

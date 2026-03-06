@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\JsonSchema;
 
 use Illuminate\JsonSchema\JsonSchema;
@@ -389,8 +391,8 @@ class TypeTest extends TestCase
 
     protected function makeValidator(): Validator
     {
-        $loader = new SchemaLoader;
-        $resolver = new SchemaResolver;
+        $loader = new SchemaLoader();
+        $resolver = new SchemaResolver();
 
         $loader->setResolver($resolver);
         $resolver->registerProtocol('https', function (Uri $uri) {

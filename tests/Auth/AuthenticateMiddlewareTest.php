@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Auth;
 
 use Illuminate\Auth\AuthenticationException;
@@ -21,7 +23,7 @@ class AuthenticateMiddlewareTest extends TestCase
 
     protected function setUp(): void
     {
-        $container = Container::setInstance(new Container);
+        $container = Container::setInstance(new Container());
 
         $this->auth = new AuthManager($container);
 
@@ -193,7 +195,7 @@ class AuthenticateMiddlewareTest extends TestCase
     protected function createAuthDriver($authenticated)
     {
         return new RequestGuard(function () use ($authenticated) {
-            return $authenticated ? new stdClass : null;
+            return $authenticated ? new stdClass() : null;
         }, m::mock(Request::class), m::mock(EloquentUserProvider::class));
     }
 

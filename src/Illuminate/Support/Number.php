@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Illuminate\Support\Traits\Macroable;
@@ -83,7 +85,7 @@ class Number
      *
      * @return string
      */
-    public static function spell(int|float $number, ?string $locale = null, ?int $after = null, ?int $until = null)
+    public static function spell(int|float $number, ?string $locale = null, ?int $after = null, ?int $until = null): string|false
     {
         static::ensureIntlExtensionIsInstalled();
 
@@ -221,7 +223,7 @@ class Number
      *
      * @return string|false
      */
-    protected static function summarize(int|float $number, int $precision = 0, ?int $maxPrecision = null, array $units = [])
+    protected static function summarize(int|float $number, int $precision = 0, ?int $maxPrecision = null, array $units = []): string|false
     {
         if (empty($units)) {
             $units = [

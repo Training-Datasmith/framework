@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Routing;
 
 use Illuminate\Routing\SortedMiddleware;
@@ -103,20 +105,16 @@ class RoutingSortedMiddlewareTest extends TestCase
 
 interface FirstContractStub
 {
-    //
 }
 
 class FirstStub implements FirstContractStub
 {
-    //
 }
 
 class SecondStub
 {
-    //
 }
 
 class SecondChildStub extends SecondStub
 {
-    //
 }

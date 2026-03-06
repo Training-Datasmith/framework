@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Resources\JsonApi;
 
 use BadMethodCallException;
@@ -10,8 +12,8 @@ use Illuminate\Support\Arr;
 
 class JsonApiResource extends JsonResource
 {
-    use Concerns\ResolvesJsonApiElements,
-        Concerns\ResolvesJsonApiRequest;
+    use Concerns\ResolvesJsonApiElements;
+    use Concerns\ResolvesJsonApiRequest;
 
     /**
      * The "data" wrapper that should be applied.
@@ -126,7 +128,7 @@ class JsonApiResource extends JsonResource
         return array_filter([
             'included' => $this->resolveIncludedResourceObjects($request)
                 ->uniqueStrict('_uniqueKey')
-                ->map(fn ($included) => Arr::except($included, ['_uniqueKey']))
+                ->map(fn (array $included): array => Arr::except($included, ['_uniqueKey']))
                 ->values()
                 ->all(),
             ...($implementation = static::$jsonApiInformation)

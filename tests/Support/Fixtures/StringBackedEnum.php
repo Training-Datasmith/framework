@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support\Fixtures;
 
 enum StringBackedEnum: string

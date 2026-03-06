@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Query;
 
 use Closure;
@@ -41,10 +43,10 @@ class JoinClause extends Builder
     public function __construct(Builder $parentQuery, /**
      * The type of join being performed.
      */
-    public $type, /**
+        public $type, /**
      * The table the join clause is joining to.
      */
-    public $table)
+        public $table)
     {
         $this->parentClass = $parentQuery::class;
         $this->parentGrammar = $parentQuery->getGrammar();
@@ -52,7 +54,9 @@ class JoinClause extends Builder
         $this->parentConnection = $parentQuery->getConnection();
 
         parent::__construct(
-            $this->parentConnection, $this->parentGrammar, $this->parentProcessor
+            $this->parentConnection,
+            $this->parentGrammar,
+            $this->parentProcessor
         );
     }
 

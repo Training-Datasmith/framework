@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Testing;
 
 use Illuminate\Http\UploadedFile;
@@ -29,14 +31,17 @@ class File extends UploadedFile
     public function __construct(/**
      * The name of the file.
      */
-    public $name, /**
+        public $name, /**
      * The temporary file resource.
      */
-    public $tempFile)
-    {
+        public $tempFile
+    ) {
         parent::__construct(
-            $this->tempFilePath(), $this->name, $this->getMimeType(),
-            null, true
+            $this->tempFilePath(),
+            $this->name,
+            $this->getMimeType(),
+            null,
+            true
         );
     }
 
@@ -49,7 +54,7 @@ class File extends UploadedFile
      */
     public static function create($name, $kilobytes = 0)
     {
-        return (new FileFactory)->create($name, $kilobytes);
+        return (new FileFactory())->create($name, $kilobytes);
     }
 
     /**
@@ -61,7 +66,7 @@ class File extends UploadedFile
      */
     public static function createWithContent($name, $content)
     {
-        return (new FileFactory)->createWithContent($name, $content);
+        return (new FileFactory())->createWithContent($name, $content);
     }
 
     /**
@@ -74,7 +79,7 @@ class File extends UploadedFile
      */
     public static function image($name, $width = 10, $height = 10)
     {
-        return (new FileFactory)->image($name, $width, $height);
+        return (new FileFactory())->image($name, $width, $height);
     }
 
     /**

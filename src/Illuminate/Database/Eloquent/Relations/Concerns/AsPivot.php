@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
@@ -44,7 +46,7 @@ trait AsPivot
      */
     public static function fromAttributes(Model $parent, $attributes, $table, $exists = false): static
     {
-        $instance = new static;
+        $instance = new static();
 
         $instance->timestamps = $instance->hasTimestampAttributes($attributes);
 
@@ -72,16 +74,16 @@ trait AsPivot
      * @param  array  $attributes
      * @param  string  $table
      * @param  bool  $exists
-     * @return static
      */
-    public static function fromRawAttributes(Model $parent, $attributes, $table, $exists = false)
+    public static function fromRawAttributes(Model $parent, $attributes, $table, $exists = false): static
     {
         $instance = static::fromAttributes($parent, [], $table, $exists);
 
         $instance->timestamps = $instance->hasTimestampAttributes($attributes);
 
         $instance->setRawAttributes(
-            array_merge($instance->getRawOriginal(), $attributes), $exists
+            array_merge($instance->getRawOriginal(), $attributes),
+            $exists
         );
 
         return $instance;
@@ -100,11 +102,13 @@ trait AsPivot
         }
 
         $query->where($this->foreignKey, $this->getOriginal(
-            $this->foreignKey, $this->getAttribute($this->foreignKey)
+            $this->foreignKey,
+            $this->getAttribute($this->foreignKey)
         ));
 
         return $query->where($this->relatedKey, $this->getOriginal(
-            $this->relatedKey, $this->getAttribute($this->relatedKey)
+            $this->relatedKey,
+            $this->getAttribute($this->relatedKey)
         ));
     }
 
@@ -165,7 +169,9 @@ trait AsPivot
     {
         if (! isset($this->table)) {
             $this->setTable(str_replace(
-                '\\', '', Str::snake(Str::singular(class_basename($this)))
+                '\\',
+                '',
+                Str::snake(Str::singular(class_basename($this)))
             ));
         }
 
@@ -278,8 +284,10 @@ trait AsPivot
 
         return sprintf(
             '%s:%s:%s:%s',
-            $this->foreignKey, $this->getAttribute($this->foreignKey),
-            $this->relatedKey, $this->getAttribute($this->relatedKey)
+            $this->foreignKey,
+            $this->getAttribute($this->foreignKey),
+            $this->relatedKey,
+            $this->getAttribute($this->relatedKey)
         );
     }
 
@@ -325,7 +333,7 @@ trait AsPivot
         foreach ($ids as $id) {
             $segments = explode(':', (string) $id);
 
-            $query->orWhere(fn($query) => $query->where($segments[0], $segments[1])
+            $query->orWhere(fn ($query) => $query->where($segments[0], $segments[1])
                 ->where($segments[2], $segments[3]));
         }
 

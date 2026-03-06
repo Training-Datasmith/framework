@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use function PHPStan\Testing\assertType;
 
 /** @var bool|float|int|string|null $value */
@@ -98,10 +100,9 @@ assertType('SupportLazyClass', proxy(SupportLazyClass::class, function (SupportL
     return new SupportLazyClass();
 }));
 assertType('SupportLazyClass', lazy(fn (SupportLazyClass $instance) => []));
-assertType('SupportLazyClass', proxy(fn (SupportLazyClass $proxy) => new SupportLazyClass));
-assertType('SupportLazyClass', proxy(fn (): SupportLazyClass => new SupportLazyClass));
+assertType('SupportLazyClass', proxy(fn (SupportLazyClass $proxy) => new SupportLazyClass()));
+assertType('SupportLazyClass', proxy(fn (): SupportLazyClass => new SupportLazyClass()));
 
 class SupportLazyClass
 {
-    //
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Closure;
@@ -137,7 +139,10 @@ class ValidationRuleParser
 
         if ($rule instanceof CompilableRules) {
             return $rule->compile(
-                $attribute, $this->data[$attribute] ?? null, Arr::dot($this->data), $this->data
+                $attribute,
+                $this->data[$attribute] ?? null,
+                Arr::dot($this->data),
+                $this->data
             )->rules[$attribute];
         }
 
@@ -204,7 +209,9 @@ class ValidationRuleParser
         }
 
         return $this->mergeRulesForAttribute(
-            $results, $attribute, $rules
+            $results,
+            $attribute,
+            $rules
         );
     }
 
@@ -219,7 +226,8 @@ class ValidationRuleParser
         $merge = head($this->explodeRules([$rules]));
 
         $results[$attribute] = array_merge(
-            isset($results[$attribute]) ? $this->explodeExplicitRule($results[$attribute], $attribute) : [], $merge
+            isset($results[$attribute]) ? $this->explodeExplicitRule($results[$attribute], $attribute) : [],
+            $merge
         );
 
         return $results;
@@ -229,9 +237,8 @@ class ValidationRuleParser
      * Extract the rule name and parameters from a rule.
      *
      * @param  array|string  $rule
-     * @return array
      */
-    public static function parse($rule)
+    public static function parse($rule): array
     {
         if ($rule instanceof RuleContract || $rule instanceof CompilableRules) {
             return [$rule, []];

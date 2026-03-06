@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
@@ -18,8 +20,7 @@ class AsEncryptedCollection implements Castable
      */
     public static function castUsing(array $arguments): \Illuminate\Contracts\Database\Eloquent\CastsAttributes
     {
-        return new class($arguments) implements CastsAttributes
-        {
+        return new class ($arguments) implements CastsAttributes {
             public function __construct(protected array $arguments)
             {
                 $this->arguments = array_pad(array_values($this->arguments), 2, '');
@@ -67,9 +68,8 @@ class AsEncryptedCollection implements Castable
      * Specify the type of object each item in the collection should be mapped to.
      *
      * @param  array{class-string, string}|class-string  $map
-     * @return string
      */
-    public static function of($map)
+    public static function of($map): string
     {
         return static::using('', $map);
     }

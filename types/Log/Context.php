@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Events\Dispatcher;
 use Illuminate\Log\Context\Repository;
 

@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Connectors;
 
-use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Queue\DatabaseQueue;
 
 class DatabaseConnector implements ConnectorInterface
@@ -15,8 +16,7 @@ class DatabaseConnector implements ConnectorInterface
          * Database connections.
          */
         protected \Illuminate\Database\ConnectionResolverInterface $connections
-    )
-    {
+    ) {
     }
 
     /**

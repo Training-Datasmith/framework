@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 use Illuminate\Contracts\Container\Container;
@@ -8,19 +10,18 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\Factory as FactoryContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Traits\Macroable;
-use Illuminate\View\Engines\EngineResolver;
 use InvalidArgumentException;
 
 class Factory implements FactoryContract
 {
-    use Macroable,
-        Concerns\ManagesComponents,
-        Concerns\ManagesEvents,
-        Concerns\ManagesFragments,
-        Concerns\ManagesLayouts,
-        Concerns\ManagesLoops,
-        Concerns\ManagesStacks,
-        Concerns\ManagesTranslations;
+    use Macroable;
+    use Concerns\ManagesComponents;
+    use Concerns\ManagesEvents;
+    use Concerns\ManagesFragments;
+    use Concerns\ManagesLayouts;
+    use Concerns\ManagesLoops;
+    use Concerns\ManagesStacks;
+    use Concerns\ManagesTranslations;
 
     /**
      * The IoC container instance.
@@ -89,14 +90,14 @@ class Factory implements FactoryContract
     public function __construct(/**
      * The engine implementation.
      */
-    protected \Illuminate\View\Engines\EngineResolver $engines, /**
+        protected \Illuminate\View\Engines\EngineResolver $engines, /**
      * The view finder implementation.
      */
-    protected \Illuminate\View\ViewFinderInterface $finder, /**
+        protected \Illuminate\View\ViewFinderInterface $finder, /**
      * The event dispatcher instance.
      */
-    protected \Illuminate\Contracts\Events\Dispatcher $events)
-    {
+        protected \Illuminate\Contracts\Events\Dispatcher $events
+    ) {
         $this->share('__env', $this);
     }
 
@@ -151,7 +152,7 @@ class Factory implements FactoryContract
      */
     public function first(array $views, $data = [], $mergeData = [])
     {
-        $view = Arr::first($views, fn($view) => $this->exists($view));
+        $view = Arr::first($views, fn ($view): bool => $this->exists($view));
 
         if (! $view) {
             throw new InvalidArgumentException('None of the views in the given array exist.');
@@ -211,7 +212,8 @@ class Factory implements FactoryContract
         if (count($data) > 0) {
             foreach ($data as $key => $value) {
                 $result .= $this->make(
-                    $view, ['key' => $key, $iterator => $value]
+                    $view,
+                    ['key' => $key, $iterator => $value]
                 )->render();
             }
         }
@@ -312,7 +314,7 @@ class Factory implements FactoryContract
     {
         $extensions = array_keys($this->extensions);
 
-        return Arr::first($extensions, fn($value) => str_ends_with($path, '.'.$value));
+        return Arr::first($extensions, fn ($value): bool => str_ends_with($path, '.'.$value));
     }
 
     /**
@@ -493,20 +495,16 @@ class Factory implements FactoryContract
 
     /**
      * Get the engine resolver instance.
-     *
-     * @return \Illuminate\View\Engines\EngineResolver
      */
-    public function getEngineResolver()
+    public function getEngineResolver(): \Illuminate\View\Engines\EngineResolver
     {
         return $this->engines;
     }
 
     /**
      * Get the view finder instance.
-     *
-     * @return \Illuminate\View\ViewFinderInterface
      */
-    public function getFinder()
+    public function getFinder(): \Illuminate\View\ViewFinderInterface
     {
         return $this->finder;
     }
@@ -529,10 +527,8 @@ class Factory implements FactoryContract
 
     /**
      * Get the event dispatcher instance.
-     *
-     * @return \Illuminate\Contracts\Events\Dispatcher
      */
-    public function getDispatcher()
+    public function getDispatcher(): \Illuminate\Contracts\Events\Dispatcher
     {
         return $this->events;
     }

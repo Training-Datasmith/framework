@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Engines;
 
 use Illuminate\Contracts\View\Engine;
@@ -16,17 +18,15 @@ class PhpEngine implements Engine
          * The filesystem instance.
          */
         protected \Illuminate\Filesystem\Filesystem $files
-    )
-    {
+    ) {
     }
 
     /**
      * Get the evaluated contents of the view.
      *
      * @param  string  $path
-     * @return string
      */
-    public function get($path, array $data = [])
+    public function get($path, array $data = []): string
     {
         return $this->evaluatePath($path, $data);
     }

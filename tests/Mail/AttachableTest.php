@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Mail;
 
 use Illuminate\Contracts\Mail\Attachable;
@@ -15,10 +17,9 @@ class AttachableTest extends TestCase
         Attachment::macro('fromInvoice', function ($name) {
             return Attachment::fromData(fn () => 'pdf content', $name);
         });
-        $mailable = new Mailable;
+        $mailable = new Mailable();
 
-        $mailable->attach(new class() implements Attachable
-        {
+        $mailable->attach(new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromInvoice('foo')
@@ -41,8 +42,7 @@ class AttachableTest extends TestCase
         Attachment::macro('size', function () {
             return 99;
         });
-        $notification = new class()
-        {
+        $notification = new class () {
             public $pathArgs;
 
             public function withPathAttachment()
@@ -50,8 +50,7 @@ class AttachableTest extends TestCase
                 $this->pathArgs = func_get_args();
             }
         };
-        $attachable = new class() implements Attachable
-        {
+        $attachable = new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromPath('foo.jpg')
@@ -78,8 +77,7 @@ class AttachableTest extends TestCase
         Attachment::macro('size', function () {
             return 99;
         });
-        $notification = new class()
-        {
+        $notification = new class () {
             public $pathArgs;
 
             public $dataArgs;
@@ -89,8 +87,7 @@ class AttachableTest extends TestCase
                 $this->dataArgs = func_get_args();
             }
         };
-        $attachable = new class() implements Attachable
-        {
+        $attachable = new class () implements Attachable {
             public function toMailAttachment()
             {
                 return Attachment::fromData(fn () => 'expected attachment body', 'bar')
@@ -113,12 +110,10 @@ class AttachableTest extends TestCase
 
     public function testFromUrlMethod(): void
     {
-        $mailable = new class extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
-                $this->attach(new class implements Attachable
-                {
+                $this->attach(new class () implements Attachable {
                     public function toMailAttachment()
                     {
                         return Attachment::fromUrl('https://example.com/file.pdf')
@@ -142,12 +137,10 @@ class AttachableTest extends TestCase
 
     public function testFromUploadedFileMethod(): void
     {
-        $mailable = new class extends Mailable
-        {
+        $mailable = new class () extends Mailable {
             public function build()
             {
-                $this->attach(new class implements Attachable
-                {
+                $this->attach(new class () implements Attachable {
                     public function toMailAttachment()
                     {
                         return Attachment::fromUploadedFile(

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\View;
 
 use Illuminate\Filesystem\Filesystem;
@@ -238,8 +240,11 @@ class ViewBladeCompilerTest extends TestCase
     {
         $compiler = new BladeCompiler($files = $this->getFiles(), __DIR__);
         $strictTypeDecl = "<?php\ndeclare(strict_types = 1);";
-        $this->assertSame(substr($compiler->compileString("<?php\ndeclare(strict_types = 1);\nHello World"),
-            0, strlen($strictTypeDecl)), $strictTypeDecl);
+        $this->assertSame(substr(
+            $compiler->compileString("<?php\ndeclare(strict_types = 1);\nHello World"),
+            0,
+            strlen($strictTypeDecl)
+        ), $strictTypeDecl);
     }
 
     public function testComponentAliasesCanBeConventionallyDetermined()

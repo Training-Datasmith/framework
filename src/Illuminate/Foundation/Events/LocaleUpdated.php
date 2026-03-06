@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Events;
 
 class LocaleUpdated
@@ -19,7 +21,6 @@ class LocaleUpdated
          * The previous locale.
          */
         public $previousLocale = null
-    )
-    {
+    ) {
     }
 }

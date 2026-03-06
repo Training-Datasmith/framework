@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 /**
@@ -27,8 +29,7 @@ class HigherOrderCollectionProxy
          * The method being proxied.
          */
         protected $method
-    )
-    {
+    ) {
     }
 
     /**
@@ -36,18 +37,17 @@ class HigherOrderCollectionProxy
      */
     public function __get(string $key): mixed
     {
-        return $this->collection->{$this->method}(fn($value) => is_array($value) ? $value[$key] : $value->{$key});
+        return $this->collection->{$this->method}(fn ($value) => is_array($value) ? $value[$key] : $value->{$key});
     }
 
     /**
      * Proxy a method call onto the collection items.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)
     {
-        return $this->collection->{$this->method}(fn($value) => is_string($value)
+        return $this->collection->{$this->method}(fn ($value) => is_string($value)
             ? $value::{$method}(...$parameters)
             : $value->{$method}(...$parameters));
     }

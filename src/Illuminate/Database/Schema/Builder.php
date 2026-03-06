@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema;
 
 use Closure;
@@ -54,8 +56,8 @@ class Builder
     public function __construct(/**
      * The database connection instance.
      */
-    protected \Illuminate\Database\Connection $connection)
-    {
+        protected \Illuminate\Database\Connection $connection
+    ) {
         $this->grammar = $this->connection->getSchemaGrammar();
     }
 
@@ -139,7 +141,7 @@ class Builder
      *
      * @return list<array{name: string, path: string|null, default: bool}>
      */
-    public function getSchemas()
+    public function getSchemas(): array
     {
         return $this->connection->getPostProcessor()->processSchemas(
             $this->connection->selectFromWriteConnection($this->grammar->compileSchemas())
@@ -197,7 +199,7 @@ class Builder
      * @param  string|string[]|null  $schema
      * @return list<array{name: string, schema: string|null, schema_qualified_name: string, size: int|null, comment: string|null, collation: string|null, engine: string|null}>
      */
-    public function getTables($schema = null)
+    public function getTables($schema = null): array
     {
         return $this->connection->getPostProcessor()->processTables(
             $this->connection->selectFromWriteConnection($this->grammar->compileTables($schema))
@@ -225,7 +227,7 @@ class Builder
      * @param  string|string[]|null  $schema
      * @return list<array{name: string, schema: string|null, schema_qualified_name: string, definition: string}>
      */
-    public function getViews($schema = null)
+    public function getViews($schema = null): array
     {
         return $this->connection->getPostProcessor()->processViews(
             $this->connection->selectFromWriteConnection($this->grammar->compileViews($schema))
@@ -254,7 +256,8 @@ class Builder
     public function hasColumn($table, $column): bool
     {
         return in_array(
-            strtolower($column), array_map(strtolower(...), $this->getColumnListing($table))
+            strtolower($column),
+            array_map(strtolower(...), $this->getColumnListing($table))
         );
     }
 
@@ -700,10 +703,8 @@ class Builder
 
     /**
      * Get the database connection instance.
-     *
-     * @return \Illuminate\Database\Connection
      */
-    public function getConnection()
+    public function getConnection(): \Illuminate\Database\Connection
     {
         return $this->connection;
     }

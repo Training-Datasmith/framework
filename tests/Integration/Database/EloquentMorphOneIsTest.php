@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentMorphOneIsTest;
 
 use Illuminate\Database\Eloquent\Model;
@@ -47,7 +49,7 @@ class EloquentMorphOneIsTest extends DatabaseTestCase
     public function testChildIsNotAnotherModel()
     {
         $parent = Post::first();
-        $child = new Attachment;
+        $child = new Attachment();
         $child->id = 2;
 
         $this->assertFalse($parent->attachment()->is($child));

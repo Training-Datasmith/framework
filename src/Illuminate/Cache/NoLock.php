@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 class NoLock extends Lock
@@ -25,7 +27,7 @@ class NoLock extends Lock
      */
     public function forceRelease(): void
     {
-        //
+
     }
 
     /**

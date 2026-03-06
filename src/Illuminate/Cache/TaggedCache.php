@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Cache\Events\CacheFlushed;
@@ -18,7 +20,7 @@ class TaggedCache extends Repository
     public function __construct(Store $store, /**
      * The tag set instance.
      */
-    protected \Illuminate\Cache\TagSet $tags)
+        protected \Illuminate\Cache\TagSet $tags)
     {
         parent::__construct($store);
     }
@@ -79,7 +81,7 @@ class TaggedCache extends Repository
     /**
      * {@inheritdoc}
      */
-    protected function itemKey($key)
+    protected function itemKey($key): string
     {
         return $this->taggedItemKey($key);
     }
@@ -109,10 +111,8 @@ class TaggedCache extends Repository
 
     /**
      * Get the tag set instance.
-     *
-     * @return \Illuminate\Cache\TagSet
      */
-    public function getTags()
+    public function getTags(): \Illuminate\Cache\TagSet
     {
         return $this->tags;
     }

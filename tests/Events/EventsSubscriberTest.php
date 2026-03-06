@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Events;
 
 use Illuminate\Container\Container;
@@ -25,7 +27,7 @@ class EventsSubscriberTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        $d = new Dispatcher;
+        $d = new Dispatcher();
         $subs = m::mock(ExampleSubscriber::class);
         $subs->shouldReceive('subscribe')->once()->with($d);
 
@@ -34,7 +36,7 @@ class EventsSubscriberTest extends TestCase
 
     public function testEventSubscribeCanReturnMappings()
     {
-        $d = new Dispatcher;
+        $d = new Dispatcher();
         $d->subscribe(DeclarativeSubscriber::class);
 
         $d->dispatch('myEvent1');

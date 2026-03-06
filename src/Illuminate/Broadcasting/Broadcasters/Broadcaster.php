@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting\Broadcasters;
 
 use Closure;
@@ -84,7 +86,7 @@ abstract class Broadcaster implements BroadcasterContract
         if ($channel instanceof HasBroadcastChannel) {
             $channel = $channel->broadcastChannelRoute();
         } elseif (is_string($channel) && class_exists($channel) && is_a($channel, HasBroadcastChannel::class, true)) {
-            $channel = (new $channel)->broadcastChannelRoute();
+            $channel = (new $channel())->broadcastChannelRoute();
         }
 
         $this->channels[$channel] = $callback;
@@ -116,7 +118,7 @@ abstract class Broadcaster implements BroadcasterContract
 
             $result = $handler($this->retrieveUser($request, $channel), ...$parameters);
             if ($result === false) {
-                throw new AccessDeniedHttpException;
+                throw new AccessDeniedHttpException();
             }
 
             if ($result) {
@@ -124,7 +126,7 @@ abstract class Broadcaster implements BroadcasterContract
             }
         }
 
-        throw new AccessDeniedHttpException;
+        throw new AccessDeniedHttpException();
     }
 
     /**
@@ -212,7 +214,9 @@ abstract class Broadcaster implements BroadcasterContract
         $newValue = $this->resolveExplicitBindingIfPossible($key, $value);
 
         return $newValue === $value ? $this->resolveImplicitBindingIfPossible(
-            $key, $value, $callbackParameters
+            $key,
+            $value,
+            $callbackParameters
         ) : $newValue;
     }
 
@@ -253,8 +257,8 @@ abstract class Broadcaster implements BroadcasterContract
 
             $className = Reflector::getParameterClassName($parameter);
 
-            if (is_null($model = (new $className)->resolveRouteBinding($value))) {
-                throw new AccessDeniedHttpException;
+            if (is_null($model = (new $className())->resolveRouteBinding($value))) {
+                throw new AccessDeniedHttpException();
             }
 
             return $model;
@@ -283,7 +287,7 @@ abstract class Broadcaster implements BroadcasterContract
      */
     protected function formatChannels(array $channels)
     {
-        return array_map(fn($channel) => (string) $channel, $channels);
+        return array_map(fn ($channel): string => (string) $channel, $channels);
     }
 
     /**
@@ -310,7 +314,7 @@ abstract class Broadcaster implements BroadcasterContract
      */
     protected function normalizeChannelHandlerToCallable($callback)
     {
-        return is_callable($callback) ? $callback : (fn(...$args) => Container::getInstance()
+        return is_callable($callback) ? $callback : (fn (...$args) => Container::getInstance()
             ->make($callback)
             ->join(...$args));
     }

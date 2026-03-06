@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Illuminate\Foundation\Precognition;
@@ -40,7 +42,7 @@ trait ValidatesWhenResolvedTrait
      */
     protected function prepareForValidation()
     {
-        //
+
     }
 
     /**
@@ -60,7 +62,7 @@ trait ValidatesWhenResolvedTrait
      */
     protected function passedValidation()
     {
-        //
+
     }
 
     /**
@@ -98,6 +100,6 @@ trait ValidatesWhenResolvedTrait
      */
     protected function failedAuthorization(): never
     {
-        throw new UnauthorizedException;
+        throw new UnauthorizedException();
     }
 }

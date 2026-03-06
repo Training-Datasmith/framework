@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Capsule\Manager as DB;
@@ -11,13 +13,13 @@ class DatabaseIntegrationTest extends TestCase
 {
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
         $db->addConnection([
             'driver' => 'sqlite',
             'database' => ':memory:',
         ]);
         $db->setAsGlobal();
-        $db->setEventDispatcher(new Dispatcher);
+        $db->setEventDispatcher(new Dispatcher());
     }
 
     public function testQueryExecutedToRawSql(): void

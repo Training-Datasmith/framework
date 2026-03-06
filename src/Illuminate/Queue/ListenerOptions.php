@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 class ListenerOptions extends WorkerOptions
@@ -20,7 +22,7 @@ class ListenerOptions extends WorkerOptions
     public function __construct($name = 'default', /**
      * The environment the worker should run in.
      */
-    public $environment = null, $backoff = 0, $memory = 128, $timeout = 60, $sleep = 3, $maxTries = 1, $force = false, $rest = 0)
+        public $environment = null, $backoff = 0, $memory = 128, $timeout = 60, $sleep = 3, $maxTries = 1, $force = false, $rest = 0)
     {
         parent::__construct($name, $backoff, $memory, $timeout, $sleep, $maxTries, $force, false, 0, 0, $rest);
     }

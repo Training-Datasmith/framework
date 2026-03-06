@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Notifications;
 
 use Illuminate\Contracts\Translation\HasLocalePreference;
@@ -57,9 +59,10 @@ class SendingNotificationsWithLocaleTest extends TestCase
             'name' => 'Taylor Otwell',
         ]);
 
-        NotificationFacade::send($user, new GreetingMailNotification);
+        NotificationFacade::send($user, new GreetingMailNotification());
 
-        $this->assertStringContainsString('hello',
+        $this->assertStringContainsString(
+            'hello',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
@@ -71,9 +74,10 @@ class SendingNotificationsWithLocaleTest extends TestCase
             'name' => 'Taylor Otwell',
         ]);
 
-        NotificationFacade::locale('fr')->send($user, new GreetingMailNotification);
+        NotificationFacade::locale('fr')->send($user, new GreetingMailNotification());
 
-        $this->assertStringContainsString('bonjour',
+        $this->assertStringContainsString(
+            'bonjour',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
@@ -91,13 +95,15 @@ class SendingNotificationsWithLocaleTest extends TestCase
             ]),
         ];
 
-        NotificationFacade::send($users, (new GreetingMailNotification)->locale('fr'));
+        NotificationFacade::send($users, (new GreetingMailNotification())->locale('fr'));
 
-        $this->assertStringContainsString('bonjour',
+        $this->assertStringContainsString(
+            'bonjour',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
 
-        $this->assertStringContainsString('bonjour',
+        $this->assertStringContainsString(
+            'bonjour',
             app('mailer')->getSymfonyTransport()->messages()[1]->toString()
         );
     }
@@ -109,9 +115,10 @@ class SendingNotificationsWithLocaleTest extends TestCase
             'name' => 'Taylor Otwell',
         ]);
 
-        NotificationFacade::locale('fr')->send($user, new GreetingMailNotificationWithMailable);
+        NotificationFacade::locale('fr')->send($user, new GreetingMailNotificationWithMailable());
 
-        $this->assertStringContainsString('bonjour',
+        $this->assertStringContainsString(
+            'bonjour',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
@@ -129,13 +136,15 @@ class SendingNotificationsWithLocaleTest extends TestCase
             'name' => 'Taylor Otwell',
         ]);
 
-        $user->notify((new GreetingMailNotification)->locale('fr'));
+        $user->notify((new GreetingMailNotification())->locale('fr'));
 
-        $this->assertStringContainsString('bonjour',
+        $this->assertStringContainsString(
+            'bonjour',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
 
-        Assert::assertMatchesRegularExpression('/dans (1|un) jour/',
+        Assert::assertMatchesRegularExpression(
+            '/dans (1|un) jour/',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
 
@@ -153,9 +162,10 @@ class SendingNotificationsWithLocaleTest extends TestCase
             'email_locale' => 'fr',
         ]);
 
-        $recipient->notify(new GreetingMailNotification);
+        $recipient->notify(new GreetingMailNotification());
 
-        $this->assertStringContainsString('bonjour',
+        $this->assertStringContainsString(
+            'bonjour',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
@@ -177,16 +187,20 @@ class SendingNotificationsWithLocaleTest extends TestCase
         ];
 
         NotificationFacade::send(
-            $recipients, new GreetingMailNotification
+            $recipients,
+            new GreetingMailNotification()
         );
 
-        $this->assertStringContainsString('bonjour',
+        $this->assertStringContainsString(
+            'bonjour',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
-        $this->assertStringContainsString('hola',
+        $this->assertStringContainsString(
+            'hola',
             app('mailer')->getSymfonyTransport()->messages()[1]->toString()
         );
-        $this->assertStringContainsString('hello',
+        $this->assertStringContainsString(
+            'hello',
             app('mailer')->getSymfonyTransport()->messages()[2]->toString()
         );
     }
@@ -199,10 +213,11 @@ class SendingNotificationsWithLocaleTest extends TestCase
         ]);
 
         $recipient->notify(
-            (new GreetingMailNotification)->locale('fr')
+            (new GreetingMailNotification())->locale('fr')
         );
 
-        $this->assertStringContainsString('bonjour',
+        $this->assertStringContainsString(
+            'bonjour',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
@@ -215,10 +230,12 @@ class SendingNotificationsWithLocaleTest extends TestCase
         ]);
 
         NotificationFacade::locale('fr')->send(
-            $recipient, new GreetingMailNotification
+            $recipient,
+            new GreetingMailNotification()
         );
 
-        $this->assertStringContainsString('bonjour',
+        $this->assertStringContainsString(
+            'bonjour',
             app('mailer')->getSymfonyTransport()->messages()[0]->toString()
         );
     }
@@ -256,7 +273,7 @@ class GreetingMailNotification extends Notification
 
     public function toMail($notifiable)
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->greeting(__('hi'))
             ->line(Carbon::tomorrow()->diffForHumans());
     }
@@ -271,7 +288,7 @@ class GreetingMailNotificationWithMailable extends Notification
 
     public function toMail($notifiable)
     {
-        return (new GreetingMailable)
+        return (new GreetingMailable())
             ->to($notifiable->email);
     }
 }

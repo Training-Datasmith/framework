@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Testing\TestResponse;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use function PHPStan\Testing\assertType;
+
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 $response = TestResponse::fromBaseResponse(response('Laravel', 200));
 assertType(Response::class, $response->baseResponse);

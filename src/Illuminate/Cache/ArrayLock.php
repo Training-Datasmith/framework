@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Support\Carbon;
@@ -17,8 +19,11 @@ class ArrayLock extends Lock
     public function __construct(/**
      * The parent array cache store.
      */
-    protected $store, $name, $seconds, $owner = null)
-    {
+        protected $store,
+        $name,
+        $seconds,
+        $owner = null
+    ) {
         parent::__construct($name, $seconds, $owner);
     }
 

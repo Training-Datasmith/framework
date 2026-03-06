@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation;
 
 class AliasLoader
@@ -35,8 +37,7 @@ class AliasLoader
          * The array of class aliases.
          */
         protected $aliases
-    )
-    {
+    ) {
     }
 
     /**
@@ -99,7 +100,8 @@ class AliasLoader
         }
 
         $stub = $this->formatFacadeStub(
-            $alias, file_get_contents(__DIR__.'/stubs/facade.stub')
+            $alias,
+            file_get_contents(__DIR__.'/stubs/facade.stub')
         );
 
         // Atomic write to prevent race conditions...
@@ -130,7 +132,9 @@ class AliasLoader
         ];
 
         return str_replace(
-            ['DummyNamespace', 'DummyClass', 'DummyTarget'], $replacements, $stub
+            ['DummyNamespace', 'DummyClass', 'DummyTarget'],
+            $replacements,
+            $stub
         );
     }
 
@@ -230,6 +234,6 @@ class AliasLoader
      */
     private function __clone()
     {
-        //
+
     }
 }

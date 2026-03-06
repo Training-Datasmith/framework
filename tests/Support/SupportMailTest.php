@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Mail\Mailable;
@@ -10,7 +12,9 @@ class SupportMailTest extends TestCase
 {
     public function testItRegisterAndCallMacros()
     {
-        Mail::macro('test', fn (string $str) => $str === 'foo'
+        Mail::macro(
+            'test',
+            fn (string $str) => $str === 'foo'
             ? 'it works!'
             : 'it failed.',
         );
@@ -20,7 +24,9 @@ class SupportMailTest extends TestCase
 
     public function testItRegisterAndCallMacrosWhenFaked()
     {
-        Mail::macro('test', fn (string $str) => $str === 'foo'
+        Mail::macro(
+            'test',
+            fn (string $str) => $str === 'foo'
             ? 'it works!'
             : 'it failed.',
         );

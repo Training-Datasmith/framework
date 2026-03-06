@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use BackedEnum;
@@ -17,19 +19,25 @@ use Illuminate\Routing\Matching\SchemeValidator;
 use Illuminate\Routing\Matching\UriValidator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use Laravel\SerializableClosure\SerializableClosure;
 use LogicException;
-use Symfony\Component\Routing\Route as SymfonyRoute;
 
-use function Illuminate\Support\enum_value;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 
 class Route
 {
-    use Conditionable, CreatesRegularExpressionRouteConstraints, FiltersControllerMiddleware, Macroable, ResolvesRouteDependencies;
+    use Conditionable;
+    use CreatesRegularExpressionRouteConstraints;
+    use FiltersControllerMiddleware;
+    use Macroable;
+    use ResolvesRouteDependencies;
 
     /**
      * The HTTP methods the route responds to.
@@ -167,7 +175,7 @@ class Route
     public function __construct($methods, /**
      * The URI pattern the route responds to.
      */
-    public $uri, $action)
+        public $uri, $action)
     {
         $this->methods = (array) $methods;
         $this->action = Arr::except($this->parseAction($action), ['prefix']);
@@ -199,7 +207,7 @@ class Route
      */
     public function run()
     {
-        $this->container = $this->container ?: new Container;
+        $this->container = $this->container ?: new Container();
 
         try {
             if ($this->isControllerAction()) {
@@ -254,7 +262,9 @@ class Route
     protected function runController()
     {
         return $this->controllerDispatcher()->dispatch(
-            $this, $this->getController(), $this->getControllerMethod()
+            $this,
+            $this->getController(),
+            $this->getControllerMethod()
         );
     }
 
@@ -302,10 +312,8 @@ class Route
 
     /**
      * Parse the controller.
-     *
-     * @return array
      */
-    protected function parseControllerCallback()
+    protected function parseControllerCallback(): array
     {
         return Str::parseCallback($this->action['uses']);
     }
@@ -706,10 +714,8 @@ class Route
 
     /**
      * Determine if the route only responds to HTTPS requests.
-     *
-     * @return bool
      */
-    public function httpsOnly()
+    public function httpsOnly(): bool
     {
         return $this->secure();
     }
@@ -730,7 +736,7 @@ class Route
      *
      * @throws \InvalidArgumentException
      */
-    public function domain($domain = null)
+    public function domain($domain = null): array|string|null|self
     {
         if (is_null($domain)) {
             return $this->getDomain();
@@ -745,7 +751,8 @@ class Route
         $this->action['domain'] = $parsed->uri;
 
         $this->bindingFields = array_merge(
-            $this->bindingFields, $parsed->bindingFields
+            $this->bindingFields,
+            $parsed->bindingFields
         );
 
         return $this;
@@ -779,7 +786,7 @@ class Route
      * @param  string|null  $prefix
      * @return $this
      */
-    public function prefix($prefix)
+    public function prefix($prefix): static
     {
         $prefix ??= '';
 
@@ -896,7 +903,7 @@ class Route
      * @param  \Closure|array|string  $action
      * @return $this
      */
-    public function uses($action)
+    public function uses($action): static
     {
         if (is_array($action)) {
             $action = $action[0].'@'.$action[1];
@@ -1020,7 +1027,8 @@ class Route
         $this->computedMiddleware = [];
 
         return $this->computedMiddleware = Router::uniqueMiddleware(array_merge(
-            $this->middleware(), $this->controllerMiddleware()
+            $this->middleware(),
+            $this->controllerMiddleware()
         ));
     }
 
@@ -1045,7 +1053,8 @@ class Route
         }
 
         $this->action['middleware'] = array_merge(
-            (array) ($this->action['middleware'] ?? []), $middleware
+            (array) ($this->action['middleware'] ?? []),
+            $middleware
         );
 
         return $this;
@@ -1058,7 +1067,7 @@ class Route
      * @param  array|string  $models
      * @return $this
      */
-    public function can($ability, $models = [])
+    public function can($ability, $models = []): \Illuminate\Routing\Route|array
     {
         $ability = enum_value($ability);
 
@@ -1085,13 +1094,15 @@ class Route
 
         if (is_a($controllerClass, HasMiddleware::class, true)) {
             return $this->staticallyProvidedControllerMiddleware(
-                $controllerClass, $controllerMethod
+                $controllerClass,
+                $controllerMethod
             );
         }
 
         if (method_exists($controllerClass, 'getMiddleware')) {
             return $this->controllerDispatcher()->getMiddleware(
-                $this->getController(), $controllerMethod
+                $this->getController(),
+                $controllerMethod
             );
         }
 
@@ -1106,11 +1117,12 @@ class Route
     protected function staticallyProvidedControllerMiddleware(string $class, string $method)
     {
         return (new Collection($class::middleware()))
-            ->map(fn($middleware) => $middleware instanceof Middleware
+            ->map(fn ($middleware): \Illuminate\Routing\Controllers\Middleware => $middleware instanceof Middleware
                 ? $middleware
                 : new Middleware($middleware))
-            ->reject(fn($middleware) => static::methodExcludedByOptions(
-                $method, ['only' => $middleware->only, 'except' => $middleware->except],
+            ->reject(fn ($middleware): bool => static::methodExcludedByOptions(
+                $method,
+                ['only' => $middleware->only, 'except' => $middleware->except],
             ))
             ->map
             ->middleware
@@ -1128,7 +1140,8 @@ class Route
     public function withoutMiddleware($middleware): static
     {
         $this->action['excluded_middleware'] = array_merge(
-            (array) ($this->action['excluded_middleware'] ?? []), Arr::wrap($middleware)
+            (array) ($this->action['excluded_middleware'] ?? []),
+            Arr::wrap($middleware)
         );
 
         return $this;
@@ -1202,7 +1215,7 @@ class Route
      *
      * @return $this
      */
-    public function withoutBlocking()
+    public function withoutBlocking(): static
     {
         return $this->block(null, null);
     }
@@ -1254,8 +1267,8 @@ class Route
         // validator implementations. We will spin through each one making sure it
         // passes and then we will know if the route as a whole matches request.
         return static::$validators ?? static::$validators = [
-            new UriValidator, new MethodValidator,
-            new SchemeValidator, new HostValidator,
+            new UriValidator(), new MethodValidator(),
+            new SchemeValidator(), new HostValidator(),
         ];
     }
 
@@ -1267,9 +1280,13 @@ class Route
     public function toSymfonyRoute()
     {
         return new SymfonyRoute(
-            preg_replace('/\{(\w+?)\?\}/', '{$1}', $this->uri()), $this->getOptionalParameterNames(),
-            $this->wheres, ['utf8' => true],
-            $this->getDomain() ?: '', [], $this->methods
+            preg_replace('/\{(\w+?)\?\}/', '{$1}', $this->uri()),
+            $this->getOptionalParameterNames(),
+            $this->wheres,
+            ['utf8' => true],
+            $this->getDomain() ?: '',
+            [],
+            $this->methods
         );
     }
 

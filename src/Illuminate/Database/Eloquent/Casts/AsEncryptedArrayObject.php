@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
@@ -15,8 +17,7 @@ class AsEncryptedArrayObject implements Castable
      */
     public static function castUsing(array $arguments): \Illuminate\Contracts\Database\Eloquent\CastsAttributes
     {
-        return new class implements CastsAttributes
-        {
+        return new class () implements CastsAttributes {
             public function get($model, $key, $value, $attributes): ?\Illuminate\Database\Eloquent\Casts\ArrayObject
             {
                 if (isset($attributes[$key])) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Database\Migrations\Migrator;
@@ -31,8 +33,8 @@ class StatusCommand extends BaseCommand
     public function __construct(/**
      * The migrator instance.
      */
-    protected \Illuminate\Database\Migrations\Migrator $migrator)
-    {
+        protected \Illuminate\Database\Migrations\Migrator $migrator
+    ) {
         parent::__construct();
     }
 
@@ -55,7 +57,7 @@ class StatusCommand extends BaseCommand
             $batches = $this->migrator->getRepository()->getMigrationBatches();
 
             $migrations = $this->getStatusFor($ran, $batches)
-                ->when($this->option('pending') !== false, fn ($collection): \Illuminate\Support\Collection => $collection->filter(fn($migration) => (new Stringable($migration[1]))->contains('Pending')));
+                ->when($this->option('pending') !== false, fn ($collection): \Illuminate\Support\Collection => $collection->filter(fn ($migration) => (new Stringable($migration[1]))->contains('Pending')));
 
             if (count($migrations) > 0) {
                 $this->newLine();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Auth;
 
 use Illuminate\Auth\Events\Registered;
@@ -20,7 +22,7 @@ class AuthListenersSendEmailVerificationNotificationHandleFunctionTest extends T
         $user->method('hasVerifiedEmail')->willReturn(false);
         $user->expects($this->once())->method('sendEmailVerificationNotification');
 
-        $listener = new SendEmailVerificationNotification;
+        $listener = new SendEmailVerificationNotification();
 
         $listener->handle(new Registered($user));
     }
@@ -33,7 +35,7 @@ class AuthListenersSendEmailVerificationNotificationHandleFunctionTest extends T
         $user = m::mock(User::class);
         $user->shouldNotReceive('sendEmailVerificationNotification');
 
-        $listener = new SendEmailVerificationNotification;
+        $listener = new SendEmailVerificationNotification();
 
         $listener->handle(new Registered($user));
     }
@@ -47,7 +49,7 @@ class AuthListenersSendEmailVerificationNotificationHandleFunctionTest extends T
         $user->method('hasVerifiedEmail')->willReturn(true);
         $user->expects($this->never())->method('sendEmailVerificationNotification');
 
-        $listener = new SendEmailVerificationNotification;
+        $listener = new SendEmailVerificationNotification();
 
         $listener->handle(new Registered($user));
     }

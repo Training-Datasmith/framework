@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Console\Concerns;
 
 use Generator;
@@ -18,7 +20,7 @@ class InteractsWithIOTest extends TestCase
     #[DataProvider('iterableDataProvider')]
     public function testWithProgressBarIterable($iterable)
     {
-        $command = new CommandInteractsWithIO;
+        $command = new CommandInteractsWithIO();
         $bufferedOutput = new BufferedOutput();
         $output = m::mock(OutputStyle::class, [new ArgvInput(), $bufferedOutput])->makePartial();
         $command->setOutput($output);
@@ -52,7 +54,7 @@ class InteractsWithIOTest extends TestCase
 
     public function testWithProgressBarInteger()
     {
-        $command = new CommandInteractsWithIO;
+        $command = new CommandInteractsWithIO();
         $bufferedOutput = new BufferedOutput();
         $output = m::mock(OutputStyle::class, [new ArgvInput(), $bufferedOutput])->makePartial();
         $command->setOutput($output);

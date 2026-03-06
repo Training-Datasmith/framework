@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use Closure;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\ConnectionInterface;
 
 class DatabaseUserProvider implements UserProvider
 {
@@ -29,8 +29,7 @@ class DatabaseUserProvider implements UserProvider
          * The table containing the users.
          */
         protected $table
-    )
-    {
+    ) {
     }
 
     /**

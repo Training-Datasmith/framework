@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Client\Events;
 
 use Illuminate\Http\Client\ConnectionException;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Carbon\CarbonInterval;
@@ -10,13 +12,15 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Env;
 use Illuminate\Support\Str;
+
+use function Laravel\Prompts\suggest;
+
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
-use Throwable;
 
-use function Laravel\Prompts\suggest;
+use Throwable;
 
 #[AsCommand(name: 'docs')]
 class DocsCommand extends Command
@@ -374,7 +378,7 @@ class DocsCommand extends Command
         $binary = (new Collection(match ($this->systemOsFamily) {
             'Darwin' => ['open'],
             'Linux' => ['xdg-open', 'wslview'],
-        }))->first(fn (string $binary): bool => (new ExecutableFinder)->find($binary) !== null);
+        }))->first(fn (string $binary): bool => (new ExecutableFinder())->find($binary) !== null);
 
         if ($binary === null) {
             $this->components->warn('Unable to open the URL on your system. You will need to open it yourself or create a custom opener for your system.');

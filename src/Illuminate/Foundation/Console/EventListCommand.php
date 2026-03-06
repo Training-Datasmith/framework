@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Closure;
@@ -67,7 +69,7 @@ class EventListCommand extends Command
      */
     protected function displayJson(Collection $events)
     {
-        $data = $events->map(fn($listeners, $event) => [
+        $data = $events->map(fn ($listeners, $event): array => [
             'event' => strip_tags($this->appendEventInterfaces($event)),
             'listeners' => (new Collection($listeners))->map(fn ($listener): string => strip_tags((string) $listener))->values()->all(),
         ])->values();

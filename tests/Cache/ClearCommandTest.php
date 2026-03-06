@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cache;
 
 use Illuminate\Cache\CacheManager;
@@ -47,7 +49,7 @@ class ClearCommandTest extends TestCase
         $this->cacheRepository = m::mock(Repository::class);
         $this->command = new ClearCommandTestStub($this->cacheManager, $this->files);
 
-        $app = new Application;
+        $app = new Application();
         $app['path.storage'] = __DIR__;
         $this->command->setLaravel($app);
     }
@@ -137,7 +139,7 @@ class ClearCommandTest extends TestCase
 
     protected function runCommand($command, $input = [])
     {
-        return $command->run(new ArrayInput($input), new NullOutput);
+        return $command->run(new ArrayInput($input), new NullOutput());
     }
 }
 

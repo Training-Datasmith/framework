@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console;
 
 use Illuminate\Console\Events\CommandFinished;
@@ -35,7 +37,7 @@ class CommandEventsTest extends TestCase
     protected function setUp(): void
     {
         $this->afterApplicationCreated(function () {
-            $this->files = new Filesystem;
+            $this->files = new Filesystem();
             $this->logfile = storage_path(sprintf('logs/command_events_test_%s.log', (string) Str::random()));
         });
 
@@ -52,7 +54,7 @@ class CommandEventsTest extends TestCase
     #[DataProvider('foregroundCommandEventsProvider')]
     public function testCommandEventsReceiveParsedInput($callback): void
     {
-        $this->app[ConsoleKernel::class]->registerCommand(new CommandEventsTestCommand);
+        $this->app[ConsoleKernel::class]->registerCommand(new CommandEventsTestCommand());
         $this->app[Dispatcher::class]->listen(function (CommandStarting $event) {
             array_map(fn ($e) => $this->files->append($this->logfile, $e.PHP_EOL), [
                 'CommandStarting',
@@ -74,8 +76,14 @@ class CommandEventsTest extends TestCase
         value($callback, $this);
 
         $this->assertLogged(
-            'CommandStarting', 'taylor', 'otwell', 'coding',
-            'CommandFinished', 'taylor', 'otwell', 'coding',
+            'CommandStarting',
+            'taylor',
+            'otwell',
+            'coding',
+            'CommandFinished',
+            'taylor',
+            'otwell',
+            'coding',
         );
     }
 
@@ -99,7 +107,7 @@ class CommandEventsTest extends TestCase
         $laravel = Testbench::create(
             basePath: static::applicationBasePath(),
             resolvingCallback: function ($app) {
-                $files = new Filesystem;
+                $files = new Filesystem();
                 $log = fn ($msg) => $files->append($this->logfile, $msg.PHP_EOL);
 
                 $app['events']->listen(function (CommandStarting $event) use ($log) {
@@ -124,7 +132,7 @@ class CommandEventsTest extends TestCase
 
         tap($laravel[ConsoleKernel::class], function ($kernel) {
             $kernel->rerouteSymfonyCommandEvents();
-            $kernel->registerCommand(new CommandEventsTestCommand);
+            $kernel->registerCommand(new CommandEventsTestCommand());
 
             $kernel->call(CommandEventsTestCommand::class, [
                 'firstname' => 'taylor',
@@ -134,8 +142,14 @@ class CommandEventsTest extends TestCase
         });
 
         $this->assertLogged(
-            'CommandStarting', 'taylor', 'otwell', 'coding',
-            'CommandFinished', 'taylor', 'otwell', 'coding',
+            'CommandStarting',
+            'taylor',
+            'otwell',
+            'coding',
+            'CommandFinished',
+            'taylor',
+            'otwell',
+            'coding',
         );
 
         $laravel->terminate();

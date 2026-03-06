@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\Events;
 
 class WritingKey extends CacheEvent
@@ -15,10 +17,10 @@ class WritingKey extends CacheEvent
     public function __construct($storeName, $key, /**
      * The value that will be written.
      */
-    public $value, /**
+        public $value, /**
      * The number of seconds the key should be valid.
      */
-    public $seconds = null, array $tags = [])
+        public $seconds = null, array $tags = [])
     {
         parent::__construct($storeName, $key, $tags);
     }

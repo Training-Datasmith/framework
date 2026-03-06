@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 use Illuminate\Support\Carbon;
-use InvalidArgumentException;
 
 use function Illuminate\Support\enum_value;
+
+use InvalidArgumentException;
 
 trait ManagesFrequencies
 {

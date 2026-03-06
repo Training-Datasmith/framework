@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Compilers\Concerns;
 
 use Closure;
@@ -137,7 +139,7 @@ trait CompilesEchos
     {
         $value = (new Stringable($value))
             ->trim()
-            ->when(str_ends_with($value, ';'), fn($str) => $str->beforeLast(';'));
+            ->when(str_ends_with($value, ';'), fn ($str): \Illuminate\Support\Stringable => $str->beforeLast(';'));
 
         return empty($this->echoHandlers) ? $value : '$__bladeCompiler->applyEchoHandler('.$value.')';
     }

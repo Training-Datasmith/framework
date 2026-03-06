@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Query\Grammars;
 
 use Illuminate\Database\Query\Builder;
@@ -44,10 +46,9 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a "where like" clause.
      *
-     * @param  array  $where
      * @return string
      */
-    protected function whereLike(Builder $query, $where)
+    protected function whereLike(Builder $query, array $where)
     {
         if ($where['caseSensitive'] == false) {
             return parent::whereLike($query, $where);
@@ -87,9 +88,8 @@ class SQLiteGrammar extends Grammar
      * Compile a "where date" clause.
      *
      * @param  array  $where
-     * @return string
      */
-    protected function whereDate(Builder $query, $where)
+    protected function whereDate(Builder $query, $where): string
     {
         return $this->dateBasedWhere('%Y-%m-%d', $query, $where);
     }
@@ -98,9 +98,8 @@ class SQLiteGrammar extends Grammar
      * Compile a "where day" clause.
      *
      * @param  array  $where
-     * @return string
      */
-    protected function whereDay(Builder $query, $where)
+    protected function whereDay(Builder $query, $where): string
     {
         return $this->dateBasedWhere('%d', $query, $where);
     }
@@ -109,9 +108,8 @@ class SQLiteGrammar extends Grammar
      * Compile a "where month" clause.
      *
      * @param  array  $where
-     * @return string
      */
-    protected function whereMonth(Builder $query, $where)
+    protected function whereMonth(Builder $query, $where): string
     {
         return $this->dateBasedWhere('%m', $query, $where);
     }
@@ -120,9 +118,8 @@ class SQLiteGrammar extends Grammar
      * Compile a "where year" clause.
      *
      * @param  array  $where
-     * @return string
      */
-    protected function whereYear(Builder $query, $where)
+    protected function whereYear(Builder $query, $where): string
     {
         return $this->dateBasedWhere('%Y', $query, $where);
     }
@@ -131,9 +128,8 @@ class SQLiteGrammar extends Grammar
      * Compile a "where time" clause.
      *
      * @param  array  $where
-     * @return string
      */
-    protected function whereTime(Builder $query, $where)
+    protected function whereTime(Builder $query, $where): string
     {
         return $this->dateBasedWhere('%H:%M:%S', $query, $where);
     }
@@ -225,10 +221,8 @@ class SQLiteGrammar extends Grammar
 
     /**
      * Compile a group limit clause.
-     *
-     * @return string
      */
-    protected function compileGroupLimit(Builder $query)
+    protected function compileGroupLimit(Builder $query): string
     {
         $version = $query->getConnection()->getServerVersion();
 
@@ -243,10 +237,8 @@ class SQLiteGrammar extends Grammar
 
     /**
      * Compile an update statement into SQL.
-     *
-     * @return string
      */
-    public function compileUpdate(Builder $query, array $values)
+    public function compileUpdate(Builder $query, array $values): string
     {
         if (isset($query->joins) || isset($query->limit)) {
             return $this->compileUpdateWithJoinsOrLimit($query, $values);
@@ -304,7 +296,7 @@ class SQLiteGrammar extends Grammar
 
         $sql .= ' on conflict ('.$this->columnize($uniqueBy).') do update set ';
 
-        $columns = (new Collection($update))->map(fn($value, $key) => is_numeric($key)
+        $columns = (new Collection($update))->map(fn ($value, $key): string => is_numeric($key)
             ? $this->wrap($value).' = '.$this->wrapValue('excluded').'.'.$this->wrap($value)
             : $this->wrap($key).' = '.$this->parameter($value))->implode(', ');
 
@@ -379,10 +371,8 @@ class SQLiteGrammar extends Grammar
 
     /**
      * Compile a delete statement into SQL.
-     *
-     * @return string
      */
-    public function compileDelete(Builder $query)
+    public function compileDelete(Builder $query): string
     {
         if (isset($query->joins) || isset($query->limit)) {
             return $this->compileDeleteWithJoinsOrLimit($query);

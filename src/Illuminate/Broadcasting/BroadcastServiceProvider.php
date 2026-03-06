@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting;
 
 use Illuminate\Contracts\Broadcasting\Broadcaster as BroadcasterContract;
@@ -16,10 +18,11 @@ class BroadcastServiceProvider extends ServiceProvider implements DeferrableProv
     {
         $this->app->singleton(BroadcastManager::class, fn ($app): \Illuminate\Broadcasting\BroadcastManager => new BroadcastManager($app));
 
-        $this->app->singleton(BroadcasterContract::class, fn($app) => $app->make(BroadcastManager::class)->connection());
+        $this->app->singleton(BroadcasterContract::class, fn ($app) => $app->make(BroadcastManager::class)->connection());
 
         $this->app->alias(
-            BroadcastManager::class, BroadcastingFactory::class
+            BroadcastManager::class,
+            BroadcastingFactory::class
         );
     }
 

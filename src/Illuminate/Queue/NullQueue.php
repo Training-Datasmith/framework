@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Illuminate\Contracts\Queue\Queue as QueueContract;
@@ -66,7 +68,7 @@ class NullQueue extends Queue implements QueueContract
      */
     public function push($job, $data = '', $queue = null): void
     {
-        //
+
     }
 
     /**
@@ -77,7 +79,7 @@ class NullQueue extends Queue implements QueueContract
      */
     public function pushRaw($payload, $queue = null, array $options = []): void
     {
-        //
+
     }
 
     /**
@@ -90,7 +92,7 @@ class NullQueue extends Queue implements QueueContract
      */
     public function later($delay, $job, $data = '', $queue = null): void
     {
-        //
+
     }
 
     /**
@@ -100,6 +102,6 @@ class NullQueue extends Queue implements QueueContract
      */
     public function pop($queue = null): void
     {
-        //
+
     }
 }

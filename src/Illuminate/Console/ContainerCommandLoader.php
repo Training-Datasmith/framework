@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console;
 
-use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
@@ -23,8 +24,7 @@ class ContainerCommandLoader implements CommandLoaderInterface
          * A map of command names to classes.
          */
         protected array $commandMap
-    )
-    {
+    ) {
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing;
 
 use Closure;
@@ -29,8 +31,8 @@ class TestView implements Stringable
     public function __construct(/**
      * The original view.
      */
-    protected \Illuminate\View\View $view)
-    {
+        protected \Illuminate\View\View $view
+    ) {
         $this->rendered = $this->view->render();
     }
 
@@ -41,7 +43,7 @@ class TestView implements Stringable
      * @param  mixed  $value
      * @return $this
      */
-    public function assertViewHas($key, $value = null)
+    public function assertViewHas($key, $value = null): static
     {
         if (is_array($key)) {
             return $this->assertViewHasAll($key);

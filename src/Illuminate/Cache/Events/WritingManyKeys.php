@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\Events;
 
 class WritingManyKeys extends CacheEvent
@@ -22,10 +24,10 @@ class WritingManyKeys extends CacheEvent
     public function __construct($storeName, $keys, /**
      * The value that is being written.
      */
-    public $values, /**
+        public $values, /**
      * The number of seconds the keys should be valid.
      */
-    public $seconds = null, array $tags = [])
+        public $seconds = null, array $tags = [])
     {
         parent::__construct($storeName, $keys[0], $tags);
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Resources\Json;
 
 use Illuminate\Support\Arr;
@@ -80,11 +82,8 @@ class PaginatedResourceResponse extends ResourceResponse
 
     /**
      * Gather the metadata for the response.
-     *
-     * @param  array  $paginated
-     * @return array
      */
-    protected function meta($paginated)
+    protected function meta(array $paginated): array
     {
         return Arr::except($paginated, [
             'data',

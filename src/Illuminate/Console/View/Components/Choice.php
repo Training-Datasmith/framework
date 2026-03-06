@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\View\Components;
 
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -34,8 +36,7 @@ class Choice extends Component
      */
     protected function getChoiceQuestion($question, $choices, $default): \Symfony\Component\Console\Question\ChoiceQuestion
     {
-        return new class($question, $choices, $default) extends ChoiceQuestion
-        {
+        return new class ($question, $choices, $default) extends ChoiceQuestion {
             protected function isAssoc(array $array): bool
             {
                 return ! array_is_list($array);

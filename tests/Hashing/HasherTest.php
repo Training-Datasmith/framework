@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Hashing;
 
 use Illuminate\Config\Repository as Config;
@@ -20,7 +22,7 @@ class HasherTest extends TestCase
     {
         parent::setUp();
 
-        $container = Container::setInstance(new Container);
+        $container = Container::setInstance(new Container());
         $container->singleton('config', fn () => new Config());
 
         $this->hashManager = new HashManager($container);
@@ -48,7 +50,7 @@ class HasherTest extends TestCase
 
     public function testBasicBcryptHashing()
     {
-        $hasher = new BcryptHasher;
+        $hasher = new BcryptHasher();
         $value = $hasher->make('password');
         $this->assertNotSame('password', $value);
         $this->assertTrue($hasher->check('password', $value));
@@ -68,7 +70,7 @@ class HasherTest extends TestCase
 
     public function testBasicArgon2iHashing()
     {
-        $hasher = new ArgonHasher;
+        $hasher = new ArgonHasher();
         $value = $hasher->make('password');
         $this->assertNotSame('password', $value);
         $this->assertTrue($hasher->check('password', $value));
@@ -80,7 +82,7 @@ class HasherTest extends TestCase
 
     public function testBasicArgon2idHashing()
     {
-        $hasher = new Argon2IdHasher;
+        $hasher = new Argon2IdHasher();
         $value = $hasher->make('password');
         $this->assertNotSame('password', $value);
         $this->assertTrue($hasher->check('password', $value));

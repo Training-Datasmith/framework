@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Connectors\Connector;
@@ -19,7 +21,7 @@ class DatabaseConnectorTest extends TestCase
 {
     public function testOptionResolution()
     {
-        $connector = new Connector;
+        $connector = new Connector();
         $connector->setDefaultOptions([0 => 'foo', 1 => 'bar']);
         $this->assertEquals([0 => 'baz', 1 => 'bar', 2 => 'boom'], $connector->getOptions(['options' => [0 => 'baz', 2 => 'boom']]));
     }

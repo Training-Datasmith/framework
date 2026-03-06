@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentModelCustomEventsTest;
 
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -76,7 +78,6 @@ class TestModel1 extends Model
 
 class CustomEvent
 {
-    //
 }
 
 trait CustomEventTrait

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications;
 
 use Illuminate\Contracts\Bus\Dispatcher as Bus;
@@ -127,7 +129,10 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
     protected function resolveNotificationSender()
     {
         return $this->notificationSender ??= new NotificationSender(
-            $this, $this->container->make(Bus::class), $this->container->make(Dispatcher::class), $this->locale
+            $this,
+            $this->container->make(Bus::class),
+            $this->container->make(Dispatcher::class),
+            $this->locale
         );
     }
 

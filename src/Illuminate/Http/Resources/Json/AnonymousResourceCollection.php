@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Resources\Json;
 
 class AnonymousResourceCollection extends ResourceCollection
@@ -20,7 +22,7 @@ class AnonymousResourceCollection extends ResourceCollection
     public function __construct($resource, /**
      * The name of the resource being collected.
      */
-    public $collects)
+        public $collects)
     {
         parent::__construct($resource);
     }

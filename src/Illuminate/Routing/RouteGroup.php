@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Support\Arr;
@@ -28,7 +30,8 @@ class RouteGroup
         ]);
 
         return array_merge_recursive(Arr::except(
-            $old, ['namespace', 'prefix', 'where', 'as']
+            $old,
+            ['namespace', 'prefix', 'where', 'as']
         ), $new);
     }
 

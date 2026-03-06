@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 class DynamoDbLock extends Lock
@@ -14,17 +16,18 @@ class DynamoDbLock extends Lock
     public function __construct(/**
      * The DynamoDB client instance.
      */
-    protected \Illuminate\Cache\DynamoDbStore $dynamo, $name, $seconds, $owner = null)
-    {
+        protected \Illuminate\Cache\DynamoDbStore $dynamo,
+        $name,
+        $seconds,
+        $owner = null
+    ) {
         parent::__construct($name, $seconds, $owner);
     }
 
     /**
      * Attempt to acquire the lock.
-     *
-     * @return bool
      */
-    public function acquire()
+    public function acquire(): bool
     {
         if ($this->seconds > 0) {
             return $this->dynamo->add($this->name, $this->owner, $this->seconds);

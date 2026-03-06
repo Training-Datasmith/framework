@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Composer;
-use Mockery as m;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\Process;
 
 use function Illuminate\Support\php_binary;
+
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+
+use Symfony\Component\Process\Process;
 
 class SupportComposerTest extends TestCase
 {

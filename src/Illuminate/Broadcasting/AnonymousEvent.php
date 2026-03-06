@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting;
 
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -10,7 +12,9 @@ use Illuminate\Support\Collection;
 
 class AnonymousEvent implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithBroadcasting, InteractsWithSockets;
+    use Dispatchable;
+    use InteractsWithBroadcasting;
+    use InteractsWithSockets;
 
     /**
      * The connection the event should be broadcast on.

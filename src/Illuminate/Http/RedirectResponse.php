@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http;
 
 use Illuminate\Contracts\Support\MessageProvider;
@@ -130,14 +132,15 @@ class RedirectResponse extends BaseRedirectResponse
     {
         $value = $this->parseErrors($provider);
 
-        $errors = $this->session->get('errors', new ViewErrorBag);
+        $errors = $this->session->get('errors', new ViewErrorBag());
 
         if (! $errors instanceof ViewErrorBag) {
-            $errors = new ViewErrorBag;
+            $errors = new ViewErrorBag();
         }
 
         $this->session->flash(
-            'errors', $errors->put($key, $value)
+            'errors',
+            $errors->put($key, $value)
         );
 
         return $this;
@@ -205,7 +208,7 @@ class RedirectResponse extends BaseRedirectResponse
      */
     public function getOriginalContent(): void
     {
-        //
+
     }
 
     /**

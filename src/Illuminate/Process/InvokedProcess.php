@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Illuminate\Contracts\Process\InvokedProcess as InvokedProcessContract;
@@ -17,8 +19,7 @@ class InvokedProcess implements InvokedProcessContract
          * The underlying process instance.
          */
         protected \Symfony\Component\Process\Process $process
-    )
-    {
+    ) {
     }
 
     /**

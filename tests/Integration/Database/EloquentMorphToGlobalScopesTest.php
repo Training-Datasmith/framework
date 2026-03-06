@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentMorphToGlobalScopesTest;
 
 use Illuminate\Database\Eloquent\Model;
@@ -25,10 +27,10 @@ class EloquentMorphToGlobalScopesTest extends DatabaseTestCase
         });
 
         $post = Post::create();
-        (new Comment)->commentable()->associate($post)->save();
+        (new Comment())->commentable()->associate($post)->save();
 
         $post = tap(Post::create())->delete();
-        (new Comment)->commentable()->associate($post)->save();
+        (new Comment())->commentable()->associate($post)->save();
     }
 
     public function testWithGlobalScopes()

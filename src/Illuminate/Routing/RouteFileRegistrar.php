@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 class RouteFileRegistrar
@@ -12,8 +14,7 @@ class RouteFileRegistrar
          * The router instance.
          */
         protected \Illuminate\Routing\Router $router
-    )
-    {
+    ) {
     }
 
     /**

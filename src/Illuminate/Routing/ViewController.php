@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Routing;
+declare(strict_types=1);
 
-use Illuminate\Contracts\Routing\ResponseFactory;
+namespace Illuminate\Routing;
 
 class ViewController extends Controller
 {
@@ -14,8 +14,7 @@ class ViewController extends Controller
          * The response factory implementation.
          */
         protected \Illuminate\Contracts\Routing\ResponseFactory $response
-    )
-    {
+    ) {
     }
 
     /**
@@ -26,7 +25,7 @@ class ViewController extends Controller
      */
     public function __invoke(...$args)
     {
-        $routeParameters = array_filter($args, fn($key) => ! in_array($key, ['view', 'data', 'status', 'headers']), ARRAY_FILTER_USE_KEY);
+        $routeParameters = array_filter($args, fn ($key): bool => ! in_array($key, ['view', 'data', 'status', 'headers']), ARRAY_FILTER_USE_KEY);
 
         $args['data'] = array_merge($args['data'], $routeParameters);
 

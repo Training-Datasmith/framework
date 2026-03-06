@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Traits\ReflectsClosures;
 
 if (! function_exists('lazy')) {
@@ -18,8 +20,7 @@ if (! function_exists('lazy')) {
     {
         static $closureReflector;
 
-        $closureReflector ??= new class
-        {
+        $closureReflector ??= new class () {
             use ReflectsClosures;
 
             public function typeFromParameter(\Closure $callback)
@@ -66,8 +67,7 @@ if (! function_exists('proxy')) {
     {
         static $closureReflector;
 
-        $closureReflector = new class
-        {
+        $closureReflector = new class () {
             use ReflectsClosures;
 
             public function get(\Closure $callback)

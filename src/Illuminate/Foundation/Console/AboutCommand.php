@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Closure;
@@ -48,8 +50,8 @@ class AboutCommand extends Command
     public function __construct(/**
      * The Composer instance.
      */
-    protected \Illuminate\Support\Composer $composer)
-    {
+        protected \Illuminate\Support\Composer $composer
+    ) {
         parent::__construct();
     }
 
@@ -61,7 +63,8 @@ class AboutCommand extends Command
         $this->gatherApplicationInformation();
 
         (new Collection(static::$data))
-            ->map(fn ($items): \Illuminate\Support\Collection => (new Collection($items))
+            ->map(
+                fn ($items): \Illuminate\Support\Collection => (new Collection($items))
                 ->map(function ($value) {
                     if (is_array($value)) {
                         return [$value];
@@ -82,7 +85,7 @@ class AboutCommand extends Command
 
                 return $index === false ? 99 : $index;
             })
-            ->filter(fn($data, $key) => $this->option('only') ? in_array($this->toSearchKeyword($key), $this->sections()) : true)
+            ->filter(fn ($data, $key): bool => $this->option('only') ? in_array($this->toSearchKeyword($key), $this->sections()) : true)
             ->pipe(fn ($data) => $this->display($data));
 
         $this->newLine();
@@ -130,7 +133,7 @@ class AboutCommand extends Command
      */
     protected function displayJson($data)
     {
-        $output = $data->flatMap(fn($data, $section) => [
+        $output = $data->flatMap(fn ($data, $section): array => [
             (new Stringable($section))->snake()->value() => $data->mapWithKeys(fn ($item, $key): array => [
                 $this->toSearchKeyword($item[0]) => value($item[1], true),
             ]),

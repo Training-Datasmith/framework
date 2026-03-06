@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Events;
 
 use Closure;
 use Illuminate\Support\Collection;
-use Laravel\SerializableClosure\SerializableClosure;
 
 use function Illuminate\Support\enum_value;
+
+use Laravel\SerializableClosure\SerializableClosure;
 
 class QueuedClosure
 {

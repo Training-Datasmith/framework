@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Filesystem;
 
 use Closure;
@@ -62,7 +64,9 @@ class LocalFilesystemAdapter extends FilesystemAdapter
     {
         if ($this->temporaryUrlCallback) {
             return $this->temporaryUrlCallback->bindTo($this, static::class)(
-                $path, $expiration, $options
+                $path,
+                $expiration,
+                $options
             );
         }
 
@@ -91,7 +95,9 @@ class LocalFilesystemAdapter extends FilesystemAdapter
     {
         if ($this->temporaryUploadUrlCallback) {
             return $this->temporaryUploadUrlCallback->bindTo($this, static::class)(
-                $path, $expiration, $options
+                $path,
+                $expiration,
+                $options
             );
         }
 

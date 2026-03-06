@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Filesystem;
 
 use Illuminate\Contracts\Foundation\CachesRoutes;
@@ -33,7 +35,7 @@ class FilesystemServiceProvider extends ServiceProvider
      */
     protected function registerNativeFilesystem()
     {
-        $this->app->singleton('files', fn() => new Filesystem);
+        $this->app->singleton('files', fn (): \Illuminate\Filesystem\Filesystem => new Filesystem());
     }
 
     /**
@@ -45,9 +47,9 @@ class FilesystemServiceProvider extends ServiceProvider
     {
         $this->registerManager();
 
-        $this->app->singleton('filesystem.disk', fn($app) => $app['filesystem']->disk($this->getDefaultDriver()));
+        $this->app->singleton('filesystem.disk', fn ($app) => $app['filesystem']->disk($this->getDefaultDriver()));
 
-        $this->app->singleton('filesystem.cloud', fn($app) => $app['filesystem']->disk($this->getCloudDriver()));
+        $this->app->singleton('filesystem.cloud', fn ($app) => $app['filesystem']->disk($this->getCloudDriver()));
     }
 
     /**
@@ -57,7 +59,7 @@ class FilesystemServiceProvider extends ServiceProvider
      */
     protected function registerManager()
     {
-        $this->app->singleton('filesystem', fn($app) => new FilesystemManager($app));
+        $this->app->singleton('filesystem', fn ($app): \Illuminate\Filesystem\FilesystemManager => new FilesystemManager($app));
     }
 
     /**
@@ -83,13 +85,13 @@ class FilesystemServiceProvider extends ServiceProvider
 
                 $isProduction = $app->isProduction();
 
-                Route::get($uri.'/{path}', fn(Request $request, string $path) => (new ServeFile(
+                Route::get($uri.'/{path}', fn (Request $request, string $path) => (new ServeFile(
                     $disk,
                     $config,
                     $isProduction
                 ))($request, $path))->where('path', '.*')->name('storage.'.$disk);
 
-                Route::put($uri.'/{path}', fn(Request $request, string $path) => (new ReceiveFile(
+                Route::put($uri.'/{path}', fn (Request $request, string $path): \Illuminate\Http\Response => (new ReceiveFile(
                     $disk,
                     $config,
                     $isProduction

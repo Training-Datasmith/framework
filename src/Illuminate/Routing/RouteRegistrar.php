@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use BackedEnum;
@@ -96,8 +98,7 @@ class RouteRegistrar
          * The router instance.
          */
         protected \Illuminate\Routing\Router $router
-    )
-    {
+    ) {
     }
 
     /**
@@ -127,7 +128,8 @@ class RouteRegistrar
 
         if ($key === 'withoutMiddleware') {
             $value = array_merge(
-                (array) ($this->attributes[$attributeKey] ?? []), Arr::wrap($value)
+                (array) ($this->attributes[$attributeKey] ?? []),
+                Arr::wrap($value)
             );
         }
 
@@ -149,9 +151,8 @@ class RouteRegistrar
      *
      * @param  string  $name
      * @param  string  $controller
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function resource($name, $controller, array $options = [])
+    public function resource($name, $controller, array $options = []): \Illuminate\Routing\PendingResourceRegistration
     {
         return $this->router->resource($name, $controller, $this->attributes + $options);
     }
@@ -173,9 +174,8 @@ class RouteRegistrar
      *
      * @param  string  $name
      * @param  string  $controller
-     * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
-    public function singleton($name, $controller, array $options = [])
+    public function singleton($name, $controller, array $options = []): \Illuminate\Routing\PendingSingletonResourceRegistration
     {
         return $this->router->singleton($name, $controller, $this->attributes + $options);
     }
@@ -269,7 +269,6 @@ class RouteRegistrar
     /**
      * Dynamically handle calls into the route registrar.
      *
-     * @param  array  $parameters
      * @return \Illuminate\Routing\Route|$this
      * @throws \BadMethodCallException
      */
@@ -296,7 +295,9 @@ class RouteRegistrar
         }
 
         throw new BadMethodCallException(sprintf(
-            'Method %s::%s does not exist.', static::class, $method
+            'Method %s::%s does not exist.',
+            static::class,
+            $method
         ));
     }
 }

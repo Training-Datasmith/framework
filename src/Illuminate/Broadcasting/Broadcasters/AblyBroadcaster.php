@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting\Broadcasters;
 
 use Ably\AblyRest;
@@ -45,11 +47,12 @@ class AblyBroadcaster extends Broadcaster
         if (empty($request->channel_name) ||
             ($this->isGuardedChannel($request->channel_name) &&
             ! $this->retrieveUser($request, $channelName))) {
-            throw new AccessDeniedHttpException;
+            throw new AccessDeniedHttpException();
         }
 
         return parent::verifyUserCanAccessChannel(
-            $request, $channelName
+            $request,
+            $channelName
         );
     }
 
@@ -63,7 +66,8 @@ class AblyBroadcaster extends Broadcaster
     {
         if (str_starts_with((string) $request->channel_name, 'private')) {
             $signature = $this->generateAblySignature(
-                $request->channel_name, $request->socket_id
+                $request->channel_name,
+                $request->socket_id
             );
 
             return ['auth' => $this->getPublicToken().':'.$signature];
@@ -137,7 +141,7 @@ class AblyBroadcaster extends Broadcaster
      */
     protected function buildAblyMessage($event, array $payload = [])
     {
-        return tap(new AblyMessage, function ($message) use ($event, $payload): void {
+        return tap(new AblyMessage(), function ($message) use ($event, $payload): void {
             $message->name = $event;
             $message->data = $payload;
             $message->connectionKey = data_get($payload, 'socket');
@@ -148,9 +152,8 @@ class AblyBroadcaster extends Broadcaster
      * Return true if the channel is protected by authentication.
      *
      * @param  string  $channel
-     * @return bool
      */
-    public function isGuardedChannel($channel)
+    public function isGuardedChannel($channel): bool
     {
         return Str::startsWith($channel, ['private-', 'presence-']);
     }

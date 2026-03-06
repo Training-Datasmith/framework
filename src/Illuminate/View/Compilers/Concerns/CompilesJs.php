@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Compilers\Concerns;
 
 use Illuminate\Support\Js;
@@ -13,7 +15,8 @@ trait CompilesJs
     {
         return sprintf(
             "<?php echo \%s::from(%s)->toHtml() ?>",
-            Js::class, $this->stripParentheses($expression)
+            Js::class,
+            $this->stripParentheses($expression)
         );
     }
 }

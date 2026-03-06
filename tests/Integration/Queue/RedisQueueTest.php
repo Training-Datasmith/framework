@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Container\Container;
@@ -19,7 +21,8 @@ use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 #[RequiresPhpExtension('redis')]
 class RedisQueueTest extends TestCase
 {
-    use InteractsWithRedis, InteractsWithTime;
+    use InteractsWithRedis;
+    use InteractsWithTime;
 
     /**
      * @var \Illuminate\Queue\RedisQueue
@@ -606,6 +609,6 @@ class RedisQueueIntegrationTestJob
 
     public function handle()
     {
-        //
+
     }
 }

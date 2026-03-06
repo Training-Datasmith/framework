@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Exceptions\Whoops;
 
 use Illuminate\Filesystem\Filesystem;
@@ -15,7 +17,7 @@ class WhoopsHandler
      */
     public function forDebug()
     {
-        return tap(new PrettyPageHandler, function ($handler): void {
+        return tap(new PrettyPageHandler(), function ($handler): void {
             $handler->handleUnconditionally(true);
 
             $this->registerApplicationPaths($handler)
@@ -41,13 +43,11 @@ class WhoopsHandler
 
     /**
      * Get the application paths except for the "vendor" directory.
-     *
-     * @return array
      */
-    protected function directoriesExceptVendor()
+    protected function directoriesExceptVendor(): array
     {
         return Arr::except(
-            array_flip((new Filesystem)->directories(base_path())),
+            array_flip((new Filesystem())->directories(base_path())),
             [base_path('vendor')]
         );
     }

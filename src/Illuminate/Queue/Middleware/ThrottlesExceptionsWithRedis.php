@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Middleware;
 
 use Illuminate\Container\Container;
@@ -48,7 +50,10 @@ class ThrottlesExceptionsWithRedis extends ThrottlesExceptions
             ->connection($this->connectionName);
 
         $this->limiter = new DurationLimiter(
-            $this->redis, $this->getKey($job), $this->maxAttempts, $this->decaySeconds
+            $this->redis,
+            $this->getKey($job),
+            $this->maxAttempts,
+            $this->decaySeconds
         );
 
         if ($this->limiter->tooManyAttempts()) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Testing\Fakes;
 
 use Closure;
@@ -16,7 +18,8 @@ use ReflectionFunction;
 
 class EventFake implements Dispatcher, Fake
 {
-    use ForwardsCalls, ReflectsClosures;
+    use ForwardsCalls;
+    use ReflectsClosures;
 
     /**
      * The original event dispatcher.
@@ -163,7 +166,8 @@ class EventFake implements Dispatcher, Fake
         $count = $this->dispatched($event)->count();
 
         PHPUnit::assertSame(
-            $times, $count,
+            $times,
+            $count,
             sprintf(
                 "The expected [{$event}] event was dispatched {$count} %s instead of {$times} %s.",
                 Str::plural('time', $count),
@@ -185,7 +189,8 @@ class EventFake implements Dispatcher, Fake
         }
 
         PHPUnit::assertCount(
-            0, $this->dispatched($event, $callback),
+            0,
+            $this->dispatched($event, $callback),
             "The unexpected [{$event}] event was dispatched."
         );
     }
@@ -207,7 +212,8 @@ class EventFake implements Dispatcher, Fake
             ->join("\n- ");
 
         PHPUnit::assertSame(
-            0, $count,
+            0,
+            $count,
             "{$count} unexpected events were dispatched:\n\n- $eventNames\n"
         );
     }
@@ -221,7 +227,7 @@ class EventFake implements Dispatcher, Fake
     public function dispatched($event, $callback = null): \Illuminate\Support\Collection
     {
         if (! $this->hasDispatched($event)) {
-            return new Collection;
+            return new Collection();
         }
 
         $callback = $callback ?: fn (): true => true;
@@ -271,7 +277,7 @@ class EventFake implements Dispatcher, Fake
      */
     public function push($event, $payload = []): void
     {
-        //
+
     }
 
     /**
@@ -291,7 +297,7 @@ class EventFake implements Dispatcher, Fake
      */
     public function flush($event): void
     {
-        //
+
     }
 
     /**
@@ -331,7 +337,7 @@ class EventFake implements Dispatcher, Fake
         }
 
         return (new Collection($this->eventsToFake))
-            ->filter(fn($event) => $event instanceof Closure
+            ->filter(fn ($event) => $event instanceof Closure
                 ? $event($eventName, $payload)
                 : $event === $eventName)
             ->isNotEmpty();
@@ -369,7 +375,7 @@ class EventFake implements Dispatcher, Fake
         }
 
         return (new Collection($this->eventsToDispatch))
-            ->filter(fn($event) => $event instanceof Closure
+            ->filter(fn ($event) => $event instanceof Closure
                 ? $event($eventName, $payload)
                 : $event === $eventName)
             ->isNotEmpty();
@@ -382,7 +388,7 @@ class EventFake implements Dispatcher, Fake
      */
     public function forget($event): void
     {
-        //
+
     }
 
     /**
@@ -390,7 +396,7 @@ class EventFake implements Dispatcher, Fake
      */
     public function forgetPushed(): void
     {
-        //
+
     }
 
     /**
@@ -418,7 +424,6 @@ class EventFake implements Dispatcher, Fake
     /**
      * Handle dynamic method calls to the dispatcher.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

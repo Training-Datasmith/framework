@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use ArrayIterator;
@@ -10,7 +12,8 @@ use Traversable;
 
 class ValidatedInput implements ValidatedData
 {
-    use Dumpable, InteractsWithData;
+    use Dumpable;
+    use InteractsWithData;
 
     /**
      * Create a new validated input container.
@@ -20,8 +23,7 @@ class ValidatedInput implements ValidatedData
          * The underlying input.
          */
         protected array $input
-    )
-    {
+    ) {
     }
 
     /**
@@ -36,9 +38,8 @@ class ValidatedInput implements ValidatedData
      * Get the raw, underlying input array.
      *
      * @param  mixed  $keys
-     * @return array
      */
-    public function all($keys = null)
+    public function all($keys = null): array
     {
         if (! $keys) {
             return $this->input;
@@ -83,7 +84,9 @@ class ValidatedInput implements ValidatedData
     public function input($key = null, $default = null)
     {
         return data_get(
-            $this->all(), $key, $default
+            $this->all(),
+            $key,
+            $default
         );
     }
 

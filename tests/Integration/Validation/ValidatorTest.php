@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Validation;
 
 use Illuminate\Database\Eloquent\Model;
@@ -72,7 +74,7 @@ class ValidatorTest extends DatabaseTestCase
 
     public function testImplicitAttributeFormatting(): void
     {
-        $translator = new Translator(new ArrayLoader, 'en');
+        $translator = new Translator(new ArrayLoader(), 'en');
         $translator->addLines(['validation.string' => ':attribute must be a string!'], 'en');
         $validator = new Validator($translator, [['name' => 1]], ['*.name' => 'string']);
 
@@ -89,7 +91,7 @@ class ValidatorTest extends DatabaseTestCase
 
     protected function getValidator(array $data, array $rules)
     {
-        $translator = new Translator(new ArrayLoader, 'en');
+        $translator = new Translator(new ArrayLoader(), 'en');
         $validator = new Validator($translator, $data, $rules);
         $validator->setPresenceVerifier(new DatabasePresenceVerifier($this->app['db']));
 

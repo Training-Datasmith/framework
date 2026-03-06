@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Illuminate\Bus\Batch;
@@ -28,7 +30,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testItUsesCustomBusRepository()
     {
-        $busRepository = new BatchRepositoryFake;
+        $busRepository = new BatchRepositoryFake();
 
         $fake = new BusFake(m::mock(QueueingDispatcher::class), [], $busRepository);
 
@@ -49,14 +51,14 @@ class SupportTestingBusFakeTest extends TestCase
             $this->assertStringContainsString('The expected [Illuminate\Tests\Support\BusJobStub] job was not dispatched.', $e->getMessage());
         }
 
-        $this->fake->dispatch(new BusJobStub);
+        $this->fake->dispatch(new BusJobStub());
 
         $this->fake->assertDispatched(BusJobStub::class);
     }
 
     public function testAssertDispatchedWithClosure()
     {
-        $this->fake->dispatch(new BusJobStub);
+        $this->fake->dispatch(new BusJobStub());
 
         $this->fake->assertDispatched(function (BusJobStub $job) {
             return true;
@@ -72,7 +74,7 @@ class SupportTestingBusFakeTest extends TestCase
             $this->assertStringContainsString('The expected [Illuminate\Tests\Support\BusJobStub] job was not dispatched after sending the response.', $e->getMessage());
         }
 
-        $this->fake->dispatchAfterResponse(new BusJobStub);
+        $this->fake->dispatchAfterResponse(new BusJobStub());
 
         $this->fake->assertDispatchedAfterResponse(BusJobStub::class);
     }
@@ -98,7 +100,7 @@ class SupportTestingBusFakeTest extends TestCase
             $this->assertStringContainsString('The expected [Illuminate\Tests\Support\BusJobStub] job was not dispatched synchronously.', $e->getMessage());
         }
 
-        $this->fake->dispatch(new BusJobStub);
+        $this->fake->dispatch(new BusJobStub());
 
         try {
             $this->fake->assertDispatchedSync(BusJobStub::class);
@@ -107,7 +109,7 @@ class SupportTestingBusFakeTest extends TestCase
             $this->assertStringContainsString('The expected [Illuminate\Tests\Support\BusJobStub] job was not dispatched synchronously.', $e->getMessage());
         }
 
-        $this->fake->dispatchSync(new BusJobStub);
+        $this->fake->dispatchSync(new BusJobStub());
 
         $this->fake->assertDispatchedSync(BusJobStub::class);
     }
@@ -126,15 +128,15 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertDispatchedNow()
     {
-        $this->fake->dispatchNow(new BusJobStub);
+        $this->fake->dispatchNow(new BusJobStub());
 
         $this->fake->assertDispatched(BusJobStub::class);
     }
 
     public function testAssertDispatchedWithCallbackInt()
     {
-        $this->fake->dispatch(new BusJobStub);
-        $this->fake->dispatchNow(new BusJobStub);
+        $this->fake->dispatch(new BusJobStub());
+        $this->fake->dispatchNow(new BusJobStub());
 
         try {
             $this->fake->assertDispatched(BusJobStub::class, 1);
@@ -148,8 +150,8 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertDispatchedAfterResponseWithCallbackInt()
     {
-        $this->fake->dispatchAfterResponse(new BusJobStub);
-        $this->fake->dispatchAfterResponse(new BusJobStub);
+        $this->fake->dispatchAfterResponse(new BusJobStub());
+        $this->fake->dispatchAfterResponse(new BusJobStub());
 
         try {
             $this->fake->assertDispatchedAfterResponse(BusJobStub::class, 1);
@@ -163,8 +165,8 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertDispatchedSyncWithCallbackInt()
     {
-        $this->fake->dispatchSync(new BusJobStub);
-        $this->fake->dispatchSync(new BusJobStub);
+        $this->fake->dispatchSync(new BusJobStub());
+        $this->fake->dispatchSync(new BusJobStub());
 
         try {
             $this->fake->assertDispatchedSync(BusJobStub::class, 1);
@@ -178,7 +180,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertDispatchedWithCallbackFunction()
     {
-        $this->fake->dispatch(new OtherBusJobStub);
+        $this->fake->dispatch(new OtherBusJobStub());
         $this->fake->dispatchNow(new OtherBusJobStub(1));
 
         try {
@@ -201,7 +203,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertDispatchedAfterResponseWithCallbackFunction()
     {
-        $this->fake->dispatchAfterResponse(new OtherBusJobStub);
+        $this->fake->dispatchAfterResponse(new OtherBusJobStub());
         $this->fake->dispatchAfterResponse(new OtherBusJobStub(1));
 
         try {
@@ -248,7 +250,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertDispatchedSyncWithCallbackFunction()
     {
-        $this->fake->dispatchSync(new OtherBusJobStub);
+        $this->fake->dispatchSync(new OtherBusJobStub());
         $this->fake->dispatchSync(new OtherBusJobStub(1));
 
         try {
@@ -271,8 +273,8 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertDispatchedOnce()
     {
-        $this->fake->dispatch(new BusJobStub);
-        $this->fake->dispatchNow(new BusJobStub);
+        $this->fake->dispatch(new BusJobStub());
+        $this->fake->dispatchNow(new BusJobStub());
 
         try {
             $this->fake->assertDispatchedOnce(BusJobStub::class);
@@ -286,8 +288,8 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertDispatchedTimes()
     {
-        $this->fake->dispatch(new BusJobStub);
-        $this->fake->dispatchNow(new BusJobStub);
+        $this->fake->dispatch(new BusJobStub());
+        $this->fake->dispatchNow(new BusJobStub());
 
         try {
             $this->fake->assertDispatchedTimes(BusJobStub::class, 1);
@@ -325,8 +327,8 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertDispatchedAfterResponseTimes()
     {
-        $this->fake->dispatchAfterResponse(new BusJobStub);
-        $this->fake->dispatchAfterResponse(new BusJobStub);
+        $this->fake->dispatchAfterResponse(new BusJobStub());
+        $this->fake->dispatchAfterResponse(new BusJobStub());
 
         try {
             $this->fake->assertDispatchedAfterResponseTimes(BusJobStub::class, 1);
@@ -340,8 +342,8 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertDispatchedSyncTimes()
     {
-        $this->fake->dispatchSync(new BusJobStub);
-        $this->fake->dispatchSync(new BusJobStub);
+        $this->fake->dispatchSync(new BusJobStub());
+        $this->fake->dispatchSync(new BusJobStub());
 
         try {
             $this->fake->assertDispatchedSyncTimes(BusJobStub::class, 1);
@@ -381,8 +383,8 @@ class SupportTestingBusFakeTest extends TestCase
     {
         $this->fake->assertNotDispatched(BusJobStub::class);
 
-        $this->fake->dispatch(new BusJobStub);
-        $this->fake->dispatchNow(new BusJobStub);
+        $this->fake->dispatch(new BusJobStub());
+        $this->fake->dispatchNow(new BusJobStub());
 
         try {
             $this->fake->assertNotDispatched(BusJobStub::class);
@@ -394,8 +396,8 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertNotDispatchedWithClosure()
     {
-        $this->fake->dispatch(new BusJobStub);
-        $this->fake->dispatchNow(new BusJobStub);
+        $this->fake->dispatch(new BusJobStub());
+        $this->fake->dispatchNow(new BusJobStub());
 
         try {
             $this->fake->assertNotDispatched(function (BusJobStub $job) {
@@ -411,7 +413,7 @@ class SupportTestingBusFakeTest extends TestCase
     {
         $this->fake->assertNotDispatchedAfterResponse(BusJobStub::class);
 
-        $this->fake->dispatchAfterResponse(new BusJobStub);
+        $this->fake->dispatchAfterResponse(new BusJobStub());
 
         try {
             $this->fake->assertNotDispatchedAfterResponse(BusJobStub::class);
@@ -423,7 +425,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertNotDispatchedAfterResponseClosure()
     {
-        $this->fake->dispatchAfterResponse(new BusJobStub);
+        $this->fake->dispatchAfterResponse(new BusJobStub());
 
         try {
             $this->fake->assertNotDispatchedAfterResponse(function (BusJobStub $job) {
@@ -439,7 +441,7 @@ class SupportTestingBusFakeTest extends TestCase
     {
         $this->fake->assertNotDispatchedSync(BusJobStub::class);
 
-        $this->fake->dispatchSync(new BusJobStub);
+        $this->fake->dispatchSync(new BusJobStub());
 
         try {
             $this->fake->assertNotDispatchedSync(BusJobStub::class);
@@ -451,7 +453,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertNotDispatchedSyncClosure()
     {
-        $this->fake->dispatchSync(new BusJobStub);
+        $this->fake->dispatchSync(new BusJobStub());
 
         try {
             $this->fake->assertNotDispatchedSync(function (BusJobStub $job) {
@@ -467,7 +469,7 @@ class SupportTestingBusFakeTest extends TestCase
     {
         $this->fake->assertNothingDispatched();
 
-        $this->fake->dispatch(new BusJobStub);
+        $this->fake->dispatch(new BusJobStub());
 
         try {
             $this->fake->assertNothingDispatched();
@@ -480,12 +482,12 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertChained()
     {
-        Container::setInstance($container = new Container);
+        Container::setInstance($container = new Container());
 
         $container->instance(Dispatcher::class, $this->fake);
 
         $this->fake->chain([
-            new ChainedJobStub,
+            new ChainedJobStub(),
         ])->dispatch();
 
         $this->fake->assertChained([
@@ -493,8 +495,8 @@ class SupportTestingBusFakeTest extends TestCase
         ]);
 
         $this->fake->chain([
-            new ChainedJobStub,
-            new OtherBusJobStub,
+            new ChainedJobStub(),
+            new OtherBusJobStub(),
         ])->dispatch();
 
         $this->fake->assertChained([
@@ -503,12 +505,12 @@ class SupportTestingBusFakeTest extends TestCase
         ]);
 
         $this->fake->chain([
-            new ChainedJobStub,
+            new ChainedJobStub(),
             $this->fake->batch([
-                new OtherBusJobStub,
-                new OtherBusJobStub,
+                new OtherBusJobStub(),
+                new OtherBusJobStub(),
             ]),
-            new ChainedJobStub,
+            new ChainedJobStub(),
         ])->dispatch();
 
         $this->fake->assertChained([
@@ -520,20 +522,20 @@ class SupportTestingBusFakeTest extends TestCase
         ]);
 
         $this->fake->assertChained([
-            new ChainedJobStub,
+            new ChainedJobStub(),
             $this->fake->chainedBatch(function ($pendingBatch) {
                 return $pendingBatch->jobs->count() === 2;
             }),
-            new ChainedJobStub,
+            new ChainedJobStub(),
         ]);
 
         $this->fake->chain([
             $this->fake->batch([
-                new OtherBusJobStub,
-                new OtherBusJobStub,
+                new OtherBusJobStub(),
+                new OtherBusJobStub(),
             ]),
-            new ChainedJobStub,
-            new ChainedJobStub,
+            new ChainedJobStub(),
+            new ChainedJobStub(),
         ])->dispatch();
 
         $this->fake->assertChained([
@@ -564,7 +566,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertNothingChainedFails()
     {
-        $this->fake->chain([new ChainedJobStub])->dispatch();
+        $this->fake->chain([new ChainedJobStub()])->dispatch();
 
         try {
             $this->fake->assertNothingDispatched();
@@ -579,11 +581,11 @@ class SupportTestingBusFakeTest extends TestCase
     {
         $dispatcher = m::mock(QueueingDispatcher::class);
 
-        $job = new BusJobStub;
+        $job = new BusJobStub();
         $dispatcher->shouldReceive('dispatch')->once()->with($job);
         $dispatcher->shouldReceive('dispatchNow')->once()->with($job, null);
 
-        $otherJob = new OtherBusJobStub;
+        $otherJob = new OtherBusJobStub();
         $dispatcher->shouldReceive('dispatch')->never()->with($otherJob);
         $dispatcher->shouldReceive('dispatchNow')->never()->with($otherJob, null);
 
@@ -603,15 +605,15 @@ class SupportTestingBusFakeTest extends TestCase
     {
         $dispatcher = m::mock(QueueingDispatcher::class);
 
-        $job = new BusJobStub;
+        $job = new BusJobStub();
         $dispatcher->shouldReceive('dispatch')->never()->with($job);
         $dispatcher->shouldReceive('dispatchNow')->never()->with($job, null);
 
-        $otherJob = new OtherBusJobStub;
+        $otherJob = new OtherBusJobStub();
         $dispatcher->shouldReceive('dispatch')->once()->with($otherJob);
         $dispatcher->shouldReceive('dispatchNow')->once()->with($otherJob, null);
 
-        $thirdJob = new ThirdJob;
+        $thirdJob = new ThirdJob();
         $dispatcher->shouldReceive('dispatch')->never()->with($thirdJob);
         $dispatcher->shouldReceive('dispatchNow')->never()->with($thirdJob, null);
 
@@ -635,11 +637,11 @@ class SupportTestingBusFakeTest extends TestCase
     {
         $dispatcher = m::mock(QueueingDispatcher::class);
 
-        $job = new BusJobStub;
+        $job = new BusJobStub();
         $dispatcher->shouldReceive('dispatch')->once()->with($job);
         $dispatcher->shouldReceive('dispatchNow')->once()->with($job, null);
 
-        $otherJob = new OtherBusJobStub;
+        $otherJob = new OtherBusJobStub();
         $dispatcher->shouldReceive('dispatch')->once()->with($otherJob);
         $dispatcher->shouldReceive('dispatchNow')->once()->with($otherJob, null);
 
@@ -676,7 +678,7 @@ class SupportTestingBusFakeTest extends TestCase
     {
         $this->fake->assertNothingBatched();
 
-        $job = new BusJobStub;
+        $job = new BusJobStub();
 
         $this->fake->batch([$job])->dispatch();
 
@@ -695,7 +697,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertNothingPlacedWhenJobBatched()
     {
-        $this->fake->batch([new BusJobStub])->dispatch();
+        $this->fake->batch([new BusJobStub()])->dispatch();
 
         $this->expectException(ExpectationFailedException::class);
 
@@ -704,7 +706,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertNothingPlacedWhenJobDispatched()
     {
-        $this->fake->dispatch(new BusJobStub);
+        $this->fake->dispatch(new BusJobStub());
 
         $this->expectException(ExpectationFailedException::class);
 
@@ -713,7 +715,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertNothingPlacedWhenJobChained()
     {
-        $this->fake->chain([new ChainedJobStub])->dispatch();
+        $this->fake->chain([new ChainedJobStub()])->dispatch();
 
         $this->expectException(ExpectationFailedException::class);
 
@@ -722,7 +724,7 @@ class SupportTestingBusFakeTest extends TestCase
 
     public function testAssertNothingPlacedWhenJobDispatchedNow()
     {
-        $this->fake->dispatchNow(new BusJobStub);
+        $this->fake->dispatchNow(new BusJobStub());
 
         $this->expectException(ExpectationFailedException::class);
 
@@ -978,7 +980,6 @@ class SupportTestingBusFakeTest extends TestCase
 
 class BusJobStub
 {
-    //
 }
 
 class ChainedJobStub
@@ -1005,7 +1006,6 @@ class OtherBusJobStub
 
 class ThirdJob
 {
-    //
 }
 
 class BusFakeJobWithSerialization

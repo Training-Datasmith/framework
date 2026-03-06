@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Console;
 
 use Illuminate\Console\Command;
@@ -16,9 +18,10 @@ use Illuminate\Support\InteractsWithTime;
 use Illuminate\Support\Stringable;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Terminal;
-use Throwable;
 
 use function Termwind\terminal;
+
+use Throwable;
 
 #[AsCommand(name: 'queue:work')]
 class WorkCommand extends Command
@@ -74,11 +77,11 @@ class WorkCommand extends Command
     public function __construct(/**
      * The queue worker instance.
      */
-    protected \Illuminate\Queue\Worker $worker, /**
+        protected \Illuminate\Queue\Worker $worker, /**
      * The cache store implementation.
      */
-    protected \Illuminate\Contracts\Cache\Repository $cache)
-    {
+        protected \Illuminate\Contracts\Cache\Repository $cache
+    ) {
         parent::__construct();
     }
 
@@ -113,7 +116,8 @@ class WorkCommand extends Command
         }
 
         return $this->runWorker(
-            $connection, $queue
+            $connection,
+            $queue
         );
     }
 
@@ -130,7 +134,9 @@ class WorkCommand extends Command
             ->setName($this->option('name'))
             ->setCache($this->cache)
             ->{$this->option('once') ? 'runNextJob' : 'daemon'}(
-                $connection, $queue, $this->gatherWorkerOptions()
+                $connection,
+                $queue,
+                $this->gatherWorkerOptions()
             );
     }
 
@@ -328,7 +334,8 @@ class WorkCommand extends Command
     protected function getQueue($connection)
     {
         return $this->option('queue') ?: $this->laravel['config']->get(
-            "queue.connections.{$connection}.queue", 'default'
+            "queue.connections.{$connection}.queue",
+            'default'
         );
     }
 

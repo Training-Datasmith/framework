@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Console;
 
 use Illuminate\Console\Application;
@@ -19,8 +21,7 @@ class CommandTest extends TestCase
 {
     public function testCallingClassCommandResolveCommandViaApplicationResolution()
     {
-        $command = new class extends Command
-        {
+        $command = new class () extends Command {
             public function handle()
             {
             }
@@ -30,7 +31,7 @@ class CommandTest extends TestCase
         $command->setLaravel($application);
 
         $input = new ArrayInput([]);
-        $output = new NullOutput;
+        $output = new NullOutput();
         $outputStyle = m::mock(OutputStyle::class);
         $application->shouldReceive('make')->with(OutputStyle::class, ['input' => $input, 'output' => $output])->andReturn($outputStyle);
         $application->shouldReceive('make')->with(Factory::class, ['output' => $outputStyle])->andReturn(m::mock(Factory::class));
@@ -53,8 +54,7 @@ class CommandTest extends TestCase
 
     public function testGettingCommandArgumentsAndOptionsByClass()
     {
-        $command = new class extends Command
-        {
+        $command = new class () extends Command {
             public function handle()
             {
             }
@@ -97,7 +97,7 @@ class CommandTest extends TestCase
             '--option-one' => 'test-first-option',
             '--option-two' => 'test-second-option',
         ]);
-        $output = new NullOutput;
+        $output = new NullOutput();
 
         $command->run($input, $output);
 
@@ -114,7 +114,7 @@ class CommandTest extends TestCase
         $input = m::mock(InputInterface::class);
         $input->shouldReceive('hasArgument')->once()->with('foo')->andReturn(false);
 
-        $command = new Command;
+        $command = new Command();
         $command->setInput($input);
 
         $this->assertFalse($command->hasArgument('foo'));
@@ -127,7 +127,7 @@ class CommandTest extends TestCase
             return $args[0] === '<info>foo</info>';
         });
 
-        $command = new Command;
+        $command = new Command();
         $command->setOutput($output);
 
         $command->info('foo');
@@ -135,8 +135,7 @@ class CommandTest extends TestCase
 
     public function testSetHidden()
     {
-        $command = new class extends Command
-        {
+        $command = new class () extends Command {
             public function parentIsHidden()
             {
                 return parent::isHidden();
@@ -154,8 +153,7 @@ class CommandTest extends TestCase
 
     public function testHiddenProperty()
     {
-        $command = new class extends Command
-        {
+        $command = new class () extends Command {
             protected $hidden = true;
 
             public function parentIsHidden()
@@ -175,8 +173,7 @@ class CommandTest extends TestCase
 
     public function testAliasesProperty()
     {
-        $command = new class extends Command
-        {
+        $command = new class () extends Command {
             protected $name = 'foo:bar';
 
             protected $aliases = ['bar:baz', 'baz:qux'];
@@ -192,7 +189,7 @@ class CommandTest extends TestCase
             return $question->isMultiselect() === false;
         });
 
-        $command = new Command;
+        $command = new Command();
         $command->setOutput($output);
 
         $command->choice('Do you need further help?', ['yes', 'no']);
@@ -205,7 +202,7 @@ class CommandTest extends TestCase
             return $question->isMultiselect() === true;
         });
 
-        $command = new Command;
+        $command = new Command();
         $command->setOutput($output);
 
         $command->choice('Select all that apply.', ['option-1', 'option-2', 'option-3'], null, null, true);

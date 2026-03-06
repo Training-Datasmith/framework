@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Auth;
 
 use Illuminate\Auth\Access\AuthorizationException;
@@ -32,8 +34,7 @@ class AuthHandlesAuthorizationTest extends TestCase
 
     public function testDenyHasNullStatus()
     {
-        $class = new class()
-        {
+        $class = new class () {
             use HandlesAuthorization;
 
             public function __invoke()
@@ -53,8 +54,7 @@ class AuthHandlesAuthorizationTest extends TestCase
 
     public function testItCanDenyWithStatus()
     {
-        $class = new class()
-        {
+        $class = new class () {
             use HandlesAuthorization;
 
             public function __invoke()
@@ -73,8 +73,7 @@ class AuthHandlesAuthorizationTest extends TestCase
             $this->assertSame(0, $e->getCode());
         }
 
-        $class = new class()
-        {
+        $class = new class () {
             use HandlesAuthorization;
 
             public function __invoke()
@@ -96,8 +95,7 @@ class AuthHandlesAuthorizationTest extends TestCase
 
     public function testItCanDenyAsNotFound()
     {
-        $class = new class()
-        {
+        $class = new class () {
             use HandlesAuthorization;
 
             public function __invoke()
@@ -116,8 +114,7 @@ class AuthHandlesAuthorizationTest extends TestCase
             $this->assertSame(0, $e->getCode());
         }
 
-        $class = new class()
-        {
+        $class = new class () {
             use HandlesAuthorization;
 
             public function __invoke()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Jobs;
 
 use Illuminate\Support\Str;
@@ -10,9 +12,8 @@ class JobName
      * Parse the given job name into a class / method array.
      *
      * @param  string  $job
-     * @return array
      */
-    public static function parse($job)
+    public static function parse($job): array
     {
         return Str::parseCallback($job, 'fire');
     }

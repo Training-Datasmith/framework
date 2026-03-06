@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Testing\Concerns;
 
 use Illuminate\Config\Repository as Config;
@@ -21,7 +23,7 @@ class TestViewsTest extends TestCase
     {
         parent::setUp();
 
-        Container::setInstance($container = new Container);
+        Container::setInstance($container = new Container());
 
         Facade::setFacadeApplication($container);
 
@@ -103,8 +105,7 @@ class TestViewsTest extends TestCase
 
     public function testCompiledViewPath()
     {
-        $instance = new class
-        {
+        $instance = new class () {
             use TestViews;
 
             public $app;
@@ -126,8 +127,7 @@ class TestViewsTest extends TestCase
     {
         Container::getInstance()->make(ParallelTesting::class)->resolveTokenUsing(fn () => '7');
 
-        $instance = new class
-        {
+        $instance = new class () {
             use TestViews;
 
             public $app;
@@ -151,8 +151,7 @@ class TestViewsTest extends TestCase
 
     public function switchToCompiledViewPath($path)
     {
-        $instance = new class
-        {
+        $instance = new class () {
             use TestViews;
 
             public $app;

@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Rules;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Stringable;
 
 use function Illuminate\Support\enum_value;
+
+use Stringable;
 
 class Contains implements Stringable
 {

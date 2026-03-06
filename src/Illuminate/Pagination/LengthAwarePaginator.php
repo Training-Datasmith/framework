@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Pagination;
 
 use ArrayAccess;
@@ -42,7 +44,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     public function __construct($items, /**
      * The total number of items before slicing.
      */
-    protected $total, $perPage, $currentPage = null, array $options = [])
+        protected $total, $perPage, $currentPage = null, array $options = [])
     {
         $this->options = $options;
 
@@ -106,7 +108,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
                 return [['url' => null, 'label' => '...', 'active' => false]];
             }
 
-            return (new Collection($item))->map(fn($url, $page) => [
+            return (new Collection($item))->map(fn ($url, $page): array => [
                 'url' => $url,
                 'label' => (string) $page,
                 'page' => $page,
@@ -173,10 +175,8 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
 
     /**
      * Get the last page.
-     *
-     * @return int
      */
-    public function lastPage()
+    public function lastPage(): int
     {
         return $this->lastPage;
     }

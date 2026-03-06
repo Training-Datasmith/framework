@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Http\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
@@ -11,7 +13,7 @@ class ConvertEmptyStringsToNullTest extends TestCase
 {
     public function testConvertsEmptyStringsToNull()
     {
-        $middleware = new ConvertEmptyStringsToNull;
+        $middleware = new ConvertEmptyStringsToNull();
         $symfonyRequest = new SymfonyRequest([
             'foo' => 'bar',
             'baz' => '',
@@ -27,7 +29,7 @@ class ConvertEmptyStringsToNullTest extends TestCase
 
     public function testSkipConvertsEmptyStringsToNull()
     {
-        $middleware = new ConvertEmptyStringsToNull;
+        $middleware = new ConvertEmptyStringsToNull();
         ConvertEmptyStringsToNull::skipWhen(fn ($request) => '' === $request->baz);
         $symfonyRequest = new SymfonyRequest([
             'foo' => 'bar',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use BackedEnum;
@@ -54,8 +56,7 @@ class RouteUrlGenerator
          * The request instance.
          */
         protected $request
-    )
-    {
+    ) {
     }
 
     /**
@@ -82,14 +83,14 @@ class RouteUrlGenerator
             $route
         ), $parameters);
 
-        if (preg_match_all('/{(.*?)}/', (string) $uri, $matchedMissingParameters)) {
+        if (preg_match_all('/{(.*?)}/', $uri, $matchedMissingParameters)) {
             throw UrlGenerationException::forMissingParameters($route, $matchedMissingParameters[1]);
         }
 
         // Once we have ensured that there are no missing parameters in the URI we will encode
         // the URI and prepare it for returning to the developer. If the URI is supposed to
         // be absolute, we will return it as-is. Otherwise we will remove the URL's root.
-        $uri = strtr(rawurlencode((string) $uri), $this->dontEncode);
+        $uri = strtr(rawurlencode($uri), $this->dontEncode);
 
         if (! $absolute) {
             $uri = preg_replace('#^(//|[^/?])+#', '', $uri);
@@ -121,9 +122,8 @@ class RouteUrlGenerator
      *
      * @param  \Illuminate\Routing\Route  $route
      * @param  array  $parameters
-     * @return string
      */
-    protected function formatDomain($route, &$parameters)
+    protected function formatDomain($route, &$parameters): string
     {
         return $this->addPortToDomain(
             $this->getRouteScheme($route).$route->getDomain()
@@ -166,9 +166,8 @@ class RouteUrlGenerator
      * Format the array of route parameters.
      *
      * @param  mixed  $parameters
-     * @return array
      */
-    protected function formatParameters(Route $route, $parameters)
+    protected function formatParameters(Route $route, $parameters): array
     {
         $parameters = Arr::wrap($parameters);
 
@@ -280,7 +279,7 @@ class RouteUrlGenerator
         // Any remaining values in $parameters are unnamed query string parameters...
         $parameters = array_merge($namedParameters, $namedQueryParameters, $parameters);
 
-        $parameters = Collection::wrap($parameters)->map(fn($value, $key) => $value instanceof UrlRoutable && $route->bindingFieldFor($key)
+        $parameters = Collection::wrap($parameters)->map(fn ($value, $key) => $value instanceof UrlRoutable && $route->bindingFieldFor($key)
                 ? $value->{$route->bindingFieldFor($key)}
                 : $value)->all();
 
@@ -298,14 +297,14 @@ class RouteUrlGenerator
      *
      * @param  \Illuminate\Routing\Route  $route
      * @param  string  $domain
-     * @return string
      */
-    protected function replaceRootParameters($route, $domain, array &$parameters)
+    protected function replaceRootParameters($route, $domain, array &$parameters): string
     {
         $scheme = $this->getRouteScheme($route);
 
         return $this->replaceRouteParameters(
-            $this->url->formatRoot($scheme, $domain), $parameters
+            $this->url->formatRoot($scheme, $domain),
+            $parameters
         );
     }
 
@@ -325,7 +324,7 @@ class RouteUrlGenerator
             return (! isset($parameters[0]) && ! str_ends_with($match[0], '?}'))
                 ? $match[0]
                 : Arr::pull($parameters, 0);
-        }, $path);
+        }, (string) $path);
 
         return trim((string) preg_replace('/\{.*?\?\}/', '', (string) $path), '/');
     }
@@ -394,7 +393,8 @@ class RouteUrlGenerator
         // will make the initial query string if it wasn't started with strings.
         if (count($keyed) < count($parameters)) {
             $query .= '&'.implode(
-                '&', $this->getNumericParameters($parameters)
+                '&',
+                $this->getNumericParameters($parameters)
             );
         }
 
@@ -425,7 +425,8 @@ class RouteUrlGenerator
     public function defaults(array $defaults): void
     {
         $this->defaultParameters = array_merge(
-            $this->defaultParameters, $defaults
+            $this->defaultParameters,
+            $defaults
         );
     }
 }

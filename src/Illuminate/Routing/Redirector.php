@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Http\RedirectResponse;
@@ -25,8 +27,7 @@ class Redirector
          * The URL generator instance.
          */
         protected \Illuminate\Routing\UrlGenerator $generator
-    )
-    {
+    ) {
     }
 
     /**
@@ -213,10 +214,8 @@ class Redirector
 
     /**
      * Get the URL generator instance.
-     *
-     * @return \Illuminate\Routing\UrlGenerator
      */
-    public function getUrlGenerator()
+    public function getUrlGenerator(): \Illuminate\Routing\UrlGenerator
     {
         return $this->generator;
     }

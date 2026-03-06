@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Capsule\Manager as DB;
@@ -11,7 +13,7 @@ class DatabaseEloquentIrregularPluralTest extends TestCase
 {
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -73,7 +75,7 @@ class DatabaseEloquentIrregularPluralTest extends TestCase
 
     public function testItPluralizesTheTableName()
     {
-        $model = new IrregularPluralHuman;
+        $model = new IrregularPluralHuman();
 
         $this->assertSame('irregular_plural_humans', $model->getTable());
     }

@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Date;
 
 class RequirePassword
@@ -24,11 +24,12 @@ class RequirePassword
     public function __construct(/**
      * The response factory instance.
      */
-    protected \Illuminate\Contracts\Routing\ResponseFactory $responseFactory, /**
+        protected \Illuminate\Contracts\Routing\ResponseFactory $responseFactory, /**
      * The URL generator instance.
      */
-    protected \Illuminate\Contracts\Routing\UrlGenerator $urlGenerator, $passwordTimeout = null)
-    {
+        protected \Illuminate\Contracts\Routing\UrlGenerator $urlGenerator,
+        $passwordTimeout = null
+    ) {
         $this->passwordTimeout = $passwordTimeout ?: 10800;
     }
 

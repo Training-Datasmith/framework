@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentMorphToLazyEagerLoadingTest;
 
 use DB;
@@ -33,12 +35,12 @@ class EloquentMorphToLazyEagerLoadingTest extends DatabaseTestCase
 
         $user = User::create();
 
-        $post = tap((new Post)->user()->associate($user))->save();
+        $post = tap((new Post())->user()->associate($user))->save();
 
         $video = Video::create();
 
-        (new Comment)->commentable()->associate($post)->save();
-        (new Comment)->commentable()->associate($video)->save();
+        (new Comment())->commentable()->associate($post)->save();
+        (new Comment())->commentable()->associate($video)->save();
     }
 
     public function testLazyEagerLoading()

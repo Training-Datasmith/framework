@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Testing\Console;
 
 use Illuminate\Foundation\Console\ConfigShowCommand;
@@ -27,7 +29,7 @@ class ConfigShowCommandTest extends TestCase
             ],
             'empty_array' => [],
             'assoc_array' => ['foo' => 'bar'],
-            'class' => new \stdClass,
+            'class' => new \stdClass(),
         ]);
 
         $this->artisan(ConfigShowCommand::class, ['config' => 'test'])

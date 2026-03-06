@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Encryption;
 
 use Illuminate\Support\ServiceProvider;
@@ -24,7 +26,7 @@ class EncryptionServiceProvider extends ServiceProvider
      */
     protected function registerEncrypter()
     {
-        $this->app->singleton('encrypter', function ($app) {
+        $this->app->singleton('encrypter', function ($app): \Illuminate\Encryption\Encrypter {
             $config = $app->make('config')->get('app');
 
             return (new Encrypter($this->parseKey($config), $config['cipher']))
@@ -75,7 +77,7 @@ class EncryptionServiceProvider extends ServiceProvider
     {
         return tap($config['key'], function ($key): void {
             if (empty($key)) {
-                throw new MissingAppKeyException;
+                throw new MissingAppKeyException();
             }
         });
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Illuminate\Contracts\Process\InvokedProcess as InvokedProcessContract;
@@ -53,8 +55,7 @@ class FakeInvokedProcess implements InvokedProcessContract
          * The underlying process description.
          */
         protected \Illuminate\Process\FakeProcessDescription $process
-    )
-    {
+    ) {
     }
 
     /**
@@ -71,10 +72,8 @@ class FakeInvokedProcess implements InvokedProcessContract
 
     /**
      * Get the command line for the process.
-     *
-     * @return string
      */
-    public function command()
+    public function command(): string
     {
         return $this->command;
     }
@@ -256,7 +255,7 @@ class FakeInvokedProcess implements InvokedProcessContract
         }
 
         while ($this->invokeOutputHandlerWithNextLineOfOutput()) {
-            //
+
         }
 
         $this->remainingRunIterations = 0;
@@ -286,7 +285,7 @@ class FakeInvokedProcess implements InvokedProcessContract
         }
 
         while ($this->running() && ! $shouldStop) {
-            //
+
         }
 
         $this->remainingRunIterations = 0;
@@ -299,7 +298,7 @@ class FakeInvokedProcess implements InvokedProcessContract
      *
      * @return \Illuminate\Contracts\Process\ProcessResult
      */
-    public function predictProcessResult()
+    public function predictProcessResult(): \Illuminate\Process\FakeProcessResult
     {
         return $this->process->toProcessResult($this->command);
     }

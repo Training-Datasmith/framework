@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Events;
 
 use Illuminate\Support\Arr;
@@ -34,7 +36,8 @@ class DiscoverEvents
         }
 
         $listeners = new Collection(static::getListenerEvents(
-            Finder::create()->files()->in($listenerPath), $basePath
+            Finder::create()->files()->in($listenerPath),
+            $basePath
         ));
 
         $discoveredEvents = [];

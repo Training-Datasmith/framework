@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cookie\Middleware;
 
 use Illuminate\Container\Container;
@@ -36,12 +38,12 @@ class EncryptCookiesTest extends TestCase
     {
         parent::setUp();
 
-        $this->container = new Container;
+        $this->container = new Container();
         $this->container->singleton(EncrypterContract::class, function () {
             return new Encrypter(str_repeat('a', 16));
         });
 
-        $this->router = new Router(new Dispatcher, $this->container);
+        $this->router = new Router(new Dispatcher(), $this->container);
 
         EncryptCookiesTestMiddleware::except(['globally_unencrypted_cookie']);
     }
@@ -133,7 +135,7 @@ class EncryptCookiesTest extends TestCase
                 $this->assertArrayHasKey('globally_unencrypted_cookie', $cookies);
                 $this->assertSame('value', $cookies['globally_unencrypted_cookie']);
 
-                return new Response;
+                return new Response();
             }
         );
     }
@@ -143,7 +145,7 @@ class EncryptCookiesTestController extends Controller
 {
     public function setCookies()
     {
-        $response = new Response;
+        $response = new Response();
         $response->headers->setCookie(new Cookie('encrypted_cookie', 'value'));
         $response->headers->setCookie(new Cookie('encrypted[array_cookie]', 'value'));
         $response->headers->setCookie(new Cookie('encrypted[nested][array_cookie]', 'value'));
@@ -155,7 +157,7 @@ class EncryptCookiesTestController extends Controller
 
     public function queueCookies()
     {
-        return new Response;
+        return new Response();
     }
 }
 
@@ -170,7 +172,7 @@ class AddQueuedCookiesToResponseTestMiddleware extends AddQueuedCookiesToRespons
 {
     public function __construct()
     {
-        $cookie = new CookieJar;
+        $cookie = new CookieJar();
         $cookie->queue(new Cookie('encrypted_cookie', 'value'));
         $cookie->queue(new Cookie('encrypted[array_cookie]', 'value'));
         $cookie->queue(new Cookie('encrypted[nested][array_cookie]', 'value'));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Failed;
 
 use Closure;
@@ -28,8 +30,7 @@ class FileFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
          * The lock provider resolver.
          */
         protected ?\Closure $lockProviderResolver = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -82,10 +83,8 @@ class FileFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
 
     /**
      * Get a list of all of the failed jobs.
-     *
-     * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $this->read();
     }
@@ -140,7 +139,8 @@ class FileFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
         return $this->lock(function () use ($before): int {
             $jobs = $this->read();
 
-            $this->write($prunedJobs = (new Collection($jobs))
+            $this->write(
+                $prunedJobs = (new Collection($jobs))
                 ->reject(fn ($job): bool => $job->failed_at_timestamp <= $before->getTimestamp())
                 ->values()
                 ->all()
@@ -163,7 +163,7 @@ class FileFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
 
         return ($this->lockProviderResolver)()
             ->lock('laravel-failed-jobs', 5)
-            ->block(10, fn() => $callback());
+            ->block(10, fn () => $callback());
     }
 
     /**

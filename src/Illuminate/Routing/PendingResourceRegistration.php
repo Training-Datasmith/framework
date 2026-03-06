@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Support\Arr;
@@ -7,7 +9,8 @@ use Illuminate\Support\Traits\Macroable;
 
 class PendingResourceRegistration
 {
-    use CreatesRegularExpressionRouteConstraints, Macroable;
+    use CreatesRegularExpressionRouteConstraints;
+    use Macroable;
 
     /**
      * The resource's registration status.
@@ -39,8 +42,7 @@ class PendingResourceRegistration
          * The resource options.
          */
         protected array $options
-    )
-    {
+    ) {
     }
 
     /**
@@ -179,7 +181,8 @@ class PendingResourceRegistration
     public function withoutMiddleware($middleware): static
     {
         $this->options['excluded_middleware'] = array_merge(
-            (array) ($this->options['excluded_middleware'] ?? []), Arr::wrap($middleware)
+            (array) ($this->options['excluded_middleware'] ?? []),
+            Arr::wrap($middleware)
         );
 
         return $this;
@@ -271,7 +274,9 @@ class PendingResourceRegistration
         $this->registered = true;
 
         return $this->registrar->register(
-            $this->name, $this->controller, $this->options
+            $this->name,
+            $this->controller,
+            $this->options
         );
     }
 

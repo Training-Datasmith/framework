@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Connectors;
 
 use Illuminate\Contracts\Redis\Connector;
@@ -26,8 +28,10 @@ class PhpRedisConnector implements Connector
             $formattedOptions['prefix'] = $config['prefix'];
         }
 
-        $connector = (fn() => $this->createClient(array_merge(
-            $config, $options, $formattedOptions
+        $connector = (fn () => $this->createClient(array_merge(
+            $config,
+            $options,
+            $formattedOptions
         )));
 
         return new PhpRedisConnection($connector(), $connector, $config);
@@ -41,7 +45,8 @@ class PhpRedisConnector implements Connector
         $options = array_merge($options, $clusterOptions, Arr::pull($config, 'options', []));
 
         return new PhpRedisClusterConnection($this->createRedisClusterInstance(
-            array_map($this->buildClusterConnectionString(...), $config), $options
+            array_map($this->buildClusterConnectionString(...), $config),
+            $options
         ));
     }
 
@@ -61,7 +66,7 @@ class PhpRedisConnector implements Connector
      */
     protected function createClient(array $config)
     {
-        return tap(new Redis, function ($client) use ($config): void {
+        return tap(new Redis(), function ($client) use ($config): void {
             if ($client instanceof RedisFacade) {
                 throw new LogicException(
                     extension_loaded('redis')

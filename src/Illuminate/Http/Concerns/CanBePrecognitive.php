@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Concerns;
 
 use Illuminate\Support\Collection;

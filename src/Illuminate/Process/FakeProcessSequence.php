@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Illuminate\Contracts\Process\ProcessResult as ProcessResultContract;
@@ -29,8 +31,7 @@ class FakeProcessSequence
          * The fake process results and descriptions.
          */
         protected array $processes = []
-    )
-    {
+    ) {
     }
 
     /**
@@ -73,9 +74,9 @@ class FakeProcessSequence
      *
      * @return $this
      */
-    public function dontFailWhenEmpty()
+    public function dontFailWhenEmpty(): static
     {
-        return $this->whenEmpty(new FakeProcessResult);
+        return $this->whenEmpty(new FakeProcessResult());
     }
 
     /**
@@ -100,7 +101,7 @@ class FakeProcessSequence
         }
 
         if (! $this->failWhenEmpty && count($this->processes) === 0) {
-            return value($this->emptyProcess ?? new FakeProcessResult);
+            return value($this->emptyProcess ?? new FakeProcessResult());
         }
 
         return array_shift($this->processes);

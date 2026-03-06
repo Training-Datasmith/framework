@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console;
 
 use Illuminate\Console\Command;
@@ -80,7 +82,7 @@ class DbCommand extends Command
         }
 
         if (! empty($connection['url'])) {
-            $connection = (new ConfigurationUrlParser)->parseConfiguration($connection);
+            $connection = (new ConfigurationUrlParser())->parseConfiguration($connection);
         }
 
         if ($this->option('read')) {
@@ -166,10 +168,8 @@ class DbCommand extends Command
 
     /**
      * Get the arguments for the MariaDB CLI.
-     *
-     * @return array
      */
-    protected function getMariaDbArguments(array $connection)
+    protected function getMariaDbArguments(array $connection): array
     {
         return $this->getMysqlArguments($connection);
     }
@@ -223,6 +223,6 @@ class DbCommand extends Command
      */
     protected function getOptionalArguments(array $args, array $connection): array
     {
-        return array_values(array_filter($args, fn($key) => ! empty($connection[$key]), ARRAY_FILTER_USE_KEY));
+        return array_values(array_filter($args, fn ($key): bool => ! empty($connection[$key]), ARRAY_FILTER_USE_KEY));
     }
 }

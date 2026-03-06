@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Pagination;
 
 use ArrayAccess;
@@ -27,7 +29,9 @@ use Traversable;
  */
 abstract class AbstractCursorPaginator implements Htmlable, Stringable
 {
-    use ForwardsCalls, Tappable, TransformsToResourceCollection;
+    use ForwardsCalls;
+    use Tappable;
+    use TransformsToResourceCollection;
 
     /**
      * All of the items being paginated.
@@ -660,7 +664,6 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
     /**
      * Make dynamic calls into the collection.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

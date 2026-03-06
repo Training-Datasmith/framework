@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session;
 
 use BackedEnum;
@@ -7,6 +9,9 @@ use Closure;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\MessageBag;
@@ -17,9 +22,8 @@ use Illuminate\Support\ViewErrorBag;
 use RuntimeException;
 use SessionHandlerInterface;
 use stdClass;
-use UnitEnum;
 
-use function Illuminate\Support\enum_value;
+use UnitEnum;
 
 class Store implements Session
 {
@@ -63,14 +67,15 @@ class Store implements Session
     public function __construct(/**
      * The session name.
      */
-    protected $name, /**
+        protected $name, /**
      * The session handler implementation.
      */
-    protected \SessionHandlerInterface $handler, $id = null, /**
+        protected \SessionHandlerInterface $handler,
+        $id = null, /**
      * The session store's serialization strategy.
      */
-    protected $serialization = 'php')
-    {
+        protected $serialization = 'php'
+    ) {
         $this->setId($id);
     }
 
@@ -144,7 +149,7 @@ class Store implements Session
             return;
         }
 
-        $errorBag = new ViewErrorBag;
+        $errorBag = new ViewErrorBag();
 
         foreach ($this->get('errors') as $key => $value) {
             $messageBag = new MessageBag($value['messages']);
@@ -237,10 +242,8 @@ class Store implements Session
 
     /**
      * Get all the session data except for a specified array of items.
-     *
-     * @return array
      */
-    public function except(array $keys)
+    public function except(array $keys): array
     {
         return Arr::except($this->attributes, $keys);
     }
@@ -252,9 +255,9 @@ class Store implements Session
      */
     public function exists($key): bool
     {
-        $placeholder = new stdClass;
+        $placeholder = new stdClass();
 
-        return ! (new Collection(is_array($key) ? $key : func_get_args()))->contains(fn($key) => $this->get($key, $placeholder) === $placeholder);
+        return ! (new Collection(is_array($key) ? $key : func_get_args()))->contains(fn ($key): bool => $this->get($key, $placeholder) === $placeholder);
     }
 
     /**
@@ -274,7 +277,7 @@ class Store implements Session
      */
     public function has($key): bool
     {
-        return ! (new Collection(is_array($key) ? $key : func_get_args()))->contains(fn($key) => is_null($this->get($key)));
+        return ! (new Collection(is_array($key) ? $key : func_get_args()))->contains(fn ($key): bool => is_null($this->get($key)));
     }
 
     /**
@@ -284,7 +287,7 @@ class Store implements Session
      */
     public function hasAny($key): bool
     {
-        return (new Collection(is_array($key) ? $key : func_get_args()))->filter(fn($key) => ! is_null($this->get($key)))->count() >= 1;
+        return (new Collection(is_array($key) ? $key : func_get_args()))->filter(fn ($key): bool => ! is_null($this->get($key)))->count() >= 1;
     }
 
     /**
@@ -412,7 +415,7 @@ class Store implements Session
      * @param  int  $amount
      * @return int
      */
-    public function decrement($key, $amount = 1)
+    public function decrement($key, $amount = 1): float|int|array
     {
         return $this->increment($key, $amount * -1);
     }
@@ -541,10 +544,8 @@ class Store implements Session
 
     /**
      * Flush the session data and regenerate the ID.
-     *
-     * @return bool
      */
-    public function invalidate()
+    public function invalidate(): bool
     {
         $this->flush();
 
@@ -765,10 +766,8 @@ class Store implements Session
 
     /**
      * Get the underlying session handler implementation.
-     *
-     * @return \SessionHandlerInterface
      */
-    public function getHandler()
+    public function getHandler(): \SessionHandlerInterface
     {
         return $this->handler;
     }

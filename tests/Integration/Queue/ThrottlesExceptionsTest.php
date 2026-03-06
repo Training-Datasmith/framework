@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Exception;
@@ -65,7 +67,7 @@ class ThrottlesExceptionsTest extends TestCase
         $job->shouldReceive('uuid')->andReturn('simple-test-uuid');
 
         $instance->call($job, [
-            'command' => serialize($command = new $class),
+            'command' => serialize($command = new $class()),
         ]);
 
         $this->assertTrue($class::$handled);
@@ -87,7 +89,7 @@ class ThrottlesExceptionsTest extends TestCase
         $job->shouldReceive('uuid')->andReturn('simple-test-uuid');
 
         $instance->call($job, [
-            'command' => serialize($command = new $class),
+            'command' => serialize($command = new $class()),
         ]);
 
         $this->assertFalse($class::$handled);
@@ -108,7 +110,7 @@ class ThrottlesExceptionsTest extends TestCase
         $job->shouldReceive('uuid')->andReturn('simple-test-uuid');
 
         $instance->call($job, [
-            'command' => serialize($command = new $class),
+            'command' => serialize($command = new $class()),
         ]);
 
         $this->assertTrue($class::$handled);
@@ -129,7 +131,7 @@ class ThrottlesExceptionsTest extends TestCase
         $job->shouldReceive('uuid')->andReturn('simple-test-uuid');
 
         $instance->call($job, [
-            'command' => serialize($command = new $class),
+            'command' => serialize($command = new $class()),
         ]);
 
         $this->assertTrue($class::$handled);
@@ -149,7 +151,7 @@ class ThrottlesExceptionsTest extends TestCase
         $job->shouldReceive('uuid')->andReturn('simple-test-uuid');
 
         $instance->call($job, [
-            'command' => serialize($command = new $class),
+            'command' => serialize($command = new $class()),
         ]);
 
         $this->assertTrue($class::$handled);
@@ -157,8 +159,7 @@ class ThrottlesExceptionsTest extends TestCase
 
     public function testItCanLimitPerMinute()
     {
-        $jobFactory = fn () => new class
-        {
+        $jobFactory = fn () => new class () {
             public $released = false;
 
             public $handled = false;
@@ -211,8 +212,7 @@ class ThrottlesExceptionsTest extends TestCase
 
     public function testItCanLimitPerSecond()
     {
-        $jobFactory = fn () => new class
-        {
+        $jobFactory = fn () => new class () {
             public $released = false;
 
             public $handled = false;
@@ -265,8 +265,7 @@ class ThrottlesExceptionsTest extends TestCase
 
     public function testLimitingWithDefaultValues()
     {
-        $jobFactory = fn () => new class
-        {
+        $jobFactory = fn () => new class () {
             public $released = false;
 
             public $handled = false;
@@ -324,8 +323,7 @@ class ThrottlesExceptionsTest extends TestCase
             ->twice()
             ->with(m::type(RuntimeException::class));
 
-        $job = new class
-        {
+        $job = new class () {
             public function release()
             {
                 return $this;
@@ -351,8 +349,7 @@ class ThrottlesExceptionsTest extends TestCase
     {
         $rateLimiter = $this->mock(RateLimiter::class);
 
-        $job = new class
-        {
+        $job = new class () {
             public $released = false;
 
             public function release()
@@ -388,8 +385,7 @@ class ThrottlesExceptionsTest extends TestCase
     {
         $rateLimiter = $this->mock(RateLimiter::class);
 
-        $job = new class
-        {
+        $job = new class () {
             public $released = false;
 
             public function release()
@@ -429,7 +425,8 @@ class ThrottlesExceptionsTest extends TestCase
 
 class CircuitBreakerTestJob
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 
@@ -437,7 +434,7 @@ class CircuitBreakerTestJob
     {
         static::$handled = true;
 
-        throw new Exception;
+        throw new Exception();
     }
 
     public function middleware()
@@ -448,7 +445,8 @@ class CircuitBreakerTestJob
 
 class CircuitBreakerSkipJob
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 
@@ -456,7 +454,7 @@ class CircuitBreakerSkipJob
     {
         static::$handled = true;
 
-        throw new Exception;
+        throw new Exception();
     }
 
     public function middleware()
@@ -467,7 +465,8 @@ class CircuitBreakerSkipJob
 
 class CircuitBreakerFailedJob
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 
@@ -475,7 +474,7 @@ class CircuitBreakerFailedJob
     {
         static::$handled = true;
 
-        throw new Exception;
+        throw new Exception();
     }
 
     public function middleware()
@@ -486,7 +485,8 @@ class CircuitBreakerFailedJob
 
 class CircuitBreakerSuccessfulJob
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 

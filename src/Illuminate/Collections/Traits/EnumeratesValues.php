@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Traits;
 
 use BackedEnum;
@@ -10,13 +12,15 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Enumerable;
 use Illuminate\Support\HigherOrderCollectionProxy;
 use JsonSerializable;
 use UnexpectedValueException;
-use UnitEnum;
 
-use function Illuminate\Support\enum_value;
+use UnitEnum;
 
 /**
  * @template TKey of array-key
@@ -170,7 +174,7 @@ trait EnumeratesValues
     public static function times($number, ?callable $callback = null)
     {
         if ($number < 1) {
-            return new static;
+            return new static();
         }
 
         return static::range(1, $number)
@@ -361,7 +365,7 @@ trait EnumeratesValues
      */
     public function value($key, $default = null)
     {
-        $value = $this->first(fn($target) => data_has($target, $key));
+        $value = $this->first(fn (array $target): bool => data_has($target, $key));
 
         return data_get($value, $key, $default);
     }
@@ -689,7 +693,7 @@ trait EnumeratesValues
     {
         $values = $this->getArrayableItems($values);
 
-        return $this->filter(fn ($item): bool => in_array(data_get($item, $key), $values, $strict));
+        return $this->filter(fn (array $item): bool => in_array(data_get($item, $key), $values, $strict));
     }
 
     /**
@@ -726,7 +730,7 @@ trait EnumeratesValues
     public function whereNotBetween($key, $values)
     {
         return $this->filter(
-            fn ($item): bool => data_get($item, $key) < reset($values) || data_get($item, $key) > end($values)
+            fn (array $item): bool => data_get($item, $key) < reset($values) || data_get($item, $key) > end($values)
         );
     }
 
@@ -742,7 +746,7 @@ trait EnumeratesValues
     {
         $values = $this->getArrayableItems($values);
 
-        return $this->reject(fn ($item): bool => in_array(data_get($item, $key), $values, $strict));
+        return $this->reject(fn (array $item): bool => in_array(data_get($item, $key), $values, $strict));
     }
 
     /**
@@ -860,7 +864,8 @@ trait EnumeratesValues
             if (! is_array($result)) {
                 throw new UnexpectedValueException(sprintf(
                     "%s::reduceSpread expects reducer to return an array, but got a '%s' instead.",
-                    class_basename(static::class), gettype($result)
+                    class_basename(static::class),
+                    gettype($result)
                 ));
             }
         }
@@ -893,7 +898,7 @@ trait EnumeratesValues
     {
         $useAsCallable = $this->useAsCallable($callback);
 
-        return $this->filter(fn($value, $key) => $useAsCallable
+        return $this->filter(fn ($value, $key): bool => $useAsCallable
             ? ! $callback($value, $key)
             : $value != $callback);
     }
@@ -971,7 +976,7 @@ trait EnumeratesValues
      */
     public function jsonSerialize(): array
     {
-        return array_map(fn($value) => match (true) {
+        return array_map(fn ($value) => match (true) {
             $value instanceof JsonSerializable => $value->jsonSerialize(),
             $value instanceof Jsonable => json_decode($value->toJson(), true),
             $value instanceof Arrayable => $value->toArray(),
@@ -1101,11 +1106,11 @@ trait EnumeratesValues
             $operator = '=';
         }
 
-        return function ($item) use ($key, $operator, $value) {
+        return function (array $item) use ($key, $operator, $value) {
             $retrieved = enum_value(data_get($item, $key));
             $value = enum_value($value);
 
-            $strings = array_filter([$retrieved, $value], fn($value) => match (true) {
+            $strings = array_filter([$retrieved, $value], fn ($value): bool => match (true) {
                 is_string($value) => true,
                 $value instanceof \Stringable => true,
                 default => false,
@@ -1154,7 +1159,7 @@ trait EnumeratesValues
             return $value;
         }
 
-        return fn ($item) => data_get($item, $value);
+        return fn (array $item) => data_get($item, $value);
     }
 
     /**

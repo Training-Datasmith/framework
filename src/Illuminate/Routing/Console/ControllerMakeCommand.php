@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing\Console;
 
 use Illuminate\Console\Concerns\CreatesMatchingTest;
 use Illuminate\Console\GeneratorCommand;
 use InvalidArgumentException;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\suggest;
+
+use Symfony\Component\Console\Attribute\AsCommand;
+
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: 'make:controller')]
 class ControllerMakeCommand extends GeneratorCommand
@@ -134,7 +138,9 @@ class ControllerMakeCommand extends GeneratorCommand
         }
 
         return str_replace(
-            array_keys($replace), array_values($replace), parent::buildClass($name)
+            array_keys($replace),
+            array_values($replace),
+            parent::buildClass($name)
         );
     }
 
@@ -221,7 +227,9 @@ class ControllerMakeCommand extends GeneratorCommand
             $namespace = 'App\\Http\\Requests';
 
             [$storeRequestClass, $updateRequestClass] = $this->generateFormRequests(
-                $modelClass, $storeRequestClass, $updateRequestClass
+                $modelClass,
+                $storeRequestClass,
+                $updateRequestClass
             );
         }
 

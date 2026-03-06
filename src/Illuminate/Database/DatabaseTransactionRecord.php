@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 class DatabaseTransactionRecord
@@ -34,11 +36,12 @@ class DatabaseTransactionRecord
     public function __construct(/**
      * The name of the database connection.
      */
-    public $connection, /**
+        public $connection, /**
      * The transaction level.
      */
-    public $level, ?DatabaseTransactionRecord $parent = null)
-    {
+        public $level,
+        ?DatabaseTransactionRecord $parent = null
+    ) {
         $this->parent = $parent;
     }
 

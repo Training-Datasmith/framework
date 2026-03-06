@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Queue\Jobs\RedisJob;
@@ -30,7 +32,7 @@ class MyFakeRedisJob extends RedisJob
 {
     public function __construct()
     {
-        //
+
     }
 
     public function resolveName()

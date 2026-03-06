@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Session;
 
 use Illuminate\Support\InteractsWithTime;
@@ -26,8 +28,7 @@ class ArraySessionHandler implements SessionHandlerInterface
          * The number of minutes the session should be valid.
          */
         protected $minutes
-    )
-    {
+    ) {
     }
 
     /**

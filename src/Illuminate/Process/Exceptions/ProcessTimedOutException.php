@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process\Exceptions;
 
 use Illuminate\Contracts\Process\ProcessResult;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Events;
 
 use Illuminate\Broadcasting\PendingBroadcast;
@@ -18,11 +20,11 @@ class BroadcastedEventsTest extends TestCase
 
         $d->makePartial()->shouldAllowMockingProtectedMethods();
 
-        $event = new BroadcastEvent;
+        $event = new BroadcastEvent();
 
         $this->assertTrue($d->shouldBroadcast([$event]));
 
-        $event = new AlwaysBroadcastEvent;
+        $event = new AlwaysBroadcastEvent();
 
         $this->assertTrue($d->shouldBroadcast([$event]));
     }
@@ -39,7 +41,7 @@ class BroadcastedEventsTest extends TestCase
             $_SERVER['__event.test'] = $payload;
         });
 
-        $d->dispatch($e = new AlwaysBroadcastEvent);
+        $d->dispatch($e = new AlwaysBroadcastEvent());
 
         $this->assertSame($e, $_SERVER['__event.test']);
     }
@@ -50,11 +52,11 @@ class BroadcastedEventsTest extends TestCase
 
         $d->makePartial()->shouldAllowMockingProtectedMethods();
 
-        $event = new BroadcastFalseCondition;
+        $event = new BroadcastFalseCondition();
 
         $this->assertFalse($d->shouldBroadcast([$event]));
 
-        $event = new ExampleEvent;
+        $event = new ExampleEvent();
 
         $this->assertFalse($d->shouldBroadcast([$event]));
     }
@@ -66,8 +68,7 @@ class BroadcastedEventsTest extends TestCase
         $broadcast->shouldReceive('queue')->once();
         $container->shouldReceive('make')->once()->with(BroadcastFactory::class)->andReturn($broadcast);
 
-        $event = new class implements ShouldBroadcast
-        {
+        $event = new class () implements ShouldBroadcast {
             public function broadcastOn()
             {
                 return ['channel-1', 'channel-2'];
@@ -84,8 +85,7 @@ class BroadcastedEventsTest extends TestCase
         $broadcast->shouldReceive('queue')->once();
         $container->shouldReceive('make')->once()->with(BroadcastFactory::class)->andReturn($broadcast);
 
-        $event = new class implements ShouldBroadcast
-        {
+        $event = new class () implements ShouldBroadcast {
             public $connection = 'custom-connection';
 
             public function broadcastOn()
@@ -104,8 +104,7 @@ class BroadcastedEventsTest extends TestCase
         $broadcast->shouldReceive('queue')->once();
         $container->shouldReceive('make')->once()->with(BroadcastFactory::class)->andReturn($broadcast);
 
-        $event = new class implements ShouldBroadcast
-        {
+        $event = new class () implements ShouldBroadcast {
             public function broadcastOn()
             {
                 return ['test-channel'];
@@ -127,8 +126,7 @@ class BroadcastedEventsTest extends TestCase
         $broadcast->shouldReceive('queue')->once();
         $container->shouldReceive('make')->once()->with(BroadcastFactory::class)->andReturn($broadcast);
 
-        $event = new class implements ShouldBroadcast
-        {
+        $event = new class () implements ShouldBroadcast {
             public $customData = 'test-data';
 
             public function broadcastOn()
@@ -147,7 +145,7 @@ class BroadcastedEventsTest extends TestCase
 
     public function testEventBroadcastsUsingNamedArguments()
     {
-        $container = new Container;
+        $container = new Container();
         $broadcast = m::mock(BroadcastFactory::class);
         $container->instance(BroadcastFactory::class, $broadcast);
 

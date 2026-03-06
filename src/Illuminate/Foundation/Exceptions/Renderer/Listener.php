@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Exceptions\Renderer;
 
 use Illuminate\Contracts\Events\Dispatcher;

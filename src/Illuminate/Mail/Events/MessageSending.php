@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail\Events;
 
 use Symfony\Component\Mime\Email;

@@ -27,7 +27,7 @@ final class ScheduleTest extends TestCase
     {
         parent::setUp();
 
-        $this->container = new Container;
+        $this->container = new Container();
         Container::setInstance($this->container);
         $this->eventMutex = m::mock(EventMutex::class);
         $this->container->instance(EventMutex::class, $this->eventMutex);
@@ -46,8 +46,7 @@ final class ScheduleTest extends TestCase
 
     public static function jobHonoursDisplayNameIfMethodExistsProvider(): array
     {
-        $job = new class implements ShouldQueue
-        {
+        $job = new class () implements ShouldQueue {
             public function displayName(): string
             {
                 return 'testJob-123';
@@ -55,7 +54,7 @@ final class ScheduleTest extends TestCase
         };
 
         return [
-            [new JobToTestWithSchedule, JobToTestWithSchedule::class],
+            [new JobToTestWithSchedule(), JobToTestWithSchedule::class],
             [$job, 'testJob-123'],
         ];
     }

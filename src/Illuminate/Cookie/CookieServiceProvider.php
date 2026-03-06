@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cookie;
 
 use Illuminate\Support\ServiceProvider;
@@ -11,11 +13,14 @@ class CookieServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton('cookie', function ($app) {
+        $this->app->singleton('cookie', function ($app): \Illuminate\Cookie\CookieJar {
             $config = $app->make('config')->get('session');
 
-            return (new CookieJar)->setDefaultPathAndDomain(
-                $config['path'], $config['domain'], $config['secure'], $config['same_site'] ?? null
+            return (new CookieJar())->setDefaultPathAndDomain(
+                $config['path'],
+                $config['domain'],
+                $config['secure'],
+                $config['same_site'] ?? null
             );
         });
     }

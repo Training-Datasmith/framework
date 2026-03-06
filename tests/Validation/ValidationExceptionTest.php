@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Translation\ArrayLoader;
@@ -180,7 +182,7 @@ class ValidationExceptionTest extends TestCase
 
     protected function getTranslator($locale = 'en', $loaded = [])
     {
-        $translator ??= new Translator(new ArrayLoader, $locale);
+        $translator ??= new Translator(new ArrayLoader(), $locale);
 
         $translator->setLoaded($loaded);
 

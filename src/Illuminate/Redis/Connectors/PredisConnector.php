@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Connectors;
 
 use Illuminate\Contracts\Redis\Connector;
@@ -17,7 +19,9 @@ class PredisConnector implements Connector
     public function connect(array $config, array $options): \Illuminate\Redis\Connections\PredisConnection
     {
         $formattedOptions = array_merge(
-            ['timeout' => 10.0], $options, Arr::pull($config, 'options', [])
+            ['timeout' => 10.0],
+            $options,
+            Arr::pull($config, 'options', [])
         );
 
         if (isset($config['prefix'])) {
@@ -44,7 +48,9 @@ class PredisConnector implements Connector
         }
 
         return new PredisClusterConnection(new Client(array_values($config), array_merge(
-            $options, $clusterOptions, $clusterSpecificOptions
+            $options,
+            $clusterOptions,
+            $clusterSpecificOptions
         )));
     }
 }

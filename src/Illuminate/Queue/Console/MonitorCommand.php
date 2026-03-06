@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Queue\Factory;
 use Illuminate\Queue\Events\QueueBusy;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -36,11 +37,11 @@ class MonitorCommand extends Command
     public function __construct(/**
      * The queue manager instance.
      */
-    protected \Illuminate\Contracts\Queue\Factory $manager, /**
+        protected \Illuminate\Contracts\Queue\Factory $manager, /**
      * The events dispatcher instance.
      */
-    protected \Illuminate\Contracts\Events\Dispatcher $events)
-    {
+        protected \Illuminate\Contracts\Events\Dispatcher $events
+    ) {
         parent::__construct();
     }
 
@@ -52,7 +53,7 @@ class MonitorCommand extends Command
         $queues = $this->parseQueues($this->argument('queues'));
 
         if ($this->option('json')) {
-            $this->output->writeln((new Collection($queues))->map(fn($queue) => array_merge($queue, [
+            $this->output->writeln((new Collection($queues))->map(fn ($queue): array => array_merge($queue, [
                 'status' => str_contains((string) $queue['status'], 'ALERT') ? 'ALERT' : 'OK',
             ]))->toJson());
         } else {
@@ -117,7 +118,9 @@ class MonitorCommand extends Command
             $this->components->twoColumnDetail('Pending jobs', $queue['pending'] ?? 'N/A');
             $this->components->twoColumnDetail('Delayed jobs', $queue['delayed'] ?? 'N/A');
             $this->components->twoColumnDetail('Reserved jobs', $queue['reserved'] ?? 'N/A');
-            $this->components->twoColumnDetail('Oldest pending job', $queue['oldest_pending']
+            $this->components->twoColumnDetail(
+                'Oldest pending job',
+                $queue['oldest_pending']
                 ? Carbon::createFromTimestamp($queue['oldest_pending'])->diffForHumans()
                 : 'N/A'
             );

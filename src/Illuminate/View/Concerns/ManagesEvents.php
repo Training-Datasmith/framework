@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Concerns;
 
 use Closure;
@@ -90,7 +92,8 @@ trait ManagesEvents
         // classes from the application IoC container then call the compose method
         // on the instance. This allows for convenient, testable view composers.
         $callback = $this->buildClassEventCallback(
-            $class, $prefix
+            $class,
+            $prefix
         );
 
         $this->addEventListener($name, $callback);
@@ -112,7 +115,7 @@ trait ManagesEvents
         // Once we have the class and method name, we can build the Closure to resolve
         // the instance out of the IoC container and call the method on it with the
         // given arguments that are passed to the Closure as the composer's data.
-        return fn() => $this->container->make($class)->{$method}(...func_get_args());
+        return fn () => $this->container->make($class)->{$method}(...func_get_args());
     }
 
     /**
@@ -146,7 +149,7 @@ trait ManagesEvents
     protected function addEventListener($name, $callback)
     {
         if (str_contains($name, '*')) {
-            $callback = (fn($name, array $data) => $callback($data[0]));
+            $callback = (fn ($name, array $data) => $callback($data[0]));
         }
 
         $this->events->listen($name, $callback);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Bootstrap;
 
 use ErrorException;
@@ -21,7 +23,7 @@ class HandleExceptionsTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->app = m::mock(Application::setInstance(new Application));
+        $this->app = m::mock(Application::setInstance(new Application()));
 
         $this->app->instance('config', $this->config = new Config());
     }
@@ -49,7 +51,8 @@ class HandleExceptionsTest extends TestCase
         $this->app->expects('hasBeenBootstrapped')->andReturn(true);
 
         $logger->expects('channel')->with('deprecations')->andReturnSelf();
-        $logger->expects('warning')->with(sprintf('%s in %s on line %s',
+        $logger->expects('warning')->with(sprintf(
+            '%s in %s on line %s',
             'str_contains(): Passing null to parameter #2 ($needle) of type string is deprecated',
             '/home/user/laravel/routes/web.php',
             17
@@ -112,7 +115,8 @@ class HandleExceptionsTest extends TestCase
         ]);
 
         $logger->expects('channel')->with('deprecations')->andReturnSelf();
-        $logger->expects('warning')->with(sprintf('%s in %s on line %s',
+        $logger->expects('warning')->with(sprintf(
+            '%s in %s on line %s',
             'str_contains(): Passing null to parameter #2 ($needle) of type string is deprecated',
             '/home/user/laravel/routes/web.php',
             17
@@ -139,7 +143,8 @@ class HandleExceptionsTest extends TestCase
         $this->app->expects('hasBeenBootstrapped')->andReturn(true);
 
         $logger->expects('channel')->with('deprecations')->andReturnSelf();
-        $logger->expects('warning')->with(sprintf('%s in %s on line %s',
+        $logger->expects('warning')->with(sprintf(
+            '%s in %s on line %s',
             'str_contains(): Passing null to parameter #2 ($needle) of type string is deprecated',
             '/home/user/laravel/routes/web.php',
             17

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Illuminate\Bus\UniqueLock;
@@ -100,7 +102,7 @@ class SyncQueue extends Queue implements QueueContract
             }
 
             return $this->container->make('db.transactions')->addCallback(
-                fn () => $this->executeJob($job, $data, $queue)
+                fn (): int => $this->executeJob($job, $data, $queue)
             );
         }
 
@@ -219,7 +221,7 @@ class SyncQueue extends Queue implements QueueContract
      */
     public function pushRaw($payload, $queue = null, array $options = []): void
     {
-        //
+
     }
 
     /**
@@ -243,6 +245,6 @@ class SyncQueue extends Queue implements QueueContract
      */
     public function pop($queue = null): void
     {
-        //
+
     }
 }

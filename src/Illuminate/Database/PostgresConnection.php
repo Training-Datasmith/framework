@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Exception;
@@ -91,6 +93,6 @@ class PostgresConnection extends Connection
      */
     protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\PostgresProcessor
     {
-        return new PostgresProcessor;
+        return new PostgresProcessor();
     }
 }

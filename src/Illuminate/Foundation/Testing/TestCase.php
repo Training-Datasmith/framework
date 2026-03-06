@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Testing;
 
 use Illuminate\Contracts\Console\Kernel;
@@ -8,17 +10,17 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    use Concerns\InteractsWithContainer,
-        Concerns\MakesHttpRequests,
-        Concerns\InteractsWithAuthentication,
-        Concerns\InteractsWithConsole,
-        Concerns\InteractsWithDatabase,
-        Concerns\InteractsWithDeprecationHandling,
-        Concerns\InteractsWithExceptionHandling,
-        Concerns\InteractsWithSession,
-        Concerns\InteractsWithTime,
-        Concerns\InteractsWithTestCaseLifecycle,
-        Concerns\InteractsWithViews;
+    use Concerns\InteractsWithContainer;
+    use Concerns\MakesHttpRequests;
+    use Concerns\InteractsWithAuthentication;
+    use Concerns\InteractsWithConsole;
+    use Concerns\InteractsWithDatabase;
+    use Concerns\InteractsWithDeprecationHandling;
+    use Concerns\InteractsWithExceptionHandling;
+    use Concerns\InteractsWithSession;
+    use Concerns\InteractsWithTime;
+    use Concerns\InteractsWithTestCaseLifecycle;
+    use Concerns\InteractsWithViews;
 
     /**
      * The list of trait that this test uses, fetched recursively.

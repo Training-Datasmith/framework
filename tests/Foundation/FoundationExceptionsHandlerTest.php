@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation;
 
 use Closure;
@@ -63,7 +65,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
         $this->request = m::mock(stdClass::class);
 
-        $this->container = Container::setInstance(new Container);
+        $this->container = Container::setInstance(new Container());
 
         $this->container->instance('config', $this->config);
 
@@ -234,23 +236,23 @@ class FoundationExceptionsHandlerTest extends TestCase
             return response()->json(['response' => 'My custom exception response']);
         });
 
-        $response = $this->handler->render($this->request, new CustomException)->getContent();
+        $response = $this->handler->render($this->request, new CustomException())->getContent();
 
         $this->assertSame('{"response":"My custom exception response"}', $response);
     }
 
     public function testReturnsCustomResponseFromCallableClass()
     {
-        $this->handler->renderable(new CustomRenderer);
+        $this->handler->renderable(new CustomRenderer());
 
-        $response = $this->handler->render($this->request, new CustomException)->getContent();
+        $response = $this->handler->render($this->request, new CustomException())->getContent();
 
         $this->assertSame('{"response":"The CustomRenderer response"}', $response);
     }
 
     public function testReturnsResponseFromRenderableException()
     {
-        $response = $this->handler->render(Request::create('/'), new RenderableException)->getContent();
+        $response = $this->handler->render(Request::create('/'), new RenderableException())->getContent();
 
         $this->assertSame('{"response":"My renderable exception response"}', $response);
     }
@@ -259,14 +261,14 @@ class FoundationExceptionsHandlerTest extends TestCase
     {
         $this->handler->map(RuntimeException::class, RenderableException::class);
 
-        $response = $this->handler->render(Request::create('/'), new RuntimeException)->getContent();
+        $response = $this->handler->render(Request::create('/'), new RuntimeException())->getContent();
 
         $this->assertSame('{"response":"My renderable exception response"}', $response);
     }
 
     public function testReturnsCustomResponseWhenExceptionImplementsResponsable()
     {
-        $response = $this->handler->render($this->request, new ResponsableException)->getContent();
+        $response = $this->handler->render($this->request, new ResponsableException())->getContent();
 
         $this->assertSame('{"response":"My responsable exception response"}', $response);
     }
@@ -332,7 +334,8 @@ class FoundationExceptionsHandlerTest extends TestCase
                     $argumentActual = $argument;
 
                     return true;
-                }))->andReturn($responder);
+                }
+            ))->andReturn($responder);
 
             $responder->shouldReceive('withErrors')->once()
                 ->andReturn($responder);
@@ -381,7 +384,7 @@ class FoundationExceptionsHandlerTest extends TestCase
         $this->config->shouldReceive('get')->with('app.debug', null)->once()->andReturn(true);
         $this->request->shouldReceive('expectsJson')->once()->andReturn(true);
 
-        $response = $this->handler->render($this->request, new RecordsNotFoundException);
+        $response = $this->handler->render($this->request, new RecordsNotFoundException());
 
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertStringContainsString('"message": "Not found."', $response->getContent());
@@ -390,7 +393,7 @@ class FoundationExceptionsHandlerTest extends TestCase
         $this->container->instance(LoggerInterface::class, $logger);
         $logger->shouldNotReceive('log');
 
-        $this->handler->report(new RecordsNotFoundException);
+        $this->handler->report(new RecordsNotFoundException());
     }
 
     public function testItReturnsSpecificErrorViewIfExists()
@@ -400,8 +403,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
         $this->container->instance(ViewFactory::class, $viewFactory);
 
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             public function getErrorView($e)
             {
                 return $this->getHttpExceptionView($e);
@@ -419,8 +421,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
         $this->container->instance(ViewFactory::class, $viewFactory);
 
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             public function getErrorView($e)
             {
                 return $this->getHttpExceptionView($e);
@@ -438,8 +439,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
         $this->container->instance(ViewFactory::class, $viewFactory);
 
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             public function getErrorView($e)
             {
                 return $this->getHttpExceptionView($e);
@@ -456,8 +456,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
         $this->config->shouldReceive('get')->with('app.debug', null)->andReturn($debug);
 
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             protected function registerErrorViewPaths()
             {
             }
@@ -490,13 +489,13 @@ class FoundationExceptionsHandlerTest extends TestCase
     public function testAssertExceptionIsThrown()
     {
         $this->assertThrows(function () {
-            throw new Exception;
+            throw new Exception();
         });
         $this->assertThrows(function () {
-            throw new CustomException;
+            throw new CustomException();
         });
         $this->assertThrows(function () {
-            throw new CustomException;
+            throw new CustomException();
         }, CustomException::class);
         $this->assertThrows(function () {
             throw new Exception('Some message.');
@@ -510,7 +509,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
         try {
             $this->assertThrows(function () {
-                throw new Exception;
+                throw new Exception();
             }, CustomException::class);
             $testFailed = true;
         } catch (AssertionFailedError) {
@@ -575,7 +574,7 @@ class FoundationExceptionsHandlerTest extends TestCase
     {
         try {
             $this->assertDoesntThrow(function () {
-                throw new Exception;
+                throw new Exception();
             });
 
             $testFailed = true;
@@ -676,11 +675,10 @@ class FoundationExceptionsHandlerTest extends TestCase
 
     public function testItDoesNotThrottleExceptionsWhenNullReturned()
     {
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             protected function throttle($e)
             {
-                //
+
             }
         };
         $reported = [];
@@ -699,8 +697,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
     public function testItDoesNotThrottleExceptionsWhenUnlimitedLimit()
     {
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             protected function throttle($e)
             {
                 return Limit::none();
@@ -722,8 +719,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
     public function testItCanSampleExceptionsByClass()
     {
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             protected function throttle($e)
             {
                 return match (true) {
@@ -755,8 +751,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
     public function testItRescuesExceptionsWhileThrottlingAndReports()
     {
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             protected function throttle($e)
             {
                 throw new RuntimeException('Something went wrong in the throttle method.');
@@ -777,8 +772,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
     public function testItRescuesExceptionsIfThereIsAnIssueResolvingTheRateLimiter()
     {
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             protected function throttle($e)
             {
                 return Limit::perDay(1);
@@ -806,8 +800,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
     public function testItRescuesExceptionsIfThereIsAnIssueWithTheRateLimiter()
     {
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             protected function throttle($e)
             {
                 return Limit::perDay(1);
@@ -819,8 +812,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
             return false;
         });
-        $this->container->instance(RateLimiter::class, $limiter = new class(new Repository(new NullStore)) extends RateLimiter
-        {
+        $this->container->instance(RateLimiter::class, $limiter = new class (new Repository(new NullStore())) extends RateLimiter {
             public $attempted = false;
 
             public function attempt($key, $maxAttempts, Closure $callback, $decaySeconds = 60)
@@ -840,8 +832,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
     public function testItCanRateLimitExceptions()
     {
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             protected function throttle($e)
             {
                 return Limit::perMinute(7);
@@ -853,8 +844,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
             return false;
         });
-        $this->container->instance(RateLimiter::class, $limiter = new class(new Repository(new ArrayStore)) extends RateLimiter
-        {
+        $this->container->instance(RateLimiter::class, $limiter = new class (new Repository(new ArrayStore())) extends RateLimiter {
             public $attempted = 0;
 
             public function attempt($key, $maxAttempts, Closure $callback, $decaySeconds = 60)
@@ -887,8 +877,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
     public function testRateLimitExpiresOnBoundary()
     {
-        $handler = new class($this->container) extends Handler
-        {
+        $handler = new class ($this->container) extends Handler {
             protected function throttle($e)
             {
                 return Limit::perMinute(1);
@@ -900,8 +889,7 @@ class FoundationExceptionsHandlerTest extends TestCase
 
             return false;
         });
-        $this->container->instance(RateLimiter::class, $limiter = new class(new Repository(new ArrayStore)) extends RateLimiter
-        {
+        $this->container->instance(RateLimiter::class, $limiter = new class (new Repository(new ArrayStore())) extends RateLimiter {
             public $attempted = 0;
 
             public function attempt($key, $maxAttempts, Closure $callback, $decaySeconds = 60)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
@@ -39,7 +41,7 @@ class DatabaseCustomCastsTest extends DatabaseTestCase
 
     public function test_custom_casting()
     {
-        $model = new TestEloquentModelWithCustomCasts;
+        $model = new TestEloquentModelWithCustomCasts();
 
         $model->array_object = ['name' => 'Taylor'];
         $model->array_object_json = ['name' => 'Taylor'];

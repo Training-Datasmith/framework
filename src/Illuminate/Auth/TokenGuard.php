@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use Illuminate\Contracts\Auth\Guard;
@@ -9,7 +11,8 @@ use Illuminate\Support\Traits\Macroable;
 
 class TokenGuard implements Guard
 {
-    use GuardHelpers, Macroable;
+    use GuardHelpers;
+    use Macroable;
 
     /**
      * Create a new authentication guard.

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation;
 
 use Exception;
@@ -16,14 +18,14 @@ class FoundationHelpersTest extends TestCase
         $this->assertEquals(
             'rescued!',
             rescue(function () {
-                throw new Exception;
+                throw new Exception();
             }, 'rescued!')
         );
 
         $this->assertEquals(
             'rescued!',
             rescue(function () {
-                throw new Exception;
+                throw new Exception();
             }, function () {
                 return 'rescued!';
             })
@@ -36,8 +38,7 @@ class FoundationHelpersTest extends TestCase
             }, 'rescued!')
         );
 
-        $testClass = new class
-        {
+        $testClass = new class () {
             public function test(int $a)
             {
                 return $a;
@@ -54,7 +55,7 @@ class FoundationHelpersTest extends TestCase
 
     public function testMixReportsExceptionWhenAssetIsMissingFromManifest()
     {
-        $handler = new FakeHandler;
+        $handler = new FakeHandler();
         $this->app->instance(ExceptionHandler::class, $handler);
         $manifest = $this->makeManifest();
 
@@ -98,7 +99,7 @@ class FoundationHelpersTest extends TestCase
     #[WithConfig('app.debug', true)]
     public function testMixOnlyThrowsAndReportsOneExceptionWhenAssetIsMissingFromManifestWhenInDebugMode()
     {
-        $handler = new FakeHandler;
+        $handler = new FakeHandler();
         $this->app->instance(ExceptionHandler::class, $handler);
 
         $manifest = $this->makeManifest();
@@ -173,6 +174,6 @@ class FakeHandler
 
     public function render($exception)
     {
-        //
+
     }
 }

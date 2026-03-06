@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Aws\Sqs\SqsClient;
@@ -142,7 +144,7 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
             $this->createPayload($job, $queue ?: $this->default, $data),
             $queue,
             null,
-            fn($payload, $queue) => $this->pushRaw($payload, $queue, $this->getQueueableOptions($job, $queue, $payload))
+            fn ($payload, $queue): mixed => $this->pushRaw($payload, $queue, $this->getQueueableOptions($job, $queue, $payload))
         );
     }
 
@@ -176,7 +178,7 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
             $this->createPayload($job, $queue ?: $this->default, $data, $delay),
             $queue,
             $delay,
-            fn($payload, $queue, $delay) => $this->pushRaw($payload, $queue, $this->getQueueableOptions($job, $queue, $payload, $delay))
+            fn ($payload, $queue, $delay): mixed => $this->pushRaw($payload, $queue, $this->getQueueableOptions($job, $queue, $payload, $delay))
         );
     }
 
@@ -275,8 +277,11 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
 
         if (! is_null($response['Messages']) && count($response['Messages']) > 0) {
             return new SqsJob(
-                $this->container, $this->sqs, $response['Messages'][0],
-                $this->connectionName, $queue
+                $this->container,
+                $this->sqs,
+                $response['Messages'][0],
+                $this->connectionName,
+                $queue
             );
         }
     }
@@ -315,9 +320,8 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      * Add the given suffix to the given queue name.
      *
      * @param  string  $queue
-     * @param  string  $suffix
      */
-    protected function suffixQueue($queue, $suffix = ''): string
+    protected function suffixQueue($queue, string $suffix = ''): string
     {
         if (str_ends_with($queue, '.fifo')) {
             $queue = Str::beforeLast($queue, '.fifo');

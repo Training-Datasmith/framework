@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Http\Middleware;
 
 use Closure;
@@ -17,8 +19,8 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 class VerifyCsrfToken
 {
-    use InteractsWithTime,
-        ExcludesPaths;
+    use InteractsWithTime;
+    use ExcludesPaths;
 
     /**
      * The URIs that should be excluded.
@@ -53,8 +55,7 @@ class VerifyCsrfToken
          * The encrypter implementation.
          */
         protected \Illuminate\Contracts\Encryption\Encrypter $encrypter
-    )
-    {
+    ) {
     }
 
     /**

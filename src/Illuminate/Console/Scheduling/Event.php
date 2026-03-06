@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 use Closure;
@@ -24,7 +26,11 @@ use Throwable;
 
 class Event
 {
-    use Macroable, ManagesAttributes, ManagesFrequencies, ReflectsClosures, Tappable;
+    use Macroable;
+    use ManagesAttributes;
+    use ManagesFrequencies;
+    use ReflectsClosures;
+    use Tappable;
 
     /**
      * The location that output should be sent to.
@@ -93,7 +99,7 @@ class Event
     public function __construct(EventMutex $mutex, /**
      * The command string.
      */
-    public $command, $timezone = null)
+        public $command, $timezone = null)
     {
         $this->mutex = $mutex;
         $this->timezone = $timezone;
@@ -157,11 +163,10 @@ class Event
      * Run the command process.
      *
      * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return int
      *
      * @throws \Throwable
      */
-    protected function start($container)
+    protected function start(\Illuminate\Contracts\Container\Container|array $container): int
     {
         try {
             $this->callBeforeCallbacks($container);
@@ -184,7 +189,11 @@ class Event
         $context = json_encode($container[Repository::class]->dehydrate());
 
         return Process::fromShellCommandline(
-            $this->buildCommand(), base_path(), ['__LARAVEL_CONTEXT' => $context], null, null
+            $this->buildCommand(),
+            base_path(),
+            ['__LARAVEL_CONTEXT' => $context],
+            null,
+            null
         )->run(
             laravel_cloud()
                 ? fn ($type, $line): int|false => fwrite($type === 'out' ? STDOUT : STDERR, (string) $line)
@@ -235,7 +244,7 @@ class Event
      */
     public function buildCommand()
     {
-        return (new CommandBuilder)->buildCommand($this);
+        return (new CommandBuilder())->buildCommand($this);
     }
 
     /**
@@ -348,7 +357,7 @@ class Event
      * @param  string  $location
      * @return $this
      */
-    public function appendOutputTo($location)
+    public function appendOutputTo($location): static
     {
         return $this->sendOutputTo($location, true);
     }
@@ -455,7 +464,7 @@ class Event
      * @param  string  $url
      * @return $this
      */
-    public function pingBefore($url)
+    public function pingBefore($url): static
     {
         return $this->before($this->pingCallback($url));
     }

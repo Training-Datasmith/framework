@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Exception;
@@ -36,8 +38,7 @@ class CallQueuedHandler
          * The container instance.
          */
         protected \Illuminate\Contracts\Container\Container $container
-    )
-    {
+    ) {
     }
 
     /**
@@ -49,7 +50,8 @@ class CallQueuedHandler
     {
         try {
             $command = $this->setJobInstanceIfNecessary(
-                $job, $this->getCommand($data)
+                $job,
+                $this->getCommand($data)
             );
         } catch (ModelNotFoundException $e) {
             return $this->handleModelNotFound($job, $e);
@@ -119,7 +121,8 @@ class CallQueuedHandler
                 }
 
                 return $this->dispatcher->dispatchNow(
-                    $command, $this->resolveHandler($job, $command)
+                    $command,
+                    $this->resolveHandler($job, $command)
                 );
             });
     }

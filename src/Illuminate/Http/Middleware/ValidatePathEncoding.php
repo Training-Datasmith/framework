@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Middleware;
 
 use Closure;
@@ -18,7 +20,7 @@ class ValidatePathEncoding
         $decodedPath = rawurldecode($request->path());
 
         if (! mb_check_encoding($decodedPath, 'UTF-8')) {
-            throw new MalformedUrlException;
+            throw new MalformedUrlException();
         }
 
         return $next($request);

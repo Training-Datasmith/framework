@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Rules;
 
 use DateTimeInterface;
@@ -10,7 +12,8 @@ use Stringable;
 
 class Date implements Stringable
 {
-    use Conditionable, Macroable;
+    use Conditionable;
+    use Macroable;
 
     /**
      * The format of the date.

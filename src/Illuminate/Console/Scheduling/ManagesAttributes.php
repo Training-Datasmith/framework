@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Scheduling;
 
 use Illuminate\Support\Reflector;
@@ -148,7 +150,7 @@ trait ManagesAttributes
 
         $this->expiresAt = $expiresAt;
 
-        return $this->skip(fn() => $this->mutex->exists($this));
+        return $this->skip(fn () => $this->mutex->exists($this));
     }
 
     /**
@@ -183,7 +185,7 @@ trait ManagesAttributes
      */
     public function when($callback)
     {
-        $this->filters[] = Reflector::isCallable($callback) ? $callback : (fn() => $callback);
+        $this->filters[] = Reflector::isCallable($callback) ? $callback : (fn () => $callback);
 
         return $this;
     }
@@ -196,7 +198,7 @@ trait ManagesAttributes
      */
     public function skip($callback)
     {
-        $this->rejects[] = Reflector::isCallable($callback) ? $callback : (fn() => $callback);
+        $this->rejects[] = Reflector::isCallable($callback) ? $callback : (fn () => $callback);
 
         return $this;
     }

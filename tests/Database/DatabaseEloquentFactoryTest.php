@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use BadMethodCallException;
@@ -34,7 +36,7 @@ class DatabaseEloquentFactoryTest extends TestCase
         $container->instance(Application::class, $app = m::mock(Application::class));
         $app->shouldReceive('getNamespace')->andReturn('App\\');
 
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',

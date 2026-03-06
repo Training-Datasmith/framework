@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Jobs;
 
 use Illuminate\Container\Container;
@@ -24,7 +26,7 @@ class SyncJob extends Job implements JobContract
     public function __construct(Container $container, /**
      * The queue message data.
      */
-    protected $payload, $connectionName, $queue)
+        protected $payload, $connectionName, $queue)
     {
         $this->queue = $queue;
         $this->container = $container;

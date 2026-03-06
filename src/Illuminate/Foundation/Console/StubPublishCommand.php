@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
@@ -32,7 +34,7 @@ class StubPublishCommand extends Command
     public function handle(): void
     {
         if (! is_dir($stubsPath = $this->laravel->basePath('stubs'))) {
-            (new Filesystem)->makeDirectory($stubsPath);
+            (new Filesystem())->makeDirectory($stubsPath);
         }
 
         $stubs = [

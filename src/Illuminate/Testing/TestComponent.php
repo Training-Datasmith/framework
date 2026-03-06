@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing;
 
 use Illuminate\Support\Traits\Macroable;
@@ -29,8 +31,9 @@ class TestComponent implements Stringable
     public function __construct(/**
      * The original component.
      */
-    public $component, $view)
-    {
+        public $component,
+        $view
+    ) {
         $this->rendered = $view->render();
     }
 
@@ -147,7 +150,6 @@ class TestComponent implements Stringable
     /**
      * Dynamically call methods on the underlying component.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

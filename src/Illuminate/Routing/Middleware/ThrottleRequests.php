@@ -1,19 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing\Middleware;
 
 use Closure;
-use Illuminate\Cache\RateLimiter;
 use Illuminate\Cache\RateLimiting\Unlimited;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Routing\Exceptions\MissingRateLimiterException;
 use Illuminate\Support\Collection;
-use Illuminate\Support\InteractsWithTime;
-use RuntimeException;
-use Symfony\Component\HttpFoundation\Response;
 
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\InteractsWithTime;
+use RuntimeException;
+
+use Symfony\Component\HttpFoundation\Response;
 
 class ThrottleRequests
 {
@@ -34,8 +37,7 @@ class ThrottleRequests
          * The rate limiter instance.
          */
         protected \Illuminate\Cache\RateLimiter $limiter
-    )
-    {
+    ) {
     }
 
     /**
@@ -118,7 +120,7 @@ class ThrottleRequests
         return $this->handleRequest(
             $request,
             $next,
-            Collection::wrap($limiterResponse)->map(fn($limit) => (object) [
+            Collection::wrap($limiterResponse)->map(fn ($limit) => (object) [
                 'key' => self::$shouldHashKeys ? md5($limiterName.$limit->key) : $limiterName.':'.$limit->key,
                 'maxAttempts' => $limit->maxAttempts,
                 'decaySeconds' => $limit->decaySeconds,
@@ -272,11 +274,12 @@ class ThrottleRequests
      * @param  int  $remainingAttempts
      * @param  int|null  $retryAfter
      */
-    protected function getHeaders($maxAttempts,
+    protected function getHeaders(
+        $maxAttempts,
         $remainingAttempts,
         $retryAfter = null,
-        ?Response $response = null): array
-    {
+        ?Response $response = null
+    ): array {
         if ($response &&
             ! is_null($response->headers->get('X-RateLimit-Remaining')) &&
             (int) $response->headers->get('X-RateLimit-Remaining') <= (int) $remainingAttempts) {
@@ -304,7 +307,7 @@ class ThrottleRequests
      * @param  int|null  $retryAfter
      * @return int
      */
-    protected function calculateRemainingAttempts($key, $maxAttempts, $retryAfter = null)
+    protected function calculateRemainingAttempts($key, $maxAttempts, $retryAfter = null): float|int
     {
         return is_null($retryAfter) ? $this->limiter->retriesLeft($key, $maxAttempts) : 0;
     }

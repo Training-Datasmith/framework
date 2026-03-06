@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -64,8 +66,14 @@ class MorphToMany extends BelongsToMany
         $this->morphClass = $this->inverse ? $query->getModel()->getMorphClass() : $parent->getMorphClass();
 
         parent::__construct(
-            $query, $parent, $table, $foreignPivotKey,
-            $relatedPivotKey, $parentKey, $relatedKey, $relationName
+            $query,
+            $parent,
+            $table,
+            $foreignPivotKey,
+            $relatedPivotKey,
+            $parentKey,
+            $relatedKey,
+            $relationName
         );
     }
 
@@ -101,15 +109,18 @@ class MorphToMany extends BelongsToMany
     protected function baseAttachRecord($id, $timed)
     {
         return Arr::add(
-            parent::baseAttachRecord($id, $timed), $this->morphType, $this->morphClass
+            parent::baseAttachRecord($id, $timed),
+            $this->morphType,
+            $this->morphClass
         );
     }
 
     /** @inheritDoc */
-    public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
+    public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*']): \Illuminate\Database\Eloquent\Builder
     {
         return parent::getRelationExistenceQuery($query, $parentQuery, $columns)->where(
-            $this->qualifyPivotColumn($this->morphType), $this->morphClass
+            $this->qualifyPivotColumn($this->morphType),
+            $this->morphClass
         );
     }
 
@@ -121,7 +132,7 @@ class MorphToMany extends BelongsToMany
      */
     protected function getCurrentlyAttachedPivotsForIds($ids = null): \Illuminate\Support\Collection
     {
-        return parent::getCurrentlyAttachedPivotsForIds($ids)->map(fn($record) => $record instanceof MorphPivot
+        return parent::getCurrentlyAttachedPivotsForIds($ids)->map(fn ($record): mixed => $record instanceof MorphPivot
             ? $record->setMorphType($this->morphType)
                 ->setMorphClass($this->morphClass)
             : $record);
@@ -183,10 +194,8 @@ class MorphToMany extends BelongsToMany
 
     /**
      * Get the foreign key "type" name.
-     *
-     * @return string
      */
-    public function getMorphType()
+    public function getMorphType(): string
     {
         return $this->morphType;
     }

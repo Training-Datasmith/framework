@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Eloquent\Model;
@@ -45,8 +47,10 @@ class EloquentWhereTest extends DatabaseTestCase
         $this->assertTrue($secondUser->is(UserWhereTest::where('name', 'wrong-name')->orWhere('email', $secondUser->email)->first()));
         $this->assertTrue($firstUser->is(UserWhereTest::where(['name' => 'test-name', 'email' => 'test-email'])->first()));
         $this->assertNull(UserWhereTest::where(['name' => 'test-name', 'email' => 'test-email1'])->first());
-        $this->assertTrue($secondUser->is(
-            UserWhereTest::where(['name' => 'wrong-name', 'email' => 'test-email1'], null, null, 'or')->first())
+        $this->assertTrue(
+            $secondUser->is(
+                UserWhereTest::where(['name' => 'wrong-name', 'email' => 'test-email1'], null, null, 'or')->first()
+            )
         );
 
         $this->assertSame(
@@ -244,8 +248,10 @@ class EloquentWhereTest extends DatabaseTestCase
         $this->assertNull(UserWhereTest::where('name', $firstUser->name)->firstWhere('email', $secondUser->email));
         $this->assertTrue($firstUser->is(UserWhereTest::firstWhere(['name' => 'test-name', 'email' => 'test-email'])));
         $this->assertNull(UserWhereTest::firstWhere(['name' => 'test-name', 'email' => 'test-email1']));
-        $this->assertTrue($secondUser->is(
-            UserWhereTest::firstWhere(['name' => 'wrong-name', 'email' => 'test-email1'], null, null, 'or'))
+        $this->assertTrue(
+            $secondUser->is(
+                UserWhereTest::firstWhere(['name' => 'wrong-name', 'email' => 'test-email1'], null, null, 'or')
+            )
         );
     }
 
@@ -284,7 +290,7 @@ class EloquentWhereTest extends DatabaseTestCase
         try {
             UserWhereTest::where('name', 'test-name')->sole();
         } catch (ModelNotFoundException $exception) {
-            //
+
         }
 
         $this->assertSame(UserWhereTest::class, $exception->getModel());

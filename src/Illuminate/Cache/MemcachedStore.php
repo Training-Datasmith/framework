@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Contracts\Cache\LockProvider;
@@ -32,8 +34,9 @@ class MemcachedStore extends TaggableStore implements LockProvider
     public function __construct(/**
      * The Memcached instance.
      */
-    protected $memcached, $prefix = '')
-    {
+        protected $memcached,
+        $prefix = ''
+    ) {
         $this->setPrefix($prefix);
 
         $this->onVersionThree = (new ReflectionMethod('Memcached', 'getMulti'))
@@ -62,7 +65,7 @@ class MemcachedStore extends TaggableStore implements LockProvider
      */
     public function many(array $keys): array
     {
-        $prefixedKeys = array_map(fn($key) => $this->prefix.$key, $keys);
+        $prefixedKeys = array_map(fn ($key): string => $this->prefix.$key, $keys);
 
         if ($this->onVersionThree) {
             $values = $this->memcached->getMulti($prefixedKeys, Memcached::GET_PRESERVE_ORDER);
@@ -89,7 +92,9 @@ class MemcachedStore extends TaggableStore implements LockProvider
     public function put($key, $value, $seconds): bool
     {
         return $this->memcached->set(
-            $this->prefix.$key, $value, $this->calculateExpiration($seconds)
+            $this->prefix.$key,
+            $value,
+            $this->calculateExpiration($seconds)
         );
     }
 
@@ -107,7 +112,8 @@ class MemcachedStore extends TaggableStore implements LockProvider
         }
 
         return $this->memcached->setMulti(
-            $prefixedValues, $this->calculateExpiration($seconds)
+            $prefixedValues,
+            $this->calculateExpiration($seconds)
         );
     }
 
@@ -120,7 +126,9 @@ class MemcachedStore extends TaggableStore implements LockProvider
     public function add(string $key, $value, $seconds): bool
     {
         return $this->memcached->add(
-            $this->prefix.$key, $value, $this->calculateExpiration($seconds)
+            $this->prefix.$key,
+            $value,
+            $this->calculateExpiration($seconds)
         );
     }
 
@@ -153,9 +161,8 @@ class MemcachedStore extends TaggableStore implements LockProvider
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return bool
      */
-    public function forever($key, $value)
+    public function forever($key, $value): bool
     {
         return $this->put($key, $value, 0);
     }
@@ -180,7 +187,7 @@ class MemcachedStore extends TaggableStore implements LockProvider
      * @param  string  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function restoreLock($name, $owner)
+    public function restoreLock($name, $owner): \Illuminate\Cache\MemcachedLock
     {
         return $this->lock($name, 0, $owner);
     }

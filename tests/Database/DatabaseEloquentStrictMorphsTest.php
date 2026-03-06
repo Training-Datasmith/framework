@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\ClassMorphViolationException;
@@ -21,14 +23,14 @@ class DatabaseEloquentStrictMorphsTest extends TestCase
     {
         $this->expectException(ClassMorphViolationException::class);
 
-        $model = new TestModel;
+        $model = new TestModel();
 
         $model->getMorphClass();
     }
 
     public function testStrictModeDoesNotThrowExceptionWhenMorphMap()
     {
-        $model = new TestModel;
+        $model = new TestModel();
 
         Relation::morphMap([
             'test' => TestModel::class,
@@ -40,7 +42,7 @@ class DatabaseEloquentStrictMorphsTest extends TestCase
 
     public function testMapsCanBeEnforcedInOneMethod()
     {
-        $model = new TestModel;
+        $model = new TestModel();
 
         Relation::requireMorphMap(false);
 

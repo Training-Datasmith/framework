@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Factories;
 
 use Illuminate\Support\Arr;
@@ -14,7 +16,7 @@ class CrossJoinSequence extends Sequence
     public function __construct(...$sequences)
     {
         $crossJoined = array_map(
-            fn(array $a) => array_merge(...$a),
+            fn (array $a): array => array_merge(...$a),
             Arr::crossJoin(...$sequences),
         );
 

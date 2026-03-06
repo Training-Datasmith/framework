@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Broadcasting;
 
 use Ably\AblyRest;
@@ -87,7 +89,7 @@ class AblyBroadcasterTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
 
         $this->broadcaster->channel('test', function () {
-            //
+
         });
 
         $this->broadcaster->auth(

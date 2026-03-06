@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use BadMethodCallException;
@@ -307,7 +309,7 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertSame($query, $result);
 
         $result = $query->pipe(function (Builder $query) {
-            //
+
         });
         $this->assertSame($query, $result);
 
@@ -2508,8 +2510,7 @@ class DatabaseQueryBuilderTest extends TestCase
     {
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->having(
-            new class() implements ConditionExpression
-            {
+            new class () implements ConditionExpression {
                 public function getValue(\Illuminate\Database\Grammar $grammar)
                 {
                     return '1 = 1';
@@ -3871,7 +3872,7 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->getConnection()->shouldReceive('select')->andReturn([['exists' => 0]]);
         $results = $builder->from('users')->doesntExistOr(function () {
-            throw new RuntimeException;
+            throw new RuntimeException();
         });
         $this->assertTrue($results);
     }
@@ -3887,7 +3888,7 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->getConnection()->shouldReceive('select')->andReturn([['exists' => 1]]);
         $results = $builder->from('users')->existsOr(function () {
-            throw new RuntimeException;
+            throw new RuntimeException();
         });
         $this->assertTrue($results);
     }
@@ -5982,7 +5983,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results) {
             $this->assertEquals(
                 'select * from "foobar" where ("test" > ?) order by "test" asc limit 17',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals(['bar'], $builder->bindings['where']);
 
             return $results;
@@ -6058,7 +6060,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results) {
             $this->assertEquals(
                 'select * from "foobar" where ("test" > ?) order by "test" asc limit 16',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals(['bar'], $builder->bindings['where']);
 
             return $results;
@@ -6128,7 +6131,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results) {
             $this->assertEquals(
                 'select * from "foobar" where ("id" > ?) order by "id" asc limit 17',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals([2], $builder->bindings['where']);
 
             return $results;
@@ -6204,7 +6208,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results) {
             $this->assertEquals(
                 'select *, (CONCAT(firstname, \' \', lastname)) as test from "foobar" where ((CONCAT(firstname, \' \', lastname)) > ?) order by "test" asc limit 16',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals(['bar'], $builder->bindings['where']);
 
             return $results;
@@ -6245,7 +6250,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results) {
             $this->assertEquals(
                 'select *, (CAST(CONCAT(firstname, \' \', lastname) as VARCHAR)) as test from "foobar" where ((CAST(CONCAT(firstname, \' \', lastname) as VARCHAR)) > ?) order by "test" asc limit 16',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals(['bar'], $builder->bindings['where']);
 
             return $results;
@@ -6286,7 +6292,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results) {
             $this->assertEquals(
                 'select *, (CONCAT(firstname, \' \', lastname)) as "test" from "foobar" where ((CONCAT(firstname, \' \', lastname)) > ?) order by "test" asc limit 16',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals(['bar'], $builder->bindings['where']);
 
             return $results;
@@ -6336,7 +6343,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results, $ts) {
             $this->assertEquals(
                 '(select "id", "start_time" as "created_at", \'video\' as type from "videos" where ("start_time" > ?)) union (select "id", "created_at", \'news\' as type from "news" where ("created_at" > ?)) order by "created_at" asc limit 17',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals([$ts], $builder->bindings['where']);
             $this->assertEquals([$ts], $builder->bindings['union']);
 
@@ -6385,7 +6393,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results, $ts) {
             $this->assertEquals(
                 '(select "id", "start_time" as "created_at", \'video\' as type from "videos" where ("start_time" > ?)) union (select "id", "created_at", \'news\' as type from "news" where "extra" = ? and ("created_at" > ?)) union (select "id", "created_at", \'podcast\' as type from "podcasts" where "extra" = ? and ("created_at" > ?)) order by "created_at" asc limit 17',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals([$ts], $builder->bindings['where']);
             $this->assertEquals(['first', $ts, 'second', $ts], $builder->bindings['union']);
 
@@ -6435,7 +6444,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results, $ts) {
             $this->assertEquals(
                 '(select "id", "start_time" as "created_at", "type" from "videos" where "extra" = ? and ("id" > ? or ("id" = ? and ("start_time" < ? or ("start_time" = ? and ("type" > ?)))))) union (select "id", "created_at", "type" from "news" where "extra" = ? and ("id" > ? or ("id" = ? and ("start_time" < ? or ("start_time" = ? and ("type" > ?)))))) union (select "id", "created_at", "type" from "podcasts" where "extra" = ? and ("id" > ? or ("id" = ? and ("start_time" < ? or ("start_time" = ? and ("type" > ?)))))) order by "id" asc, "created_at" desc, "type" asc limit 17',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals(['first', 1, 1, $ts, $ts, 'news'], $builder->bindings['where']);
             $this->assertEquals(['second', 1, 1, $ts, $ts, 'news', 'third', 1, 1, $ts, $ts, 'news'], $builder->bindings['union']);
 
@@ -6482,7 +6492,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results, $ts) {
             $this->assertEquals(
                 '(select "id", "is_published", "start_time" as "created_at", \'video\' as type from "videos" where "is_published" = ? and ("start_time" > ?)) union (select "id", "is_published", "created_at", \'news\' as type from "news" where "is_published" = ? and ("created_at" > ?)) order by case when (id = 3 and type="news" then 0 else 1 end), "created_at" asc limit 17',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals([true, $ts], $builder->bindings['where']);
             $this->assertEquals([true, $ts], $builder->bindings['union']);
 
@@ -6529,7 +6540,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results, $ts) {
             $this->assertEquals(
                 '(select "id", "start_time" as "created_at", \'video\' as type from "videos" where ("start_time" < ?)) union (select "id", "created_at", \'news\' as type from "news" where ("created_at" < ?)) order by "created_at" desc limit 17',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals([$ts], $builder->bindings['where']);
             $this->assertEquals([$ts], $builder->bindings['union']);
 
@@ -6576,7 +6588,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results, $ts) {
             $this->assertEquals(
                 '(select "id", "start_time" as "created_at", \'video\' as type from "videos" where ("start_time" < ? or ("start_time" = ? and ("id" > ?)))) union (select "id", "created_at", \'news\' as type from "news" where ("created_at" < ? or ("created_at" = ? and ("id" > ?)))) order by "created_at" desc, "id" asc limit 17',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals([$ts, $ts, 1], $builder->bindings['where']);
             $this->assertEquals([$ts, $ts, 1], $builder->bindings['union']);
 
@@ -6625,7 +6638,8 @@ SQL;
         $builder->shouldReceive('get')->once()->andReturnUsing(function () use ($builder, $results, $ts) {
             $this->assertEquals(
                 '(select "id", "start_time" as "created_at", \'video\' as type from "videos" where ("start_time" > ?)) union (select "id", "created_at", \'news\' as type from "news" where ("created_at" > ?)) union (select "id", "init_at" as "created_at", \'podcast\' as type from "podcasts" where ("init_at" > ?)) order by "created_at" asc limit 17',
-                $builder->toSql());
+                $builder->toSql()
+            );
             $this->assertEquals([$ts], $builder->bindings['where']);
             $this->assertEquals([$ts, $ts], $builder->bindings['union']);
 
@@ -6649,8 +6663,7 @@ SQL;
     {
         $builder = $this->getBuilder();
         $builder->select('*')->from('orders')->where(
-            new class() implements ConditionExpression
-            {
+            new class () implements ConditionExpression {
                 public function getValue(\Illuminate\Database\Grammar $grammar)
                 {
                     return '1 = 1';
@@ -7338,7 +7351,7 @@ SQL;
     {
         $connection = $this->getConnection(prefix: $prefix);
         $grammar = new MySqlGrammar($connection);
-        $processor = new MySqlProcessor;
+        $processor = new MySqlProcessor();
 
         return new Builder($connection, $grammar, $processor);
     }
@@ -7347,7 +7360,7 @@ SQL;
     {
         $connection = $this->getConnection(prefix: $prefix);
         $grammar = new PostgresGrammar($connection);
-        $processor = new PostgresProcessor;
+        $processor = new PostgresProcessor();
 
         return new Builder($connection, $grammar, $processor);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Aws\DynamoDb\DynamoDbClient;
@@ -74,13 +76,15 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerManager()
     {
-        $this->app->singleton('queue', 
+        $this->app->singleton(
+            'queue',
             // Once we have an instance of the queue manager, we will register the various
             // resolvers for the queue connectors. These connectors are responsible for
             // creating the classes that accept queue configs and instantiate queues.
-            fn($app) => tap(new QueueManager($app), function ($manager): void {
-            $this->registerConnectors($manager);
-        }));
+            fn ($app) => tap(new QueueManager($app), function ($manager): void {
+                $this->registerConnectors($manager);
+            })
+        );
     }
 
     /**
@@ -90,7 +94,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerConnection()
     {
-        $this->app->singleton('queue.connection', fn($app) => $app['queue']->connection());
+        $this->app->singleton('queue.connection', fn ($app) => $app['queue']->connection());
     }
 
     /**
@@ -113,7 +117,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerNullConnector($manager)
     {
-        $manager->addConnector('null', fn() => new NullConnector);
+        $manager->addConnector('null', fn (): \Illuminate\Queue\Connectors\NullConnector => new NullConnector());
     }
 
     /**
@@ -124,7 +128,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerSyncConnector($manager)
     {
-        $manager->addConnector('sync', fn() => new SyncConnector);
+        $manager->addConnector('sync', fn (): \Illuminate\Queue\Connectors\SyncConnector => new SyncConnector());
     }
 
     /**
@@ -135,7 +139,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerDeferredConnector($manager)
     {
-        $manager->addConnector('deferred', fn() => new DeferredConnector);
+        $manager->addConnector('deferred', fn (): \Illuminate\Queue\Connectors\DeferredConnector => new DeferredConnector());
     }
 
     /**
@@ -146,7 +150,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerBackgroundConnector($manager)
     {
-        $manager->addConnector('background', fn() => new BackgroundConnector);
+        $manager->addConnector('background', fn (): \Illuminate\Queue\Connectors\BackgroundConnector => new BackgroundConnector());
     }
 
     /**
@@ -157,7 +161,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerFailoverConnector($manager)
     {
-        $manager->addConnector('failover', fn() => new FailoverConnector(
+        $manager->addConnector('failover', fn (): \Illuminate\Queue\Connectors\FailoverConnector => new FailoverConnector(
             $manager,
             $this->app->make(EventDispatcher::class)
         ));
@@ -171,7 +175,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerDatabaseConnector($manager)
     {
-        $manager->addConnector('database', fn() => new DatabaseConnector($this->app['db']));
+        $manager->addConnector('database', fn (): \Illuminate\Queue\Connectors\DatabaseConnector => new DatabaseConnector($this->app['db']));
     }
 
     /**
@@ -182,7 +186,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerRedisConnector($manager)
     {
-        $manager->addConnector('redis', fn() => new RedisConnector($this->app['redis']));
+        $manager->addConnector('redis', fn (): \Illuminate\Queue\Connectors\RedisConnector => new RedisConnector($this->app['redis']));
     }
 
     /**
@@ -193,7 +197,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerBeanstalkdConnector($manager)
     {
-        $manager->addConnector('beanstalkd', fn() => new BeanstalkdConnector);
+        $manager->addConnector('beanstalkd', fn (): \Illuminate\Queue\Connectors\BeanstalkdConnector => new BeanstalkdConnector());
     }
 
     /**
@@ -204,7 +208,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerSqsConnector($manager)
     {
-        $manager->addConnector('sqs', fn() => new SqsConnector);
+        $manager->addConnector('sqs', fn (): \Illuminate\Queue\Connectors\SqsConnector => new SqsConnector());
     }
 
     /**
@@ -215,7 +219,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
     protected function registerWorker()
     {
         $this->app->singleton('queue.worker', function (array $app): \Illuminate\Queue\Worker {
-            $isDownForMaintenance = (fn() => $this->app->isDownForMaintenance());
+            $isDownForMaintenance = (fn () => $this->app->isDownForMaintenance());
 
             $resetScope = function () use ($app): void {
                 if (method_exists($app['log'], 'flushSharedContext')) {
@@ -257,7 +261,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerListener()
     {
-        $this->app->singleton('queue.listener', fn($app) => new Listener($app->basePath()));
+        $this->app->singleton('queue.listener', fn ($app): \Illuminate\Queue\Listener => new Listener($app->basePath()));
     }
 
     /**
@@ -267,12 +271,12 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerFailedJobServices()
     {
-        $this->app->singleton('queue.failer', function (array $app) {
+        $this->app->singleton('queue.failer', function (array $app): \Illuminate\Queue\Failed\NullFailedJobProvider|\Illuminate\Queue\Failed\FileFailedJobProvider|\Illuminate\Queue\Failed\DynamoDbFailedJobProvider|\Illuminate\Queue\Failed\DatabaseUuidFailedJobProvider|\Illuminate\Queue\Failed\DatabaseFailedJobProvider {
             $config = $app['config']['queue.failed'];
 
             if (array_key_exists('driver', $config) &&
                 (is_null($config['driver']) || $config['driver'] === 'null')) {
-                return new NullFailedJobProvider;
+                return new NullFailedJobProvider();
             }
             if (isset($config['driver']) && $config['driver'] === 'file') {
                 return new FileFailedJobProvider(
@@ -291,7 +295,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
             if (isset($config['table'])) {
                 return $this->databaseFailedJobProvider($config);
             }
-            return new NullFailedJobProvider;
+            return new NullFailedJobProvider();
         });
     }
 
@@ -301,7 +305,9 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
     protected function databaseFailedJobProvider(array $config): \Illuminate\Queue\Failed\DatabaseFailedJobProvider
     {
         return new DatabaseFailedJobProvider(
-            $this->app['db'], $config['database'], $config['table']
+            $this->app['db'],
+            $config['database'],
+            $config['table']
         );
     }
 
@@ -311,7 +317,9 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
     protected function databaseUuidFailedJobProvider(array $config): \Illuminate\Queue\Failed\DatabaseUuidFailedJobProvider
     {
         return new DatabaseUuidFailedJobProvider(
-            $this->app['db'], $config['database'], $config['table']
+            $this->app['db'],
+            $config['database'],
+            $config['table']
         );
     }
 

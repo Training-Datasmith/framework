@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Http;
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -25,9 +27,9 @@ class HttpJsonResponseTest extends TestCase
     public static function setAndRetrieveDataProvider()
     {
         return [
-            'Jsonable data' => [new JsonResponseTestJsonableObject],
-            'JsonSerializable data' => [new JsonResponseTestJsonSerializeObject],
-            'Arrayable data' => [new JsonResponseTestArrayableObject],
+            'Jsonable data' => [new JsonResponseTestJsonableObject()],
+            'JsonSerializable data' => [new JsonResponseTestJsonSerializeObject()],
+            'Arrayable data' => [new JsonResponseTestArrayableObject()],
             'Array data' => [['foo' => 'bar']],
             'stdClass data' => [(object) ['foo' => 'bar']],
         ];
@@ -35,11 +37,11 @@ class HttpJsonResponseTest extends TestCase
 
     public function testGetOriginalContent()
     {
-        $response = new JsonResponse(new JsonResponseTestArrayableObject);
+        $response = new JsonResponse(new JsonResponseTestArrayableObject());
         $this->assertInstanceOf(JsonResponseTestArrayableObject::class, $response->getOriginalContent());
 
-        $response = new JsonResponse;
-        $response->setData(new JsonResponseTestArrayableObject);
+        $response = new JsonResponse();
+        $response->setData(new JsonResponseTestArrayableObject());
         $this->assertInstanceOf(JsonResponseTestArrayableObject::class, $response->getOriginalContent());
     }
 
@@ -86,8 +88,8 @@ class HttpJsonResponseTest extends TestCase
         $resource = tmpfile();
 
         // Recursion can't be encoded
-        $recursiveObject = new stdClass;
-        $objectB = new stdClass;
+        $recursiveObject = new stdClass();
+        $objectB = new stdClass();
         $recursiveObject->b = $objectB;
         $objectB->a = $recursiveObject;
 

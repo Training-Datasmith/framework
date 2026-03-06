@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema\Grammars;
 
 use Illuminate\Database\Query\Expression;
@@ -221,7 +223,8 @@ class PostgresGrammar extends Grammar
      */
     public function compileCreate(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('%s table %s (%s)',
+        return sprintf(
+            '%s table %s (%s)',
             $blueprint->temporary ? 'create temporary' : 'create',
             $this->wrapTable($blueprint),
             implode(', ', $this->getColumns($blueprint))
@@ -233,7 +236,8 @@ class PostgresGrammar extends Grammar
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('alter table %s add column %s',
+        return sprintf(
+            'alter table %s add column %s',
             $this->wrapTable($blueprint),
             $this->getColumn($blueprint, $command->column)
         );
@@ -278,7 +282,8 @@ class PostgresGrammar extends Grammar
             }
         }
 
-        return sprintf('alter table %s %s',
+        return sprintf(
+            'alter table %s %s',
             $this->wrapTable($blueprint),
             implode(', ', $this->prefixArray('alter column '.$this->wrap($column), $changes))
         );
@@ -308,7 +313,8 @@ class PostgresGrammar extends Grammar
         }
 
         if ($command->online || $command->algorithm) {
-            $createIndexSql = sprintf('create unique index %s%s on %s%s (%s)',
+            $createIndexSql = sprintf(
+                'create unique index %s%s on %s%s (%s)',
                 $command->online ? 'concurrently ' : '',
                 $this->wrap($command->index),
                 $this->wrapTable($blueprint),
@@ -316,7 +322,8 @@ class PostgresGrammar extends Grammar
                 $this->columnize($command->columns)
             );
 
-            $sql = sprintf('alter table %s add constraint %s unique using index %s',
+            $sql = sprintf(
+                'alter table %s add constraint %s unique using index %s',
                 $this->wrapTable($blueprint),
                 $this->wrap($command->index),
                 $this->wrap($command->index)
@@ -347,7 +354,8 @@ class PostgresGrammar extends Grammar
      */
     public function compileIndex(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('create index %s%s on %s%s (%s)',
+        return sprintf(
+            'create index %s%s on %s%s (%s)',
             $command->online ? 'concurrently ' : '',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
@@ -366,9 +374,10 @@ class PostgresGrammar extends Grammar
     {
         $language = $command->language ?: 'english';
 
-        $columns = array_map(fn($column) => "to_tsvector({$this->quoteString($language)}, {$this->wrap($column)})", $command->columns);
+        $columns = array_map(fn ($column): string => "to_tsvector({$this->quoteString($language)}, {$this->wrap($column)})", $command->columns);
 
-        return sprintf('create index %s%s on %s using gin ((%s))',
+        return sprintf(
+            'create index %s%s on %s using gin ((%s))',
             $command->online ? 'concurrently ' : '',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
@@ -378,10 +387,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a spatial index key command.
-     *
-     * @return string
      */
-    public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
+    public function compileSpatialIndex(Blueprint $blueprint, Fluent $command): string
     {
         $command->algorithm = 'gist';
 
@@ -394,10 +401,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a vector index key command.
-     *
-     * @return string
      */
-    public function compileVectorIndex(Blueprint $blueprint, Fluent $command)
+    public function compileVectorIndex(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileIndexWithOperatorClass($blueprint, $command);
     }
@@ -409,7 +414,8 @@ class PostgresGrammar extends Grammar
     {
         $columns = $this->columnizeWithOperatorClass($command->columns, $command->operatorClass);
 
-        return sprintf('create index %s%s on %s%s (%s)',
+        return sprintf(
+            'create index %s%s on %s%s (%s)',
             $command->online ? 'concurrently ' : '',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
@@ -425,7 +431,7 @@ class PostgresGrammar extends Grammar
      */
     protected function columnizeWithOperatorClass(array $columns, $operatorClass): string
     {
-        return implode(', ', array_map(fn($column) => $this->wrap($column).' '.$operatorClass, $columns));
+        return implode(', ', array_map(fn ($column): string => $this->wrap($column).' '.$operatorClass, $columns));
     }
 
     /**
@@ -549,20 +555,16 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a drop fulltext index command.
-     *
-     * @return string
      */
-    public function compileDropFullText(Blueprint $blueprint, Fluent $command)
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileDropIndex($blueprint, $command);
     }
 
     /**
      * Compile a drop spatial index command.
-     *
-     * @return string
      */
-    public function compileDropSpatialIndex(Blueprint $blueprint, Fluent $command)
+    public function compileDropSpatialIndex(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileDropIndex($blueprint, $command);
     }
@@ -592,7 +594,8 @@ class PostgresGrammar extends Grammar
      */
     public function compileRenameIndex(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('alter index %s rename to %s',
+        return sprintf(
+            'alter index %s rename to %s',
             $this->wrap($command->from),
             $this->wrap($command->to)
         );
@@ -622,7 +625,8 @@ class PostgresGrammar extends Grammar
     public function compileComment(Blueprint $blueprint, Fluent $command)
     {
         if (! is_null($comment = $command->column->comment) || $command->column->change) {
-            return sprintf('comment on column %s.%s is %s',
+            return sprintf(
+                'comment on column %s.%s is %s',
                 $this->wrapTable($blueprint),
                 $this->wrap($command->column->name),
                 is_null($comment) ? 'NULL' : "'".str_replace("'", "''", $comment)."'"
@@ -635,7 +639,8 @@ class PostgresGrammar extends Grammar
      */
     public function compileTableComment(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('comment on table %s is %s',
+        return sprintf(
+            'comment on table %s is %s',
             $this->wrapTable($blueprint),
             "'".str_replace("'", "''", $command->comment)."'"
         );
@@ -729,20 +734,16 @@ class PostgresGrammar extends Grammar
 
     /**
      * Create the column definition for a medium integer type.
-     *
-     * @return string
      */
-    protected function typeMediumInteger(Fluent $column)
+    protected function typeMediumInteger(Fluent $column): string
     {
         return $this->typeInteger($column);
     }
 
     /**
      * Create the column definition for a tiny integer type.
-     *
-     * @return string
      */
-    protected function typeTinyInteger(Fluent $column)
+    protected function typeTinyInteger(Fluent $column): string
     {
         return $this->typeSmallInteger($column);
     }
@@ -841,20 +842,16 @@ class PostgresGrammar extends Grammar
 
     /**
      * Create the column definition for a date-time type.
-     *
-     * @return string
      */
-    protected function typeDateTime(Fluent $column)
+    protected function typeDateTime(Fluent $column): string
     {
         return $this->typeTimestamp($column);
     }
 
     /**
      * Create the column definition for a date-time (with time zone) type.
-     *
-     * @return string
      */
-    protected function typeDateTimeTz(Fluent $column)
+    protected function typeDateTimeTz(Fluent $column): string
     {
         return $this->typeTimestampTz($column);
     }
@@ -901,10 +898,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Create the column definition for a year type.
-     *
-     * @return string
      */
-    protected function typeYear(Fluent $column)
+    protected function typeYear(Fluent $column): string
     {
         if ($column->useCurrent) {
             $column->default(new Expression('EXTRACT(YEAR FROM CURRENT_DATE)'));
@@ -951,7 +946,8 @@ class PostgresGrammar extends Grammar
     protected function typeGeometry(Fluent $column): string
     {
         if ($column->subtype) {
-            return sprintf('geometry(%s%s)',
+            return sprintf(
+                'geometry(%s%s)',
                 strtolower($column->subtype),
                 $column->srid ? ','.$column->srid : ''
             );
@@ -966,7 +962,8 @@ class PostgresGrammar extends Grammar
     protected function typeGeography(Fluent $column): string
     {
         if ($column->subtype) {
-            return sprintf('geography(%s%s)',
+            return sprintf(
+                'geography(%s%s)',
                 strtolower($column->subtype),
                 $column->srid ? ','.$column->srid : ''
             );

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Passwords;
 
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;

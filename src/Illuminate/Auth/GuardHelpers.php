@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -33,7 +35,7 @@ trait GuardHelpers
      */
     public function authenticate()
     {
-        return $this->user() ?? throw new AuthenticationException;
+        return $this->user() ?? throw new AuthenticationException();
     }
 
     /**

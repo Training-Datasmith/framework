@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console;
 
 use Illuminate\Bus\Queueable;
@@ -55,7 +57,9 @@ class UniqueJobSchedulingTest extends TestCase
 
 class TestJob implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use Dispatchable;
 }
 
 class UniqueTestJob extends TestJob implements ShouldBeUnique

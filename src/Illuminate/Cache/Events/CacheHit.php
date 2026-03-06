@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\Events;
 
 class CacheHit extends CacheEvent
@@ -14,7 +16,7 @@ class CacheHit extends CacheEvent
     public function __construct($storeName, $key, /**
      * The value that was retrieved.
      */
-    public $value, array $tags = [])
+        public $value, array $tags = [])
     {
         parent::__construct($storeName, $key, $tags);
     }

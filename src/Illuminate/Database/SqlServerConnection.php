@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use Closure;
@@ -131,6 +133,6 @@ class SqlServerConnection extends Connection
      */
     protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\Processor
     {
-        return new SqlServerProcessor;
+        return new SqlServerProcessor();
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use ArrayIterator;
@@ -60,7 +62,7 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
         // proper error response with the correct headers on the response string.
         return array_values(array_filter(
             $methods,
-            fn(string $method) => ! is_null($this->matchAgainstRoutes($this->get($method), $request, false))
+            fn (string $method): bool => ! is_null($this->matchAgainstRoutes($this->get($method), $request, false))
         ));
     }
 
@@ -103,7 +105,7 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
     protected function getRouteForMethods($request, array $methods)
     {
         if ($request->isMethod('OPTIONS')) {
-            return (new Route('OPTIONS', $request->path(), fn() => new Response('', 200, ['Allow' => implode(',', $methods)])))->bind($request);
+            return (new Route('OPTIONS', $request->path(), fn (): \Illuminate\Http\Response => new Response('', 200, ['Allow' => implode(',', $methods)])))->bind($request);
         }
 
         $this->requestMethodNotAllowed($request, $methods, $request->method());
@@ -197,7 +199,7 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
      */
     public function toSymfonyRouteCollection()
     {
-        $symfonyRoutes = new SymfonyRouteCollection;
+        $symfonyRoutes = new SymfonyRouteCollection();
 
         $fallbackRoutes = [];
 

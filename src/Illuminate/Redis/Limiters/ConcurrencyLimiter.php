@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Limiters;
 
 use Illuminate\Contracts\Redis\LimiterTimeoutException;
@@ -34,8 +36,7 @@ class ConcurrencyLimiter
          * The number of seconds a slot should be maintained.
          */
         protected $releaseAfter
-    )
-    {
+    ) {
     }
 
     /**
@@ -57,7 +58,7 @@ class ConcurrencyLimiter
 
         while (! $slot = $this->acquire($id)) {
             if (time() - $timeout >= $starting) {
-                throw new LimiterTimeoutException;
+                throw new LimiterTimeoutException();
             }
 
             Sleep::usleep($sleep * 1000);
@@ -86,7 +87,7 @@ class ConcurrencyLimiter
      */
     protected function acquire($id)
     {
-        $slots = array_map(fn($i) => $this->name.$i, range(1, $this->maxLocks));
+        $slots = array_map(fn ($i): string => $this->name.$i, range(1, $this->maxLocks));
 
         return $this->redis->eval(...array_merge(
             [$this->lockScript(), count($slots)],

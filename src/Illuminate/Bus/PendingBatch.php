@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Bus;
 
 use Closure;
@@ -8,13 +10,15 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Traits\Conditionable;
 use Laravel\SerializableClosure\SerializableClosure;
 use RuntimeException;
 use Throwable;
-use UnitEnum;
 
-use function Illuminate\Support\enum_value;
+use UnitEnum;
 
 class PendingBatch
 {
@@ -54,8 +58,9 @@ class PendingBatch
     public function __construct(/**
      * The IoC container instance.
      */
-    protected \Illuminate\Contracts\Container\Container $container, Collection $jobs)
-    {
+        protected \Illuminate\Contracts\Container\Container $container,
+        Collection $jobs
+    ) {
         $this->jobs = $jobs->filter()->values()->each(function (object|array $job): void {
             $this->ensureJobIsBatchable($job);
         });

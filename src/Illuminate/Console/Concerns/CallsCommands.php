@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Concerns;
 
 use Illuminate\Support\Collection;
@@ -36,7 +38,7 @@ trait CallsCommands
      */
     public function callSilent($command, array $arguments = [])
     {
-        return $this->runCommand($command, $arguments, new NullOutput);
+        return $this->runCommand($command, $arguments, new NullOutput());
     }
 
     /**
@@ -61,7 +63,8 @@ trait CallsCommands
         $arguments['command'] = $command;
 
         $result = $this->resolveCommand($command)->run(
-            $this->createInputFromArguments($arguments), $output
+            $this->createInputFromArguments($arguments),
+            $output
         );
 
         $this->restorePrompts();

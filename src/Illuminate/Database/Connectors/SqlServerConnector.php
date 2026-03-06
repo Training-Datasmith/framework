@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Connectors;
 
 use Illuminate\Support\Arr;
@@ -85,10 +87,8 @@ class SqlServerConnector extends Connector implements ConnectorInterface
 
     /**
      * Get the DSN string for a DbLib connection.
-     *
-     * @return string
      */
-    protected function getDblibDsn(array $config)
+    protected function getDblibDsn(array $config): string
     {
         return $this->buildConnectString('dblib', array_merge([
             'host' => $this->buildHostString($config, ':'),
@@ -108,10 +108,8 @@ class SqlServerConnector extends Connector implements ConnectorInterface
 
     /**
      * Get the DSN string for a SqlSrv connection.
-     *
-     * @return string
      */
-    protected function getSqlSrvDsn(array $config)
+    protected function getSqlSrvDsn(array $config): string
     {
         $arguments = [
             'Server' => $this->buildHostString($config, ','),
@@ -185,7 +183,7 @@ class SqlServerConnector extends Connector implements ConnectorInterface
      */
     protected function buildConnectString(string $driver, array $arguments): string
     {
-        return $driver.':'.implode(';', array_map(fn(int|string $key) => sprintf('%s=%s', $key, $arguments[$key]), array_keys($arguments)));
+        return $driver.':'.implode(';', array_map(fn (int|string $key): string => sprintf('%s=%s', $key, $arguments[$key]), array_keys($arguments)));
     }
 
     /**

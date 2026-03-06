@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications;
 
 class Action
@@ -19,7 +21,6 @@ class Action
          * The action URL.
          */
         public $url
-    )
-    {
+    ) {
     }
 }

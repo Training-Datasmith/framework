@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema\Grammars;
 
 use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Database\Concerns\CompilesJsonPaths;
 use Illuminate\Database\Grammar as BaseGrammar;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Fluent;
-use RuntimeException;
-use UnitEnum;
 
 use function Illuminate\Support\enum_value;
+
+use Illuminate\Support\Fluent;
+use RuntimeException;
+
+use UnitEnum;
 
 abstract class Grammar extends BaseGrammar
 {
@@ -45,7 +49,8 @@ abstract class Grammar extends BaseGrammar
      */
     public function compileCreateDatabase($name)
     {
-        return sprintf('create database %s',
+        return sprintf(
+            'create database %s',
             $this->wrapValue($name),
         );
     }
@@ -58,7 +63,8 @@ abstract class Grammar extends BaseGrammar
      */
     public function compileDropDatabaseIfExists($name)
     {
-        return sprintf('drop database if exists %s',
+        return sprintf(
+            'drop database if exists %s',
             $this->wrapValue($name)
         );
     }
@@ -81,7 +87,7 @@ abstract class Grammar extends BaseGrammar
      */
     public function compileTableExists($schema, $table): void
     {
-        //
+
     }
 
     /**
@@ -184,7 +190,8 @@ abstract class Grammar extends BaseGrammar
      */
     public function compileRenameColumn(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('alter table %s rename column %s to %s',
+        return sprintf(
+            'alter table %s rename column %s to %s',
             $this->wrapTable($blueprint),
             $this->wrap($command->from),
             $this->wrap($command->to)
@@ -237,7 +244,8 @@ abstract class Grammar extends BaseGrammar
         // We need to prepare several of the elements of the foreign key definition
         // before we can create the SQL, such as wrapping the tables and convert
         // an array of columns to comma-delimited strings for the SQL queries.
-        $sql = sprintf('alter table %s add constraint %s ',
+        $sql = sprintf(
+            'alter table %s add constraint %s ',
             $this->wrapTable($blueprint),
             $this->wrap($command->index)
         );
@@ -245,7 +253,8 @@ abstract class Grammar extends BaseGrammar
         // Once we have the initial portion of the SQL statement we will add on the
         // key name, table name, and referenced columns. These will complete the
         // main portion of the SQL statement and this SQL will almost be done.
-        $sql .= sprintf('foreign key (%s) references %s (%s)',
+        $sql .= sprintf(
+            'foreign key (%s) references %s (%s)',
             $this->columnize($command->columns),
             $this->wrapTable($command->on),
             $this->columnize((array) $command->references)
@@ -399,7 +408,7 @@ abstract class Grammar extends BaseGrammar
      */
     protected function getCommandsByName(Blueprint $blueprint, $name)
     {
-        return array_filter($blueprint->getCommands(), fn(\Illuminate\Support\Fluent $value) => $value->name == $name);
+        return array_filter($blueprint->getCommands(), fn (\Illuminate\Support\Fluent $value): bool => $value->name == $name);
     }
 
     /*
@@ -429,7 +438,7 @@ abstract class Grammar extends BaseGrammar
      */
     public function prefixArray($prefix, array $values)
     {
-        return array_map(fn(string $value) => $prefix.' '.$value, $values);
+        return array_map(fn (string $value): string => $prefix.' '.$value, $values);
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Failed;
 
 use Aws\DynamoDb\DynamoDbClient;
@@ -27,10 +29,10 @@ class DynamoDbFailedJobProvider implements FailedJobProviderInterface
     public function __construct(DynamoDbClient $dynamo, /**
      * The application name.
      */
-    protected $applicationName, /**
+        protected $applicationName, /**
      * The table name.
      */
-    protected $table)
+        protected $table)
     {
         $this->dynamo = $dynamo;
     }
@@ -100,14 +102,15 @@ class DynamoDbFailedJobProvider implements FailedJobProviderInterface
 
         return (new Collection($results['Items']))
             ->sortByDesc(fn ($result): int => (int) $result['failed_at']['N'])
-            ->map(fn($result) => (object) [
+            ->map(fn ($result) => (object) [
                 'id' => $result['uuid']['S'],
                 'connection' => $result['connection']['S'],
                 'queue' => $result['queue']['S'],
                 'payload' => $result['payload']['S'],
                 'exception' => $result['exception']['S'],
                 'failed_at' => Carbon::createFromTimestamp(
-                    (int) $result['failed_at']['N'], date_default_timezone_get()
+                    (int) $result['failed_at']['N'],
+                    date_default_timezone_get()
                 )->format(DateTimeInterface::ISO8601),
             ])
             ->all();
@@ -140,7 +143,8 @@ class DynamoDbFailedJobProvider implements FailedJobProviderInterface
             'payload' => $result['Item']['payload']['S'],
             'exception' => $result['Item']['exception']['S'],
             'failed_at' => Carbon::createFromTimestamp(
-                (int) $result['Item']['failed_at']['N'], date_default_timezone_get()
+                (int) $result['Item']['failed_at']['N'],
+                date_default_timezone_get()
             )->format(DateTimeInterface::ISO8601),
         ];
     }

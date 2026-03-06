@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Middleware;
 
 use Closure;
@@ -29,8 +31,9 @@ class HandleCors
     public function __construct(/**
      * The container instance.
      */
-    protected \Illuminate\Contracts\Container\Container $container, CorsService $cors)
-    {
+        protected \Illuminate\Contracts\Container\Container $container,
+        CorsService $cors
+    ) {
         $this->cors = $cors;
     }
 
@@ -100,7 +103,7 @@ class HandleCors
     {
         $paths = $this->container['config']->get('cors.paths', []);
 
-        return $paths[$host] ?? array_filter($paths, fn($path) => is_string($path));
+        return $paths[$host] ?? array_filter($paths, is_string(...));
     }
 
     /**

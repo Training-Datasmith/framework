@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Bus;
 
 use Illuminate\Contracts\Cache\Repository as Cache;
@@ -14,8 +16,7 @@ class UniqueLock
          * The cache repository implementation.
          */
         protected \Illuminate\Contracts\Cache\Repository $cache
-    )
-    {
+    ) {
     }
 
     /**

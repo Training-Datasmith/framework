@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http;
 
 use ArrayAccess;
@@ -28,12 +30,12 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 {
-    use Concerns\CanBePrecognitive,
-        Concerns\InteractsWithContentTypes,
-        Concerns\InteractsWithFlashData,
-        Concerns\InteractsWithInput,
-        Conditionable,
-        Macroable;
+    use Concerns\CanBePrecognitive;
+    use Concerns\InteractsWithContentTypes;
+    use Concerns\InteractsWithFlashData;
+    use Concerns\InteractsWithInput;
+    use Conditionable;
+    use Macroable;
 
     /**
      * The decoded JSON content for the request.
@@ -220,7 +222,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     {
         $segments = explode('/', $this->decodedPath());
 
-        return array_values(array_filter($segments, fn($value) => $value !== ''));
+        return array_values(array_filter($segments, fn ($value): bool => $value !== ''));
     }
 
     /**
@@ -232,7 +234,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     public function is(...$patterns)
     {
         return (new Collection($patterns))
-            ->contains(fn ($pattern) => Str::is($pattern, $this->decodedPath()));
+            ->contains(fn ($pattern): bool => Str::is($pattern, $this->decodedPath()));
     }
 
     /**
@@ -255,7 +257,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     public function fullUrlIs(...$patterns)
     {
         return (new Collection($patterns))
-            ->contains(fn ($pattern) => Str::is($pattern, $this->fullUrl()));
+            ->contains(fn ($pattern): bool => Str::is($pattern, $this->fullUrl()));
     }
 
     /**
@@ -400,8 +402,9 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      */
     public function mergeIfMissing(array $input)
     {
-        return $this->merge((new Collection($input))
-            ->filter(fn ($value, $key) => $this->missing($key))
+        return $this->merge(
+            (new Collection($input))
+            ->filter(fn ($value, $key): bool => $this->missing($key))
             ->toArray()
         );
     }
@@ -474,7 +477,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      */
     public static function createFrom(self $from, $to = null)
     {
-        $request = $to ?: new static;
+        $request = $to ?: new static();
 
         $files = array_filter($from->files->all());
 
@@ -516,7 +519,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     {
         $newRequest = new static(
             $request->query->all(), $request->request->all(), $request->attributes->all(),
-            $request->cookies->all(), (new static)->filterFiles($request->files->all()) ?? [], $request->server->all()
+            $request->cookies->all(), (new static())->filterFiles($request->files->all()) ?? [], $request->server->all()
         );
 
         $newRequest->headers->replace($request->headers->all());
@@ -583,7 +586,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     {
         return $this->hasSession()
             ? $this->session
-            : throw new SessionNotFoundException;
+            : throw new SessionNotFoundException();
     }
 
     /**
@@ -697,7 +700,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     public function getUserResolver()
     {
         return $this->userResolver ?: function (): void {
-            //
+
         };
     }
 
@@ -721,7 +724,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     public function getRouteResolver()
     {
         return $this->routeResolver ?: function (): void {
-            //
+
         };
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -47,7 +49,7 @@ class ValidationServiceProvider extends ServiceProvider implements DeferrablePro
      */
     protected function registerPresenceVerifier()
     {
-        $this->app->singleton('validation.presence', fn($app) => new DatabasePresenceVerifier($app['db']));
+        $this->app->singleton('validation.presence', fn ($app): \Illuminate\Validation\DatabasePresenceVerifier => new DatabasePresenceVerifier($app['db']));
     }
 
     /**
@@ -57,7 +59,7 @@ class ValidationServiceProvider extends ServiceProvider implements DeferrablePro
      */
     protected function registerUncompromisedVerifier()
     {
-        $this->app->singleton(UncompromisedVerifier::class, fn($app) => new NotPwnedVerifier($app[HttpFactory::class]));
+        $this->app->singleton(UncompromisedVerifier::class, fn ($app): \Illuminate\Validation\NotPwnedVerifier => new NotPwnedVerifier($app[HttpFactory::class]));
     }
 
     /**

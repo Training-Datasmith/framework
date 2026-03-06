@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Http;
 
 use Exception;
@@ -63,7 +65,7 @@ class HttpClientTest extends TestCase
     {
         parent::setUp();
 
-        $this->factory = new Factory;
+        $this->factory = new Factory();
 
         RequestException::truncate();
     }
@@ -607,8 +609,7 @@ class HttpClientTest extends TestCase
     {
         $this->factory->fake();
 
-        $this->factory->asJson()->{$method}('http://foo.com/form', new class implements JsonSerializable
-        {
+        $this->factory->asJson()->{$method}('http://foo.com/form', new class () implements JsonSerializable {
             public function jsonSerialize(): mixed
             {
                 return [
@@ -630,8 +631,7 @@ class HttpClientTest extends TestCase
     {
         $this->factory->fake();
 
-        $this->factory->asJson()->{$method}('http://foo.com/form', new class implements JsonSerializable, Arrayable
-        {
+        $this->factory->asJson()->{$method}('http://foo.com/form', new class () implements JsonSerializable, Arrayable {
             public function jsonSerialize(): mixed
             {
                 return [
@@ -1003,7 +1003,8 @@ class HttpClientTest extends TestCase
         $this->factory->fakeSequence()->pushStatus(200);
 
         $response = $this->factory->withCookies(
-            ['foo' => 'bar'], 'https://laravel.com'
+            ['foo' => 'bar'],
+            'https://laravel.com'
         )->get('https://laravel.com');
 
         $this->assertCount(1, $response->cookies()->toArray());
@@ -2602,7 +2603,7 @@ class HttpClientTest extends TestCase
     public function testExceptionThrowInMiddlewareAllowsRetry()
     {
         $middleware = Middleware::mapRequest(function (RequestInterface $request) {
-            throw new RuntimeException;
+            throw new RuntimeException();
         });
 
         $this->expectException(RuntimeException::class);
@@ -3958,7 +3959,7 @@ class HttpClientTest extends TestCase
 
     public function testItCanReturnCustomResponseClass(): void
     {
-        $factory = new CustomFactory;
+        $factory = new CustomFactory();
 
         $factory->fake([
             '*' => $factory::response('expected content'),
@@ -3972,7 +3973,7 @@ class HttpClientTest extends TestCase
 
     public function testItCanHaveGlobalDefaultValues()
     {
-        $factory = new Factory;
+        $factory = new Factory();
         $timeout = null;
         $allowRedirects = null;
         $headers = null;
@@ -4459,8 +4460,7 @@ class CustomFactory extends Factory
 {
     protected function newPendingRequest()
     {
-        return new class extends PendingRequest
-        {
+        return new class () extends PendingRequest {
             protected function newResponse($response)
             {
                 return new TestResponse($response);

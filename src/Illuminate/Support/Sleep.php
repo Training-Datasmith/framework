@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Carbon\CarbonInterval;
@@ -114,9 +116,8 @@ class Sleep
      * Sleep for the given number of microseconds.
      *
      * @param  int  $duration
-     * @return static
      */
-    public static function usleep($duration)
+    public static function usleep($duration): static
     {
         return (new static($duration))->microseconds();
     }
@@ -125,9 +126,8 @@ class Sleep
      * Sleep for the given number of seconds.
      *
      * @param  int|float  $duration
-     * @return static
      */
-    public static function sleep($duration)
+    public static function sleep($duration): static
     {
         return (new static($duration))->seconds();
     }
@@ -175,7 +175,7 @@ class Sleep
      *
      * @return $this
      */
-    public function minute()
+    public function minute(): static
     {
         return $this->minutes();
     }
@@ -197,7 +197,7 @@ class Sleep
      *
      * @return $this
      */
-    public function second()
+    public function second(): static
     {
         return $this->seconds();
     }
@@ -219,7 +219,7 @@ class Sleep
      *
      * @return $this
      */
-    public function millisecond()
+    public function millisecond(): static
     {
         return $this->milliseconds();
     }
@@ -241,7 +241,7 @@ class Sleep
      *
      * @return $this
      */
-    public function microsecond()
+    public function microsecond(): static
     {
         return $this->microseconds();
     }
@@ -509,7 +509,7 @@ class Sleep
      * @param  (\Closure($this): bool)|bool  $condition
      * @return $this
      */
-    public function unless($condition)
+    public function unless($condition): static
     {
         return $this->when(! value($condition, $this));
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use Illuminate\Auth\Access\Gate;
@@ -54,7 +56,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected function registerAccessGate()
     {
-        $this->app->singleton(GateContract::class, fn($app) => new Gate($app, fn (): mixed => call_user_func($app['auth']->userResolver())));
+        $this->app->singleton(GateContract::class, fn ($app): \Illuminate\Auth\Access\Gate => new Gate($app, fn (): mixed => call_user_func($app['auth']->userResolver())));
     }
 
     /**
@@ -64,7 +66,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected function registerRequirePassword()
     {
-        $this->app->bind(RequirePassword::class, fn($app) => new RequirePassword(
+        $this->app->bind(RequirePassword::class, fn ($app): \Illuminate\Auth\Middleware\RequirePassword => new RequirePassword(
             $app[ResponseFactory::class],
             $app[UrlGenerator::class],
             $app['config']->get('auth.password_timeout')
@@ -79,7 +81,7 @@ class AuthServiceProvider extends ServiceProvider
     protected function registerRequestRebindHandler()
     {
         $this->app->rebinding('request', function ($app, $request): void {
-            $request->setUserResolver(fn($guard = null) => call_user_func($app['auth']->userResolver(), $guard));
+            $request->setUserResolver(fn ($guard = null): mixed => call_user_func($app['auth']->userResolver(), $guard));
         });
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Closure;
@@ -78,8 +80,7 @@ class Factory implements FactoryContract
          * The IoC container instance.
          */
         protected ?\Illuminate\Contracts\Container\Container $container = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -90,7 +91,10 @@ class Factory implements FactoryContract
     public function make(array $data, array $rules, array $messages = [], array $attributes = [])
     {
         $validator = $this->resolve(
-            $data, $rules, $messages, $attributes
+            $data,
+            $rules,
+            $messages,
+            $attributes
         );
 
         // The presence verifier is responsible for checking the unique and exists data
@@ -245,10 +249,8 @@ class Factory implements FactoryContract
 
     /**
      * Get the Translator implementation.
-     *
-     * @return \Illuminate\Contracts\Translation\Translator
      */
-    public function getTranslator()
+    public function getTranslator(): \Illuminate\Contracts\Translation\Translator
     {
         return $this->translator;
     }
@@ -273,10 +275,8 @@ class Factory implements FactoryContract
 
     /**
      * Get the container instance used by the validation factory.
-     *
-     * @return \Illuminate\Contracts\Container\Container|null
      */
-    public function getContainer()
+    public function getContainer(): ?\Illuminate\Contracts\Container\Container
     {
         return $this->container;
     }

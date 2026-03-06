@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Access\Events;
 
 class GateEvaluated
@@ -29,7 +31,6 @@ class GateEvaluated
          * The arguments given during evaluation.
          */
         public $arguments
-    )
-    {
+    ) {
     }
 }

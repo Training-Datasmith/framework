@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Testing;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -10,7 +12,9 @@ use Illuminate\Testing\Concerns\TestViews;
 
 class ParallelTestingServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    use TestCaches, TestDatabases, TestViews;
+    use TestCaches;
+    use TestDatabases;
+    use TestViews;
 
     /**
      * Boot the application's service providers.
@@ -30,7 +34,7 @@ class ParallelTestingServiceProvider extends ServiceProvider implements Deferrab
     public function register(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->app->singleton(ParallelTesting::class, fn() => new ParallelTesting($this->app));
+            $this->app->singleton(ParallelTesting::class, fn (): \Illuminate\Testing\ParallelTesting => new ParallelTesting($this->app));
         }
     }
 }

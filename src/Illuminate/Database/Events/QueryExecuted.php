@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Events;
 
 class QueryExecuted
@@ -23,29 +25,27 @@ class QueryExecuted
     public function __construct(/**
      * The SQL query that was executed.
      */
-    public $sql, /**
+        public $sql, /**
      * The array of query bindings.
      */
-    public $bindings, /**
+        public $bindings, /**
      * The number of milliseconds it took to execute the query.
      */
-    public $time, /**
+        public $time, /**
      * The database connection instance.
      */
-    public $connection, /**
+        public $connection, /**
      * The PDO read / write type for the executed query.
      */
-    public $readWriteType = null)
-    {
+        public $readWriteType = null
+    ) {
         $this->connectionName = $this->connection->getName();
     }
 
     /**
      * Get the raw SQL representation of the query with embedded bindings.
-     *
-     * @return string
      */
-    public function toRawSql()
+    public function toRawSql(): string
     {
         return $this->connection
             ->query()

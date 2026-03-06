@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Jobs;
 
 use Aws\Sqs\SqsClient;
@@ -24,7 +26,7 @@ class SqsJob extends Job implements JobContract
     public function __construct(Container $container, SqsClient $sqs, /**
      * The Amazon SQS job instance.
      */
-    protected array $job, $connectionName, $queue)
+        protected array $job, $connectionName, $queue)
     {
         $this->sqs = $sqs;
         $this->queue = $queue;
@@ -100,10 +102,8 @@ class SqsJob extends Job implements JobContract
 
     /**
      * Get the underlying raw SQS job.
-     *
-     * @return array
      */
-    public function getSqsJob()
+    public function getSqsJob(): array
     {
         return $this->job;
     }

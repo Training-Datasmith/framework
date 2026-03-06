@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Http;
 
 use Illuminate\Auth\Access\AuthorizationException;
@@ -216,7 +218,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException;
+        throw new AuthorizationException();
     }
 
     /**

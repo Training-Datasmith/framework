@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Http\Client\Response;
 
 use function PHPStan\Testing\assertType;

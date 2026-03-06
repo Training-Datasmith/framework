@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Closure;
@@ -85,7 +87,7 @@ abstract class Relation implements BuilderContract
     public function __construct(Builder $query, /**
      * The parent model instance.
      */
-    protected \Illuminate\Database\Eloquent\Model $parent)
+        protected \Illuminate\Database\Eloquent\Model $parent)
     {
         $this->query = $query;
         $this->related = $query->getModel();
@@ -186,7 +188,7 @@ abstract class Relation implements BuilderContract
         $count = $result->count();
 
         if ($count === 0) {
-            throw (new ModelNotFoundException)->setModel($this->related::class);
+            throw (new ModelNotFoundException())->setModel($this->related::class);
         }
 
         if ($count > 1) {
@@ -241,7 +243,9 @@ abstract class Relation implements BuilderContract
     public function getRelationExistenceCountQuery(Builder $query, Builder $parentQuery)
     {
         return $this->getRelationExistenceQuery(
-            $query, $parentQuery, new Expression('count(*)')
+            $query,
+            $parentQuery,
+            new Expression('count(*)')
         )->setBindings([], 'select');
     }
 
@@ -258,7 +262,9 @@ abstract class Relation implements BuilderContract
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         return $query->select($columns)->whereColumn(
-            $this->getQualifiedParentKeyName(), '=', $this->getExistenceCompareKey()
+            $this->getQualifiedParentKeyName(),
+            '=',
+            $this->getExistenceCompareKey()
         );
     }
 
@@ -282,7 +288,7 @@ abstract class Relation implements BuilderContract
      */
     protected function getKeys(array $models, $key = null)
     {
-        return (new BaseCollection($models))->map(fn($value) => $key ? $value->getAttribute($key) : $value->getKey())->values()->unique(null, true)->sort()->all();
+        return (new BaseCollection($models))->map(fn ($value) => $key ? $value->getAttribute($key) : $value->getKey())->values()->unique(null, true)->sort()->all();
     }
 
     /**
@@ -480,7 +486,7 @@ abstract class Relation implements BuilderContract
             return $models;
         }
 
-        return array_combine(array_map(fn(string $model) => (new $model)->getTable(), $models), $models);
+        return array_combine(array_map(fn (string $model) => (new $model())->getTable(), $models), $models);
     }
 
     /**
@@ -507,7 +513,6 @@ abstract class Relation implements BuilderContract
     /**
      * Handle dynamic method calls to the relationship.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

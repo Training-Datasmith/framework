@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\JsonSchema;
 
 use Illuminate\JsonSchema\Types\StringType;
@@ -9,7 +11,7 @@ class StringTypeTest extends TestCase
 {
     public function test_it_sets_min_length()
     {
-        $type = (new StringType)->min(5);
+        $type = (new StringType())->min(5);
 
         $this->assertEquals([
             'type' => 'string',
@@ -19,7 +21,7 @@ class StringTypeTest extends TestCase
 
     public function test_it_sets_max_length()
     {
-        $type = (new StringType)->description('User handle')->max(10);
+        $type = (new StringType())->description('User handle')->max(10);
 
         $this->assertEquals([
             'type' => 'string',
@@ -30,7 +32,7 @@ class StringTypeTest extends TestCase
 
     public function test_it_sets_pattern()
     {
-        $type = (new StringType)->default('foo')->pattern('^foo.*$');
+        $type = (new StringType())->default('foo')->pattern('^foo.*$');
 
         $this->assertEquals([
             'type' => 'string',
@@ -41,7 +43,7 @@ class StringTypeTest extends TestCase
 
     public function test_it_sets_format()
     {
-        $type = (new StringType)->default('foo')->format('date');
+        $type = (new StringType())->default('foo')->format('date');
 
         $this->assertEquals([
             'type' => 'string',
@@ -52,7 +54,7 @@ class StringTypeTest extends TestCase
 
     public function test_it_sets_enum()
     {
-        $type = (new StringType)->enum(['draft', 'published']);
+        $type = (new StringType())->enum(['draft', 'published']);
 
         $this->assertEquals([
             'type' => 'string',

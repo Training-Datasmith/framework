@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth\Passwords;
 
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
@@ -28,10 +30,8 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
 
     /**
      * Create a new token record.
-     *
-     * @return string
      */
-    public function create(CanResetPasswordContract $user)
+    public function create(CanResetPasswordContract $user): string
     {
         $email = $user->getEmailForPasswordReset();
 
@@ -65,7 +65,7 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
      */
     protected function getPayload($email, #[\SensitiveParameter] $token): array
     {
-        return ['email' => $email, 'token' => $this->hasher->make($token), 'created_at' => new Carbon];
+        return ['email' => $email, 'token' => $this->hasher->make($token), 'created_at' => new Carbon()];
     }
 
     /**
@@ -76,7 +76,8 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
     public function exists(CanResetPasswordContract $user, #[\SensitiveParameter] $token): bool
     {
         $record = (array) $this->getTable()->where(
-            'email', $user->getEmailForPasswordReset()
+            'email',
+            $user->getEmailForPasswordReset()
         )->first();
 
         return $record &&
@@ -101,7 +102,8 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
     public function recentlyCreatedToken(CanResetPasswordContract $user): bool
     {
         $record = (array) $this->getTable()->where(
-            'email', $user->getEmailForPasswordReset()
+            'email',
+            $user->getEmailForPasswordReset()
         )->first();
 
         return $record && $this->tokenRecentlyCreated($record['created_at']);

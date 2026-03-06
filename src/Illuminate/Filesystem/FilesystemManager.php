@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Filesystem;
 
 use Aws\S3\S3Client;
 use Closure;
 use Illuminate\Contracts\Filesystem\Factory as FactoryContract;
 use Illuminate\Support\Arr;
+
+use function Illuminate\Support\enum_value;
+
 use InvalidArgumentException;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter as S3Adapter;
 use League\Flysystem\AwsS3V3\PortableVisibilityConverter as AwsS3PortableVisibilityConverter;
@@ -19,9 +24,8 @@ use League\Flysystem\PhpseclibV3\SftpAdapter;
 use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
 use League\Flysystem\ReadOnly\ReadOnlyFilesystemAdapter;
 use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
-use League\Flysystem\Visibility;
 
-use function Illuminate\Support\enum_value;
+use League\Flysystem\Visibility;
 
 /**
  * @mixin \Illuminate\Contracts\Filesystem\Filesystem
@@ -53,8 +57,7 @@ class FilesystemManager implements FactoryContract
          * The application instance.
          */
         protected $app
-    )
-    {
+    ) {
     }
 
     /**
@@ -165,7 +168,7 @@ class FilesystemManager implements FactoryContract
      *
      * @return \Illuminate\Contracts\Filesystem\Filesystem
      */
-    public function createLocalDriver(array $config, string $name = 'local')
+    public function createLocalDriver(array $config, string $name = 'local'): \Illuminate\Filesystem\LocalFilesystemAdapter
     {
         $visibility = PortableVisibilityConverter::fromArray(
             $config['permissions'] ?? [],
@@ -177,11 +180,16 @@ class FilesystemManager implements FactoryContract
             : LocalAdapter::DISALLOW_LINKS;
 
         $adapter = new LocalAdapter(
-            $config['root'], $visibility, $config['lock'] ?? LOCK_EX, $links
+            $config['root'],
+            $visibility,
+            $config['lock'] ?? LOCK_EX,
+            $links
         );
 
         return (new LocalFilesystemAdapter(
-            $this->createFlysystem($adapter, $config), $adapter, $config
+            $this->createFlysystem($adapter, $config),
+            $adapter,
+            $config
         ))->diskName(
             $name
         )->shouldServeSignedUrls(
@@ -248,16 +256,17 @@ class FilesystemManager implements FactoryContract
         $adapter = new S3Adapter($client, $s3Config['bucket'], $root, $visibility, null, $config['options'] ?? [], $streamReads);
 
         return new AwsS3V3Adapter(
-            $this->createFlysystem($adapter, $config), $adapter, $s3Config, $client
+            $this->createFlysystem($adapter, $config),
+            $adapter,
+            $s3Config,
+            $client
         );
     }
 
     /**
      * Format the given S3 configuration with the default options.
-     *
-     * @return array
      */
-    protected function formatS3Config(array $config)
+    protected function formatS3Config(array $config): array
     {
         $config += ['version' => 'latest'];
 
@@ -442,7 +451,6 @@ class FilesystemManager implements FactoryContract
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Capsule\Manager as DB;
@@ -21,7 +23,7 @@ class DatabaseEloquentInverseRelationMorphManyTest extends TestCase
      */
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -240,7 +242,7 @@ class DatabaseEloquentInverseRelationMorphManyTest extends TestCase
     public function testMorphManyInverseRelationIsProperlySetToParentWhenSavingMany()
     {
         $post = MorphManyInversePostModel::create();
-        $comments = array_fill(0, 3, new MorphManyInverseCommentModel);
+        $comments = array_fill(0, 3, new MorphManyInverseCommentModel());
 
         $post->comments()->saveMany($comments);
 

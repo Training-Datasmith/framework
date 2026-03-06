@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Config;
 
 use ArrayAccess;
@@ -23,17 +25,15 @@ class Repository implements ArrayAccess, ConfigContract
          * @var array<string,mixed>
          */
         protected array $items = []
-    )
-    {
+    ) {
     }
 
     /**
      * Determine if the given configuration value exists.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function has($key)
+    public function has($key): bool
     {
         return Arr::has($this->items, $key);
     }
@@ -233,10 +233,8 @@ class Repository implements ArrayAccess, ConfigContract
 
     /**
      * Get all of the configuration items for the application.
-     *
-     * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $this->items;
     }

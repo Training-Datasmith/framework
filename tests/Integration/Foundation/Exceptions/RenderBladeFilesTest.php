@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation\Exceptions\Renderer;
 
-use Orchestra\Testbench\Attributes\WithConfig;
-use Orchestra\Testbench\TestCase;
-
 use function Orchestra\Testbench\after_resolving;
+
+use Orchestra\Testbench\Attributes\WithConfig;
+
 use function Orchestra\Testbench\package_path;
+
+use Orchestra\Testbench\TestCase;
 
 #[WithConfig('app.debug', true)]
 class RenderBladeFilesTest extends TestCase
@@ -20,8 +24,7 @@ class RenderBladeFilesTest extends TestCase
 
     public function testFormattedSourceTooltipRendersMultilineSafely(): void
     {
-        $frame = new class
-        {
+        $frame = new class () {
             public function class()
             {
                 return null;

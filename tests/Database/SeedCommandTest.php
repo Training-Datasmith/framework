@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Console\Command;
@@ -24,7 +26,7 @@ class SeedCommandTest extends TestCase
     public function testHandle()
     {
         $input = new ArrayInput(['--force' => true, '--database' => 'sqlite']);
-        $output = new NullOutput;
+        $output = new NullOutput();
         $outputStyle = new OutputStyle($input, $output);
 
         $seeder = m::mock(Seeder::class);
@@ -65,7 +67,7 @@ class SeedCommandTest extends TestCase
             '--database' => 'sqlite',
             '--class' => UserWithoutModelEventsSeeder::class,
         ]);
-        $output = new NullOutput;
+        $output = new NullOutput();
         $outputStyle = new OutputStyle($input, $output);
 
         $instance = new UserWithoutModelEventsSeeder();
@@ -107,7 +109,7 @@ class SeedCommandTest extends TestCase
     public function testProhibitable()
     {
         $input = new ArrayInput([]);
-        $output = new NullOutput;
+        $output = new NullOutput();
         $outputStyle = new OutputStyle($input, $output);
 
         $resolver = m::mock(ConnectionResolverInterface::class);

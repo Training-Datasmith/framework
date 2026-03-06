@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Console;
 
 use Illuminate\Console\Scheduling\Event;
@@ -67,13 +69,15 @@ class ConsoleScheduledEventTest extends TestCase
         $eventB = new Event(m::mock(EventMutex::class), 'php foo');
         $this->assertEquals(
             $eventA->daily()->hourly()->getExpression(),
-            $eventB->hourly()->daily()->getExpression());
+            $eventB->hourly()->daily()->getExpression()
+        );
 
         $eventA = new Event(m::mock(EventMutex::class), 'php foo');
         $eventB = new Event(m::mock(EventMutex::class), 'php foo');
         $this->assertEquals(
             $eventA->weekdays()->hourly()->getExpression(),
-            $eventB->hourly()->weekdays()->getExpression());
+            $eventB->hourly()->weekdays()->getExpression()
+        );
     }
 
     public function testEventIsDueCheck()

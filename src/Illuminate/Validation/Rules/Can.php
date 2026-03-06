@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
@@ -29,8 +31,7 @@ class Can implements Rule, ValidatorAwareRule
          * The arguments to pass to the authorization check.
          */
         protected array $arguments = []
-    )
-    {
+    ) {
     }
 
     /**

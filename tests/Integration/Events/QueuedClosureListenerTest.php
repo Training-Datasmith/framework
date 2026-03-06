@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Events;
 
 use Illuminate\Events\CallQueuedListener;
@@ -16,12 +18,12 @@ class QueuedClosureListenerTest extends TestCase
         Bus::fake();
 
         Event::listen(\Illuminate\Events\queueable(function (TestEvent $event) {
-            //
+
         })->catch(function (TestEvent $event) {
-            //
+
         })->onConnection(null)->onQueue(null));
 
-        Event::dispatch(new TestEvent);
+        Event::dispatch(new TestEvent());
 
         Bus::assertDispatched(CallQueuedListener::class, function ($job) {
             return $job->class == InvokeQueuedClosure::class;
@@ -35,12 +37,12 @@ class QueuedClosureListenerTest extends TestCase
         Bus::fake();
 
         Event::listen(\Illuminate\Events\queueable(function (TestEvent $event) {
-            //
+
         })->catch(function (TestEvent $event) {
-            //
+
         })->onConnection(null)->onQueue(null)->onGroup($messageGroup));
 
-        Event::dispatch(new TestEvent);
+        Event::dispatch(new TestEvent());
 
         Bus::assertDispatched(CallQueuedListener::class, function ($job) use ($messageGroup) {
             return $job->messageGroup == $messageGroup;
@@ -54,12 +56,12 @@ class QueuedClosureListenerTest extends TestCase
         Bus::fake();
 
         Event::listen(\Illuminate\Events\queueable(function (TestEvent $event) {
-            //
+
         })->catch(function (TestEvent $event) {
-            //
+
         })->onConnection(null)->onQueue(null)->withDeduplicator($deduplicator));
 
-        Event::dispatch(new TestEvent);
+        Event::dispatch(new TestEvent());
 
         Bus::assertDispatched(CallQueuedListener::class, function ($job) {
             $this->assertInstanceOf(SerializableClosure::class, $job->deduplicator);
@@ -71,5 +73,4 @@ class QueuedClosureListenerTest extends TestCase
 
 class TestEvent
 {
-    //
 }

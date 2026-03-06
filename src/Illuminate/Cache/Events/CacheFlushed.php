@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\Events;
 
 class CacheFlushed
@@ -19,8 +21,9 @@ class CacheFlushed
     public function __construct(/**
      * The name of the cache store.
      */
-    public $storeName, array $tags = [])
-    {
+        public $storeName,
+        array $tags = []
+    ) {
         $this->tags = $tags;
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Carbon\Carbon as BaseCarbon;
@@ -11,7 +13,8 @@ use Symfony\Component\Uid\Ulid;
 
 class Carbon extends BaseCarbon
 {
-    use Conditionable, Dumpable;
+    use Conditionable;
+    use Dumpable;
 
     /**
      * {@inheritdoc}

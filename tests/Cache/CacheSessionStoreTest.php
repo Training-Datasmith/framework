@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cache;
 
 use Illuminate\Cache\SessionStore;
@@ -193,7 +195,7 @@ class CacheSessionStoreTest extends TestCase
     public function testValuesAreStoredByReference()
     {
         $store = new SessionStore(self::getSession());
-        $object = new stdClass;
+        $object = new stdClass();
         $object->foo = true;
 
         $store->put('object', $object, 10);

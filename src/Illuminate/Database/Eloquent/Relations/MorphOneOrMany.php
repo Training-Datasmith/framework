@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -34,7 +36,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
     public function __construct(Builder $query, Model $parent, /**
      * The foreign key type for the relationship.
      */
-    protected $morphType, $id, $localKey)
+        protected $morphType, $id, $localKey)
     {
         $this->morphClass = $parent->getMorphClass();
 
@@ -100,11 +102,10 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Insert new records or update the existing ones.
      *
-     * @param  array|string  $uniqueBy
      * @param  array|null  $update
      * @return int
      */
-    public function upsert(array $values, $uniqueBy, $update = null)
+    public function upsert(array $values, array|string $uniqueBy, $update = null)
     {
         if (! empty($values) && ! is_array(array_first($values))) {
             $values = [$values];
@@ -121,7 +122,8 @@ abstract class MorphOneOrMany extends HasOneOrMany
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         return parent::getRelationExistenceQuery($query, $parentQuery, $columns)->where(
-            $query->qualifyColumn($this->getMorphType()), $this->morphClass
+            $query->qualifyColumn($this->getMorphType()),
+            $this->morphClass
         );
     }
 

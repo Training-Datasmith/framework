@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Translation;
 
 use Illuminate\Translation\MessageSelector;
@@ -11,7 +13,7 @@ class TranslationMessageSelectorTest extends TestCase
     #[DataProvider('chooseTestData')]
     public function testChoose($expected, $id, $number)
     {
-        $selector = new MessageSelector;
+        $selector = new MessageSelector();
 
         $this->assertEquals($expected, $selector->choose($id, $number, 'en'));
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View;
 
 use ArrayAccess;
@@ -41,17 +43,18 @@ class View implements ArrayAccess, Htmlable, Stringable, ViewContract
     public function __construct(/**
      * The view factory instance.
      */
-    protected \Illuminate\View\Factory $factory, /**
+        protected \Illuminate\View\Factory $factory, /**
      * The engine implementation.
      */
-    protected \Illuminate\Contracts\View\Engine $engine, /**
+        protected \Illuminate\Contracts\View\Engine $engine, /**
      * The name of the view.
      */
-    protected $view, /**
+        protected $view, /**
      * The path to the view file.
      */
-    protected $path, $data = [])
-    {
+        protected $path,
+        $data = []
+    ) {
         $this->data = $data instanceof Arrayable ? $data->toArray() : (array) $data;
     }
 
@@ -63,15 +66,13 @@ class View implements ArrayAccess, Htmlable, Stringable, ViewContract
      */
     public function fragment($fragment)
     {
-        return $this->render(fn() => $this->factory->getFragment($fragment));
+        return $this->render(fn () => $this->factory->getFragment($fragment));
     }
 
     /**
      * Get the evaluated contents for a given array of fragments or return all fragments.
-     *
-     * @return string
      */
-    public function fragments(?array $fragments = null)
+    public function fragments(?array $fragments = null): string
     {
         return is_null($fragments)
             ? $this->allFragments()
@@ -202,7 +203,7 @@ class View implements ArrayAccess, Htmlable, Stringable, ViewContract
      */
     public function renderSections()
     {
-        return $this->render(fn() => $this->factory->getSections());
+        return $this->render(fn () => $this->factory->getSections());
     }
 
     /**
@@ -230,7 +231,7 @@ class View implements ArrayAccess, Htmlable, Stringable, ViewContract
      * @param  string  $view
      * @return $this
      */
-    public function nest($key, $view, array $data = [])
+    public function nest($key, $view, array $data = []): static
     {
         return $this->with($key, $this->factory->make($view, $data));
     }
@@ -241,10 +242,11 @@ class View implements ArrayAccess, Htmlable, Stringable, ViewContract
      * @param  \Illuminate\Contracts\Support\MessageProvider|array|string  $provider
      * @return $this
      */
-    public function withErrors($provider, string $bag = 'default')
+    public function withErrors($provider, string $bag = 'default'): static
     {
-        return $this->with('errors', (new ViewErrorBag)->put(
-            $bag, $this->formatErrors($provider)
+        return $this->with('errors', (new ViewErrorBag())->put(
+            $bag,
+            $this->formatErrors($provider)
         ));
     }
 
@@ -313,20 +315,16 @@ class View implements ArrayAccess, Htmlable, Stringable, ViewContract
 
     /**
      * Get the view factory instance.
-     *
-     * @return \Illuminate\View\Factory
      */
-    public function getFactory()
+    public function getFactory(): \Illuminate\View\Factory
     {
         return $this->factory;
     }
 
     /**
      * Get the view's rendering engine.
-     *
-     * @return \Illuminate\Contracts\View\Engine
      */
-    public function getEngine()
+    public function getEngine(): \Illuminate\Contracts\View\Engine
     {
         return $this->engine;
     }
@@ -413,7 +411,6 @@ class View implements ArrayAccess, Htmlable, Stringable, ViewContract
     /**
      * Dynamically bind parameters to the view.
      *
-     * @param  array  $parameters
      * @return \Illuminate\View\View
      * @throws \BadMethodCallException
      */
@@ -425,7 +422,9 @@ class View implements ArrayAccess, Htmlable, Stringable, ViewContract
 
         if (! str_starts_with($method, 'with')) {
             throw new BadMethodCallException(sprintf(
-                'Method %s::%s does not exist.', static::class, $method
+                'Method %s::%s does not exist.',
+                static::class,
+                $method
             ));
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Container\Container;
@@ -17,7 +19,7 @@ class DatabaseConnectionFactoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->db = new DB;
+        $this->db = new DB();
 
         $this->db->addConnection([
             'driver' => 'sqlite',

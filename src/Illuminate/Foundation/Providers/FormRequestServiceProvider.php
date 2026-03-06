@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Providers;
 
 use Illuminate\Contracts\Validation\ValidatesWhenResolved;
@@ -14,7 +16,7 @@ class FormRequestServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Pagination;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as PaginatorContract;
@@ -14,8 +16,7 @@ class UrlWindow
          * The paginator implementation.
          */
         protected \Illuminate\Contracts\Pagination\LengthAwarePaginator $paginator
-    )
-    {
+    ) {
     }
 
     /**
@@ -60,9 +61,8 @@ class UrlWindow
      * Create a URL slider links.
      *
      * @param  int  $onEachSide
-     * @return array
      */
-    protected function getUrlSlider($onEachSide)
+    protected function getUrlSlider($onEachSide): array
     {
         $window = $onEachSide + 4;
 

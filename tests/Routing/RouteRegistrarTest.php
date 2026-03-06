@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Routing;
 
 use BadMethodCallException;
@@ -70,8 +72,7 @@ class RouteRegistrarTest extends TestCase
 
     public function testMiddlewareAsStringableObject()
     {
-        $one = new class implements Stringable
-        {
+        $one = new class () implements Stringable {
             public function __toString()
             {
                 return 'one';
@@ -88,8 +89,7 @@ class RouteRegistrarTest extends TestCase
 
     public function testMiddlewareAsStringableObjectOnRouteInstance()
     {
-        $one = new class implements Stringable
-        {
+        $one = new class () implements Stringable {
             public function __toString()
             {
                 return 'one';
@@ -106,8 +106,7 @@ class RouteRegistrarTest extends TestCase
 
     public function testMiddlewareAsArrayWithStringables()
     {
-        $one = new class implements Stringable
-        {
+        $one = new class () implements Stringable {
             public function __toString()
             {
                 return 'one';
@@ -328,8 +327,7 @@ class RouteRegistrarTest extends TestCase
 
     public function testCanRegisterGroupWithStringableMiddleware()
     {
-        $one = new class implements Stringable
-        {
+        $one = new class () implements Stringable {
             public function __toString()
             {
                 return 'one';
@@ -524,7 +522,7 @@ class RouteRegistrarTest extends TestCase
         $this->expectExceptionMessage('Method Illuminate\Routing\RouteRegistrar::unsupportedMethod does not exist.');
 
         $this->router->domain('foo')->unsupportedMethod('bar')->group(function ($router) {
-            //
+
         });
     }
 
@@ -1008,8 +1006,7 @@ class RouteRegistrarTest extends TestCase
 
     public function testResourceWithMiddlewareAsStringable()
     {
-        $one = new class implements Stringable
-        {
+        $one = new class () implements Stringable {
             public function __toString()
             {
                 return 'one';
@@ -1602,5 +1599,4 @@ class InvokableRouteRegistrarControllerStub
 
 class RouteRegistrarMiddlewareStub
 {
-    //
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Types\Foundation\Testing;
 
 use Illuminate\Foundation\Testing\Concerns\InteractsWithTime;

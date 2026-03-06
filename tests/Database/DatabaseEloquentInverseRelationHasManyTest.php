@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Capsule\Manager as DB;
@@ -21,7 +23,7 @@ class DatabaseEloquentInverseRelationHasManyTest extends TestCase
      */
     protected function setUp(): void
     {
-        $db = new DB;
+        $db = new DB();
 
         $db->addConnection([
             'driver' => 'sqlite',
@@ -183,7 +185,7 @@ class DatabaseEloquentInverseRelationHasManyTest extends TestCase
     {
         $user = HasManyInverseUserModel::create();
 
-        $posts = array_fill(0, 3, new HasManyInversePostModel);
+        $posts = array_fill(0, 3, new HasManyInversePostModel());
 
         $user->posts()->saveMany($posts);
 

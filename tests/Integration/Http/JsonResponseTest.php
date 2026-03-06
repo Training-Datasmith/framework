@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Http;
 
 use Illuminate\Contracts\Support\Jsonable;
@@ -16,8 +18,7 @@ class JsonResponseTest extends TestCase
         $this->expectExceptionMessage('Malformed UTF-8 characters, possibly incorrectly encoded');
 
         Route::get('/response', function () {
-            return new JsonResponse(new class implements JsonSerializable
-            {
+            return new JsonResponse(new class () implements JsonSerializable {
                 public function jsonSerialize(): string
                 {
                     return "\xB1\x31";
@@ -37,8 +38,7 @@ class JsonResponseTest extends TestCase
         // Trigger json_last_error() to have a non-zero value...
         json_encode(['a' => acos(2)]);
 
-        $response->setData(new class implements Jsonable
-        {
+        $response->setData(new class () implements Jsonable {
             public function toJson($options = 0): string
             {
                 return '{}';

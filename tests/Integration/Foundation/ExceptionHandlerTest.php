@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation;
 
 use Exception;
@@ -60,8 +62,7 @@ class ExceptionHandlerTest extends TestCase
             $reported[] = $e;
         });
 
-        $exception = new class extends \Exception implements ShouldntReport, Responsable
-        {
+        $exception = new class () extends \Exception implements ShouldntReport, Responsable {
             public function toResponse($request)
             {
                 return response('shouldnt report', 500);
@@ -249,8 +250,7 @@ EOF, __DIR__.'/../../../', ['APP_RUNNING_IN_CONSOLE' => true]);
     public function test_it_use_custom_json_response_factory_in_exception_handler()
     {
         $this->app->singleton(ResponseFactoryContract::class, function ($app) {
-            return new class($app['view'], $app['redirect']) extends ResponseFactory
-            {
+            return new class ($app['view'], $app['redirect']) extends ResponseFactory {
                 public function json($data = [], $status = 200, array $headers = [], $options = 0)
                 {
                     $msg = $data['message'] ?? $data['msg'] ?? null;

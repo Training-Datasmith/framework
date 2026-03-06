@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Closure;
@@ -20,7 +22,8 @@ use Illuminate\Support\Arr;
  */
 abstract class HasOneOrMany extends Relation
 {
-    use InteractsWithDictionary, SupportsInverseRelations;
+    use InteractsWithDictionary;
+    use SupportsInverseRelations;
 
     /**
      * Create a new has one or many relationship instance.
@@ -33,10 +36,10 @@ abstract class HasOneOrMany extends Relation
     public function __construct(Builder $query, Model $parent, /**
      * The foreign key of the parent model.
      */
-    protected $foreignKey, /**
+        protected $foreignKey, /**
      * The local key of the parent model.
      */
-    protected $localKey)
+        protected $localKey)
     {
         parent::__construct($query, $parent);
     }
@@ -321,7 +324,7 @@ abstract class HasOneOrMany extends Relation
      */
     public function saveQuietly(Model $model)
     {
-        return Model::withoutEvents(fn() => $this->save($model));
+        return Model::withoutEvents(fn () => $this->save($model));
     }
 
     /**
@@ -347,7 +350,7 @@ abstract class HasOneOrMany extends Relation
      */
     public function saveManyQuietly($models)
     {
-        return Model::withoutEvents(fn() => $this->saveMany($models));
+        return Model::withoutEvents(fn () => $this->saveMany($models));
     }
 
     /**
@@ -496,7 +499,9 @@ abstract class HasOneOrMany extends Relation
         $query->getModel()->setTable($hash);
 
         return $query->select($columns)->whereColumn(
-            $this->getQualifiedParentKeyName(), '=', $hash.'.'.$this->getForeignKeyName()
+            $this->getQualifiedParentKeyName(),
+            '=',
+            $hash.'.'.$this->getForeignKeyName()
         );
     }
 

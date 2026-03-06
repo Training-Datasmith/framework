@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail;
 
 use Illuminate\Contracts\Mail\Attachable;
@@ -94,7 +96,7 @@ class Message
      * @param  bool  $override
      * @return $this
      */
-    public function to($address, $name = null, $override = false)
+    public function to($address, $name = null, $override = false): static
     {
         if ($override) {
             is_array($address)
@@ -131,7 +133,7 @@ class Message
      * @param  bool  $override
      * @return $this
      */
-    public function cc($address, $name = null, $override = false)
+    public function cc($address, $name = null, $override = false): static
     {
         if ($override) {
             is_array($address)
@@ -168,7 +170,7 @@ class Message
      * @param  bool  $override
      * @return $this
      */
-    public function bcc($address, $name = null, $override = false)
+    public function bcc($address, $name = null, $override = false): static
     {
         if ($override) {
             is_array($address)
@@ -204,7 +206,7 @@ class Message
      * @param  string|null  $name
      * @return $this
      */
-    public function replyTo($address, $name = null)
+    public function replyTo($address, $name = null): static
     {
         return $this->addAddresses($address, $name, 'ReplyTo');
     }
@@ -392,7 +394,6 @@ class Message
     /**
      * Dynamically pass missing methods to the Symfony instance.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

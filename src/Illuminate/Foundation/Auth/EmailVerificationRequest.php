@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Auth;
 
 use Illuminate\Auth\Events\Verified;
@@ -34,7 +36,7 @@ class EmailVerificationRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+
         ];
     }
 

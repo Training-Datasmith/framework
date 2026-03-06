@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Illuminate\Bus\Queueable;
@@ -152,7 +154,7 @@ class JobDispatchingTest extends QueueTestCase
 
         MyTestDispatchableJob::dispatch();
         dispatch(function () {
-            //
+
         });
 
         $this->assertCount(4, $events);
@@ -175,7 +177,7 @@ class JobDispatchingTest extends QueueTestCase
         });
 
         dispatch(function () {
-            //
+
         })->name('custom name');
 
         $this->assertCount(1, $events);
@@ -226,7 +228,8 @@ class JobDispatchingTest extends QueueTestCase
 
 class Job implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Dispatchable;
+    use Queueable;
 
     public static $ran = false;
     public static $usedQueue = null;

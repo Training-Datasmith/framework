@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Testing\Fakes;
 
 use Carbon\CarbonImmutable;
@@ -68,7 +70,7 @@ class BatchRepositoryFake implements BatchRepository
      */
     public function incrementTotalJobs(string $batchId, int $amount): void
     {
-        //
+
     }
 
     /**
@@ -76,7 +78,7 @@ class BatchRepositoryFake implements BatchRepository
      */
     public function decrementPendingJobs(string $batchId, string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
-        return new UpdatedBatchJobCounts;
+        return new UpdatedBatchJobCounts();
     }
 
     /**
@@ -84,7 +86,7 @@ class BatchRepositoryFake implements BatchRepository
      */
     public function incrementFailedJobs(string $batchId, string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
-        return new UpdatedBatchJobCounts;
+        return new UpdatedBatchJobCounts();
     }
 
     /**
@@ -130,6 +132,6 @@ class BatchRepositoryFake implements BatchRepository
      */
     public function rollBack(): void
     {
-        //
+
     }
 }

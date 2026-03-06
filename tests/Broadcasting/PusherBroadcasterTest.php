@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Broadcasting;
 
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
@@ -85,7 +87,7 @@ class PusherBroadcasterTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
 
         $this->broadcaster->channel('test', function () {
-            //
+
         });
 
         $this->broadcaster->auth(

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Container\Attributes;
 
 use Attribute;
@@ -7,5 +9,4 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PARAMETER)]
 class DB extends Database
 {
-    //
 }

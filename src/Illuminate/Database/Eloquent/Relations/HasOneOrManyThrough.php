@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Closure;
@@ -39,22 +41,22 @@ abstract class HasOneOrManyThrough extends Relation
     public function __construct(Builder $query, /**
      * The far parent model instance.
      */
-    protected \Illuminate\Database\Eloquent\Model $farParent, /**
+        protected \Illuminate\Database\Eloquent\Model $farParent, /**
      * The "through" parent model instance.
      */
-    protected \Illuminate\Database\Eloquent\Model $throughParent, /**
+        protected \Illuminate\Database\Eloquent\Model $throughParent, /**
      * The near key on the relationship.
      */
-    protected $firstKey, /**
+        protected $firstKey, /**
      * The far key on the relationship.
      */
-    protected $secondKey, /**
+        protected $secondKey, /**
      * The local key on the relationship.
      */
-    protected $localKey, /**
+        protected $localKey, /**
      * The local key on the intermediary model.
      */
-    protected $secondLocalKey)
+        protected $secondLocalKey)
     {
         parent::__construct($query, $this->throughParent);
     }
@@ -266,7 +268,7 @@ abstract class HasOneOrManyThrough extends Relation
             return $model;
         }
 
-        throw (new ModelNotFoundException)->setModel($this->related::class);
+        throw (new ModelNotFoundException())->setModel($this->related::class);
     }
 
     /**
@@ -307,7 +309,9 @@ abstract class HasOneOrManyThrough extends Relation
         }
 
         return $this->where(
-            $this->getRelated()->getQualifiedKeyName(), '=', $id
+            $this->getRelated()->getQualifiedKeyName(),
+            '=',
+            $id
         )->first($columns);
     }
 
@@ -324,7 +328,9 @@ abstract class HasOneOrManyThrough extends Relation
     public function findSole($id, $columns = ['*'])
     {
         return $this->where(
-            $this->getRelated()->getQualifiedKeyName(), '=', $id
+            $this->getRelated()->getQualifiedKeyName(),
+            '=',
+            $id
         )->sole($columns);
     }
 
@@ -344,7 +350,8 @@ abstract class HasOneOrManyThrough extends Relation
         }
 
         return $this->whereIn(
-            $this->getRelated()->getQualifiedKeyName(), $ids
+            $this->getRelated()->getQualifiedKeyName(),
+            $ids
         )->get($columns);
     }
 
@@ -371,7 +378,7 @@ abstract class HasOneOrManyThrough extends Relation
             return $result;
         }
 
-        throw (new ModelNotFoundException)->setModel($this->related::class, $id);
+        throw (new ModelNotFoundException())->setModel($this->related::class, $id);
     }
 
     /**
@@ -655,7 +662,9 @@ abstract class HasOneOrManyThrough extends Relation
         $this->performJoin($query);
 
         return $query->select($columns)->whereColumn(
-            $this->getQualifiedLocalKeyName(), '=', $this->getQualifiedFirstKeyName()
+            $this->getQualifiedLocalKeyName(),
+            '=',
+            $this->getQualifiedFirstKeyName()
         );
     }
 
@@ -680,7 +689,9 @@ abstract class HasOneOrManyThrough extends Relation
         $query->getModel()->setTable($hash);
 
         return $query->select($columns)->whereColumn(
-            $parentQuery->getQuery()->from.'.'.$this->localKey, '=', $this->getQualifiedFirstKeyName()
+            $parentQuery->getQuery()->from.'.'.$this->localKey,
+            '=',
+            $this->getQualifiedFirstKeyName()
         );
     }
 
@@ -703,7 +714,9 @@ abstract class HasOneOrManyThrough extends Relation
         }
 
         return $query->select($columns)->whereColumn(
-            $parentQuery->getQuery()->from.'.'.$this->localKey, '=', $hash.'.'.$this->firstKey
+            $parentQuery->getQuery()->from.'.'.$this->localKey,
+            '=',
+            $hash.'.'.$this->firstKey
         );
     }
 

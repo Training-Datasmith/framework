@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 class HigherOrderWhenProxy
@@ -35,8 +37,7 @@ class HigherOrderWhenProxy
          * The target being conditionally operated on.
          */
         protected $target
-    )
-    {
+    ) {
     }
 
     /**
@@ -83,7 +84,6 @@ class HigherOrderWhenProxy
     /**
      * Proxy a method call on the target.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

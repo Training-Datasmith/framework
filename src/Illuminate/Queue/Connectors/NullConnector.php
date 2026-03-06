@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Connectors;
 
 use Illuminate\Queue\NullQueue;
@@ -13,6 +15,6 @@ class NullConnector implements ConnectorInterface
      */
     public function connect(array $config): \Illuminate\Queue\NullQueue
     {
-        return new NullQueue;
+        return new NullQueue();
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Illuminate\Contracts\Bus\QueueingDispatcher;
@@ -31,7 +33,7 @@ class CustomPayloadTest extends TestCase
     {
         $dispatcher = $this->app->make(QueueingDispatcher::class);
 
-        $dispatcher->dispatchToQueue(new MyJob);
+        $dispatcher->dispatchToQueue(new MyJob());
     }
 }
 
@@ -59,6 +61,6 @@ class MyJob implements ShouldQueue
 
     public function handle()
     {
-        //
+
     }
 }

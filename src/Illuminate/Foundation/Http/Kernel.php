@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Http;
 
 use Carbon\CarbonInterval;
@@ -106,11 +108,11 @@ class Kernel implements KernelContract
     public function __construct(/**
      * The application implementation.
      */
-    protected \Illuminate\Contracts\Foundation\Application $app, /**
+        protected \Illuminate\Contracts\Foundation\Application $app, /**
      * The router instance.
      */
-    protected \Illuminate\Routing\Router $router)
-    {
+        protected \Illuminate\Routing\Router $router
+    ) {
         $this->syncMiddlewareToRouter();
     }
 
@@ -193,7 +195,7 @@ class Kernel implements KernelContract
      */
     public function terminate($request, $response): void
     {
-        $this->app['events']->dispatch(new Terminating);
+        $this->app['events']->dispatch(new Terminating());
 
         $this->terminateMiddleware($request, $response);
 
@@ -437,7 +439,7 @@ class Kernel implements KernelContract
      * @param  string  $middleware
      * @return $this
      */
-    public function addToMiddlewarePriorityBefore($before, $middleware)
+    public function addToMiddlewarePriorityBefore($before, $middleware): static
     {
         return $this->addToMiddlewarePriorityRelative($before, $middleware, after: false);
     }
@@ -449,7 +451,7 @@ class Kernel implements KernelContract
      * @param  string  $middleware
      * @return $this
      */
-    public function addToMiddlewarePriorityAfter($after, $middleware)
+    public function addToMiddlewarePriorityAfter($after, $middleware): static
     {
         return $this->addToMiddlewarePriorityRelative($after, $middleware);
     }
@@ -603,11 +605,10 @@ class Kernel implements KernelContract
     /**
      * Get the application's route middleware aliases.
      *
-     * @return array
      *
      * @deprecated
      */
-    public function getRouteMiddleware()
+    public function getRouteMiddleware(): array
     {
         return $this->getMiddlewareAliases();
     }
@@ -650,10 +651,8 @@ class Kernel implements KernelContract
 
     /**
      * Get the Laravel application instance.
-     *
-     * @return \Illuminate\Contracts\Foundation\Application
      */
-    public function getApplication()
+    public function getApplication(): \Illuminate\Contracts\Foundation\Application
     {
         return $this->app;
     }

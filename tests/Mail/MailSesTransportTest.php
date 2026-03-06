@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Mail;
 
 use Aws\Command;
@@ -21,7 +23,7 @@ class MailSesTransportTest extends TestCase
 {
     public function testGetTransport(): void
     {
-        $container = new Container;
+        $container = new Container();
 
         $container->singleton('config', function () {
             return new Repository([
@@ -95,7 +97,7 @@ class MailSesTransportTest extends TestCase
 
     public function testSesLocalConfiguration(): void
     {
-        $container = new Container;
+        $container = new Container();
 
         $container->singleton('config', function () {
             return new Repository([

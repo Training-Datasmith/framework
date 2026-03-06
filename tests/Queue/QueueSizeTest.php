@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Bus\Queueable;
@@ -16,10 +18,10 @@ class QueueSizeTest extends TestCase
         $this->assertEquals(0, Queue::size());
         $this->assertEquals(0, Queue::size('Q2'));
 
-        $job = new TestJob1;
+        $job = new TestJob1();
 
         dispatch($job);
-        dispatch(new TestJob2);
+        dispatch(new TestJob2());
         dispatch($job)->onQueue('Q2');
 
         $this->assertEquals(2, Queue::size());

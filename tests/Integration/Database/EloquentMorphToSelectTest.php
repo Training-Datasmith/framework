@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentMorphToSelectTest;
 
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +25,7 @@ class EloquentMorphToSelectTest extends DatabaseTestCase
         });
 
         $post = Post::create();
-        (new Comment)->commentable()->associate($post)->save();
+        (new Comment())->commentable()->associate($post)->save();
     }
 
     public function testSelect()
@@ -83,5 +85,4 @@ class Comment extends Model
 
 class Post extends Model
 {
-    //
 }

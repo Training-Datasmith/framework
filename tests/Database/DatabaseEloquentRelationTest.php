@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Exception;
@@ -17,8 +19,8 @@ class DatabaseEloquentRelationTest extends TestCase
 {
     public function testSetRelationFail()
     {
-        $parent = new EloquentRelationResetModelStub;
-        $relation = new EloquentRelationResetModelStub;
+        $parent = new EloquentRelationResetModelStub();
+        $relation = new EloquentRelationResetModelStub();
         $parent->setRelation('test', $relation);
         $parent->setRelation('foo', 'bar');
         $this->assertArrayNotHasKey('foo', $parent->toArray());
@@ -26,8 +28,8 @@ class DatabaseEloquentRelationTest extends TestCase
 
     public function testUnsetExistingRelation()
     {
-        $parent = new EloquentRelationResetModelStub;
-        $relation = new EloquentRelationResetModelStub;
+        $parent = new EloquentRelationResetModelStub();
+        $relation = new EloquentRelationResetModelStub();
         $parent->setRelation('foo', $relation);
         $parent->unsetRelation('foo');
         $this->assertFalse($parent->relationLoaded('foo'));
@@ -196,7 +198,7 @@ class DatabaseEloquentRelationTest extends TestCase
                 $this->assertTrue($related::isIgnoringTouch());
                 $this->assertTrue($relatedChild::isIgnoringTouch());
 
-                throw new Exception;
+                throw new Exception();
             });
 
             $this->fail('Exception was not thrown');
@@ -240,7 +242,7 @@ class DatabaseEloquentRelationTest extends TestCase
 
     public function testWithoutRelations()
     {
-        $original = new EloquentNoTouchingModelStub;
+        $original = new EloquentNoTouchingModelStub();
 
         $original->setRelation('foo', 'baz');
 
@@ -265,7 +267,7 @@ class DatabaseEloquentRelationTest extends TestCase
             return 'foo';
         });
 
-        $model = new EloquentRelationResetModelStub;
+        $model = new EloquentRelationResetModelStub();
         $relation = new EloquentRelationStub($model->newQuery(), $model);
 
         $result = $relation->foo();
@@ -274,7 +276,7 @@ class DatabaseEloquentRelationTest extends TestCase
 
     public function testIsRelationIgnoresAttribute()
     {
-        $model = new EloquentRelationAndAttributeModelStub;
+        $model = new EloquentRelationAndAttributeModelStub();
 
         $this->assertTrue($model->isRelation('parent'));
         $this->assertFalse($model->isRelation('field'));
@@ -297,27 +299,27 @@ class EloquentRelationStub extends Relation
 {
     public function addConstraints()
     {
-        //
+
     }
 
     public function addEagerConstraints(array $models)
     {
-        //
+
     }
 
     public function initRelation(array $models, $relation)
     {
-        //
+
     }
 
     public function match(array $models, Collection $results, $relation)
     {
-        //
+
     }
 
     public function getResults()
     {
-        //
+
     }
 }
 
@@ -331,7 +333,6 @@ class EloquentNoTouchingModelStub extends Model
 
 class EloquentNoTouchingChildModelStub extends EloquentNoTouchingModelStub
 {
-    //
 }
 
 class EloquentNoTouchingAnotherModelStub extends Model

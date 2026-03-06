@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Concerns;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -99,6 +101,6 @@ trait HasUniqueStringIds
      */
     protected function handleInvalidUniqueId($value, $field): never
     {
-        throw (new ModelNotFoundException)->setModel($this::class, $value);
+        throw (new ModelNotFoundException())->setModel($this::class, $value);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation;
 
 use Illuminate\Foundation\Vite;
@@ -735,7 +737,8 @@ class FoundationViteTest extends TestCase
             .'<link rel="modulepreload" as="script" href="https://example.com/'.$buildDir.'/assets/PrimaryButton.931d2859.js" />'
             .'<link rel="modulepreload" as="script" href="https://example.com/'.$buildDir.'/assets/_plugin-vue_export-helper.cdc0426e.js" />'
             .'<link rel="stylesheet" href="https://example.com/'.$buildDir.'/assets/app.9842b564.css" />'
-            .'<script type="module" src="https://example.com/'.$buildDir.'/assets/Login.8c52c4a3.js"></script>', $result->toHtml()
+            .'<script type="module" src="https://example.com/'.$buildDir.'/assets/Login.8c52c4a3.js"></script>',
+            $result->toHtml()
         );
         $this->assertSame([
             'https://example.com/'.$buildDir.'/assets/app.9842b564.css' => [
@@ -877,7 +880,8 @@ class FoundationViteTest extends TestCase
             .'<link rel="modulepreload" as="script" href="https://example.com/'.$buildDir.'/assets/import.versioned.js" general="attribute" crossorigin data-persistent-across-pages="YES" keep-me empty-string="" zero="0" />'
             .'<link rel="stylesheet" href="https://example.com/'.$buildDir.'/assets/app.versioned.css" />'
             .'<script type="module" src="https://example.com/'.$buildDir.'/assets/app.versioned.js"></script>',
-            $result->toHtml());
+            $result->toHtml()
+        );
 
         $this->assertSame([
             "https://example.com/$buildDir/assets/app.versioned.css" => [
@@ -1048,7 +1052,8 @@ class FoundationViteTest extends TestCase
             .'<link rel="stylesheet" href="https://example.com/'.$buildDir.'/assets/app-nopreload.versioned.css" />'
             .'<script type="module" src="https://example.com/'.$buildDir.'/assets/app.versioned.js"></script>'
             .'<script type="module" src="https://example.com/'.$buildDir.'/assets/app-nopreload.versioned.js"></script>',
-            $result->toHtml());
+            $result->toHtml()
+        );
 
         $this->assertSame([
             "https://example.com/$buildDir/assets/app.versioned.css" => [
@@ -1093,7 +1098,8 @@ class FoundationViteTest extends TestCase
             .'<link rel="modulepreload" as="script" href="https://example.com/'.$buildDir.'/assets/app.versioned.js" nonce="expected-nonce" />'
             .'<link rel="stylesheet" href="https://example.com/'.$buildDir.'/assets/app.versioned.css" nonce="expected-nonce" />'
             .'<script type="module" src="https://example.com/'.$buildDir.'/assets/app.versioned.js" nonce="expected-nonce"></script>',
-            $result->toHtml());
+            $result->toHtml()
+        );
 
         $this->assertSame([
             "https://example.com/$buildDir/assets/app.versioned.css" => [
@@ -1141,7 +1147,8 @@ class FoundationViteTest extends TestCase
             .'<link rel="modulepreload" as="script" href="https://example.com/'.$buildDir.'/assets/app.versioned.js" crossorigin="script-crossorigin" />'
             .'<link rel="stylesheet" href="https://example.com/'.$buildDir.'/assets/app.versioned.css" crossorigin="style-crossorigin" />'
             .'<script type="module" src="https://example.com/'.$buildDir.'/assets/app.versioned.js" crossorigin="script-crossorigin"></script>',
-            $result->toHtml());
+            $result->toHtml()
+        );
 
         $this->assertSame([
             "https://example.com/$buildDir/assets/app.versioned.css" => [
@@ -1181,7 +1188,8 @@ class FoundationViteTest extends TestCase
         $this->assertSame(
             '<link rel="modulepreload" as="script" href="https://example.com/'.$buildDir.'/assets/app-from-custom-manifest.versioned.js" />'
             .'<script type="module" src="https://example.com/'.$buildDir.'/assets/app-from-custom-manifest.versioned.js"></script>',
-            $result->toHtml());
+            $result->toHtml()
+        );
 
         unlink(public_path("{$buildDir}/custom-manifest.json"));
         rmdir(public_path($buildDir));
@@ -1220,7 +1228,8 @@ class FoundationViteTest extends TestCase
             .'<link rel="stylesheet" href="https://example.com/'.$buildDir.'/assets/app-versioned.css" />'
             .'<script type="module" src="https://example.com/'.$buildDir.'/assets/app-versioned.js"></script>'
             .'<script type="module" src="https://example.com/'.$buildDir.'/assets/Welcome-versioned.js"></script>',
-            $result->toHtml());
+            $result->toHtml()
+        );
 
         $this->assertSame([
             "https://example.com/$buildDir/assets/app-versioned.css" => [

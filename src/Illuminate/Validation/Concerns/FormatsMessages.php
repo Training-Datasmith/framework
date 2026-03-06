@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Concerns;
 
 use Closure;
@@ -68,7 +70,9 @@ trait FormatsMessages
         }
 
         return $this->getFromLocalArray(
-            $attribute, $lowerRule, $this->fallbackMessages
+            $attribute,
+            $lowerRule,
+            $this->fallbackMessages
         ) ?: $key;
     }
 
@@ -161,7 +165,9 @@ trait FormatsMessages
             // messages and loop through them and try to find a wildcard match for the
             // given key. Otherwise, we will simply return the key's value back out.
             $shortKey = preg_replace(
-                '/^validation\.custom\./', '', (string) $key
+                '/^validation\.custom\./',
+                '',
+                (string) $key
             );
 
             $message = $this->getWildcardCustomMessages(Arr::dot(
@@ -247,7 +253,8 @@ trait FormatsMessages
     public function makeReplacements($message, $attribute, $rule, $parameters)
     {
         $message = $this->replaceAttributePlaceholder(
-            $message, $this->getDisplayableAttribute($attribute)
+            $message,
+            $this->getDisplayableAttribute($attribute)
         );
 
         $message = $this->replaceInputPlaceholder($message, $attribute);
@@ -373,7 +380,9 @@ trait FormatsMessages
     protected function replaceIndexPlaceholder($message, $attribute)
     {
         return $this->replaceIndexOrPositionPlaceholder(
-            $message, $attribute, 'index'
+            $message,
+            $attribute,
+            'index'
         );
     }
 
@@ -387,7 +396,10 @@ trait FormatsMessages
     protected function replacePositionPlaceholder($message, $attribute)
     {
         return $this->replaceIndexOrPositionPlaceholder(
-            $message, $attribute, 'position', fn ($segment): int|float => $segment + 1
+            $message,
+            $attribute,
+            'position',
+            fn ($segment): int|float => $segment + 1
         );
     }
 
@@ -405,7 +417,10 @@ trait FormatsMessages
         }
 
         return $this->replaceIndexOrPositionPlaceholder(
-            $message, $attribute, 'ordinal-position', fn ($segment): string|false => Number::ordinal($segment + 1)
+            $message,
+            $attribute,
+            'ordinal-position',
+            fn ($segment): string|false => Number::ordinal($segment + 1)
         );
     }
 

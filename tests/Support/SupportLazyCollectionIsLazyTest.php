@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Support;
 
 use Exception;
@@ -1139,7 +1141,7 @@ class SupportLazyCollectionIsLazyTest extends TestCase
                     return $item === 101;
                 });
             } catch (ItemNotFoundException) {
-                //
+
             }
         });
 
@@ -1171,7 +1173,7 @@ class SupportLazyCollectionIsLazyTest extends TestCase
             try {
                 $collection->sole();
             } catch (MultipleItemsFoundException) {
-                //
+
             }
         });
 
@@ -1187,7 +1189,7 @@ class SupportLazyCollectionIsLazyTest extends TestCase
                     return $item % 2 === 0;
                 });
             } catch (MultipleItemsFoundException) {
-                //
+
             }
         });
     }

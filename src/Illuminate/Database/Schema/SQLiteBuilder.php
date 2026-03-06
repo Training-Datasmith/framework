@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Database\QueryException;
@@ -32,7 +34,7 @@ class SQLiteBuilder extends Builder
     }
 
     /** @inheritDoc */
-    public function getTables($schema = null)
+    public function getTables($schema = null): array
     {
         try {
             $withSize = $this->connection->scalar($this->grammar->compileDbstatExists());
@@ -62,7 +64,7 @@ class SQLiteBuilder extends Builder
     }
 
     /** @inheritDoc */
-    public function getViews($schema = null)
+    public function getViews($schema = null): array
     {
         $schema ??= array_column($this->getSchemas(), 'name');
 

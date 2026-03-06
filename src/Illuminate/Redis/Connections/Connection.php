@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Connections;
 
 use Closure;
@@ -113,7 +115,10 @@ abstract class Connection
             $result = $this->client->{$method}(...$parameters);
         } catch (Throwable $e) {
             $this->events?->dispatch(new CommandFailed(
-                $method, $this->parseParametersForEvent($parameters), $e, $this
+                $method,
+                $this->parseParametersForEvent($parameters),
+                $e,
+                $this
             ));
 
             throw $e;
@@ -122,7 +127,10 @@ abstract class Connection
         $time = round((microtime(true) - $start) * 1000, 2);
 
         $this->events?->dispatch(new CommandExecuted(
-            $method, $this->parseParametersForEvent($parameters), $time, $this
+            $method,
+            $this->parseParametersForEvent($parameters),
+            $time,
+            $this
         ));
 
         return $result;
@@ -219,7 +227,6 @@ abstract class Connection
     /**
      * Pass other method calls down to the underlying client.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

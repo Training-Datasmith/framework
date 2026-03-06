@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Testing\Concerns;
 
 use Generator;
@@ -20,7 +22,7 @@ class TestCachesTest extends TestCase
     {
         parent::setUp();
 
-        Container::setInstance($container = new Container);
+        Container::setInstance($container = new Container());
 
         Facade::setFacadeApplication($container);
 
@@ -44,15 +46,14 @@ class TestCachesTest extends TestCase
         unset($_SERVER['LARAVEL_PARALLEL_TESTING']);
 
         // Reset static property between tests
-        $instance = new class
-        {
+        $instance = new class () {
             use TestCaches;
 
             public $app;
 
             public function __construct()
             {
-                $this->app = Container::getInstance() ?? new Container;
+                $this->app = Container::getInstance() ?? new Container();
             }
         };
 
@@ -122,7 +123,7 @@ class TestCachesTest extends TestCase
 
         $_SERVER['LARAVEL_PARALLEL_TESTING_WITHOUT_CACHE'] = 1;
 
-        Container::getInstance()->make(ParallelTesting::class)->callSetUpTestCaseCallbacks(new class { });
+        Container::getInstance()->make(ParallelTesting::class)->callSetUpTestCaseCallbacks(new class () { });
 
         $this->assertSame('myapp_cache_', Container::getInstance()['config']->get('cache.prefix'));
 
@@ -166,8 +167,7 @@ class TestCachesTest extends TestCase
 
     protected function makeTestCachesInstance()
     {
-        return new class
-        {
+        return new class () {
             use TestCaches;
 
             public $app;

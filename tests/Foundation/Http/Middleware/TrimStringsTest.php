@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Http\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\TrimStrings;
@@ -11,7 +13,7 @@ class TrimStringsTest extends TestCase
 {
     public function testTrimStringsIgnoringExceptAttribute()
     {
-        $middleware = new TrimStringsWithExceptAttribute;
+        $middleware = new TrimStringsWithExceptAttribute();
         $symfonyRequest = new SymfonyRequest([
             'abc' => '  123  ',
             'xyz' => '  456  ',
@@ -31,7 +33,7 @@ class TrimStringsTest extends TestCase
 
     public function testTrimStringsNBSP()
     {
-        $middleware = new TrimStrings;
+        $middleware = new TrimStrings();
         $symfonyRequest = new SymfonyRequest([
             // Here has some NBSP, but it still display to space.
             // Please note, do not edit in browser

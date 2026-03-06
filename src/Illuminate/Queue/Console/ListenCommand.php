@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Console;
 
 use Illuminate\Console\Command;
@@ -68,7 +70,9 @@ class ListenCommand extends Command
         $this->components->info(sprintf('Processing jobs from the [%s] %s.', $queue, (new Stringable('queue'))->plural(explode(',', $queue))));
 
         $this->listener->listen(
-            $connection, $queue, $this->gatherOptions()
+            $connection,
+            $queue,
+            $this->gatherOptions()
         );
     }
 
@@ -83,7 +87,8 @@ class ListenCommand extends Command
         $connection = $connection ?: $this->laravel['config']['queue.default'];
 
         return $this->input->getOption('queue') ?: $this->laravel['config']->get(
-            "queue.connections.{$connection}.queue", 'default'
+            "queue.connections.{$connection}.queue",
+            'default'
         );
     }
 

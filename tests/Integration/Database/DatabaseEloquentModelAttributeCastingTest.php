@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -22,7 +24,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testBasicCustomCasting()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
         $model->uppercase = 'taylor';
 
         $this->assertSame('TAYLOR', $model->uppercase);
@@ -39,7 +41,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
         $model->uppercase = 'dries';
         $this->assertSame('TAYLOR', $model->getOriginal('uppercase'));
 
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
         $model->uppercase = 'taylor';
         $model->syncOriginal();
         $model->uppercase = 'dries';
@@ -51,13 +53,13 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
         $this->assertInstanceOf(TestEloquentModelWithAttributeCast::class, $model);
 
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $model->address = $address = new AttributeCastAddress('110 Kingsbrook St.', 'My Childhood House');
         $address->lineOne = '117 Spencer St.';
         $this->assertSame('117 Spencer St.', $model->getAttributes()['address_line_one']);
 
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $model->setRawAttributes([
             'address_line_one' => '110 Kingsbrook St.',
@@ -99,7 +101,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
         $model->options = ['foo' => 'bar'];
         $this->assertTrue($model->isDirty('options'));
 
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
         $model->birthday_at = now();
         $this->assertIsString($model->toArray()['birthday_at']);
     }
@@ -146,7 +148,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testOneWayCasting()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $this->assertNull($model->password);
 
@@ -167,7 +169,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testSettingRawAttributesClearsTheCastCache()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $model->setRawAttributes([
             'address_line_one' => '110 Kingsbrook St.',
@@ -186,7 +188,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testCastsThatOnlyHaveGetterDoNotPersistAnythingToModelOnSave()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $model->virtual;
 
@@ -197,7 +199,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testCastsThatOnlyHaveGetterThatReturnsPrimitivesAreNotCached()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $previous = null;
 
@@ -208,7 +210,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testAttributesCanCacheStrings()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $previous = $model->virtual_string_cached;
 
@@ -219,7 +221,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testAttributesCanCacheBooleans()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $first = $model->virtual_boolean_cached;
 
@@ -232,7 +234,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testAttributesCanCacheNull()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $this->assertSame(0, $model->virtualNullCalls);
 
@@ -251,7 +253,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testAttributesByDefaultDontCacheBooleans()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $first = $model->virtual_boolean;
 
@@ -272,7 +274,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testCastsThatOnlyHaveGetterThatReturnsObjectAreCached()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $previous = $model->virtualObject;
 
@@ -283,7 +285,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testCastsThatOnlyHaveGetterThatReturnsDateTimeAreCached()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $previous = $model->virtualDateTime;
 
@@ -294,7 +296,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testCastsThatOnlyHaveGetterThatReturnsObjectAreNotCached()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $previous = $model->virtualObjectWithoutCaching;
 
@@ -305,7 +307,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testCastsThatOnlyHaveGetterThatReturnsDateTimeAreNotCached()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $previous = $model->virtualDateTimeWithoutCaching;
 
@@ -316,7 +318,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testCastsThatOnlyHaveGetterThatReturnsObjectAreNotCachedFluent()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $previous = $model->virtualObjectWithoutCachingFluent;
 
@@ -327,7 +329,7 @@ class DatabaseEloquentModelAttributeCastingTest extends DatabaseTestCase
 
     public function testCastsThatOnlyHaveGetterThatReturnsDateTimeAreNotCachedFluent()
     {
-        $model = new TestEloquentModelWithAttributeCast;
+        $model = new TestEloquentModelWithAttributeCast();
 
         $previous = $model->virtualDateTimeWithoutCachingFluent;
 

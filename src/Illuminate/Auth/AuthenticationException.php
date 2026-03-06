@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use Exception;
@@ -23,20 +25,18 @@ class AuthenticationException extends Exception
     public function __construct($message = 'Unauthenticated.', /**
      * All of the guards that were checked.
      */
-    protected array $guards = [], /**
+        protected array $guards = [], /**
      * The path the user should be redirected to.
      */
-    protected $redirectTo = null)
+        protected $redirectTo = null)
     {
         parent::__construct($message);
     }
 
     /**
      * Get the guards that were checked.
-     *
-     * @return array
      */
-    public function guards()
+    public function guards(): array
     {
         return $this->guards;
     }

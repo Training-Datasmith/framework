@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Client;
 
 use Carbon\CarbonImmutable;
@@ -8,9 +10,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\EachPromise;
 use GuzzleHttp\Utils;
 use Illuminate\Http\Client\Promises\LazyPromise;
-use Illuminate\Support\Defer\DeferredCallback;
 
 use function Illuminate\Support\defer;
+
+use Illuminate\Support\Defer\DeferredCallback;
 
 /**
  * @mixin \Illuminate\Http\Client\Factory
@@ -125,9 +128,9 @@ class Batch
      */
     public function __construct(?Factory $factory = null)
     {
-        $this->factory = $factory ?: new Factory;
+        $this->factory = $factory ?: new Factory();
         $this->handler = Utils::chooseHandler();
-        $this->createdAt = new CarbonImmutable;
+        $this->createdAt = new CarbonImmutable();
     }
 
     /**
@@ -321,7 +324,7 @@ class Batch
         // Before returning the results, we must ensure that the results are sorted
         // in the same order as the requests were defined, respecting any custom
         // key names that were assigned to this request using the "as" method.
-        uksort($results, fn($key1, $key2) => array_search($key1, array_keys($this->requests), true) <=>
+        uksort($results, fn ($key1, $key2): int => array_search($key1, array_keys($this->requests), true) <=>
                array_search($key2, array_keys($this->requests), true));
 
         if (! $this->hasFailures() && $this->thenCallback !== null) {
@@ -332,7 +335,7 @@ class Batch
             call_user_func($this->finallyCallback, $this, $results);
         }
 
-        $this->finishedAt = new CarbonImmutable;
+        $this->finishedAt = new CarbonImmutable();
         $this->inProgress = false;
 
         return $results;
@@ -340,10 +343,8 @@ class Batch
 
     /**
      * Retrieve a new async pending request.
-     *
-     * @return \Illuminate\Http\Client\PendingRequest
      */
-    protected function asyncRequest()
+    protected function asyncRequest(): \Illuminate\Http\Client\PendingRequest
     {
         return $this->factory->setHandler($this->handler)->async();
     }

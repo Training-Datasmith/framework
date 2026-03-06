@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Log;
 
 use Closure;
@@ -34,8 +36,7 @@ class Logger implements LoggerInterface
          * The event dispatcher instance.
          */
         protected ?\Illuminate\Contracts\Events\Dispatcher $dispatcher = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -244,20 +245,16 @@ class Logger implements LoggerInterface
 
     /**
      * Get the underlying logger implementation.
-     *
-     * @return \Psr\Log\LoggerInterface
      */
-    public function getLogger()
+    public function getLogger(): \Psr\Log\LoggerInterface
     {
         return $this->logger;
     }
 
     /**
      * Get the event dispatcher instance.
-     *
-     * @return \Illuminate\Contracts\Events\Dispatcher|null
      */
-    public function getEventDispatcher()
+    public function getEventDispatcher(): ?\Illuminate\Contracts\Events\Dispatcher
     {
         return $this->dispatcher;
     }
@@ -273,7 +270,6 @@ class Logger implements LoggerInterface
     /**
      * Dynamically proxy method calls to the underlying logger.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

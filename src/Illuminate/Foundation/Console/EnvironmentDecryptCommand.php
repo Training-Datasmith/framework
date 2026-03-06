@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Dotenv\Parser\Lines;
@@ -9,9 +11,10 @@ use Illuminate\Encryption\Encrypter;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Env;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\password;
+
+use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'env:decrypt')]
 class EnvironmentDecryptCommand extends Command
@@ -42,8 +45,8 @@ class EnvironmentDecryptCommand extends Command
     public function __construct(/**
      * The filesystem instance.
      */
-    protected \Illuminate\Filesystem\Filesystem $files)
-    {
+        protected \Illuminate\Filesystem\Filesystem $files
+    ) {
         parent::__construct();
     }
 

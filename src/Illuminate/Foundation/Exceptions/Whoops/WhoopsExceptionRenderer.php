@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Exceptions\Whoops;
 
 use Illuminate\Contracts\Foundation\ExceptionRenderer;
-use Whoops\Run as Whoops;
 
 use function tap;
+
+use Whoops\Run as Whoops;
 
 class WhoopsExceptionRenderer implements ExceptionRenderer
 {
@@ -17,7 +20,7 @@ class WhoopsExceptionRenderer implements ExceptionRenderer
      */
     public function render($throwable)
     {
-        return tap(new Whoops, function ($whoops): void {
+        return tap(new Whoops(), function ($whoops): void {
             $whoops->appendHandler($this->whoopsHandler());
 
             $whoops->writeToOutput(false);
@@ -33,6 +36,6 @@ class WhoopsExceptionRenderer implements ExceptionRenderer
      */
     protected function whoopsHandler()
     {
-        return (new WhoopsHandler)->forDebug();
+        return (new WhoopsHandler())->forDebug();
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -11,7 +13,8 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class SendQueuedMailable
 {
-    use Queueable, InteractsWithQueue;
+    use Queueable;
+    use InteractsWithQueue;
 
     /**
      * The mailable message instance.

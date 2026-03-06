@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Illuminate\Contracts\Queue\ClearableQueue;
@@ -74,7 +76,11 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
         $queue = $this->getQueue($queue);
 
         return $this->getConnection()->eval(
-            LuaScripts::size(), 3, $queue, $queue.':delayed', $queue.':reserved'
+            LuaScripts::size(),
+            3,
+            $queue,
+            $queue.':delayed',
+            $queue.':reserved'
         );
     }
 
@@ -175,7 +181,7 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
             $this->createPayload($job, $this->getQueue($queue), $data),
             $queue,
             null,
-            fn($payload, $queue) => $this->pushRaw($payload, $queue)
+            fn ($payload, $queue): mixed => $this->pushRaw($payload, $queue)
         );
     }
 
@@ -189,8 +195,11 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
     public function pushRaw($payload, $queue = null, array $options = [])
     {
         $this->getConnection()->eval(
-            LuaScripts::push(), 2, $this->getQueue($queue),
-            $this->getQueue($queue).':notify', $payload
+            LuaScripts::push(),
+            2,
+            $this->getQueue($queue),
+            $this->getQueue($queue).':notify',
+            $payload
         );
 
         return json_decode($payload, true)['id'] ?? null;
@@ -212,7 +221,7 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
             $this->createPayload($job, $this->getQueue($queue), $data, $delay),
             $queue,
             $delay,
-            fn($payload, $queue, $delay) => $this->laterRaw($delay, $payload, $queue)
+            fn ($payload, $queue, $delay): mixed => $this->laterRaw($delay, $payload, $queue)
         );
     }
 
@@ -227,8 +236,11 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
     protected function laterRaw($delay, $payload, $queue = null)
     {
         $this->getConnection()->eval(
-            LuaScripts::later(), 1, $this->getQueue($queue).':delayed',
-            $this->availableAt($delay), $payload
+            LuaScripts::later(),
+            1,
+            $this->getQueue($queue).':delayed',
+            $this->availableAt($delay),
+            $payload
         );
 
         return json_decode($payload, true)['id'] ?? null;
@@ -274,8 +286,12 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
             }
 
             return new RedisJob(
-                $this->container, $this, $job,
-                $reserved, $this->connectionName, $queue ?: $this->default
+                $this->container,
+                $this,
+                $job,
+                $reserved,
+                $this->connectionName,
+                $queue ?: $this->default
             );
         }
     }
@@ -303,7 +319,13 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
     public function migrateExpiredJobs($from, string $to)
     {
         return $this->getConnection()->eval(
-            LuaScripts::migrateExpiredJobs(), 3, $from, $to, $to.':notify', $this->currentTime(), $this->migrationBatchSize
+            LuaScripts::migrateExpiredJobs(),
+            3,
+            $from,
+            $to,
+            $to.':notify',
+            $this->currentTime(),
+            $this->migrationBatchSize
         );
     }
 
@@ -316,7 +338,11 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
     protected function retrieveNextJob(string $queue, $block = true)
     {
         $nextJob = $this->getConnection()->eval(
-            LuaScripts::pop(), 3, $queue, $queue.':reserved', $queue.':notify',
+            LuaScripts::pop(),
+            3,
+            $queue,
+            $queue.':reserved',
+            $queue.':notify',
             $this->availableAt($this->retryAfter)
         );
 
@@ -357,8 +383,12 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
         $queue = $this->getQueue($queue);
 
         $this->getConnection()->eval(
-            LuaScripts::release(), 2, $queue.':delayed', $queue.':reserved',
-            $job->getReservedJob(), $this->availableAt($delay)
+            LuaScripts::release(),
+            2,
+            $queue.':delayed',
+            $queue.':reserved',
+            $job->getReservedJob(),
+            $this->availableAt($delay)
         );
     }
 
@@ -373,8 +403,12 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
         $queue = $this->getQueue($queue);
 
         return $this->getConnection()->eval(
-            LuaScripts::clear(), 4, $queue, $queue.':delayed',
-            $queue.':reserved', $queue.':notify'
+            LuaScripts::clear(),
+            4,
+            $queue,
+            $queue.':delayed',
+            $queue.':reserved',
+            $queue.':notify'
         );
     }
 
@@ -413,7 +447,7 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
      *
      * @return \Illuminate\Contracts\Redis\Factory
      */
-    public function getRedis()
+    public function getRedis(): \Redis
     {
         return $this->redis;
     }

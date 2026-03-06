@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 class HigherOrderTapProxy
@@ -14,14 +16,12 @@ class HigherOrderTapProxy
          * The target being tapped.
          */
         public $target
-    )
-    {
+    ) {
     }
 
     /**
      * Dynamically pass method calls to the target.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

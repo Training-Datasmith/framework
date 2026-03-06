@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Http\Middleware;
 
 use Illuminate\Container\Container;
@@ -18,8 +20,7 @@ class HandlePrecognitiveRequests
          * The container instance.
          */
         protected \Illuminate\Container\Container $container
-    )
-    {
+    ) {
     }
 
     /**

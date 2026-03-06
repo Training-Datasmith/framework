@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Translation\ArrayLoader;
@@ -292,7 +294,8 @@ class ValidationForEachTest extends TestCase
                 'foo.*.bar' => Rule::forEach(fn (mixed $value, string $attribute) => [
                     Rule::when(true, ['accepted'], ['declined']),
                 ]),
-            ]);
+            ]
+        );
 
         $this->assertEquals([
             'foo.1.bar' => ['validation.accepted'],
@@ -310,9 +313,11 @@ class ValidationForEachTest extends TestCase
                 ],
             ],
             [
-                'foo.*.bar' => Rule::forEach(fn (mixed $value, string $attribute) => Rule::when(true, ['accepted'], ['declined']),
+                'foo.*.bar' => Rule::forEach(
+                    fn (mixed $value, string $attribute) => Rule::when(true, ['accepted'], ['declined']),
                 ),
-            ]);
+            ]
+        );
 
         $this->assertEquals([
             'foo.1.bar' => ['validation.accepted'],
@@ -353,7 +358,8 @@ class ValidationForEachTest extends TestCase
     public function getIlluminateArrayTranslator()
     {
         return new Translator(
-            new ArrayLoader, 'en'
+            new ArrayLoader(),
+            'en'
         );
     }
 }

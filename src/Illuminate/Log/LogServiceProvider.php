@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Log;
 
 use Illuminate\Support\ServiceProvider;

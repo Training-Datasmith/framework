@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Bus\Dispatcher;
@@ -89,7 +91,7 @@ class FailOnExceptionMiddlewareTest extends TestCase
             ]);
             $this->fail('Did not throw exception');
         } catch (Throwable) {
-            //
+
         }
 
         $expectedToFail ? $job->assertFailed() : $job->assertNotFailed();
@@ -98,7 +100,9 @@ class FailOnExceptionMiddlewareTest extends TestCase
 
 class FailOnExceptionMiddlewareTestJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static array $_middleware = [];
 
@@ -110,7 +114,7 @@ class FailOnExceptionMiddlewareTestJob implements ShouldQueue
 
     public function handle()
     {
-        throw new $this->throws;
+        throw new $this->throws();
     }
 
     public function middleware(): array

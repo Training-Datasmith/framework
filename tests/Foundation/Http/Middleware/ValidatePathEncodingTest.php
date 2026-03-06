@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Http\Middleware;
 
 use Illuminate\Http\Exceptions\MalformedUrlException;
@@ -19,8 +21,8 @@ class ValidatePathEncodingTest extends TestCase
     #[TestWith(['汉字字符集'])]
     public function testValidPathsArePassing(string $path): void
     {
-        $middleware = new ValidatePathEncoding;
-        $symfonyRequest = new SymfonyRequest;
+        $middleware = new ValidatePathEncoding();
+        $symfonyRequest = new SymfonyRequest();
         $symfonyRequest->server->set('REQUEST_METHOD', 'GET');
         $symfonyRequest->server->set('REQUEST_URI', $path);
         $request = Request::createFromBase($symfonyRequest);
@@ -35,8 +37,8 @@ class ValidatePathEncodingTest extends TestCase
     #[TestWith(['%c0'])]
     public function testInvalidPathsAreFailing(string $path): void
     {
-        $middleware = new ValidatePathEncoding;
-        $symfonyRequest = new SymfonyRequest;
+        $middleware = new ValidatePathEncoding();
+        $symfonyRequest = new SymfonyRequest();
         $symfonyRequest->server->set('REQUEST_METHOD', 'GET');
         $symfonyRequest->server->set('REQUEST_URI', $path);
         $request = Request::createFromBase($symfonyRequest);
@@ -45,7 +47,7 @@ class ValidatePathEncodingTest extends TestCase
             $middleware->handle($request, fn () => new Response('OK'));
 
             $this->fail('MalformedUrlExceptions should have been thrown.');
-        } catch(MalformedUrlException $e) {
+        } catch (MalformedUrlException $e) {
             $this->assertSame(400, $e->getStatusCode());
             $this->assertSame('Malformed URL.', $e->getMessage());
         }

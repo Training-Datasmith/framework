@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database;
 
 use Illuminate\Database\Query\Processors\MariaDbProcessor;
@@ -9,7 +11,7 @@ class DatabaseMariaDbProcessorTest extends TestCase
 {
     public function testProcessColumns()
     {
-        $processor = new MariaDbProcessor;
+        $processor = new MariaDbProcessor();
         $listing = [
             ['name' => 'id', 'type_name' => 'bigint', 'type' => 'bigint', 'collation' => 'collate', 'nullable' => 'YES', 'default' => '', 'extra' => 'auto_increment', 'comment' => 'bar', 'expression' => null],
             ['name' => 'name', 'type_name' => 'varchar', 'type' => 'varchar(100)', 'collation' => 'collate', 'nullable' => 'NO', 'default' => 'foo', 'extra' => '', 'comment' => '', 'expression' => null],

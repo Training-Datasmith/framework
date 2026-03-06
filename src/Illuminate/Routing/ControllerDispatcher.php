@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Container\Container;
@@ -8,7 +10,8 @@ use Illuminate\Support\Collection;
 
 class ControllerDispatcher implements ControllerDispatcherContract
 {
-    use FiltersControllerMiddleware, ResolvesRouteDependencies;
+    use FiltersControllerMiddleware;
+    use ResolvesRouteDependencies;
 
     /**
      * Create a new controller dispatcher instance.
@@ -18,8 +21,7 @@ class ControllerDispatcher implements ControllerDispatcherContract
          * The container instance.
          */
         protected \Illuminate\Container\Container $container
-    )
-    {
+    ) {
     }
 
     /**
@@ -50,7 +52,9 @@ class ControllerDispatcher implements ControllerDispatcherContract
     protected function resolveParameters(Route $route, $controller, $method)
     {
         return $this->resolveClassMethodDependencies(
-            $route->parametersWithoutNulls(), $controller, $method
+            $route->parametersWithoutNulls(),
+            $controller,
+            $method
         );
     }
 
@@ -68,7 +72,7 @@ class ControllerDispatcher implements ControllerDispatcherContract
         }
 
         return (new Collection($controller->getMiddleware()))
-            ->reject(fn ($data) => static::methodExcludedByOptions($method, $data['options']))
+            ->reject(fn ($data): bool => static::methodExcludedByOptions($method, $data['options']))
             ->pluck('middleware')
             ->all();
     }

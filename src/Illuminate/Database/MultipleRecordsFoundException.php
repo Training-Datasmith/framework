@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database;
 
 use RuntimeException;
@@ -16,8 +18,10 @@ class MultipleRecordsFoundException extends RuntimeException
     public function __construct(/**
      * The number of records found.
      */
-    public $count, $code = 0, $previous = null)
-    {
+        public $count,
+        $code = 0,
+        $previous = null
+    ) {
         parent::__construct("{$this->count} records were found.", $code, $previous);
     }
 

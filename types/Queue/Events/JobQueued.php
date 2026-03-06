@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Queue\Events\JobQueued;
 
 use function PHPStan\Testing\assertType;

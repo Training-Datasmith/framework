@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Console;
 
 use Illuminate\Events\Dispatcher;
@@ -14,7 +16,7 @@ class KernelTest extends TestCase
     public function testItDispatchesTerminatingEvent()
     {
         $called = [];
-        $app = new Application;
+        $app = new Application();
         $events = new Dispatcher($app);
         $app->instance('events', $events);
         $kernel = new Kernel($app, $events);

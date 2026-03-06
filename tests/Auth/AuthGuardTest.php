@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Auth;
 
 use Illuminate\Auth\AuthenticationException;
@@ -241,7 +243,8 @@ class AuthGuardTest extends TestCase
         });
 
         $this->assertSame(
-            'bar', $guard->foo()
+            'bar',
+            $guard->foo()
         );
     }
 

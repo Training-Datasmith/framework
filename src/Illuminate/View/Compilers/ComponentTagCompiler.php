@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\View\Compilers;
 
 use Illuminate\Container\Container;
@@ -38,12 +40,13 @@ class ComponentTagCompiler
     public function __construct(/**
      * The component class aliases.
      */
-    protected array $aliases = [], /**
+        protected array $aliases = [], /**
      * The component class namespaces.
      */
-    protected array $namespaces = [], ?BladeCompiler $blade = null)
-    {
-        $this->blade = $blade ?: new BladeCompiler(new Filesystem, sys_get_temp_dir());
+        protected array $namespaces = [],
+        ?BladeCompiler $blade = null
+    ) {
+        $this->blade = $blade ?: new BladeCompiler(new Filesystem(), sys_get_temp_dir());
     }
 
     /**
@@ -64,7 +67,7 @@ class ComponentTagCompiler
      * @return string
      * @throws \InvalidArgumentException
      */
-    public function compileTags(string $value)
+    public function compileTags(string $value): ?string
     {
         $value = $this->compileSelfClosingTags($value);
         $value = $this->compileOpeningTags($value);
@@ -125,7 +128,7 @@ class ComponentTagCompiler
             >
         /x";
 
-        return preg_replace_callback($pattern, function (array $matches) {
+        return preg_replace_callback($pattern, function (array $matches): string {
             $this->boundAttributes = [];
 
             $attributes = $this->getAttributesFromAttributeString($matches['attributes']);
@@ -208,7 +211,7 @@ class ComponentTagCompiler
 
         [$data, $attributes] = $this->partitionDataAndAttributes($class, $attributes);
 
-        $data = $data->mapWithKeys(fn($value, $key) => [Str::camel($key) => $value]);
+        $data = $data->mapWithKeys(fn ($value, string $key): array => [Str::camel($key) => $value]);
 
         // If the component doesn't exist as a class, we'll assume it's a class-less
         // component and pass the component as a view parameter to the data so it
@@ -314,7 +317,7 @@ class ComponentTagCompiler
                     return $guess;
                 }
             } catch (InvalidArgumentException) {
-                //
+
             }
         }
     }
@@ -327,7 +330,7 @@ class ComponentTagCompiler
     protected function guessAnonymousComponentUsingNamespaces(Factory $viewFactory, string $component)
     {
         return (new Collection($this->blade->getAnonymousComponentNamespaces()))
-            ->filter(fn($directory, $prefix) => Str::startsWith($component, $prefix.'::'))
+            ->filter(fn ($directory, $prefix): bool => Str::startsWith($component, $prefix.'::'))
             ->prepend('components', $component)
             ->reduce(function ($carry, $directory, $prefix) use ($component, $viewFactory) {
                 if (! is_null($carry)) {
@@ -395,7 +398,7 @@ class ComponentTagCompiler
      */
     public function formatClassName(string $component): string
     {
-        $componentPieces = array_map(fn($componentPiece) => ucfirst(Str::camel($componentPiece)), explode('.', $component));
+        $componentPieces = array_map(fn (string $componentPiece): string => ucfirst(Str::camel($componentPiece)), explode('.', $component));
 
         return implode('\\', $componentPieces);
     }
@@ -565,7 +568,7 @@ class ComponentTagCompiler
             )?
         /x';
 
-        if (! preg_match_all($pattern, $attributeString, $matches, PREG_SET_ORDER)) {
+        if (! preg_match_all($pattern, (string) $attributeString, $matches, PREG_SET_ORDER)) {
             return [];
         }
 
@@ -606,7 +609,7 @@ class ComponentTagCompiler
     {
         $pattern = "/\s\:\\\$(\w+)/x";
 
-        return preg_replace_callback($pattern, fn(array $matches) => " :{$matches[1]}=\"\${$matches[1]}\"", $value);
+        return preg_replace_callback($pattern, fn (array $matches): string => " :{$matches[1]}=\"\${$matches[1]}\"", $value);
     }
 
     /**
@@ -632,7 +635,8 @@ class ComponentTagCompiler
     protected function parseComponentTagClassStatements(string $attributeString): ?string
     {
         return preg_replace_callback(
-            '/@(class)(\( ( (?>[^()]+) | (?2) )* \))/x', function (array $match): string {
+            '/@(class)(\( ( (?>[^()]+) | (?2) )* \))/x',
+            function (array $match): string {
                 if ($match[1] === 'class') {
                     $match[2] = str_replace('"', "'", $match[2]);
 
@@ -640,7 +644,8 @@ class ComponentTagCompiler
                 }
 
                 return $match[0];
-            }, $attributeString
+            },
+            $attributeString
         );
     }
 
@@ -652,7 +657,8 @@ class ComponentTagCompiler
     protected function parseComponentTagStyleStatements(string $attributeString): ?string
     {
         return preg_replace_callback(
-            '/@(style)(\( ( (?>[^()]+) | (?2) )* \))/x', function (array $match): string {
+            '/@(style)(\( ( (?>[^()]+) | (?2) )* \))/x',
+            function (array $match): string {
                 if ($match[1] === 'style') {
                     $match[2] = str_replace('"', "'", $match[2]);
 
@@ -660,7 +666,8 @@ class ComponentTagCompiler
                 }
 
                 return $match[0];
-            }, $attributeString
+            },
+            $attributeString
         );
     }
 
@@ -721,7 +728,7 @@ class ComponentTagCompiler
     protected function attributesToString(array $attributes, $escapeBound = true): string
     {
         return (new Collection($attributes))
-            ->map(fn(string $value, string $attribute) => $escapeBound && isset($this->boundAttributes[$attribute]) && $value !== 'true' && ! is_numeric($value)
+            ->map(fn (string $value, string $attribute): string => $escapeBound && isset($this->boundAttributes[$attribute]) && $value !== 'true' && ! is_numeric($value)
                 ? "'{$attribute}' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute({$value})"
                 : "'{$attribute}' => {$value}")
             ->implode(',');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Closure;
@@ -14,7 +16,7 @@ class Benchmark
      */
     public static function measure(Closure|array $benchmarkables, int $iterations = 1): array|float
     {
-        return Collection::wrap($benchmarkables)->map(fn($callback) => Collection::range(1, $iterations)->map(function () use ($callback): int|float {
+        return Collection::wrap($benchmarkables)->map(fn ($callback) => Collection::range(1, $iterations)->map(function () use ($callback): int|float {
             gc_collect_cycles();
 
             $start = hrtime(true);

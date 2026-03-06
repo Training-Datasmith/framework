@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Console\Concerns;
 
 use Illuminate\Console\PromptValidationException;
@@ -130,7 +132,7 @@ trait ConfiguresPrompts
                 $this->components->error(is_string($required) ? $required : 'Required.');
 
                 if ($this->laravel->runningUnitTests()) {
-                    throw new PromptValidationException;
+                    throw new PromptValidationException();
                 }
                 continue;
             }
@@ -141,7 +143,7 @@ trait ConfiguresPrompts
                 $this->components->error($error);
 
                 if ($this->laravel->runningUnitTests()) {
-                    throw new PromptValidationException;
+                    throw new PromptValidationException();
                 }
                 continue;
             }
@@ -176,7 +178,11 @@ trait ConfiguresPrompts
         }
 
         return $this->getPromptValidatorInstance(
-            $field, $value, $rules, $messages ?? [], $attributes ?? []
+            $field,
+            $value,
+            $rules,
+            $messages ?? [],
+            $attributes ?? []
         )->errors()->first();
     }
 

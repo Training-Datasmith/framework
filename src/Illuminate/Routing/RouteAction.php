@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Support\Arr;
@@ -70,7 +72,7 @@ class RouteAction
      */
     protected static function findCallable(array $action)
     {
-        return Arr::first($action, fn($value, $key) => Reflector::isCallable($value) && is_numeric($key));
+        return Arr::first($action, fn ($value, $key): bool => Reflector::isCallable($value) && is_numeric($key));
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Illuminate\Contracts\Database\ModelIdentifier;
@@ -75,12 +77,13 @@ trait SerializesAndRestoresModelIdentifiers
 
         if (! $class || count($value->id) === 0) {
             return ! is_null($value->collectionClass ?? null)
-                ? new $value->collectionClass
-                : new EloquentCollection;
+                ? new $value->collectionClass()
+                : new EloquentCollection();
         }
 
         $collection = $this->getQueryForModelRestoration(
-            (new $class)->setConnection($value->connection), $value->id
+            (new $class())->setConnection($value->connection),
+            $value->id
         )->useWritePdo()->get();
 
         if (is_a($class, Pivot::class, true) ||
@@ -108,7 +111,8 @@ trait SerializesAndRestoresModelIdentifiers
     public function restoreModel($value)
     {
         return $this->getQueryForModelRestoration(
-            (new ($value->getClass()))->setConnection($value->connection), $value->id
+            (new ($value->getClass()))->setConnection($value->connection),
+            $value->id
         )->useWritePdo()->firstOrFail()->loadMissing($value->relations ?? []);
     }
 

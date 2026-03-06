@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Resources\Json;
 
 use Illuminate\Contracts\Support\Responsable;
@@ -18,8 +20,7 @@ class ResourceResponse implements Responsable
          * The underlying resource.
          */
         public $resource
-    )
-    {
+    ) {
     }
 
     /**

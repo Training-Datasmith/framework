@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Rules;
 
 use ArrayIterator;
@@ -161,7 +163,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      *
      * @return static
      */
-    public static function default()
+    public static function default(): \Illuminate\Contracts\Validation\Rule
     {
         $password = is_callable(static::$defaultCallback)
             ? call_user_func(static::$defaultCallback)

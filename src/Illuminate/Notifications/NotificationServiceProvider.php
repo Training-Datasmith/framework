@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Notifications;
 
 use Illuminate\Contracts\Notifications\Dispatcher as DispatcherContract;
@@ -30,11 +32,13 @@ class NotificationServiceProvider extends ServiceProvider
         $this->app->singleton(ChannelManager::class, fn ($app): \Illuminate\Notifications\ChannelManager => new ChannelManager($app));
 
         $this->app->alias(
-            ChannelManager::class, DispatcherContract::class
+            ChannelManager::class,
+            DispatcherContract::class
         );
 
         $this->app->alias(
-            ChannelManager::class, FactoryContract::class
+            ChannelManager::class,
+            FactoryContract::class
         );
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent;
 
 use OutOfBoundsException;
@@ -16,7 +18,8 @@ class MissingAttributeException extends OutOfBoundsException
     {
         parent::__construct(sprintf(
             'The attribute [%s] either does not exist or was not retrieved for model [%s].',
-            $key, $model::class
+            $key,
+            $model::class
         ));
     }
 }

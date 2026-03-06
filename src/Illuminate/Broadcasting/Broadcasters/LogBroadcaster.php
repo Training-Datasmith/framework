@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Broadcasting\Broadcasters;
+declare(strict_types=1);
 
-use Psr\Log\LoggerInterface;
+namespace Illuminate\Broadcasting\Broadcasters;
 
 class LogBroadcaster extends Broadcaster
 {
@@ -14,8 +14,7 @@ class LogBroadcaster extends Broadcaster
          * The logger implementation.
          */
         protected \Psr\Log\LoggerInterface $logger
-    )
-    {
+    ) {
     }
 
     /**
@@ -23,7 +22,7 @@ class LogBroadcaster extends Broadcaster
      */
     public function auth($request): void
     {
-        //
+
     }
 
     /**
@@ -31,7 +30,7 @@ class LogBroadcaster extends Broadcaster
      */
     public function validAuthenticationResponse($request, $result): void
     {
-        //
+
     }
 
     /**

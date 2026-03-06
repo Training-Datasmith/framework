@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Mail;
 
 use Illuminate\Mail\Mailable;
@@ -9,7 +11,7 @@ class MailMailableDataTest extends TestCase
 {
     public function testMailableDataIsNotLost(): void
     {
-        $mailable = new MailableStub;
+        $mailable = new MailableStub();
 
         $testData = [
             'first_name' => 'James',
@@ -21,7 +23,7 @@ class MailMailableDataTest extends TestCase
         });
         $this->assertSame($testData, $mailable->buildViewData());
 
-        $mailable = new MailableStub;
+        $mailable = new MailableStub();
         $mailable->build(function ($m) use ($testData) {
             $m->view('view', $testData)
                 ->text('text-view');

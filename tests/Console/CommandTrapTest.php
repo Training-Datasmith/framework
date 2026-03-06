@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Console;
 
 use Illuminate\Console\Command;
@@ -111,7 +113,7 @@ class CommandTrapTest extends TestCase
 
     protected function createCommand()
     {
-        $command = new Command;
+        $command = new Command();
         $registry = $this->registry;
 
         (fn () => $this->signals = new Signals($registry))->call($command);

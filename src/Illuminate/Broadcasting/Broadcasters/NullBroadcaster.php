@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting\Broadcasters;
 
 class NullBroadcaster extends Broadcaster
@@ -9,7 +11,7 @@ class NullBroadcaster extends Broadcaster
      */
     public function auth($request): void
     {
-        //
+
     }
 
     /**
@@ -17,7 +19,7 @@ class NullBroadcaster extends Broadcaster
      */
     public function validAuthenticationResponse($request, $result): void
     {
-        //
+
     }
 
     /**
@@ -25,6 +27,6 @@ class NullBroadcaster extends Broadcaster
      */
     public function broadcast(array $channels, $event, array $payload = []): void
     {
-        //
+
     }
 }

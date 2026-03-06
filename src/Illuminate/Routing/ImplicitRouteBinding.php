@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
@@ -52,12 +54,14 @@ class ImplicitRouteBinding
                     : 'resolveChildRouteBinding';
 
                 if (! $model = $parent->{$childRouteBindingMethod}(
-                    $parameterName, $parameterValue, $route->bindingFieldFor($parameterName)
+                    $parameterName,
+                    $parameterValue,
+                    $route->bindingFieldFor($parameterName)
                 )) {
-                    throw (new ModelNotFoundException)->setModel($instance::class, [$parameterValue]);
+                    throw (new ModelNotFoundException())->setModel($instance::class, [$parameterValue]);
                 }
             } elseif (! $model = $instance->{$routeBindingMethod}($parameterValue, $route->bindingFieldFor($parameterName))) {
-                throw (new ModelNotFoundException)->setModel($instance::class, [$parameterValue]);
+                throw (new ModelNotFoundException())->setModel($instance::class, [$parameterValue]);
             }
 
             $route->setParameter($parameterName, $model);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 class CacheLock extends Lock
@@ -15,8 +17,11 @@ class CacheLock extends Lock
     public function __construct(/**
      * The cache store implementation.
      */
-    protected $store, $name, $seconds, $owner = null)
-    {
+        protected $store,
+        $name,
+        $seconds,
+        $owner = null
+    ) {
         parent::__construct($name, $seconds, $owner);
     }
 
@@ -29,7 +34,9 @@ class CacheLock extends Lock
     {
         if (method_exists($this->store, 'add') && $this->seconds > 0) {
             return $this->store->add(
-                $this->name, $this->owner, $this->seconds
+                $this->name,
+                $this->owner,
+                $this->seconds
             );
         }
 

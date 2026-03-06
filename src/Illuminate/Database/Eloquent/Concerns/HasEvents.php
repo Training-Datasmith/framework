@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Concerns;
 
 use Illuminate\Contracts\Events\Dispatcher;
@@ -54,7 +56,7 @@ trait HasEvents
         return (new Collection($reflectionClass->getAttributes(ObservedBy::class)))
             ->map(fn ($attribute): array => $attribute->getArguments())
             ->flatten()
-            ->when($isEloquentGrandchild, fn(Collection $attributes) => (new Collection(get_parent_class(static::class)::resolveObserveAttributes()))
+            ->when($isEloquentGrandchild, fn (Collection $attributes): \Illuminate\Support\Collection => (new Collection(get_parent_class(static::class)::resolveObserveAttributes()))
                 ->merge($attributes))
             ->all();
     }
@@ -68,7 +70,7 @@ trait HasEvents
      */
     public static function observe($classes): void
     {
-        $instance = new static;
+        $instance = new static();
 
         foreach (Arr::wrap($classes) as $class) {
             $instance->registerObserver($class);
@@ -156,7 +158,8 @@ trait HasEvents
     public function addObservableEvents($observables): void
     {
         $this->observables = array_unique(array_merge(
-            $this->observables, is_array($observables) ? $observables : func_get_args()
+            $this->observables,
+            is_array($observables) ? $observables : func_get_args()
         ));
     }
 
@@ -168,7 +171,8 @@ trait HasEvents
     public function removeObservableEvents($observables): void
     {
         $this->observables = array_diff(
-            $this->observables, is_array($observables) ? $observables : func_get_args()
+            $this->observables,
+            is_array($observables) ? $observables : func_get_args()
         );
     }
 
@@ -215,7 +219,8 @@ trait HasEvents
         }
 
         return ! empty($result) ? $result : static::$dispatcher->{$method}(
-            "eloquent.{$event}: ".static::class, $this
+            "eloquent.{$event}: ".static::class,
+            $this
         );
     }
 
@@ -248,7 +253,7 @@ trait HasEvents
     protected function filterModelEventResults($result)
     {
         if (is_array($result)) {
-            return array_filter($result, fn($response) => ! is_null($response));
+            return array_filter($result, fn ($response): bool => ! is_null($response));
         }
 
         return $result;
@@ -363,7 +368,7 @@ trait HasEvents
             return;
         }
 
-        $instance = new static;
+        $instance = new static();
 
         foreach ($instance->getObservableEvents() as $event) {
             static::$dispatcher->forget("eloquent.{$event}: ".static::class);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation\Configuration;
 
 use Exception;
@@ -15,9 +17,8 @@ class ExceptionsTest extends TestCase
 {
     public function testStopIgnoring()
     {
-        $container = new Container;
-        $exceptions = new Exceptions($handler = new class($container) extends Handler
-        {
+        $container = new Container();
+        $exceptions = new Exceptions($handler = new class ($container) extends Handler {
             public function getDontReport(): array
             {
                 return array_merge($this->dontReport, $this->internalDontReport);
@@ -36,17 +37,17 @@ class ExceptionsTest extends TestCase
 
     public function testShouldRenderJsonWhen()
     {
-        $exceptions = new Exceptions(new Handler(new Container));
+        $exceptions = new Exceptions(new Handler(new Container()));
 
-        $shouldReturnJson = (fn () => $this->shouldReturnJson(new Request, new Exception()))->call($exceptions->handler);
+        $shouldReturnJson = (fn () => $this->shouldReturnJson(new Request(), new Exception()))->call($exceptions->handler);
         $this->assertFalse($shouldReturnJson);
 
         $exceptions->shouldRenderJsonWhen(fn () => true);
-        $shouldReturnJson = (fn () => $this->shouldReturnJson(new Request, new Exception()))->call($exceptions->handler);
+        $shouldReturnJson = (fn () => $this->shouldReturnJson(new Request(), new Exception()))->call($exceptions->handler);
         $this->assertTrue($shouldReturnJson);
 
         $exceptions->shouldRenderJsonWhen(fn () => false);
-        $shouldReturnJson = (fn () => $this->shouldReturnJson(new Request, new Exception()))->call($exceptions->handler);
+        $shouldReturnJson = (fn () => $this->shouldReturnJson(new Request(), new Exception()))->call($exceptions->handler);
         $this->assertFalse($shouldReturnJson);
     }
 }

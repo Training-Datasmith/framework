@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Translation\ArrayLoader;
@@ -44,7 +46,7 @@ class ValidationRuleContainsTest extends TestCase
 
     public function testContainsValidation()
     {
-        $trans = new Translator(new ArrayLoader, 'en');
+        $trans = new Translator(new ArrayLoader(), 'en');
 
         // Test fails when value is string
         $v = new Validator($trans, ['roles' => 'admin'], ['roles' => Rule::contains('editor')]);

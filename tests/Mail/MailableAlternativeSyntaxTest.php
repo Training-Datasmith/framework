@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Mail;
 
 use Illuminate\Mail\Mailable;
@@ -13,7 +15,7 @@ class MailableAlternativeSyntaxTest extends TestCase
 {
     public function testBasicMailableInspection(): void
     {
-        $mailable = new MailableWithAlternativeSyntax;
+        $mailable = new MailableWithAlternativeSyntax();
 
         $this->assertTrue($mailable->hasTo('taylor@laravel.com'));
         $this->assertTrue($mailable->hasCc('adam@laravel.com'));

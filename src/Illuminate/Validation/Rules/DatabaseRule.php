@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Rules;
 
 use Closure;
@@ -65,13 +67,13 @@ trait DatabaseRule
         }
 
         if (is_subclass_of($table, Model::class)) {
-            $model = new $table;
+            $model = new $table();
 
             if (str_contains($model->getTable(), '.')) {
                 return $table;
             }
 
-            return implode('.', array_map(fn(string $part) => trim($part, '.'), array_filter([$model->getConnectionName(), $model->getTable()])));
+            return implode('.', array_map(fn (string $part): string => trim($part, '.'), array_filter([$model->getConnectionName(), $model->getTable()])));
         }
 
         return $table;

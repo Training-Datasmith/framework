@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\Query\Processors\PostgresProcessor;
@@ -9,7 +11,7 @@ class DatabasePostgresProcessorTest extends TestCase
 {
     public function testProcessColumns()
     {
-        $processor = new PostgresProcessor;
+        $processor = new PostgresProcessor();
 
         $listing = [
             ['name' => 'id', 'type_name' => 'int4', 'type' => 'integer', 'collation' => '', 'nullable' => true, 'default' => "nextval('employee_id_seq'::regclass)", 'comment' => '', 'generated' => false],

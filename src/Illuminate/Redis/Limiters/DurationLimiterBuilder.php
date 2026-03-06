@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Redis\Limiters;
 
 use Illuminate\Contracts\Redis\LimiterTimeoutException;
@@ -52,8 +54,7 @@ class DurationLimiterBuilder
          * The name of the lock.
          */
         public $name
-    )
-    {
+    ) {
     }
 
     /**
@@ -119,7 +120,10 @@ class DurationLimiterBuilder
     {
         try {
             return (new DurationLimiter(
-                $this->connection, $this->name, $this->maxLocks, $this->decay
+                $this->connection,
+                $this->name,
+                $this->maxLocks,
+                $this->decay
             ))->block($this->timeout, $callback, $this->sleep);
         } catch (LimiterTimeoutException $e) {
             if ($failure) {

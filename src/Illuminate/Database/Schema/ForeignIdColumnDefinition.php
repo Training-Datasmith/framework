@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Support\Stringable;
@@ -14,8 +16,9 @@ class ForeignIdColumnDefinition extends ColumnDefinition
     public function __construct(/**
      * The schema builder blueprint instance.
      */
-    protected \Illuminate\Database\Schema\Blueprint $blueprint, $attributes = [])
-    {
+        protected \Illuminate\Database\Schema\Blueprint $blueprint,
+        $attributes = []
+    ) {
         parent::__construct($attributes);
     }
 

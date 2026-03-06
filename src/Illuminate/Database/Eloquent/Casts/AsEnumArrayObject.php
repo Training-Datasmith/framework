@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Casts;
 
 use BackedEnum;
@@ -21,8 +23,7 @@ class AsEnumArrayObject implements Castable
      */
     public static function castUsing(array $arguments): \Illuminate\Contracts\Database\Eloquent\CastsAttributes
     {
-        return new class($arguments) implements CastsAttributes
-        {
+        return new class ($arguments) implements CastsAttributes {
             public function __construct(protected array $arguments)
             {
             }
@@ -41,7 +42,7 @@ class AsEnumArrayObject implements Castable
 
                 $enumClass = $this->arguments[0];
 
-                return new ArrayObject((new Collection($data))->map(fn($value) => is_subclass_of($enumClass, BackedEnum::class)
+                return new ArrayObject((new Collection($data))->map(fn ($value): mixed => is_subclass_of($enumClass, BackedEnum::class)
                     ? $enumClass::from($value)
                     : constant($enumClass.'::'.$value))->toArray());
             }

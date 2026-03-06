@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Cache;
 
 use Illuminate\Cache\ArrayStore;
@@ -287,7 +289,7 @@ class CacheEventsTest extends TestCase
 
     protected function getRepository($dispatcher)
     {
-        $repository = new Repository(new ArrayStore, ['store' => 'array']);
+        $repository = new Repository(new ArrayStore(), ['store' => 'array']);
         $repository->put('baz', 'qux', 99);
         $repository->tags('taylor')->put('baz', 'qux', 99);
         $repository->setEventDispatcher($dispatcher);

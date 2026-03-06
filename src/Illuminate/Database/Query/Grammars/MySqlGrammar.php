@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Query\Grammars;
 
 use Illuminate\Database\Query\Builder;
@@ -44,9 +46,8 @@ class MySqlGrammar extends Grammar
      * Compile a "where like" clause.
      *
      * @param  array  $where
-     * @return string
      */
-    protected function whereLike(Builder $query, $where)
+    protected function whereLike(Builder $query, $where): string
     {
         $where['operator'] = $where['not'] ? 'not ' : '';
 
@@ -67,11 +68,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Add a "where null" clause to the query.
-     *
-     * @param  array  $where
-     * @return string
      */
-    protected function whereNull(Builder $query, $where)
+    protected function whereNull(Builder $query, array $where): string
     {
         $columnValue = (string) $this->getValue($where['column']);
 
@@ -86,11 +84,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Add a "where not null" clause to the query.
-     *
-     * @param  array  $where
-     * @return string
      */
-    protected function whereNotNull(Builder $query, $where)
+    protected function whereNotNull(Builder $query, array $where): string
     {
         $columnValue = (string) $this->getValue($where['column']);
 
@@ -153,10 +148,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile a group limit clause.
-     *
-     * @return string
      */
-    protected function compileGroupLimit(Builder $query)
+    protected function compileGroupLimit(Builder $query): string
     {
         return $this->useLegacyGroupLimit($query)
             ? $this->compileLegacyGroupLimit($query)
@@ -338,10 +331,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile an insert statement into SQL.
-     *
-     * @return string
      */
-    public function compileInsert(Builder $query, array $values)
+    public function compileInsert(Builder $query, array $values): string
     {
         if (empty($values)) {
             $values = [[]];
@@ -355,7 +346,7 @@ class MySqlGrammar extends Grammar
      */
     protected function compileUpdateColumns(Builder $query, array $values): string
     {
-        return (new Collection($values))->map(function ($value, $key) {
+        return (new Collection($values))->map(function ($value, $key): string {
             if ($this->isJsonSelector($key)) {
                 return $this->compileJsonUpdateColumn($key, $value);
             }
@@ -427,9 +418,8 @@ class MySqlGrammar extends Grammar
      * @param  string  $table
      * @param  string  $columns
      * @param  string  $where
-     * @return string
      */
-    protected function compileUpdateWithoutJoins(Builder $query, $table, $columns, $where)
+    protected function compileUpdateWithoutJoins(Builder $query, $table, $columns, $where): string
     {
         $sql = parent::compileUpdateWithoutJoins($query, $table, $columns, $where);
 
@@ -448,11 +438,9 @@ class MySqlGrammar extends Grammar
      * Prepare the bindings for an update statement.
      *
      * Booleans, integers, and doubles are inserted into JSON updates as raw values.
-     *
-     * @return array
      */
     #[\Override]
-    public function prepareBindingsForUpdate(array $bindings, array $values)
+    public function prepareBindingsForUpdate(array $bindings, array $values): array
     {
         $values = (new Collection($values))
             ->reject(fn ($value, $column): bool => $this->isJsonSelector($column) && is_bool($value))
@@ -467,9 +455,8 @@ class MySqlGrammar extends Grammar
      *
      * @param  string  $table
      * @param  string  $where
-     * @return string
      */
-    protected function compileDeleteWithoutJoins(Builder $query, $table, $where)
+    protected function compileDeleteWithoutJoins(Builder $query, $table, $where): string
     {
         $sql = parent::compileDeleteWithoutJoins($query, $table, $where);
 

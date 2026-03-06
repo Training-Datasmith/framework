@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Filesystem;
 
 use ErrorException;
@@ -16,7 +18,8 @@ use Symfony\Component\Mime\MimeTypes;
 
 class Filesystem
 {
-    use Conditionable, Macroable;
+    use Conditionable;
+    use Macroable;
 
     /**
      * Determine if a file or directory exists.
@@ -47,7 +50,7 @@ class Filesystem
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function get($path, $lock = false)
+    public function get($path, $lock = false): string|false
     {
         if ($this->isFile($path)) {
             return $lock ? $this->sharedGet($path) : file_get_contents($path);
@@ -242,7 +245,7 @@ class Filesystem
      * @param  string  $path
      * @return int
      */
-    public function prepend($path, string $data)
+    public function prepend($path, string $data): int|false
     {
         if ($this->exists($path)) {
             return $this->put($path, $data.$this->get($path));
@@ -365,7 +368,7 @@ class Filesystem
             );
         }
 
-        $relativeTarget = (new SymfonyFilesystem)->makePathRelative($target, dirname($link));
+        $relativeTarget = (new SymfonyFilesystem())->makePathRelative($target, dirname($link));
 
         $this->link($this->isFile($target) ? rtrim($relativeTarget, '/') : $relativeTarget, $link);
     }
@@ -426,7 +429,7 @@ class Filesystem
             );
         }
 
-        return (new MimeTypes)->getExtensions($this->mimeType($path))[0] ?? null;
+        return (new MimeTypes())->getExtensions($this->mimeType($path))[0] ?? null;
     }
 
     /**
@@ -570,7 +573,7 @@ class Filesystem
      * @param  bool  $hidden
      * @return \Symfony\Component\Finder\SplFileInfo[]
      */
-    public function allFiles($directory, $hidden = false)
+    public function allFiles(string|array $directory, $hidden = false): array
     {
         return $this->files($directory, $hidden, []);
     }
@@ -740,7 +743,7 @@ class Filesystem
      *
      * @param  string  $directory
      */
-    public function deleteDirectories($directory): bool
+    public function deleteDirectories(string|array $directory): bool
     {
         $allDirectories = $this->directories($directory);
 
@@ -759,9 +762,8 @@ class Filesystem
      * Empty the specified directory of all files and folders.
      *
      * @param  string  $directory
-     * @return bool
      */
-    public function cleanDirectory($directory)
+    public function cleanDirectory($directory): bool
     {
         return $this->deleteDirectory($directory, true);
     }

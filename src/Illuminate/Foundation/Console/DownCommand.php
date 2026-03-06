@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use App\Http\Middleware\PreventRequestsDuringMaintenance as AppPreventRequestsDuringMaintenance;
@@ -58,7 +60,8 @@ class DownCommand extends Command
 
             $this->laravel->get('events')->dispatch(new MaintenanceModeEnabled());
 
-            $this->components->info($wasAlreadyDown
+            $this->components->info(
+                $wasAlreadyDown
                 ? 'Maintenance mode options updated.'
                 : 'Application is now in maintenance mode.'
             );
@@ -131,7 +134,7 @@ class DownCommand extends Command
      */
     protected function prerenderView()
     {
-        (new RegisterErrorViewPaths)();
+        (new RegisterErrorViewPaths())();
 
         return view($this->option('render'), [
             'retryAfter' => $this->option('retry'),

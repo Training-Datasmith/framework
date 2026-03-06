@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Foundation\Fixtures\Providers;
 
 use Illuminate\Console\Application;
@@ -11,7 +13,7 @@ class ThrowExceptionServiceProvider extends ServiceProvider
     public function boot()
     {
         Application::starting(function ($artisan) {
-            $artisan->add(new ThrowExceptionCommand);
+            $artisan->add(new ThrowExceptionCommand());
         });
     }
 }

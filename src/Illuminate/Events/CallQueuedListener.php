@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Events;
 
 use Illuminate\Bus\Queueable;
@@ -11,7 +13,8 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class CallQueuedListener implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue;
+    use Queueable;
 
     /**
      * The number of times the job may be attempted.
@@ -102,8 +105,7 @@ class CallQueuedListener implements ShouldQueue
          * The data to be passed to the listener.
          */
         public $data
-    )
-    {
+    ) {
     }
 
     /**
@@ -114,7 +116,8 @@ class CallQueuedListener implements ShouldQueue
         $this->prepareData();
 
         $handler = $this->setJobInstanceIfNecessary(
-            $this->job, $container->make($this->class)
+            $this->job,
+            $container->make($this->class)
         );
 
         $handler->{$this->method}(...array_values($this->data));
@@ -230,6 +233,6 @@ class CallQueuedListener implements ShouldQueue
      */
     public function __clone()
     {
-        $this->data = array_map(fn($data) => is_object($data) ? clone $data : $data, $this->data);
+        $this->data = array_map(fn ($data) => is_object($data) ? clone $data : $data, $this->data);
     }
 }

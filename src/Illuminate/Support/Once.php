@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use WeakMap;
@@ -25,7 +27,7 @@ class Once
      */
     protected function __construct(protected WeakMap $values)
     {
-        //
+
     }
 
     /**
@@ -35,7 +37,7 @@ class Once
      */
     public static function instance(): self
     {
-        return static::$instance ??= new static(new WeakMap);
+        return static::$instance ??= new static(new WeakMap());
     }
 
     /**

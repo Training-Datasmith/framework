@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Testing;
 
 use Illuminate\Testing\ParallelConsoleOutput;
@@ -10,7 +12,7 @@ class ParallelConsoleOutputTest extends TestCase
 {
     public function testWrite(): void
     {
-        $original = new BufferedOutput;
+        $original = new BufferedOutput();
         $output = new ParallelConsoleOutput($original);
 
         $output->write('Running phpunit in 12 processes with laravel/laravel.');

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
-use Orchestra\Testbench\TestCase;
 
 use function Laravel\Prompts\confirm;
+
 use function Laravel\Prompts\multisearch;
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\password;
@@ -17,13 +19,14 @@ use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\textarea;
 
+use Orchestra\Testbench\TestCase;
+
 class PromptsAssertionTest extends TestCase
 {
     public function testAssertionForTextPrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:text';
 
                 public function handle()
@@ -44,8 +47,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForPausePrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class($this) extends Command
-            {
+            new class ($this) extends Command {
                 protected $signature = 'test:pause';
 
                 public function __construct(public PromptsAssertionTest $test)
@@ -69,8 +71,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForTextareaPrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:textarea';
 
                 public function handle()
@@ -91,8 +92,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForSuggestPrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:suggest';
 
                 public function handle()
@@ -113,8 +113,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForPasswordPrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:password';
 
                 public function handle()
@@ -135,8 +134,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForConfirmPrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:confirm';
 
                 public function handle()
@@ -166,8 +164,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForSelectPromptWithAList(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:select';
 
                 public function handle()
@@ -191,8 +188,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForSelectPromptWithAnAssociativeArray(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:select';
 
                 public function handle()
@@ -216,8 +212,7 @@ class PromptsAssertionTest extends TestCase
     public function testAlternativeAssertionForSelectPromptWithAnAssociativeArray(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:select';
 
                 public function handle()
@@ -241,8 +236,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForRequiredMultiselectPrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:multiselect';
 
                 public function handle()
@@ -267,8 +261,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForOptionalMultiselectPrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:multiselect';
 
                 public function handle()
@@ -301,8 +294,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForSearchPrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:search';
 
                 public function handle()
@@ -330,8 +322,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForMultisearchPrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:multisearch';
 
                 public function handle()
@@ -368,8 +359,7 @@ class PromptsAssertionTest extends TestCase
     public function testAssertionForSelectPromptFollowedByMultisearchPrompt(): void
     {
         $this->app[Kernel::class]->registerCommand(
-            new class extends Command
-            {
+            new class () extends Command {
                 protected $signature = 'test:select';
 
                 public function handle()

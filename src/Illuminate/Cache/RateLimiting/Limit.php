@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache\RateLimiting;
 
 class Limit
@@ -40,8 +42,10 @@ class Limit
     public function __construct(/**
      * The rate limit signature key.
      */
-    public $key = '', int $maxAttempts = 60, int $decaySeconds = 60)
-    {
+        public $key = '',
+        int $maxAttempts = 60,
+        int $decaySeconds = 60
+    ) {
         $this->maxAttempts = $maxAttempts;
         $this->decaySeconds = $decaySeconds;
     }
@@ -108,7 +112,7 @@ class Limit
      */
     public static function none(): \Illuminate\Cache\RateLimiting\Unlimited
     {
-        return new Unlimited;
+        return new Unlimited();
     }
 
     /**

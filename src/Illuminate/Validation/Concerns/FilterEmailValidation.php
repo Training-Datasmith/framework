@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation\Concerns;
 
 use Egulias\EmailValidator\EmailLexer;
@@ -18,8 +20,7 @@ class FilterEmailValidation implements EmailValidation
          * The flags to pass to the filter_var function.
          */
         protected $flags = null
-    )
-    {
+    ) {
     }
 
     /**

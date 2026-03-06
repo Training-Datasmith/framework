@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation;
 
 use Illuminate\Contracts\Cache\Factory;
@@ -24,8 +26,7 @@ class CacheBasedMaintenanceMode implements MaintenanceMode
          * The cache key to use when storing maintenance mode information.
          */
         protected string $key
-    )
-    {
+    ) {
     }
 
     /**

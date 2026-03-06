@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Concurrency;
 
 use Closure;
@@ -9,10 +11,12 @@ use Illuminate\Contracts\Concurrency\Driver;
 use Illuminate\Process\Factory as ProcessFactory;
 use Illuminate\Process\Pool;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Defer\DeferredCallback;
-use Laravel\SerializableClosure\SerializableClosure;
 
 use function Illuminate\Support\defer;
+
+use Illuminate\Support\Defer\DeferredCallback;
+
+use Laravel\SerializableClosure\SerializableClosure;
 
 class ProcessDriver implements Driver
 {
@@ -21,7 +25,7 @@ class ProcessDriver implements Driver
      */
     public function __construct(protected ProcessFactory $processFactory)
     {
-        //
+
     }
 
     /**

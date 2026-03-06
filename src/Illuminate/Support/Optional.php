@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use ArrayAccess;
@@ -22,8 +24,7 @@ class Optional implements ArrayAccess
          * The underlying object.
          */
         protected $value
-    )
-    {
+    ) {
     }
 
     /**
@@ -103,7 +104,6 @@ class Optional implements ArrayAccess
     /**
      * Dynamically pass a method to the underlying object.
      *
-     * @param  array  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

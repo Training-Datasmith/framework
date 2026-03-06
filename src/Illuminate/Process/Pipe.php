@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Process;
 
 use Illuminate\Support\Collection;
@@ -31,8 +33,9 @@ class Pipe
     public function __construct(/**
      * The process factory instance.
      */
-    protected \Illuminate\Process\Factory $factory, callable $callback)
-    {
+        protected \Illuminate\Process\Factory $factory,
+        callable $callback
+    ) {
         $this->callback = $callback;
     }
 
@@ -70,7 +73,7 @@ class Pipe
 
                 return $pendingProcess->when(
                     $previousProcessResult,
-                    fn () => $pendingProcess->input($previousProcessResult->output())
+                    fn (): \Illuminate\Process\PendingProcess => $pendingProcess->input($previousProcessResult->output())
                 )->run(output: $output ? function ($type, $buffer) use ($key, $output): void {
                     $output($type, $buffer, $key);
                 } : null);
@@ -80,7 +83,6 @@ class Pipe
     /**
      * Dynamically proxy methods calls to a new pending process.
      *
-     * @param  array  $parameters
      * @return \Illuminate\Process\PendingProcess
      */
     public function __call(string $method, array $parameters)

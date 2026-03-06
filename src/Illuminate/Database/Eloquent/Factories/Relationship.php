@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Eloquent\Factories;
 
 use Illuminate\Database\Eloquent\Model;
@@ -23,8 +25,7 @@ class Relationship
          * The relationship name.
          */
         protected $relationship
-    )
-    {
+    ) {
     }
 
     /**

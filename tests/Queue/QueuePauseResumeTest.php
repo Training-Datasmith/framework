@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Queue;
 
 use Illuminate\Cache\ArrayStore;
@@ -22,7 +24,7 @@ class QueuePauseResumeTest extends TestCase
     {
         parent::setUp();
 
-        $this->cache = new Repository(new ArrayStore);
+        $this->cache = new Repository(new ArrayStore());
 
         // Mock the cache facade to return our cache repository
         $cacheMock = m::mock();
@@ -163,8 +165,7 @@ class QueuePauseResumeTest extends TestCase
 
     public function testParsingQueueString()
     {
-        $parser = new class()
-        {
+        $parser = new class () {
             use ParsesQueue;
 
             private array $laravel = [

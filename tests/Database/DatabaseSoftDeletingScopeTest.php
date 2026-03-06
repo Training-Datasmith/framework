@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Database\ConnectionInterface;
@@ -33,7 +35,7 @@ class DatabaseSoftDeletingScopeTest extends TestCase
             m::mock(Grammar::class),
             m::mock(Processor::class)
         ));
-        $scope = new SoftDeletingScope;
+        $scope = new SoftDeletingScope();
         $scope->extend($builder);
         $callback = $builder->getMacro('restore');
         $givenBuilder = m::mock(EloquentBuilder::class);
@@ -53,7 +55,7 @@ class DatabaseSoftDeletingScopeTest extends TestCase
             m::mock(Processor::class)
         ));
 
-        $scope = new SoftDeletingScope;
+        $scope = new SoftDeletingScope();
         $scope->extend($builder);
         $callback = $builder->getMacro('restoreOrCreate');
         $givenBuilder = m::mock(EloquentBuilder::class);
@@ -75,7 +77,7 @@ class DatabaseSoftDeletingScopeTest extends TestCase
             m::mock(Processor::class)
         ));
 
-        $scope = new SoftDeletingScope;
+        $scope = new SoftDeletingScope();
         $scope->extend($builder);
         $callback = $builder->getMacro('createOrRestore');
         $givenBuilder = m::mock(EloquentBuilder::class);

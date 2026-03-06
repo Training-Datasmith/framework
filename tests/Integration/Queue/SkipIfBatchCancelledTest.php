@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Queue;
 
 use Illuminate\Bus\Batchable;
@@ -58,7 +60,9 @@ class SkipIfBatchCancelledTest extends TestCase
 
 class SkipCancelledBatchableTestJob
 {
-    use Batchable, InteractsWithQueue, Queueable;
+    use Batchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public static $handled = false;
 
@@ -69,6 +73,6 @@ class SkipCancelledBatchableTestJob
 
     public function middleware()
     {
-        return [new SkipIfBatchCancelled];
+        return [new SkipIfBatchCancelled()];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\EloquentMorphCountLazyEagerLoadingTest;
 
 use Illuminate\Database\Eloquent\Model;
@@ -28,10 +30,10 @@ class EloquentMorphCountLazyEagerLoadingTest extends DatabaseTestCase
 
         $post = Post::create();
 
-        tap((new Like)->post()->associate($post))->save();
-        tap((new Like)->post()->associate($post))->save();
+        tap((new Like())->post()->associate($post))->save();
+        tap((new Like())->post()->associate($post))->save();
 
-        (new Comment)->commentable()->associate($post)->save();
+        (new Comment())->commentable()->associate($post)->save();
     }
 
     public function testLazyEagerLoading()

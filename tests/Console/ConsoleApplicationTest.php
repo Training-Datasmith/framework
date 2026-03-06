@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Console;
 
 use Composer\Autoload\ClassLoader;
@@ -9,22 +11,26 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Events\Dispatcher as EventsDispatcher;
 use Illuminate\Filesystem\Filesystem;
+
+use function Illuminate\Filesystem\join_paths;
+
 use Illuminate\Foundation\Application as FoundationApplication;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Tests\Console\Fixtures\FakeCommandWithArrayInputPrompting;
 use Illuminate\Tests\Console\Fixtures\FakeCommandWithInputPrompting;
 use Mockery as m;
 use Orchestra\Testbench\Concerns\InteractsWithMockery;
+
+use function Orchestra\Testbench\default_skeleton_path;
+
 use Orchestra\Testbench\Foundation\Application as Testbench;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
+
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Throwable;
-
-use function Illuminate\Filesystem\join_paths;
-use function Orchestra\Testbench\default_skeleton_path;
 
 class ConsoleApplicationTest extends TestCase
 {
@@ -257,7 +263,7 @@ class ConsoleApplicationTest extends TestCase
     #[RunInSeparateProcess]
     public function testLoadIgnoresTestFiles()
     {
-        $files = new Filesystem;
+        $files = new Filesystem();
 
         $files->ensureDirectoryExists(join_paths(default_skeleton_path(), 'app', 'Console', 'Commands'), 0755, true);
 
@@ -313,12 +319,10 @@ class ConsoleApplicationTest extends TestCase
 #[AsCommand('command-name')]
 class CommandWithNoAliasViaAttribute extends Command
 {
-    //
 }
 #[AsCommand('command-name', aliases: ['command-alias'])]
 class CommandWithAliasViaAttribute extends Command
 {
-    //
 }
 
 class CommandWithNoAliasViaProperty extends Command

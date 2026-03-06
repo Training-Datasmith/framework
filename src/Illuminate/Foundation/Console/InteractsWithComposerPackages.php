@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
-use Symfony\Component\Process\Process;
-
 use function Illuminate\Support\php_binary;
+
+use Symfony\Component\Process\Process;
 
 trait InteractsWithComposerPackages
 {

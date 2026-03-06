@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Failed;
 
 class NullFailedJobProvider implements CountableFailedJobProvider, FailedJobProviderInterface
@@ -14,7 +16,7 @@ class NullFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
      */
     public function log($connection, $queue, $payload, $exception): void
     {
-        //
+
     }
 
     /**
@@ -42,7 +44,7 @@ class NullFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
      */
     public function find($id): void
     {
-        //
+
     }
 
     /**
@@ -62,7 +64,7 @@ class NullFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
      */
     public function flush($hours = null): void
     {
-        //
+
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Cache;
 
 use Illuminate\Contracts\Cache\LockProvider;
@@ -8,7 +10,8 @@ use Illuminate\Support\InteractsWithTime;
 
 class ArrayStore extends TaggableStore implements LockProvider
 {
-    use InteractsWithTime, RetrievesMultipleKeys;
+    use InteractsWithTime;
+    use RetrievesMultipleKeys;
 
     /**
      * The array of stored values.
@@ -39,8 +42,7 @@ class ArrayStore extends TaggableStore implements LockProvider
          * The classes that should be allowed during unserialization.
          */
         protected $serializableClasses = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -148,9 +150,8 @@ class ArrayStore extends TaggableStore implements LockProvider
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return bool
      */
-    public function forever($key, $value)
+    public function forever($key, $value): bool
     {
         return $this->put($key, $value, 0);
     }
@@ -195,7 +196,7 @@ class ArrayStore extends TaggableStore implements LockProvider
      * @param  int  $seconds
      * @return float
      */
-    protected function calculateExpiration($seconds)
+    protected function calculateExpiration($seconds): int|float
     {
         return $this->toTimestamp($seconds);
     }
@@ -231,7 +232,7 @@ class ArrayStore extends TaggableStore implements LockProvider
      * @param  string  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function restoreLock($name, $owner)
+    public function restoreLock($name, $owner): \Illuminate\Cache\ArrayLock
     {
         return $this->lock($name, 0, $owner);
     }

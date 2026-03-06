@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Exceptions\Renderer;
 
 use Closure;
@@ -25,13 +27,13 @@ class Exception
     public function __construct(FlattenException $exception, /**
      * The current request instance.
      */
-    protected \Illuminate\Http\Request $request, /**
+        protected \Illuminate\Http\Request $request, /**
      * The exception listener instance.
      */
-    protected \Illuminate\Foundation\Exceptions\Renderer\Listener $listener, /**
+        protected \Illuminate\Foundation\Exceptions\Renderer\Listener $listener, /**
      * The application's base path.
      */
-    protected string $basePath)
+        protected string $basePath)
     {
         $this->exception = $exception;
     }
@@ -94,7 +96,7 @@ class Exception
     public function frames()
     {
         return once(function (): \Illuminate\Support\Collection {
-            $classMap = array_map(fn(string $path) => (string) realpath($path), array_values(ClassLoader::getRegisteredLoaders())[0]->getClassMap());
+            $classMap = array_map(fn (string $path): string => (string) realpath($path), array_values(ClassLoader::getRegisteredLoaders())[0]->getClassMap());
 
             $trace = $this->exception->getTrace();
 
@@ -106,7 +108,8 @@ class Exception
             }
 
             $trace = array_values(array_filter(
-                $trace, fn (array $trace): bool => isset($trace['file']),
+                $trace,
+                fn (array $trace): bool => isset($trace['file']),
             ));
 
             if (($trace[1]['class'] ?? '') === HandleExceptions::class) {
@@ -163,10 +166,8 @@ class Exception
 
     /**
      * Get the exception's request instance.
-     *
-     * @return \Illuminate\Http\Request
      */
-    public function request()
+    public function request(): \Illuminate\Http\Request
     {
         return $this->request;
     }
@@ -178,7 +179,7 @@ class Exception
      */
     public function requestHeaders(): array
     {
-        return array_map(fn(array $header) => implode(', ', $header), $this->request()->headers->all());
+        return array_map(fn (array $header): string => implode(', ', $header), $this->request()->headers->all());
     }
 
     /**
@@ -207,7 +208,7 @@ class Exception
         return $route ? array_filter([
             'controller' => $route->getActionName(),
             'route name' => $route->getName() ?: null,
-            'middleware' => implode(', ', array_map(fn($middleware) => $middleware instanceof Closure ? 'Closure' : $middleware, $route->gatherMiddleware())),
+            'middleware' => implode(', ', array_map(fn ($middleware) => $middleware instanceof Closure ? 'Closure' : $middleware, $route->gatherMiddleware())),
         ]) : [];
     }
 

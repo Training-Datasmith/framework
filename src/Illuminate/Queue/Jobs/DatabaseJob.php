@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue\Jobs;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Queue\Job as JobContract;
-use Illuminate\Queue\DatabaseQueue;
 
 class DatabaseJob extends Job implements JobContract
 {
@@ -18,10 +19,10 @@ class DatabaseJob extends Job implements JobContract
     public function __construct(Container $container, /**
      * The database queue instance.
      */
-    protected \Illuminate\Queue\DatabaseQueue $database, /**
+        protected \Illuminate\Queue\DatabaseQueue $database, /**
      * The database job payload.
      */
-    protected $job, $connectionName, $queue)
+        protected $job, $connectionName, $queue)
     {
         $this->queue = $queue;
         $this->container = $container;

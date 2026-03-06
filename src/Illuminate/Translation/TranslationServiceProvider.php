@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Translation;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -37,7 +39,7 @@ class TranslationServiceProvider extends ServiceProvider implements DeferrablePr
      */
     protected function registerLoader()
     {
-        $this->app->singleton('translation.loader', fn($app) => new FileLoader($app['files'], [__DIR__.'/lang', $app['path.lang']]));
+        $this->app->singleton('translation.loader', fn ($app): \Illuminate\Translation\FileLoader => new FileLoader($app['files'], [__DIR__.'/lang', $app['path.lang']]));
     }
 
     /**

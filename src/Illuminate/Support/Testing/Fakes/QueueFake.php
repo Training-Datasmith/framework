@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Testing\Fakes;
 
 use BadMethodCallException;
@@ -69,12 +71,12 @@ class QueueFake extends QueueManager implements Fake, Queue
     public function __construct($app, $jobsToFake = [], /**
      * The original queue manager.
      */
-    public $queue = null)
+        public $queue = null)
     {
         parent::__construct($app);
 
         $this->jobsToFake = Collection::wrap($jobsToFake);
-        $this->jobsToBeQueued = new Collection;
+        $this->jobsToBeQueued = new Collection();
     }
 
     /**
@@ -124,7 +126,8 @@ class QueueFake extends QueueManager implements Fake, Queue
         $count = $this->pushed($job)->count();
 
         PHPUnit::assertSame(
-            $times, $count,
+            $times,
+            $count,
             sprintf(
                 "The expected [{$job}] job was pushed {$count} %s instead of {$times} %s.",
                 Str::plural('time', $count),
@@ -223,10 +226,11 @@ class QueueFake extends QueueManager implements Fake, Queue
      */
     protected function assertPushedWithChainOfClasses($job, $expectedChain, $callback)
     {
-        $matching = $this->pushed($job, $callback)->map->chained->map(fn($chain) => (new Collection($chain))->map(fn($job) => unserialize($job)::class))->filter(fn($chain) => $chain->all() === $expectedChain);
+        $matching = $this->pushed($job, $callback)->map->chained->map(fn ($chain): \Illuminate\Support\Collection => (new Collection($chain))->map(fn ($job) => unserialize($job)::class))->filter(fn ($chain): bool => $chain->all() === $expectedChain);
 
         PHPUnit::assertTrue(
-            $matching->isNotEmpty(), 'The expected chain was not pushed.'
+            $matching->isNotEmpty(),
+            'The expected chain was not pushed.'
         );
     }
 
@@ -273,7 +277,8 @@ class QueueFake extends QueueManager implements Fake, Queue
         }
 
         PHPUnit::assertCount(
-            0, $this->pushed($job, $callback),
+            0,
+            $this->pushed($job, $callback),
             "The unexpected [{$job}] job was pushed."
         );
     }
@@ -288,7 +293,8 @@ class QueueFake extends QueueManager implements Fake, Queue
         $actualCount = (new Collection($this->jobs))->flatten(1)->count();
 
         PHPUnit::assertSame(
-            $expectedCount, $actualCount,
+            $expectedCount,
+            $actualCount,
             "Expected {$expectedCount} jobs to be pushed, but found {$actualCount} instead."
         );
     }
@@ -312,7 +318,7 @@ class QueueFake extends QueueManager implements Fake, Queue
     public function pushed($job, $callback = null): \Illuminate\Support\Collection
     {
         if (! $this->hasPushed($job)) {
-            return new Collection;
+            return new Collection();
         }
 
         $callback = $callback ?: fn (): true => true;
@@ -345,7 +351,7 @@ class QueueFake extends QueueManager implements Fake, Queue
     public function listenersPushed($listenerClass, $callback = null): \Illuminate\Support\Collection
     {
         if (! $this->hasPushed(CallQueuedListener::class)) {
-            return new Collection;
+            return new Collection();
         }
 
         $collection = (new Collection($this->jobs[CallQueuedListener::class]))
@@ -396,9 +402,8 @@ class QueueFake extends QueueManager implements Fake, Queue
      * Get the number of pending jobs.
      *
      * @param  string|null  $queue
-     * @return int
      */
-    public function pendingSize($queue = null)
+    public function pendingSize($queue = null): int
     {
         return $this->size($queue);
     }
@@ -565,7 +570,7 @@ class QueueFake extends QueueManager implements Fake, Queue
      */
     public function pop($queue = null): void
     {
-        //
+
     }
 
     /**
@@ -643,7 +648,7 @@ class QueueFake extends QueueManager implements Fake, Queue
      */
     public function getConnectionName(): void
     {
-        //
+
     }
 
     /**
@@ -669,7 +674,9 @@ class QueueFake extends QueueManager implements Fake, Queue
     public function __call($method, $parameters)
     {
         throw new BadMethodCallException(sprintf(
-            'Call to undefined method %s::%s()', static::class, $method
+            'Call to undefined method %s::%s()',
+            static::class,
+            $method
         ));
     }
 }

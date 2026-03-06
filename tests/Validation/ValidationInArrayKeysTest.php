@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Validation;
 
 use Illuminate\Translation\ArrayLoader;
@@ -75,6 +77,6 @@ class ValidationInArrayKeysTest extends TestCase
 
     protected function getIlluminateArrayTranslator()
     {
-        return new Translator(new ArrayLoader, 'en');
+        return new Translator(new ArrayLoader(), 'en');
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Database;
 
 use Illuminate\Contracts\Events\Dispatcher;
@@ -26,7 +28,7 @@ class DatabaseMigrationRefreshCommandTest extends TestCase
 
     public function testRefreshCommandCallsCommandsWithProperArguments()
     {
-        $command = new RefreshCommand;
+        $command = new RefreshCommand();
 
         $app = new ApplicationDatabaseRefreshStub(['path.database' => __DIR__]);
         $dispatcher = $app->instance(Dispatcher::class, $events = m::mock());
@@ -51,7 +53,7 @@ class DatabaseMigrationRefreshCommandTest extends TestCase
 
     public function testRefreshCommandCallsCommandsWithStep()
     {
-        $command = new RefreshCommand;
+        $command = new RefreshCommand();
 
         $app = new ApplicationDatabaseRefreshStub(['path.database' => __DIR__]);
         $dispatcher = $app->instance(Dispatcher::class, $events = m::mock());
@@ -76,7 +78,7 @@ class DatabaseMigrationRefreshCommandTest extends TestCase
 
     public function testRefreshCommandExitsWhenProhibited()
     {
-        $command = new RefreshCommand;
+        $command = new RefreshCommand();
 
         $app = new ApplicationDatabaseRefreshStub(['path.database' => __DIR__]);
         $dispatcher = $app->instance(Dispatcher::class, $events = m::mock());
@@ -97,7 +99,7 @@ class DatabaseMigrationRefreshCommandTest extends TestCase
 
     protected function runCommand($command, $input = [])
     {
-        return $command->run(new ArrayInput($input), new NullOutput);
+        return $command->run(new ArrayInput($input), new NullOutput());
     }
 }
 

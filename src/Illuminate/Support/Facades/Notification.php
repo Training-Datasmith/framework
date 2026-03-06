@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support\Facades;
 
 use Illuminate\Notifications\AnonymousNotifiable;
@@ -50,7 +52,7 @@ class Notification extends Facade
      */
     public static function fake()
     {
-        return tap(new NotificationFake, function ($fake): void {
+        return tap(new NotificationFake(), function ($fake): void {
             static::swap($fake);
         });
     }
@@ -60,7 +62,7 @@ class Notification extends Facade
      */
     public static function routes(array $channels): \Illuminate\Notifications\AnonymousNotifiable
     {
-        $notifiable = new AnonymousNotifiable;
+        $notifiable = new AnonymousNotifiable();
 
         foreach ($channels as $channel => $route) {
             $notifiable->route($channel, $route);
@@ -77,7 +79,7 @@ class Notification extends Facade
      */
     public static function route($channel, $route): \Illuminate\Notifications\AnonymousNotifiable
     {
-        return (new AnonymousNotifiable)->route($channel, $route);
+        return (new AnonymousNotifiable())->route($channel, $route);
     }
 
     /**

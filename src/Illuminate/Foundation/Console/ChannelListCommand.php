@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Closure;
@@ -73,7 +75,7 @@ class ChannelListCommand extends Command
      */
     protected function forCli($channels)
     {
-        $maxChannelName = $channels->keys()->max(fn($channelName) => mb_strlen((string) $channelName));
+        $maxChannelName = $channels->keys()->max(fn ($channelName): int => mb_strlen((string) $channelName));
 
         $terminalWidth = static::getTerminalWidth();
 
@@ -85,7 +87,8 @@ class ChannelListCommand extends Command
             $spaces = str_repeat(' ', max($maxChannelName + 6 - mb_strlen($channelName), 0));
 
             $dots = str_repeat('.', max(
-                $terminalWidth - mb_strlen($channelName.$spaces.$resolver) - 6, 0
+                $terminalWidth - mb_strlen($channelName.$spaces.$resolver) - 6,
+                0
             ));
 
             $dots = empty($dots) ? $dots : " $dots";
@@ -130,7 +133,7 @@ class ChannelListCommand extends Command
     public static function getTerminalWidth()
     {
         return is_null(static::$terminalWidthResolver)
-            ? (new Terminal)->getWidth()
+            ? (new Terminal())->getWidth()
             : call_user_func(static::$terminalWidthResolver);
     }
 

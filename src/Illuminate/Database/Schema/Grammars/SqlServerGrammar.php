@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Schema\Grammars;
 
 use Illuminate\Database\Query\Expression;
@@ -192,7 +194,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileCreate(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('create table %s (%s)',
+        return sprintf(
+            'create table %s (%s)',
             $this->wrapTable($blueprint, $blueprint->temporary ? '#'.$this->connection->getTablePrefix() : null),
             implode(', ', $this->getColumns($blueprint))
         );
@@ -203,7 +206,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('alter table %s add %s',
+        return sprintf(
+            'alter table %s add %s',
             $this->wrapTable($blueprint),
             $this->getColumn($blueprint, $command->column)
         );
@@ -212,7 +216,8 @@ class SqlServerGrammar extends Grammar
     /** @inheritDoc */
     public function compileRenameColumn(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf("sp_rename %s, %s, N'COLUMN'",
+        return sprintf(
+            "sp_rename %s, %s, N'COLUMN'",
             $this->quoteString($this->wrapTable($blueprint).'.'.$this->wrap($command->from)),
             $this->wrap($command->to)
         );
@@ -223,7 +228,8 @@ class SqlServerGrammar extends Grammar
     {
         return [
             $this->compileDropDefaultConstraint($blueprint, $command),
-            sprintf('alter table %s alter column %s',
+            sprintf(
+                'alter table %s alter column %s',
                 $this->wrapTable($blueprint),
                 $this->getColumn($blueprint, $command->column),
             ),
@@ -235,7 +241,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compilePrimary(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('alter table %s add constraint %s primary key (%s)',
+        return sprintf(
+            'alter table %s add constraint %s primary key (%s)',
             $this->wrapTable($blueprint),
             $this->wrap($command->index),
             $this->columnize($command->columns)
@@ -247,7 +254,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('create unique index %s on %s (%s)%s',
+        return sprintf(
+            'create unique index %s on %s (%s)%s',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
             $this->columnize($command->columns),
@@ -260,7 +268,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileIndex(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('create index %s on %s (%s)%s',
+        return sprintf(
+            'create index %s on %s (%s)%s',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
             $this->columnize($command->columns),
@@ -273,7 +282,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileSpatialIndex(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('create spatial index %s on %s (%s)',
+        return sprintf(
+            'create spatial index %s on %s (%s)',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
             $this->columnize($command->columns)
@@ -288,7 +298,8 @@ class SqlServerGrammar extends Grammar
     public function compileDefault(Blueprint $blueprint, Fluent $command)
     {
         if ($command->column->change && ! is_null($command->column->default)) {
-            return sprintf('alter table %s add default %s for %s',
+            return sprintf(
+                'alter table %s add default %s for %s',
                 $this->wrapTable($blueprint),
                 $this->getDefaultValue($command->column->default),
                 $this->wrap($command->column)
@@ -309,7 +320,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileDropIfExists(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('if object_id(%s, \'U\') is not null drop table %s',
+        return sprintf(
+            'if object_id(%s, \'U\') is not null drop table %s',
             $this->quoteString($this->wrapTable($blueprint)),
             $this->wrapTable($blueprint)
         );
@@ -387,10 +399,8 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Compile a drop spatial index command.
-     *
-     * @return string
      */
-    public function compileDropSpatialIndex(Blueprint $blueprint, Fluent $command)
+    public function compileDropSpatialIndex(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileDropIndex($blueprint, $command);
     }
@@ -410,7 +420,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileRename(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf('sp_rename %s, %s',
+        return sprintf(
+            'sp_rename %s, %s',
             $this->quoteString($this->wrapTable($blueprint)),
             $this->wrapTable($command->to)
         );
@@ -421,7 +432,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileRenameIndex(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf("sp_rename %s, %s, N'INDEX'",
+        return sprintf(
+            "sp_rename %s, %s, N'INDEX'",
             $this->quoteString($this->wrapTable($blueprint).'.'.$this->wrap($command->from)),
             $this->wrap($command->to)
         );
@@ -635,20 +647,16 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Create the column definition for a date-time type.
-     *
-     * @return string
      */
-    protected function typeDateTime(Fluent $column)
+    protected function typeDateTime(Fluent $column): string
     {
         return $this->typeTimestamp($column);
     }
 
     /**
      * Create the column definition for a date-time (with time zone) type.
-     *
-     * @return string
      */
-    protected function typeDateTimeTz(Fluent $column)
+    protected function typeDateTimeTz(Fluent $column): string
     {
         return $this->typeTimestampTz($column);
     }
@@ -663,10 +671,8 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Create the column definition for a time (with time zone) type.
-     *
-     * @return string
      */
-    protected function typeTimeTz(Fluent $column)
+    protected function typeTimeTz(Fluent $column): string
     {
         return $this->typeTime($column);
     }
@@ -699,10 +705,8 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Create the column definition for a year type.
-     *
-     * @return string
      */
-    protected function typeYear(Fluent $column)
+    protected function typeYear(Fluent $column): string
     {
         if ($column->useCurrent) {
             $column->default(new Expression('CAST(YEAR(GETDATE()) AS INTEGER)'));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Auth;
 
 use Illuminate\Auth\Events\Attempting;
@@ -29,7 +31,8 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class SessionGuard implements StatefulGuard, SupportsBasicAuth
 {
-    use GuardHelpers, Macroable;
+    use GuardHelpers;
+    use Macroable;
 
     /**
      * The user we last attempted to retrieve.
@@ -124,7 +127,7 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
     ) {
         $this->request = $request;
         $this->provider = $provider;
-        $this->timebox = $timebox ?: new Timebox;
+        $this->timebox = $timebox ?: new Timebox();
     }
 
     /**
@@ -188,7 +191,8 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
         $this->recallAttempted = true;
 
         $this->viaRemember = ! is_null($user = $this->provider->retrieveByToken(
-            $recaller->id(), $recaller->token()
+            $recaller->id(),
+            $recaller->token()
         ));
 
         return $user;
@@ -340,7 +344,8 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
         }
 
         return $this->attempt(array_merge(
-            $this->basicCredentials($request, $field), $extraConditions
+            $this->basicCredentials($request, $field),
+            $extraConditions
         ));
     }
 
@@ -712,7 +717,9 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
         }
 
         $this->provider->rehashPasswordIfRequired(
-            $user, ['password' => $password], force: true
+            $user,
+            ['password' => $password],
+            force: true
         );
     }
 
@@ -896,10 +903,8 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
 
     /**
      * Get the session store used by the guard.
-     *
-     * @return \Illuminate\Contracts\Session\Session
      */
-    public function getSession()
+    public function getSession(): \Illuminate\Contracts\Session\Session
     {
         return $this->session;
     }
@@ -954,10 +959,8 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
 
     /**
      * Get the timebox instance used by the guard.
-     *
-     * @return \Illuminate\Support\Timebox
      */
-    public function getTimebox()
+    public function getTimebox(): \Illuminate\Support\Timebox
     {
         return $this->timebox;
     }

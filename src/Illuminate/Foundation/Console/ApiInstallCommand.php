@@ -1,15 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Illuminate\Support\artisan_binary;
+
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Process;
+
 use function Illuminate\Support\php_binary;
+
+use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'install:api')]
 class ApiInstallCommand extends Command
@@ -54,7 +59,7 @@ class ApiInstallCommand extends Command
             copy(__DIR__.'/stubs/api-routes.stub', $apiRoutesPath);
 
             if ($this->option('passport')) {
-                (new Filesystem)->replaceInFile(
+                (new Filesystem())->replaceInFile(
                     'auth:sanctum',
                     'auth:api',
                     $apiRoutesPath,
@@ -95,13 +100,13 @@ class ApiInstallCommand extends Command
         $content = file_get_contents($appBootstrapPath);
 
         if (str_contains($content, '// api: ')) {
-            (new Filesystem)->replaceInFile(
+            (new Filesystem())->replaceInFile(
                 '// api: ',
                 'api: ',
                 $appBootstrapPath,
             );
         } elseif (str_contains($content, 'web: __DIR__.\'/../routes/web.php\',')) {
-            (new Filesystem)->replaceInFile(
+            (new Filesystem())->replaceInFile(
                 'web: __DIR__.\'/../routes/web.php\',',
                 'web: __DIR__.\'/../routes/web.php\','.PHP_EOL.'        api: __DIR__.\'/../routes/api.php\',',
                 $appBootstrapPath,
@@ -124,7 +129,7 @@ class ApiInstallCommand extends Command
             'laravel/sanctum:^4.0',
         ]);
 
-        $migrationPublished = (new Collection(scandir($this->laravel->databasePath('migrations'))))->contains(fn($migration) => preg_match('/\d{4}_\d{2}_\d{2}_\d{6}_create_personal_access_tokens_table.php/', (string) $migration));
+        $migrationPublished = (new Collection(scandir($this->laravel->databasePath('migrations'))))->contains(fn ($migration): int|false => preg_match('/\d{4}_\d{2}_\d{2}_\d{6}_create_personal_access_tokens_table.php/', (string) $migration));
 
         if (! $migrationPublished) {
             Process::run([

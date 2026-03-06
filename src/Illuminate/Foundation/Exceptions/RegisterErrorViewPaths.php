@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Foundation\Exceptions;
 
 use Illuminate\Support\Collection;
@@ -12,7 +14,9 @@ class RegisterErrorViewPaths
      */
     public function __invoke(): void
     {
-        View::replaceNamespace('errors', (new Collection(config('view.paths')))
+        View::replaceNamespace(
+            'errors',
+            (new Collection(config('view.paths')))
             ->map(fn ($path): string => "{$path}/errors")
             ->push(__DIR__.'/views')
             ->all()

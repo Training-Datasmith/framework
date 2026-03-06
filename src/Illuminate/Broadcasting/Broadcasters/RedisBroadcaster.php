@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Broadcasting\Broadcasters;
 
 use Illuminate\Broadcasting\BroadcastException;
@@ -36,8 +38,7 @@ class RedisBroadcaster extends Broadcaster
          * The Redis key prefix.
          */
         protected $prefix = ''
-    )
-    {
+    ) {
     }
 
     /**
@@ -57,11 +58,12 @@ class RedisBroadcaster extends Broadcaster
         if (empty($request->channel_name) ||
             ($this->isGuardedChannel($request->channel_name) &&
             ! $this->retrieveUser($request, $channelName))) {
-            throw new AccessDeniedHttpException;
+            throw new AccessDeniedHttpException();
         }
 
         return parent::verifyUserCanAccessChannel(
-            $request, $channelName
+            $request,
+            $channelName
         );
     }
 
@@ -130,12 +132,16 @@ class RedisBroadcaster extends Broadcaster
 
                 $randomClusterNodeConnection->eval(
                     $this->broadcastMultipleChannelsScript(),
-                    0, $payload, ...$this->formatChannels($channels)
+                    0,
+                    $payload,
+                    ...$this->formatChannels($channels)
                 );
             } else {
                 $connection->eval(
                     $this->broadcastMultipleChannelsScript(),
-                    0, $payload, ...$this->formatChannels($channels)
+                    0,
+                    $payload,
+                    ...$this->formatChannels($channels)
                 );
             }
         } catch (ConnectionException|RedisException $e) {
@@ -165,6 +171,6 @@ LUA;
      */
     protected function formatChannels(array $channels): array
     {
-        return array_map(fn($channel) => $this->prefix.$channel, parent::formatChannels($channels));
+        return array_map(fn ($channel): string => $this->prefix.$channel, parent::formatChannels($channels));
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Console\Command;
@@ -12,7 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 #[AsCommand(name: 'migrate:reset')]
 class ResetCommand extends BaseCommand
 {
-    use ConfirmableTrait, Prohibitable;
+    use ConfirmableTrait;
+    use Prohibitable;
 
     /**
      * The console command name.
@@ -34,8 +37,8 @@ class ResetCommand extends BaseCommand
     public function __construct(/**
      * The migrator instance.
      */
-    protected \Illuminate\Database\Migrations\Migrator $migrator)
-    {
+        protected \Illuminate\Database\Migrations\Migrator $migrator
+    ) {
         parent::__construct();
     }
 
@@ -60,7 +63,8 @@ class ResetCommand extends BaseCommand
             }
 
             $this->migrator->setOutput($this->output)->reset(
-                $this->getMigrationPaths(), $this->option('pretend')
+                $this->getMigrationPaths(),
+                $this->option('pretend')
             );
         });
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Validation;
 
 use Illuminate\Support\Arr;
@@ -17,7 +19,9 @@ class ValidationData
         $data = Arr::dot(static::initializeAttributeOnData($attribute, $masterData));
 
         return array_merge($data, static::extractValuesForWildcards(
-            $masterData, $data, $attribute
+            $masterData,
+            $data,
+            $attribute
         ));
     }
 

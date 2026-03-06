@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Console;
 
 use Carbon\CarbonInterval;
@@ -23,7 +25,7 @@ class CommandDurationThresholdTest extends TestCase
         });
 
         Carbon::setTestNow(Carbon::now());
-        $kernel->handle($input, new ConsoleOutput);
+        $kernel->handle($input, new ConsoleOutput());
 
         $this->assertFalse($called);
 
@@ -44,7 +46,7 @@ class CommandDurationThresholdTest extends TestCase
         });
 
         Carbon::setTestNow(Carbon::now());
-        $kernel->handle($input, new ConsoleOutput);
+        $kernel->handle($input, new ConsoleOutput());
 
         $this->assertFalse($called);
 
@@ -65,7 +67,7 @@ class CommandDurationThresholdTest extends TestCase
         });
 
         Carbon::setTestNow($startedAt = Carbon::now());
-        $kernel->handle($input, new ConsoleOutput);
+        $kernel->handle($input, new ConsoleOutput());
         Carbon::setTestNow(Carbon::now()->addSeconds(1));
         $kernel->terminate($input, 21);
 
@@ -86,7 +88,7 @@ class CommandDurationThresholdTest extends TestCase
         });
 
         Carbon::setTestNow(Carbon::now());
-        $kernel->handle($input, new ConsoleOutput);
+        $kernel->handle($input, new ConsoleOutput());
 
         $this->assertFalse($called);
 
@@ -107,7 +109,7 @@ class CommandDurationThresholdTest extends TestCase
         });
 
         Carbon::setTestNow(Carbon::now());
-        $kernel->handle($input, new ConsoleOutput);
+        $kernel->handle($input, new ConsoleOutput());
 
         $this->assertFalse($called);
 
@@ -131,7 +133,7 @@ class CommandDurationThresholdTest extends TestCase
                 $called = true;
             });
 
-            $kernel->handle($input, new ConsoleOutput);
+            $kernel->handle($input, new ConsoleOutput());
 
             $this->assertFalse($called);
 
@@ -154,7 +156,7 @@ class CommandDurationThresholdTest extends TestCase
             $called = true;
         });
 
-        $kernel->handle($input, new ConsoleOutput);
+        $kernel->handle($input, new ConsoleOutput());
 
         $this->assertFalse($called);
 
@@ -172,7 +174,7 @@ class CommandDurationThresholdTest extends TestCase
 
         $this->assertNull($kernel->commandStartedAt());
 
-        $kernel->handle($input, new ConsoleOutput);
+        $kernel->handle($input, new ConsoleOutput());
         $this->assertNotNull($kernel->commandStartedAt());
 
         $kernel->terminate($input, 21);
@@ -191,7 +193,7 @@ class CommandDurationThresholdTest extends TestCase
 
         Config::set('app.timezone', 'Australia/Melbourne');
         Carbon::setTestNow(Carbon::now());
-        $kernel->handle($input = new StringInput('foo'), new ConsoleOutput);
+        $kernel->handle($input = new StringInput('foo'), new ConsoleOutput());
 
         Carbon::setTestNow(now()->addMinute());
         $kernel->terminate($input, 21);

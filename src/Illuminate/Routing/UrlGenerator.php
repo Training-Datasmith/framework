@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Routing;
 
 use BackedEnum;
@@ -18,7 +20,8 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class UrlGenerator implements UrlGeneratorContract
 {
-    use InteractsWithTime, Macroable;
+    use InteractsWithTime;
+    use Macroable;
 
     /**
      * The request instance.
@@ -112,11 +115,12 @@ class UrlGenerator implements UrlGeneratorContract
     public function __construct(/**
      * The route collection.
      */
-    protected \Illuminate\Routing\RouteCollectionInterface $routes, Request $request, /**
+        protected \Illuminate\Routing\RouteCollectionInterface $routes,
+        Request $request, /**
      * The asset root URL.
      */
-    protected $assetRoot = null)
-    {
+        protected $assetRoot = null
+    ) {
         $this->setRequest($request);
     }
 
@@ -202,8 +206,12 @@ class UrlGenerator implements UrlGeneratorContract
             return $path;
         }
 
-        $tail = implode('/', array_map(
-            rawurlencode(...), (array) $this->formatParameters($extra))
+        $tail = implode(
+            '/',
+            array_map(
+                rawurlencode(...),
+                $this->formatParameters($extra)
+            )
         );
 
         // Once we have the scheme we will compile the "tail" by collapsing the values
@@ -214,7 +222,8 @@ class UrlGenerator implements UrlGeneratorContract
         [$path, $query] = $this->extractQueryString($path);
 
         return $this->format(
-            $root, '/'.trim($path.'/'.$tail, '/')
+            $root,
+            '/'.trim($path.'/'.$tail, '/')
         ).$query;
     }
 
@@ -414,10 +423,8 @@ class UrlGenerator implements UrlGeneratorContract
 
     /**
      * Determine if the given request has a valid signature for a relative URL.
-     *
-     * @return bool
      */
-    public function hasValidRelativeSignature(Request $request, Closure|array $ignoreQuery = [])
+    public function hasValidRelativeSignature(Request $request, Closure|array $ignoreQuery = []): bool
     {
         return $this->hasValidSignature($request, false, $ignoreQuery);
     }
@@ -509,14 +516,15 @@ class UrlGenerator implements UrlGeneratorContract
      * @param  \Illuminate\Routing\Route  $route
      * @param  mixed  $parameters
      * @param  bool  $absolute
-     * @return string
      *
      * @throws \Illuminate\Routing\Exceptions\UrlGenerationException
      */
-    public function toRoute($route, $parameters, $absolute)
+    public function toRoute($route, $parameters, $absolute): string
     {
         return $this->routeUrl()->to(
-            $route, $parameters, $absolute
+            $route,
+            $parameters,
+            $absolute
         );
     }
 
@@ -768,7 +776,7 @@ class UrlGenerator implements UrlGeneratorContract
      */
     public function pathFormatter()
     {
-        return $this->formatPathUsing ?: (fn($path) => $path);
+        return $this->formatPathUsing ?: (fn ($path) => $path);
     }
 
     /**
@@ -850,10 +858,8 @@ class UrlGenerator implements UrlGeneratorContract
 
     /**
      * Clone a new instance of the URL generator with a different encryption key resolver.
-     *
-     * @return \Illuminate\Routing\UrlGenerator
      */
-    public function withKeyResolver(callable $keyResolver)
+    public function withKeyResolver(callable $keyResolver): static
     {
         return (clone $this)->setKeyResolver($keyResolver);
     }

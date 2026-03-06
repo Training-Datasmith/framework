@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Support;
 
 use Illuminate\Contracts\Support\Htmlable;
@@ -17,8 +19,7 @@ class HtmlString implements Htmlable, Stringable
          * The HTML string.
          */
         protected $html = ''
-    )
-    {
+    ) {
     }
 
     /**

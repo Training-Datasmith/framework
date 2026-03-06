@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Foundation;
 
 use Illuminate\Config\Repository;
@@ -18,7 +20,7 @@ class FoundationApplicationTest extends TestCase
 {
     public function testSetLocaleSetsLocaleAndFiresLocaleChangedEvent()
     {
-        $app = new Application;
+        $app = new Application();
 
         $app['config'] = $config = m::mock(stdClass::class);
         $config->shouldReceive('get')->once()->with('app.locale')->andReturn('bar');
@@ -38,7 +40,7 @@ class FoundationApplicationTest extends TestCase
         $provider = m::mock(ApplicationBasicServiceProviderStub::class);
         $class = get_class($provider);
         $provider->shouldReceive('register')->once();
-        $app = new Application;
+        $app = new Application();
         $app->register($provider);
 
         $this->assertArrayHasKey($class, $app->getLoadedProviders());
@@ -46,9 +48,8 @@ class FoundationApplicationTest extends TestCase
 
     public function testClassesAreBoundWhenServiceProviderIsRegistered()
     {
-        $app = new Application;
-        $app->register($provider = new class($app) extends ServiceProvider
-        {
+        $app = new Application();
+        $app->register($provider = new class ($app) extends ServiceProvider {
             public $bindings = [
                 AbstractClass::class => ConcreteClass::class,
             ];
@@ -64,9 +65,8 @@ class FoundationApplicationTest extends TestCase
 
     public function testSingletonsAreCreatedWhenServiceProviderIsRegistered()
     {
-        $app = new Application;
-        $app->register($provider = new class($app) extends ServiceProvider
-        {
+        $app = new Application();
+        $app->register($provider = new class ($app) extends ServiceProvider {
             public $singletons = [
                 NonContractBackedClass::class,
                 AbstractClass::class => ConcreteClass::class,
@@ -91,7 +91,7 @@ class FoundationApplicationTest extends TestCase
         $provider = m::mock(ServiceProvider::class);
         $class = get_class($provider);
         $provider->shouldReceive('register')->once();
-        $app = new Application;
+        $app = new Application();
         $app->register($provider);
 
         $this->assertArrayHasKey($class, $app->getLoadedProviders());
@@ -102,7 +102,7 @@ class FoundationApplicationTest extends TestCase
         $provider = m::mock(ServiceProvider::class);
         $class = get_class($provider);
         $provider->shouldReceive('register')->once();
-        $app = new Application;
+        $app = new Application();
         $app->register($provider);
 
         $this->assertTrue($app->providerIsLoaded($class));
@@ -111,7 +111,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testDeferredServicesMarkedAsBound()
     {
-        $app = new Application;
+        $app = new Application();
         $app->setDeferredServices(['foo' => ApplicationDeferredServiceProviderStub::class]);
         $this->assertTrue($app->bound('foo'));
         $this->assertSame('foo', $app->make('foo'));
@@ -119,7 +119,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testDeferredServicesAreSharedProperly()
     {
-        $app = new Application;
+        $app = new Application();
         $app->setDeferredServices(['foo' => ApplicationDeferredSharedServiceProviderStub::class]);
         $this->assertTrue($app->bound('foo'));
         $one = $app->make('foo');
@@ -131,7 +131,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testDeferredServicesCanBeExtended()
     {
-        $app = new Application;
+        $app = new Application();
         $app->setDeferredServices(['foo' => ApplicationDeferredServiceProviderStub::class]);
         $app->extend('foo', function ($instance, $container) {
             return $instance.'bar';
@@ -141,7 +141,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testDeferredServiceProviderIsRegisteredOnlyOnce()
     {
-        $app = new Application;
+        $app = new Application();
         $app->setDeferredServices(['foo' => ApplicationDeferredServiceProviderCountStub::class]);
         $obj = $app->make('foo');
         $this->assertInstanceOf(stdClass::class, $obj);
@@ -151,7 +151,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testDeferredServiceDontRunWhenInstanceSet()
     {
-        $app = new Application;
+        $app = new Application();
         $app->setDeferredServices(['foo' => ApplicationDeferredServiceProviderStub::class]);
         $app->instance('foo', 'bar');
         $instance = $app->make('foo');
@@ -161,7 +161,7 @@ class FoundationApplicationTest extends TestCase
     public function testDeferredServicesAreLazilyInitialized()
     {
         ApplicationDeferredServiceProviderStub::$initialized = false;
-        $app = new Application;
+        $app = new Application();
         $app->setDeferredServices(['foo' => ApplicationDeferredServiceProviderStub::class]);
         $this->assertTrue($app->bound('foo'));
         $this->assertFalse(ApplicationDeferredServiceProviderStub::$initialized);
@@ -175,7 +175,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testDeferredServicesCanRegisterFactories()
     {
-        $app = new Application;
+        $app = new Application();
         $app->setDeferredServices(['foo' => ApplicationFactoryProviderStub::class]);
         $this->assertTrue($app->bound('foo'));
         $this->assertEquals(1, $app->make('foo'));
@@ -185,7 +185,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testSingleProviderCanProvideMultipleDeferredServices()
     {
-        $app = new Application;
+        $app = new Application();
         $app->setDeferredServices([
             'foo' => ApplicationMultiProviderStub::class,
             'bar' => ApplicationMultiProviderStub::class,
@@ -196,7 +196,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testDeferredServiceIsLoadedWhenAccessingImplementationThroughInterface()
     {
-        $app = new Application;
+        $app = new Application();
         $app->setDeferredServices([
             SampleInterface::class => InterfaceToImplementationDeferredServiceProvider::class,
             SampleImplementation::class => SampleImplementationDeferredServiceProvider::class,
@@ -207,7 +207,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testEnvironment()
     {
-        $app = new Application;
+        $app = new Application();
         $app['env'] = 'foo';
 
         $this->assertSame('foo', $app->environment());
@@ -225,21 +225,21 @@ class FoundationApplicationTest extends TestCase
 
     public function testEnvironmentHelpers()
     {
-        $local = new Application;
+        $local = new Application();
         $local['env'] = 'local';
 
         $this->assertTrue($local->isLocal());
         $this->assertFalse($local->isProduction());
         $this->assertFalse($local->runningUnitTests());
 
-        $production = new Application;
+        $production = new Application();
         $production['env'] = 'production';
 
         $this->assertTrue($production->isProduction());
         $this->assertFalse($production->isLocal());
         $this->assertFalse($production->runningUnitTests());
 
-        $testing = new Application;
+        $testing = new Application();
         $testing['env'] = 'testing';
 
         $this->assertTrue($testing->runningUnitTests());
@@ -249,12 +249,12 @@ class FoundationApplicationTest extends TestCase
 
     public function testDebugHelper()
     {
-        $debugOff = new Application;
+        $debugOff = new Application();
         $debugOff['config'] = new Repository(['app' => ['debug' => false]]);
 
         $this->assertFalse($debugOff->hasDebugModeEnabled());
 
-        $debugOn = new Application;
+        $debugOn = new Application();
         $debugOn['config'] = new Repository(['app' => ['debug' => true]]);
 
         $this->assertTrue($debugOn->hasDebugModeEnabled());
@@ -262,9 +262,9 @@ class FoundationApplicationTest extends TestCase
 
     public function testMethodAfterLoadingEnvironmentAddsClosure()
     {
-        $app = new Application;
+        $app = new Application();
         $closure = function () {
-            //
+
         };
         $app->afterLoadingEnvironment($closure);
         $this->assertArrayHasKey(0, $app['events']->getListeners('bootstrapped: Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables'));
@@ -272,9 +272,9 @@ class FoundationApplicationTest extends TestCase
 
     public function testBeforeBootstrappingAddsClosure()
     {
-        $app = new Application;
+        $app = new Application();
         $closure = function () {
-            //
+
         };
         $app->beforeBootstrapping(RegisterFacades::class, $closure);
         $this->assertArrayHasKey(0, $app['events']->getListeners('bootstrapping: Illuminate\Foundation\Bootstrap\RegisterFacades'));
@@ -282,7 +282,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testTerminationTests()
     {
-        $app = new Application;
+        $app = new Application();
 
         $result = [];
         $callback1 = function () use (&$result) {
@@ -308,9 +308,9 @@ class FoundationApplicationTest extends TestCase
 
     public function testAfterBootstrappingAddsClosure()
     {
-        $app = new Application;
+        $app = new Application();
         $closure = function () {
-            //
+
         };
         $app->afterBootstrapping(RegisterFacades::class, $closure);
         $this->assertArrayHasKey(0, $app['events']->getListeners('bootstrapped: Illuminate\Foundation\Bootstrap\RegisterFacades'));
@@ -318,7 +318,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testTerminationCallbacksCanAcceptAtNotation()
     {
-        $app = new Application;
+        $app = new Application();
         $app->terminating(ConcreteTerminator::class.'@terminate');
 
         $app->terminate();
@@ -328,7 +328,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testBootingCallbacks()
     {
-        $application = new Application;
+        $application = new Application();
 
         $counter = 0;
         $closure = function ($app) use (&$counter, $application) {
@@ -351,7 +351,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testBootedCallbacks()
     {
-        $application = new Application;
+        $application = new Application();
 
         $counter = 0;
         $closure = function ($app) use (&$counter, $application) {
@@ -453,7 +453,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testEnvPathsAreUsedAndMadeAbsoluteForCachePathsWhenSpecifiedAsRelativeWithNullBasePath()
     {
-        $app = new Application;
+        $app = new Application();
         $_SERVER['APP_SERVICES_CACHE'] = 'relative/path/services.php';
         $_SERVER['APP_PACKAGES_CACHE'] = 'relative/path/packages.php';
         $_SERVER['APP_CONFIG_CACHE'] = 'relative/path/config.php';
@@ -503,7 +503,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testMacroable(): void
     {
-        $app = new Application;
+        $app = new Application();
         $app['env'] = 'foo';
 
         $app->macro('foo', function () {
@@ -519,7 +519,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testUseConfigPath(): void
     {
-        $app = new Application;
+        $app = new Application();
         $app->useConfigPath(__DIR__.'/fixtures/config');
         $app->bootstrapWith([\Illuminate\Foundation\Bootstrap\LoadConfiguration::class]);
 
@@ -528,7 +528,7 @@ class FoundationApplicationTest extends TestCase
 
     public function testMergingConfig(): void
     {
-        $app = new Application;
+        $app = new Application();
         $app->useConfigPath(__DIR__.'/fixtures/config');
         $app->bootstrapWith([\Illuminate\Foundation\Bootstrap\LoadConfiguration::class]);
 
@@ -619,7 +619,7 @@ class FoundationApplicationTest extends TestCase
     public function test_routes_are_not_cached_by_instance_falls_back_to_file()
     {
         $app = new Application();
-        $files = new FileExistsFake;
+        $files = new FileExistsFake();
         $app->instance('files', $files);
 
         $this->assertFalse($app->routesAreCached());
@@ -630,7 +630,7 @@ class FoundationApplicationTest extends TestCase
     {
         $app = new Application();
         $app->instance('events.cached', true);
-        $files = new FileExistsFake;
+        $files = new FileExistsFake();
         $app->instance('files', $files);
 
         $this->assertTrue($app->eventsAreCached());
@@ -640,7 +640,7 @@ class FoundationApplicationTest extends TestCase
     public function test_events_are_cached_checks_filesystem_if_not_set()
     {
         $app = new Application();
-        $files = new FileExistsFake;
+        $files = new FileExistsFake();
         $app->instance('files', $files);
 
         $this->assertFalse($app->eventsAreCached());
@@ -666,12 +666,12 @@ class ApplicationBasicServiceProviderStub extends ServiceProvider
 {
     public function boot()
     {
-        //
+
     }
 
     public function register()
     {
-        //
+
     }
 }
 
@@ -680,7 +680,7 @@ class ApplicationDeferredSharedServiceProviderStub extends ServiceProvider imple
     public function register()
     {
         $this->app->singleton('foo', function () {
-            return new stdClass;
+            return new stdClass();
         });
     }
 }
@@ -692,7 +692,7 @@ class ApplicationDeferredServiceProviderCountStub extends ServiceProvider implem
     public function register()
     {
         static::$count++;
-        $this->app['foo'] = new stdClass;
+        $this->app['foo'] = new stdClass();
     }
 }
 
@@ -772,17 +772,14 @@ class ApplicationMultiProviderStub extends ServiceProvider implements Deferrable
 
 abstract class AbstractClass
 {
-    //
 }
 
 class ConcreteClass extends AbstractClass
 {
-    //
 }
 
 class NonContractBackedClass
 {
-    //
 }
 
 class ConcreteTerminator

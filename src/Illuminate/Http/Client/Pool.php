@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Http\Client;
 
 use GuzzleHttp\Utils;
@@ -59,10 +61,8 @@ class Pool
 
     /**
      * Retrieve a new async pending request.
-     *
-     * @return \Illuminate\Http\Client\PendingRequest
      */
-    protected function asyncRequest()
+    protected function asyncRequest(): \Illuminate\Http\Client\PendingRequest
     {
         return $this->factory->setHandler($this->handler)->async();
     }
@@ -80,7 +80,6 @@ class Pool
     /**
      * Add a request to the pool with a numeric index and forward the method call to the request.
      *
-     * @param  array  $parameters
      * @return \Illuminate\Http\Client\PendingRequest|\GuzzleHttp\Promise\Promise
      */
     public function __call(string $method, array $parameters)

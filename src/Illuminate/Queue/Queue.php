@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Queue;
 
 use Carbon\Carbon;
@@ -127,7 +129,8 @@ abstract class Queue
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new InvalidPayloadException(
-                'Unable to JSON encode payload. Error ('.json_last_error().'): '.json_last_error_msg(), $value
+                'Unable to JSON encode payload. Error ('.json_last_error().'): '.json_last_error_msg(),
+                $value
             );
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Tests\Integration\Database\Sqlite;
 
 use Illuminate\Database\Query\Expression;
@@ -99,16 +101,20 @@ class DatabaseSchemaBuilderTest extends TestCase
 
         $foreignKeys = collect($schema->getForeignKeys('table2'));
 
-        $this->assertTrue($foreignKeys->contains(
-            fn ($fk) => $fk['foreign_table'] === 'example_table1' &&
+        $this->assertTrue(
+            $foreignKeys->contains(
+                fn ($fk) => $fk['foreign_table'] === 'example_table1' &&
                 $fk['foreign_columns'] === ['id'] &&
-                $fk['columns'] === ['author_id'])
+                $fk['columns'] === ['author_id']
+            )
         );
 
-        $this->assertTrue($foreignKeys->contains(
-            fn ($fk) => $fk['foreign_table'] === 'example_table1' &&
+        $this->assertTrue(
+            $foreignKeys->contains(
+                fn ($fk) => $fk['foreign_table'] === 'example_table1' &&
                 $fk['foreign_columns'] === ['id'] &&
-                $fk['columns'] === ['moderator_id'])
+                $fk['columns'] === ['moderator_id']
+            )
         );
     }
 

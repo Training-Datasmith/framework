@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Illuminate\Translation;
 
 use Stringable;
@@ -28,8 +30,7 @@ class PotentiallyTranslatedString implements Stringable
          * The validator that may perform the translation.
          */
         protected $translator
-    )
-    {
+    ) {
     }
 
     /**
