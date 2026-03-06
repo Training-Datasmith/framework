@@ -19,13 +19,6 @@ abstract class GeneratorCommand extends Command implements PromptsForMissingInpu
     use FindsAvailableModels;
 
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * The type of class being generated.
      *
      * @var string
@@ -126,15 +119,16 @@ abstract class GeneratorCommand extends Command implements PromptsForMissingInpu
     /**
      * Create a new generator command instance.
      */
-    public function __construct(Filesystem $files)
+    public function __construct(/**
+     * The filesystem instance.
+     */
+    protected \Illuminate\Filesystem\Filesystem $files)
     {
         parent::__construct();
 
         if (in_array(CreatesMatchingTest::class, class_uses_recursive($this))) {
             $this->addTestOptions();
         }
-
-        $this->files = $files;
     }
 
     /**
@@ -471,7 +465,7 @@ abstract class GeneratorCommand extends Command implements PromptsForMissingInpu
      * @param  string  $path
      * @return string
      */
-    protected function viewPath($path = '')
+    protected function viewPath(?string $path = '')
     {
         $views = $this->laravel['config']['view.paths'][0] ?? resource_path('views');
 

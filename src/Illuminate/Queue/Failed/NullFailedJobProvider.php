@@ -11,9 +11,8 @@ class NullFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
      * @param  string  $queue
      * @param  string  $payload
      * @param  \Throwable  $exception
-     * @return int|null
      */
-    public function log($connection, $queue, $payload, $exception)
+    public function log($connection, $queue, $payload, $exception): void
     {
         //
     }
@@ -22,19 +21,16 @@ class NullFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
      * Get the IDs of all of the failed jobs.
      *
      * @param  string|null  $queue
-     * @return array
      */
-    public function ids($queue = null)
+    public function ids($queue = null): array
     {
         return [];
     }
 
     /**
      * Get a list of all of the failed jobs.
-     *
-     * @return array
      */
-    public function all()
+    public function all(): array
     {
         return [];
     }
@@ -43,9 +39,8 @@ class NullFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
      * Get a single failed job.
      *
      * @param  mixed  $id
-     * @return object|null
      */
-    public function find($id)
+    public function find($id): void
     {
         //
     }
@@ -54,9 +49,8 @@ class NullFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
      * Delete a single failed job from storage.
      *
      * @param  mixed  $id
-     * @return bool
      */
-    public function forget($id)
+    public function forget($id): bool
     {
         return true;
     }
@@ -65,9 +59,8 @@ class NullFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
      * Flush all of the failed jobs from storage.
      *
      * @param  int|null  $hours
-     * @return void
      */
-    public function flush($hours = null)
+    public function flush($hours = null): void
     {
         //
     }
@@ -77,9 +70,8 @@ class NullFailedJobProvider implements CountableFailedJobProvider, FailedJobProv
      *
      * @param  string|null  $connection
      * @param  string|null  $queue
-     * @return int
      */
-    public function count($connection = null, $queue = null)
+    public function count($connection = null, $queue = null): int
     {
         return 0;
     }

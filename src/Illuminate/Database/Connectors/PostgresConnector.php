@@ -24,7 +24,6 @@ class PostgresConnector extends Connector implements ConnectorInterface
     /**
      * Establish a database connection.
      *
-     * @param  array  $config
      * @return \PDO
      */
     public function connect(array $config)
@@ -53,7 +52,6 @@ class PostgresConnector extends Connector implements ConnectorInterface
     /**
      * Create a DSN string from a configuration.
      *
-     * @param  array  $config
      * @return string
      */
     protected function getDsn(array $config)
@@ -96,12 +94,8 @@ class PostgresConnector extends Connector implements ConnectorInterface
 
     /**
      * Add the SSL options to the DSN.
-     *
-     * @param  string  $dsn
-     * @param  array  $config
-     * @return string
      */
-    protected function addSslOptions($dsn, array $config)
+    protected function addSslOptions(string $dsn, array $config): string
     {
         foreach (['sslmode', 'sslcert', 'sslkey', 'sslrootcert'] as $option) {
             if (isset($config[$option])) {
@@ -116,7 +110,6 @@ class PostgresConnector extends Connector implements ConnectorInterface
      * Set the connection transaction isolation level.
      *
      * @param  \PDO  $connection
-     * @param  array  $config
      * @return void
      */
     protected function configureIsolationLevel($connection, array $config)
@@ -130,7 +123,6 @@ class PostgresConnector extends Connector implements ConnectorInterface
      * Set the timezone on the connection.
      *
      * @param  \PDO  $connection
-     * @param  array  $config
      * @return void
      */
     protected function configureTimezone($connection, array $config)
@@ -146,10 +138,9 @@ class PostgresConnector extends Connector implements ConnectorInterface
      * Set the "search_path" on the database connection.
      *
      * @param  \PDO  $connection
-     * @param  array  $config
      * @return void
      */
-    protected function configureSearchPath($connection, $config)
+    protected function configureSearchPath($connection, array $config)
     {
         if (isset($config['search_path']) || isset($config['schema'])) {
             $searchPath = $this->quoteSearchPath(
@@ -162,11 +153,8 @@ class PostgresConnector extends Connector implements ConnectorInterface
 
     /**
      * Format the search path for the DSN.
-     *
-     * @param  array  $searchPath
-     * @return string
      */
-    protected function quoteSearchPath($searchPath)
+    protected function quoteSearchPath(array $searchPath): string
     {
         return count($searchPath) === 1 ? '"'.$searchPath[0].'"' : '"'.implode('", "', $searchPath).'"';
     }
@@ -175,7 +163,6 @@ class PostgresConnector extends Connector implements ConnectorInterface
      * Configure the synchronous_commit setting.
      *
      * @param  \PDO  $connection
-     * @param  array  $config
      * @return void
      */
     protected function configureSynchronousCommit($connection, array $config)

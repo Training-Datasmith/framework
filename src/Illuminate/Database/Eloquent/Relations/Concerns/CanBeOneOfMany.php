@@ -52,7 +52,6 @@ trait CanBeOneOfMany
     /**
      * Add join query constraints for one of many relationships.
      *
-     * @param  \Illuminate\Database\Query\JoinClause  $join
      * @return void
      */
     abstract public function addOneOfManyJoinSubQueryConstraints(JoinClause $join);
@@ -91,7 +90,7 @@ trait CanBeOneOfMany
         }
 
         foreach ($columns as $column => $aggregate) {
-            if (! in_array(strtolower($aggregate), ['min', 'max'])) {
+            if (! in_array(strtolower((string) $aggregate), ['min', 'max'])) {
                 throw new InvalidArgumentException("Invalid aggregate [{$aggregate}] used within ofMany relation. Available aggregates: MIN, MAX");
             }
 
@@ -151,9 +150,7 @@ trait CanBeOneOfMany
      */
     public function latestOfMany($column = 'id', $relation = null)
     {
-        return $this->ofMany(Collection::wrap($column)->mapWithKeys(function ($column) {
-            return [$column => 'MAX'];
-        })->all(), 'MAX', $relation);
+        return $this->ofMany(Collection::wrap($column)->mapWithKeys(fn($column) => [$column => 'MAX'])->all(), 'MAX', $relation);
     }
 
     /**
@@ -165,9 +162,7 @@ trait CanBeOneOfMany
      */
     public function oldestOfMany($column = 'id', $relation = null)
     {
-        return $this->ofMany(Collection::wrap($column)->mapWithKeys(function ($column) {
-            return [$column => 'MIN'];
-        })->all(), 'MIN', $relation);
+        return $this->ofMany(Collection::wrap($column)->mapWithKeys(fn($column) => [$column => 'MIN'])->all(), 'MIN', $relation);
     }
 
     /**
@@ -230,10 +225,10 @@ trait CanBeOneOfMany
      */
     protected function addOneOfManyJoinSubQuery(Builder $parent, Builder $subQuery, $on)
     {
-        $parent->beforeQuery(function ($parent) use ($subQuery, $on) {
+        $parent->beforeQuery(function ($parent) use ($subQuery, $on): void {
             $subQuery->applyBeforeQueryCallbacks();
 
-            $parent->joinSub($subQuery, $this->relationName, function ($join) use ($on) {
+            $parent->joinSub($subQuery, $this->relationName, function ($join) use ($on): void {
                 foreach ($on as $onColumn) {
                     $join->on($this->qualifySubSelectColumn($onColumn.'_aggregate'), '=', $this->qualifyRelatedColumn($onColumn));
                 }
@@ -282,9 +277,8 @@ trait CanBeOneOfMany
      * Get the qualified column name for the one-of-many relationship using the subselect join query's alias.
      *
      * @param  string  $column
-     * @return string
      */
-    public function qualifySubSelectColumn($column)
+    public function qualifySubSelectColumn($column): string
     {
         return $this->getRelationName().'.'.last(explode('.', $column));
     }
@@ -302,10 +296,8 @@ trait CanBeOneOfMany
 
     /**
      * Guess the "hasOne" relationship's name via backtrace.
-     *
-     * @return string
      */
-    protected function guessRelationship()
+    protected function guessRelationship(): string
     {
         return debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)[2]['function'];
     }

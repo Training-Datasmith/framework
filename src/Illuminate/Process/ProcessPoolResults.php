@@ -8,20 +8,15 @@ use Illuminate\Support\Collection;
 class ProcessPoolResults implements ArrayAccess
 {
     /**
-     * The results of the processes.
-     *
-     * @var array
-     */
-    protected $results = [];
-
-    /**
      * Create a new process pool result set.
-     *
-     * @param  array  $results
      */
-    public function __construct(array $results)
+    public function __construct(
+        /**
+         * The results of the processes.
+         */
+        protected array $results
+    )
     {
-        $this->results = $results;
     }
 
     /**
@@ -36,20 +31,16 @@ class ProcessPoolResults implements ArrayAccess
 
     /**
      * Determine if any of the processes in the pool failed.
-     *
-     * @return bool
      */
-    public function failed()
+    public function failed(): bool
     {
         return ! $this->successful();
     }
 
     /**
      * Get the results as a collection.
-     *
-     * @return \Illuminate\Support\Collection
      */
-    public function collect()
+    public function collect(): \Illuminate\Support\Collection
     {
         return new Collection($this->results);
     }
@@ -58,7 +49,6 @@ class ProcessPoolResults implements ArrayAccess
      * Determine if the given array offset exists.
      *
      * @param  int  $offset
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -69,7 +59,6 @@ class ProcessPoolResults implements ArrayAccess
      * Get the result at the given offset.
      *
      * @param  int  $offset
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -81,7 +70,6 @@ class ProcessPoolResults implements ArrayAccess
      *
      * @param  int  $offset
      * @param  mixed  $value
-     * @return void
      */
     public function offsetSet($offset, $value): void
     {
@@ -92,7 +80,6 @@ class ProcessPoolResults implements ArrayAccess
      * Unset the result at the given offset.
      *
      * @param  int  $offset
-     * @return void
      */
     public function offsetUnset($offset): void
     {

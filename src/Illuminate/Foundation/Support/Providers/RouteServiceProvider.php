@@ -45,12 +45,10 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->booted(function () {
+        $this->booted(function (): void {
             $this->setRootControllerNamespace();
 
             if ($this->routesAreCached()) {
@@ -58,7 +56,7 @@ class RouteServiceProvider extends ServiceProvider
             } else {
                 $this->loadRoutes();
 
-                $this->app->booted(function () {
+                $this->app->booted(function (): void {
                     $this->app['router']->getRoutes()->refreshNameLookups();
                     $this->app['router']->getRoutes()->refreshActionLookups();
                 });
@@ -68,10 +66,8 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         //
     }
@@ -79,10 +75,9 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Register the callback that will be used to load the application's routes.
      *
-     * @param  \Closure  $routesCallback
      * @return $this
      */
-    protected function routes(Closure $routesCallback)
+    protected function routes(Closure $routesCallback): static
     {
         $this->loadRoutesUsing = $routesCallback;
 
@@ -91,22 +86,16 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * Register the callback that will be used to load the application's routes.
-     *
-     * @param  \Closure|null  $routesCallback
-     * @return void
      */
-    public static function loadRoutesUsing(?Closure $routesCallback)
+    public static function loadRoutesUsing(?Closure $routesCallback): void
     {
         self::$alwaysLoadRoutesUsing = $routesCallback;
     }
 
     /**
      * Register the callback that will be used to load the application's cached routes.
-     *
-     * @param  \Closure|null  $routesCallback
-     * @return void
      */
-    public static function loadCachedRoutesUsing(?Closure $routesCallback)
+    public static function loadCachedRoutesUsing(?Closure $routesCallback): void
     {
         self::$alwaysLoadCachedRoutesUsing = $routesCallback;
     }
@@ -146,7 +135,7 @@ class RouteServiceProvider extends ServiceProvider
             return;
         }
 
-        $this->app->booted(function () {
+        $this->app->booted(function (): void {
             require $this->app->getCachedRoutesPath();
         });
     }
@@ -172,11 +161,10 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Pass dynamic methods onto the router instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->forwardCallTo(
             $this->app->make(Router::class), $method, $parameters

@@ -22,10 +22,8 @@ trait InteractsWithFlashData
 
     /**
      * Flash the input for the current request to the session.
-     *
-     * @return void
      */
-    public function flash()
+    public function flash(): void
     {
         $this->session()->flashInput($this->input());
     }
@@ -34,9 +32,8 @@ trait InteractsWithFlashData
      * Flash only some of the input to the session.
      *
      * @param  mixed  $keys
-     * @return void
      */
-    public function flashOnly($keys)
+    public function flashOnly($keys): void
     {
         $this->session()->flashInput(
             $this->only(is_array($keys) ? $keys : func_get_args())
@@ -47,9 +44,8 @@ trait InteractsWithFlashData
      * Flash only some of the input to the session.
      *
      * @param  mixed  $keys
-     * @return void
      */
-    public function flashExcept($keys)
+    public function flashExcept($keys): void
     {
         $this->session()->flashInput(
             $this->except(is_array($keys) ? $keys : func_get_args())
@@ -58,10 +54,8 @@ trait InteractsWithFlashData
 
     /**
      * Flush all of the old input from the session.
-     *
-     * @return void
      */
-    public function flush()
+    public function flush(): void
     {
         $this->session()->flashInput([]);
     }

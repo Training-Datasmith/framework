@@ -15,47 +15,29 @@ class SoftDeletedInDatabase extends Constraint
     protected $show = 3;
 
     /**
-     * The database connection.
-     *
-     * @var \Illuminate\Database\Connection
-     */
-    protected $database;
-
-    /**
-     * The data that will be used to narrow the search in the database table.
-     *
-     * @var array
-     */
-    protected $data;
-
-    /**
-     * The name of the column that indicates soft deletion has occurred.
-     *
-     * @var string
-     */
-    protected $deletedAtColumn;
-
-    /**
      * Create a new constraint instance.
-     *
-     * @param  \Illuminate\Database\Connection  $database
-     * @param  array  $data
-     * @param  string  $deletedAtColumn
      */
-    public function __construct(Connection $database, array $data, string $deletedAtColumn)
+    public function __construct(
+        /**
+         * The database connection.
+         */
+        protected \Illuminate\Database\Connection $database,
+        /**
+         * The data that will be used to narrow the search in the database table.
+         */
+        protected array $data,
+        /**
+         * The name of the column that indicates soft deletion has occurred.
+         */
+        protected string $deletedAtColumn
+    )
     {
-        $this->data = $data;
-
-        $this->database = $database;
-
-        $this->deletedAtColumn = $deletedAtColumn;
     }
 
     /**
      * Check if the data is found in the given table.
      *
      * @param  string  $table
-     * @return bool
      */
     public function matches($table): bool
     {
@@ -69,7 +51,6 @@ class SoftDeletedInDatabase extends Constraint
      * Get the description of the failure.
      *
      * @param  string  $table
-     * @return string
      */
     public function failureDescription($table): string
     {
@@ -106,8 +87,6 @@ class SoftDeletedInDatabase extends Constraint
 
     /**
      * Get a string representation of the object.
-     *
-     * @return string
      */
     public function toString(): string
     {

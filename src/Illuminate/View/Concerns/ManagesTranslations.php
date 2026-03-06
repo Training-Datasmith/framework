@@ -15,9 +15,8 @@ trait ManagesTranslations
      * Start a translation block.
      *
      * @param  array  $replacements
-     * @return void
      */
-    public function startTranslation($replacements = [])
+    public function startTranslation($replacements = []): void
     {
         ob_start();
 

@@ -13,12 +13,8 @@ class PredisConnector implements Connector
 {
     /**
      * Create a new connection.
-     *
-     * @param  array  $config
-     * @param  array  $options
-     * @return \Illuminate\Redis\Connections\PredisConnection
      */
-    public function connect(array $config, array $options)
+    public function connect(array $config, array $options): \Illuminate\Redis\Connections\PredisConnection
     {
         $formattedOptions = array_merge(
             ['timeout' => 10.0], $options, Arr::pull($config, 'options', [])
@@ -38,13 +34,8 @@ class PredisConnector implements Connector
 
     /**
      * Create a new clustered Predis connection.
-     *
-     * @param  array  $config
-     * @param  array  $clusterOptions
-     * @param  array  $options
-     * @return \Illuminate\Redis\Connections\PredisClusterConnection
      */
-    public function connectToCluster(array $config, array $clusterOptions, array $options)
+    public function connectToCluster(array $config, array $clusterOptions, array $options): \Illuminate\Redis\Connections\PredisClusterConnection
     {
         $clusterSpecificOptions = Arr::pull($config, 'options', []);
 

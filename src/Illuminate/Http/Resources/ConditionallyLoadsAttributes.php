@@ -10,10 +10,9 @@ trait ConditionallyLoadsAttributes
     /**
      * Filter the given data, removing any optional values.
      *
-     * @param  array  $data
      * @return array
      */
-    protected function filter($data)
+    protected function filter(array $data)
     {
         $index = -1;
 
@@ -67,10 +66,9 @@ trait ConditionallyLoadsAttributes
     /**
      * Remove the missing values from the filtered data.
      *
-     * @param  array  $data
      * @return array
      */
-    protected function removeMissingValues($data)
+    protected function removeMissingValues(array $data)
     {
         $numericKeys = true;
 
@@ -171,9 +169,8 @@ trait ConditionallyLoadsAttributes
      * Merge the given attributes.
      *
      * @param  array  $attributes
-     * @return \Illuminate\Http\Resources\MergeValue
      */
-    protected function attributes($attributes)
+    protected function attributes($attributes): \Illuminate\Http\Resources\MergeValue
     {
         return new MergeValue(
             Arr::only($this->resource->toArray(), $attributes)
@@ -413,9 +410,8 @@ trait ConditionallyLoadsAttributes
      *
      * @param  string  $accessor
      * @param  string  $table
-     * @return bool
      */
-    protected function hasPivotLoadedAs($accessor, $table)
+    protected function hasPivotLoadedAs($accessor, $table): bool
     {
         return isset($this->resource->$accessor) &&
             ($this->resource->$accessor instanceof $table ||
@@ -426,7 +422,6 @@ trait ConditionallyLoadsAttributes
      * Transform the given value if it is present.
      *
      * @param  mixed  $value
-     * @param  callable  $callback
      * @param  mixed  $default
      * @return mixed
      */

@@ -10,12 +10,8 @@ trait InteractsWithComposerPackages
 {
     /**
      * Installs the given Composer Packages into the application.
-     *
-     * @param  string  $composer
-     * @param  array  $packages
-     * @return bool
      */
-    protected function requireComposerPackages(string $composer, array $packages)
+    protected function requireComposerPackages(string $composer, array $packages): bool
     {
         if ($composer !== 'global') {
             $command = [$this->phpBinary(), $composer, 'require'];
@@ -28,17 +24,15 @@ trait InteractsWithComposerPackages
 
         return ! (new Process($command, $this->laravel->basePath(), ['COMPOSER_MEMORY_LIMIT' => '-1']))
             ->setTimeout(null)
-            ->run(function ($type, $output) {
+            ->run(function ($type, $output): void {
                 $this->output->write($output);
             });
     }
 
     /**
      * Get the path to the appropriate PHP binary.
-     *
-     * @return string
      */
-    protected function phpBinary()
+    protected function phpBinary(): string
     {
         return php_binary();
     }

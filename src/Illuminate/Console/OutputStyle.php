@@ -11,13 +11,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class OutputStyle extends SymfonyStyle implements NewLineAware
 {
     /**
-     * The output instance.
-     *
-     * @var \Symfony\Component\Console\Output\OutputInterface
-     */
-    private $output;
-
-    /**
      * The number of trailing new lines written by the last output.
      *
      * This is initialized as 1 to account for the new line written by the shell after executing a command.
@@ -37,15 +30,13 @@ class OutputStyle extends SymfonyStyle implements NewLineAware
 
     /**
      * Create a new Console OutputStyle instance.
-     *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      */
-    public function __construct(InputInterface $input, OutputInterface $output)
+    public function __construct(InputInterface $input, /**
+     * The output instance.
+     */
+    private readonly OutputInterface $output)
     {
-        $this->output = $output;
-
-        parent::__construct($input, $output);
+        parent::__construct($input, $this->output);
     }
 
     /**
@@ -131,7 +122,7 @@ class OutputStyle extends SymfonyStyle implements NewLineAware
      * @param  string|iterable<string>  $messages
      * @return int
      */
-    protected function trailingNewLineCount($messages)
+    protected function trailingNewLineCount($messages): int
     {
         if (is_iterable($messages)) {
             $string = '';
@@ -143,13 +134,11 @@ class OutputStyle extends SymfonyStyle implements NewLineAware
             $string = $messages;
         }
 
-        return strlen($string) - strlen(rtrim($string, PHP_EOL));
+        return strlen((string) $string) - strlen(rtrim((string) $string, PHP_EOL));
     }
 
     /**
      * Returns whether verbosity is quiet (-q).
-     *
-     * @return bool
      */
     public function isQuiet(): bool
     {
@@ -158,8 +147,6 @@ class OutputStyle extends SymfonyStyle implements NewLineAware
 
     /**
      * Returns whether verbosity is verbose (-v).
-     *
-     * @return bool
      */
     public function isVerbose(): bool
     {
@@ -168,8 +155,6 @@ class OutputStyle extends SymfonyStyle implements NewLineAware
 
     /**
      * Returns whether verbosity is very verbose (-vv).
-     *
-     * @return bool
      */
     public function isVeryVerbose(): bool
     {
@@ -178,8 +163,6 @@ class OutputStyle extends SymfonyStyle implements NewLineAware
 
     /**
      * Returns whether verbosity is debug (-vvv).
-     *
-     * @return bool
      */
     public function isDebug(): bool
     {

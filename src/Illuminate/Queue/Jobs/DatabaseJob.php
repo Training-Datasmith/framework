@@ -9,33 +9,21 @@ use Illuminate\Queue\DatabaseQueue;
 class DatabaseJob extends Job implements JobContract
 {
     /**
-     * The database queue instance.
-     *
-     * @var \Illuminate\Queue\DatabaseQueue
-     */
-    protected $database;
-
-    /**
-     * The database job payload.
-     *
-     * @var \Illuminate\Queue\Jobs\DatabaseJobRecord
-     */
-    protected $job;
-
-    /**
      * Create a new job instance.
      *
-     * @param  \Illuminate\Container\Container  $container
-     * @param  \Illuminate\Queue\DatabaseQueue  $database
      * @param  \Illuminate\Queue\Jobs\DatabaseJobRecord  $job
      * @param  string  $connectionName
      * @param  string  $queue
      */
-    public function __construct(Container $container, DatabaseQueue $database, $job, $connectionName, $queue)
+    public function __construct(Container $container, /**
+     * The database queue instance.
+     */
+    protected \Illuminate\Queue\DatabaseQueue $database, /**
+     * The database job payload.
+     */
+    protected $job, $connectionName, $queue)
     {
-        $this->job = $job;
         $this->queue = $queue;
-        $this->database = $database;
         $this->container = $container;
         $this->connectionName = $connectionName;
     }
@@ -44,9 +32,8 @@ class DatabaseJob extends Job implements JobContract
      * Release the job back into the queue after (n) seconds.
      *
      * @param  int  $delay
-     * @return void
      */
-    public function release($delay = 0)
+    public function release($delay = 0): void
     {
         parent::release($delay);
 
@@ -55,10 +42,8 @@ class DatabaseJob extends Job implements JobContract
 
     /**
      * Delete the job from the queue.
-     *
-     * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         parent::delete();
 
@@ -67,10 +52,8 @@ class DatabaseJob extends Job implements JobContract
 
     /**
      * Get the number of times the job has been attempted.
-     *
-     * @return int
      */
-    public function attempts()
+    public function attempts(): int
     {
         return (int) $this->job->attempts;
     }

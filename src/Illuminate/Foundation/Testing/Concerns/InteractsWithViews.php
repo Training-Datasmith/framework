@@ -14,11 +14,9 @@ trait InteractsWithViews
     /**
      * Create a new TestView from the given view.
      *
-     * @param  string  $view
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
-     * @return \Illuminate\Testing\TestView
      */
-    protected function view(string $view, $data = [])
+    protected function view(string $view, $data = []): \Illuminate\Testing\TestView
     {
         return new TestView(view($view, $data));
     }
@@ -26,11 +24,9 @@ trait InteractsWithViews
     /**
      * Render the contents of the given Blade template string.
      *
-     * @param  string  $template
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
-     * @return \Illuminate\Testing\TestView
      */
-    protected function blade(string $template, $data = [])
+    protected function blade(string $template, $data = []): \Illuminate\Testing\TestView
     {
         $tempDirectory = sys_get_temp_dir();
 
@@ -50,11 +46,9 @@ trait InteractsWithViews
     /**
      * Render the given view component.
      *
-     * @param  string  $componentClass
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
-     * @return \Illuminate\Testing\TestComponent
      */
-    protected function component(string $componentClass, $data = [])
+    protected function component(string $componentClass, $data = []): \Illuminate\Testing\TestComponent
     {
         $component = $this->app->make($componentClass, $data);
 
@@ -70,7 +64,6 @@ trait InteractsWithViews
     /**
      * Populate the shared view error bag with the given errors.
      *
-     * @param  array  $errors
      * @param  string  $key
      * @return $this
      */

@@ -10,34 +10,6 @@ use Throwable;
 class ConcurrencyLimiter
 {
     /**
-     * The Redis factory implementation.
-     *
-     * @var \Illuminate\Redis\Connections\Connection
-     */
-    protected $redis;
-
-    /**
-     * The name of the limiter.
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The allowed number of concurrent tasks.
-     *
-     * @var int
-     */
-    protected $maxLocks;
-
-    /**
-     * The number of seconds a slot should be maintained.
-     *
-     * @var int
-     */
-    protected $releaseAfter;
-
-    /**
      * Create a new concurrency limiter instance.
      *
      * @param  \Illuminate\Redis\Connections\Connection  $redis
@@ -45,12 +17,25 @@ class ConcurrencyLimiter
      * @param  int  $maxLocks
      * @param  int  $releaseAfter
      */
-    public function __construct($redis, $name, $maxLocks, $releaseAfter)
+    public function __construct(
+        /**
+         * The Redis factory implementation.
+         */
+        protected $redis,
+        /**
+         * The name of the limiter.
+         */
+        protected $name,
+        /**
+         * The allowed number of concurrent tasks.
+         */
+        protected $maxLocks,
+        /**
+         * The number of seconds a slot should be maintained.
+         */
+        protected $releaseAfter
+    )
     {
-        $this->name = $name;
-        $this->redis = $redis;
-        $this->maxLocks = $maxLocks;
-        $this->releaseAfter = $releaseAfter;
     }
 
     /**
@@ -80,7 +65,7 @@ class ConcurrencyLimiter
 
         if (is_callable($callback)) {
             try {
-                return tap($callback(), function () use ($slot, $id) {
+                return tap($callback(), function () use ($slot, $id): void {
                     $this->release($slot, $id);
                 });
             } catch (Throwable $exception) {
@@ -101,9 +86,7 @@ class ConcurrencyLimiter
      */
     protected function acquire($id)
     {
-        $slots = array_map(function ($i) {
-            return $this->name.$i;
-        }, range(1, $this->maxLocks));
+        $slots = array_map(fn($i) => $this->name.$i, range(1, $this->maxLocks));
 
         return $this->redis->eval(...array_merge(
             [$this->lockScript(), count($slots)],
@@ -118,10 +101,8 @@ class ConcurrencyLimiter
      * ARGV[1] - The limiter name
      * ARGV[2] - The number of seconds the slot should be reserved
      * ARGV[3] - The unique identifier for this lock
-     *
-     * @return string
      */
-    protected function lockScript()
+    protected function lockScript(): string
     {
         return <<<'LUA'
 for index, value in pairs(redis.call('mget', unpack(KEYS))) do
@@ -150,10 +131,8 @@ LUA;
      *
      * KEYS[1] - The name of the lock
      * ARGV[1] - The unique identifier for this lock
-     *
-     * @return string
      */
-    protected function releaseScript()
+    protected function releaseScript(): string
     {
         return <<<'LUA'
 if redis.call('get', KEYS[1]) == ARGV[1]

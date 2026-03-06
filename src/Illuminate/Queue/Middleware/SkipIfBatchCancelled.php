@@ -9,9 +9,8 @@ class SkipIfBatchCancelled
      *
      * @param  mixed  $job
      * @param  callable  $next
-     * @return mixed
      */
-    public function handle($job, $next)
+    public function handle($job, $next): void
     {
         if (method_exists($job, 'batch') && $job->batch()?->cancelled()) {
             return;

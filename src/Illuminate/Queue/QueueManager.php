@@ -13,13 +13,6 @@ use InvalidArgumentException;
 class QueueManager implements FactoryContract, MonitorContract
 {
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
      * The array of resolved queue connections.
      *
      * @var array
@@ -38,18 +31,21 @@ class QueueManager implements FactoryContract, MonitorContract
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      */
-    public function __construct($app)
+    public function __construct(
+        /**
+         * The application instance.
+         */
+        protected $app
+    )
     {
-        $this->app = $app;
     }
 
     /**
      * Register an event listener for the before job event.
      *
      * @param  mixed  $callback
-     * @return void
      */
-    public function before($callback)
+    public function before($callback): void
     {
         $this->app['events']->listen(Events\JobProcessing::class, $callback);
     }
@@ -58,9 +54,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Register an event listener for the after job event.
      *
      * @param  mixed  $callback
-     * @return void
      */
-    public function after($callback)
+    public function after($callback): void
     {
         $this->app['events']->listen(Events\JobProcessed::class, $callback);
     }
@@ -69,9 +64,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Register an event listener for the exception occurred job event.
      *
      * @param  mixed  $callback
-     * @return void
      */
-    public function exceptionOccurred($callback)
+    public function exceptionOccurred($callback): void
     {
         $this->app['events']->listen(Events\JobExceptionOccurred::class, $callback);
     }
@@ -80,9 +74,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Register an event listener for the daemon queue loop.
      *
      * @param  mixed  $callback
-     * @return void
      */
-    public function looping($callback)
+    public function looping($callback): void
     {
         $this->app['events']->listen(Events\Looping::class, $callback);
     }
@@ -91,9 +84,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Register an event listener for the failed job event.
      *
      * @param  mixed  $callback
-     * @return void
      */
-    public function failing($callback)
+    public function failing($callback): void
     {
         $this->app['events']->listen(Events\JobFailed::class, $callback);
     }
@@ -102,9 +94,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Register an event listener for the daemon queue starting.
      *
      * @param  mixed  $callback
-     * @return void
      */
-    public function starting($callback)
+    public function starting($callback): void
     {
         $this->app['events']->listen(Events\WorkerStarting::class, $callback);
     }
@@ -113,9 +104,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Register an event listener for the daemon queue stopping.
      *
      * @param  mixed  $callback
-     * @return void
      */
-    public function stopping($callback)
+    public function stopping($callback): void
     {
         $this->app['events']->listen(Events\WorkerStopping::class, $callback);
     }
@@ -124,9 +114,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Determine if the driver is connected.
      *
      * @param  string|null  $name
-     * @return bool
      */
-    public function connected($name = null)
+    public function connected($name = null): bool
     {
         return isset($this->connections[$name ?: $this->getDefaultDriver()]);
     }
@@ -188,7 +177,7 @@ class QueueManager implements FactoryContract, MonitorContract
      *
      * @throws \InvalidArgumentException
      */
-    protected function getConnector($driver)
+    protected function getConnector($driver): mixed
     {
         if (! isset($this->connectors[$driver])) {
             throw new InvalidArgumentException("No connector for [$driver].");
@@ -202,9 +191,8 @@ class QueueManager implements FactoryContract, MonitorContract
      *
      * @param  string  $connection
      * @param  string  $queue
-     * @return void
      */
-    public function pause($connection, $queue)
+    public function pause($connection, $queue): void
     {
         $this->app['cache']
             ->store()
@@ -221,9 +209,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * @param  string  $connection
      * @param  string  $queue
      * @param  \DateTimeInterface|\DateInterval|int  $ttl
-     * @return void
      */
-    public function pauseFor($connection, $queue, $ttl)
+    public function pauseFor($connection, $queue, $ttl): void
     {
         $this->app['cache']
             ->store()
@@ -239,9 +226,8 @@ class QueueManager implements FactoryContract, MonitorContract
      *
      * @param  string  $connection
      * @param  string  $queue
-     * @return void
      */
-    public function resume($connection, $queue)
+    public function resume($connection, $queue): void
     {
         $this->app['cache']
             ->store()
@@ -257,9 +243,8 @@ class QueueManager implements FactoryContract, MonitorContract
      *
      * @param  string  $connection
      * @param  string  $queue
-     * @return bool
      */
-    public function isPaused($connection, $queue)
+    public function isPaused($connection, $queue): bool
     {
         return (bool) $this->app['cache']
             ->store()
@@ -270,10 +255,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Indicate that queue workers should not poll for restart or pause signals.
      *
      * This prevents the workers from hitting the application cache to determine if they need to pause or restart.
-     *
-     * @return void
      */
-    public function withoutInterruptionPolling()
+    public function withoutInterruptionPolling(): void
     {
         Worker::$restartable = false;
         Worker::$pausable = false;
@@ -283,10 +266,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Add a queue connection resolver.
      *
      * @param  string  $driver
-     * @param  \Closure  $resolver
-     * @return void
      */
-    public function extend($driver, Closure $resolver)
+    public function extend($driver, Closure $resolver): void
     {
         $this->addConnector($driver, $resolver);
     }
@@ -295,10 +276,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Add a queue connection resolver.
      *
      * @param  string  $driver
-     * @param  \Closure  $resolver
-     * @return void
      */
-    public function addConnector($driver, Closure $resolver)
+    public function addConnector($driver, Closure $resolver): void
     {
         $this->connectors[$driver] = $resolver;
     }
@@ -332,9 +311,8 @@ class QueueManager implements FactoryContract, MonitorContract
      * Set the name of the default queue connection.
      *
      * @param  string  $name
-     * @return void
      */
-    public function setDefaultDriver($name)
+    public function setDefaultDriver($name): void
     {
         $this->app['config']['queue.default'] = $name;
     }
@@ -366,7 +344,7 @@ class QueueManager implements FactoryContract, MonitorContract
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return $this
      */
-    public function setApplication($app)
+    public function setApplication($app): static
     {
         $this->app = $app;
 
@@ -380,11 +358,10 @@ class QueueManager implements FactoryContract, MonitorContract
     /**
      * Dynamically pass calls to the default connection.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->connection()->$method(...$parameters);
     }

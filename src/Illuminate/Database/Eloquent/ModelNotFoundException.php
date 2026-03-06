@@ -31,7 +31,7 @@ class ModelNotFoundException extends RecordsNotFoundException
      * @param  array<int, int|string>|int|string  $ids
      * @return $this
      */
-    public function setModel($model, $ids = [])
+    public function setModel($model, $ids = []): static
     {
         $this->model = $model;
         $this->ids = Arr::wrap($ids);

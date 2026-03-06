@@ -33,20 +33,16 @@ class SessionTableCommand extends MigrationGeneratorCommand
 
     /**
      * Get the migration table name.
-     *
-     * @return string
      */
-    protected function migrationTableName()
+    protected function migrationTableName(): string
     {
         return 'sessions';
     }
 
     /**
      * Get the path to the migration stub file.
-     *
-     * @return string
      */
-    protected function migrationStubFile()
+    protected function migrationStubFile(): string
     {
         return __DIR__.'/stubs/database.stub';
     }
@@ -55,9 +51,8 @@ class SessionTableCommand extends MigrationGeneratorCommand
      * Determine whether a migration for the table already exists.
      *
      * @param  string  $table
-     * @return bool
      */
-    protected function migrationExists($table)
+    protected function migrationExists($table): bool
     {
         foreach ([
             join_paths($this->laravel->databasePath('migrations'), '*_*_*_*_create_'.$table.'_table.php'),

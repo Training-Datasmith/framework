@@ -29,13 +29,6 @@ class AboutCommand extends Command
     protected $description = 'Display basic information about your application';
 
     /**
-     * The Composer instance.
-     *
-     * @var \Illuminate\Support\Composer
-     */
-    protected $composer;
-
-    /**
      * The data to display.
      *
      * @var array
@@ -51,27 +44,24 @@ class AboutCommand extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param  \Illuminate\Support\Composer  $composer
      */
-    public function __construct(Composer $composer)
+    public function __construct(/**
+     * The Composer instance.
+     */
+    protected \Illuminate\Support\Composer $composer)
     {
         parent::__construct();
-
-        $this->composer = $composer;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $this->gatherApplicationInformation();
 
         (new Collection(static::$data))
-            ->map(fn ($items) => (new Collection($items))
+            ->map(fn ($items): \Illuminate\Support\Collection => (new Collection($items))
                 ->map(function ($value) {
                     if (is_array($value)) {
                         return [$value];
@@ -82,19 +72,17 @@ class AboutCommand extends Command
                     }
 
                     return (new Collection($this->laravel->call($value)))
-                        ->map(fn ($value, $key) => [$key, $value])
+                        ->map(fn ($value, $key): array => [$key, $value])
                         ->values()
                         ->all();
                 })->flatten(1)
             )
-            ->sortBy(function ($data, $key) {
+            ->sortBy(function ($data, $key): int|string {
                 $index = array_search($key, ['Environment', 'Cache', 'Drivers']);
 
                 return $index === false ? 99 : $index;
             })
-            ->filter(function ($data, $key) {
-                return $this->option('only') ? in_array($this->toSearchKeyword($key), $this->sections()) : true;
-            })
+            ->filter(fn($data, $key) => $this->option('only') ? in_array($this->toSearchKeyword($key), $this->sections()) : true)
             ->pipe(fn ($data) => $this->display($data));
 
         $this->newLine();
@@ -121,12 +109,12 @@ class AboutCommand extends Command
      */
     protected function displayDetail($data)
     {
-        $data->each(function ($data, $section) {
+        $data->each(function ($data, string $section): void {
             $this->newLine();
 
             $this->components->twoColumnDetail('  <fg=green;options=bold>'.$section.'</>');
 
-            $data->pipe(fn ($data) => $section !== 'Environment' ? $data->sort() : $data)->each(function ($detail) {
+            $data->pipe(fn ($data) => $section !== 'Environment' ? $data->sort() : $data)->each(function ($detail): void {
                 [$label, $value] = $detail;
 
                 $this->components->twoColumnDetail($label, value($value, false));
@@ -142,13 +130,11 @@ class AboutCommand extends Command
      */
     protected function displayJson($data)
     {
-        $output = $data->flatMap(function ($data, $section) {
-            return [
-                (new Stringable($section))->snake()->value() => $data->mapWithKeys(fn ($item, $key) => [
-                    $this->toSearchKeyword($item[0]) => value($item[1], true),
-                ]),
-            ];
-        });
+        $output = $data->flatMap(fn($data, $section) => [
+            (new Stringable($section))->snake()->value() => $data->mapWithKeys(fn ($item, $key): array => [
+                $this->toSearchKeyword($item[0]) => value($item[1], true),
+            ]),
+        ]);
 
         $this->output->writeln(strip_tags(json_encode($output)));
     }
@@ -162,11 +148,11 @@ class AboutCommand extends Command
     {
         self::$data = [];
 
-        $formatEnabledStatus = fn ($value) => $value ? '<fg=yellow;options=bold>ENABLED</>' : 'OFF';
-        $formatCachedStatus = fn ($value) => $value ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>';
-        $formatStorageLinkedStatus = fn ($value) => $value ? '<fg=green;options=bold>LINKED</>' : '<fg=yellow;options=bold>NOT LINKED</>';
+        $formatEnabledStatus = fn ($value): string => $value ? '<fg=yellow;options=bold>ENABLED</>' : 'OFF';
+        $formatCachedStatus = fn ($value): string => $value ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>';
+        $formatStorageLinkedStatus = fn ($value): string => $value ? '<fg=green;options=bold>LINKED</>' : '<fg=yellow;options=bold>NOT LINKED</>';
 
-        static::addToSection('Environment', fn () => [
+        static::addToSection('Environment', fn (): array => [
             'Application Name' => config('app.name'),
             'Laravel Version' => $this->laravel->version(),
             'PHP Version' => phpversion(),
@@ -179,14 +165,14 @@ class AboutCommand extends Command
             'Locale' => config('app.locale'),
         ]);
 
-        static::addToSection('Cache', fn () => [
+        static::addToSection('Cache', fn (): array => [
             'Config' => static::format($this->laravel->configurationIsCached(), console: $formatCachedStatus),
             'Events' => static::format($this->laravel->eventsAreCached(), console: $formatCachedStatus),
             'Routes' => static::format($this->laravel->routesAreCached(), console: $formatCachedStatus),
             'Views' => static::format($this->hasPhpFiles(config('view.compiled')), console: $formatCachedStatus),
         ]);
 
-        static::addToSection('Drivers', fn () => array_filter([
+        static::addToSection('Drivers', fn (): array => array_filter([
             'Broadcasting' => config('broadcasting.default'),
             'Cache' => function ($json) {
                 $cacheStore = config('cache.default');
@@ -196,7 +182,7 @@ class AboutCommand extends Command
 
                     return value(static::format(
                         value: $cacheStore,
-                        console: fn ($value) => '<fg=yellow;options=bold>'.$value.'</> <fg=gray;options=bold>/</> '.$secondary->implode(', '),
+                        console: fn ($value): string => '<fg=yellow;options=bold>'.$value.'</> <fg=gray;options=bold>/</> '.$secondary->implode(', '),
                         json: fn () => $secondary->all(),
                     ), $json);
                 }
@@ -212,14 +198,12 @@ class AboutCommand extends Command
 
                     return value(static::format(
                         value: $logChannel,
-                        console: fn ($value) => '<fg=yellow;options=bold>'.$value.'</> <fg=gray;options=bold>/</> '.$secondary->implode(', '),
+                        console: fn ($value): string => '<fg=yellow;options=bold>'.$value.'</> <fg=gray;options=bold>/</> '.$secondary->implode(', '),
                         json: fn () => $secondary->all(),
                     ), $json);
-                } else {
-                    $logs = $logChannel;
                 }
 
-                return $logs;
+                return $logChannel;
             },
             'Mail' => function ($json) {
                 $mailMailer = config('mail.default');
@@ -229,7 +213,7 @@ class AboutCommand extends Command
 
                     return value(static::format(
                         value: $mailMailer,
-                        console: fn ($value) => '<fg=yellow;options=bold>'.$value.'</> <fg=gray;options=bold>/</> '.$secondary->implode(', '),
+                        console: fn ($value): string => '<fg=yellow;options=bold>'.$value.'</> <fg=gray;options=bold>/</> '.$secondary->implode(', '),
                         json: fn () => $secondary->all(),
                     ), $json);
                 }
@@ -245,7 +229,7 @@ class AboutCommand extends Command
 
                     return value(static::format(
                         value: $queueConnection,
-                        console: fn ($value) => '<fg=yellow;options=bold>'.$value.'</> <fg=gray;options=bold>/</> '.$secondary->implode(', '),
+                        console: fn ($value): string => '<fg=yellow;options=bold>'.$value.'</> <fg=gray;options=bold>/</> '.$secondary->implode(', '),
                         json: fn () => $secondary->all(),
                     ), $json);
                 }
@@ -256,7 +240,7 @@ class AboutCommand extends Command
             'Session' => config('session.driver'),
         ]));
 
-        static::addToSection('Storage', fn () => [
+        static::addToSection('Storage', fn (): array => [
             ...$this->determineStoragePathLinkStatus($formatStorageLinkedStatus),
         ]);
 
@@ -266,13 +250,12 @@ class AboutCommand extends Command
     /**
      * Determine storage symbolic links status.
      *
-     * @param  callable  $formatStorageLinkedStatus
      * @return array<string,mixed>
      */
     protected function determineStoragePathLinkStatus(callable $formatStorageLinkedStatus): array
     {
         return (new Collection(config('filesystems.links', [])))
-            ->mapWithKeys(function ($target, $link) use ($formatStorageLinkedStatus) {
+            ->mapWithKeys(function ($target, $link) use ($formatStorageLinkedStatus): array {
                 $path = Str::replace(public_path(), '', $link);
 
                 return [public_path($path) => static::format(file_exists($link), console: $formatStorageLinkedStatus)];
@@ -282,9 +265,6 @@ class AboutCommand extends Command
 
     /**
      * Determine whether the given directory has PHP files.
-     *
-     * @param  string  $path
-     * @return bool
      */
     protected function hasPhpFiles(string $path): bool
     {
@@ -294,12 +274,9 @@ class AboutCommand extends Command
     /**
      * Add additional data to the output of the "about" command.
      *
-     * @param  string  $section
      * @param  callable|string|array  $data
-     * @param  string|null  $value
-     * @return void
      */
-    public static function add(string $section, $data, ?string $value = null)
+    public static function add(string $section, $data, ?string $value = null): void
     {
         static::$customDataResolvers[] = fn () => static::addToSection($section, $data, $value);
     }
@@ -307,9 +284,7 @@ class AboutCommand extends Command
     /**
      * Add additional data to the output of the "about" command.
      *
-     * @param  string  $section
      * @param  callable|string|array  $data
-     * @param  string|null  $value
      * @return void
      */
     protected static function addToSection(string $section, $data, ?string $value = null)
@@ -334,7 +309,7 @@ class AboutCommand extends Command
     {
         return (new Collection(explode(',', $this->option('only') ?? '')))
             ->filter()
-            ->map(fn ($only) => $this->toSearchKeyword($only))
+            ->map(fn (string $only) => $this->toSearchKeyword($only))
             ->all();
     }
 
@@ -351,7 +326,8 @@ class AboutCommand extends Command
         return function ($isJson) use ($value, $console, $json) {
             if ($isJson === true && $json instanceof Closure) {
                 return value($json, $value);
-            } elseif ($isJson === false && $console instanceof Closure) {
+            }
+            if ($isJson === false && $console instanceof Closure) {
                 return value($console, $value);
             }
 
@@ -362,7 +338,6 @@ class AboutCommand extends Command
     /**
      * Format the given string for searching.
      *
-     * @param  string  $value
      * @return string
      */
     protected function toSearchKeyword(string $value)
@@ -372,10 +347,8 @@ class AboutCommand extends Command
 
     /**
      * Flush the registered about data.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$data = [];
 

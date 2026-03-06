@@ -17,28 +17,22 @@ class ArrayObject extends BaseArrayObject implements Arrayable, JsonSerializable
 {
     /**
      * Get a collection containing the underlying array.
-     *
-     * @return \Illuminate\Support\Collection
      */
-    public function collect()
+    public function collect(): \Illuminate\Support\Collection
     {
         return new Collection($this->getArrayCopy());
     }
 
     /**
      * Get the instance as an array.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->getArrayCopy();
     }
 
     /**
      * Get the array that should be JSON serialized.
-     *
-     * @return array
      */
     public function jsonSerialize(): array
     {

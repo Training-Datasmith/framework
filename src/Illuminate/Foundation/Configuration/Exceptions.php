@@ -11,8 +11,6 @@ class Exceptions
 {
     /**
      * Create a new exception handling configuration instance.
-     *
-     * @param  \Illuminate\Foundation\Exceptions\Handler  $handler
      */
     public function __construct(public Handler $handler)
     {
@@ -21,7 +19,6 @@ class Exceptions
     /**
      * Register a reportable callback.
      *
-     * @param  callable  $using
      * @return \Illuminate\Foundation\Exceptions\ReportableHandler
      */
     public function report(callable $using)
@@ -32,7 +29,6 @@ class Exceptions
     /**
      * Register a reportable callback.
      *
-     * @param  callable  $reportUsing
      * @return \Illuminate\Foundation\Exceptions\ReportableHandler
      */
     public function reportable(callable $reportUsing)
@@ -43,10 +39,9 @@ class Exceptions
     /**
      * Register a renderable callback.
      *
-     * @param  callable  $using
      * @return $this
      */
-    public function render(callable $using)
+    public function render(callable $using): static
     {
         $this->handler->renderable($using);
 
@@ -56,10 +51,9 @@ class Exceptions
     /**
      * Register a renderable callback.
      *
-     * @param  callable  $renderUsing
      * @return $this
      */
-    public function renderable(callable $renderUsing)
+    public function renderable(callable $renderUsing): static
     {
         $this->handler->renderable($renderUsing);
 
@@ -69,10 +63,9 @@ class Exceptions
     /**
      * Register a callback to prepare the final, rendered exception response.
      *
-     * @param  callable  $using
      * @return $this
      */
-    public function respond(callable $using)
+    public function respond(callable $using): static
     {
         $this->handler->respondUsing($using);
 
@@ -82,10 +75,9 @@ class Exceptions
     /**
      * Specify the callback that should be used to throttle reportable exceptions.
      *
-     * @param  callable  $throttleUsing
      * @return $this
      */
-    public function throttle(callable $throttleUsing)
+    public function throttle(callable $throttleUsing): static
     {
         $this->handler->throttleUsing($throttleUsing);
 
@@ -101,7 +93,7 @@ class Exceptions
      *
      * @throws \InvalidArgumentException
      */
-    public function map($from, $to = null)
+    public function map($from, $to = null): static
     {
         $this->handler->map($from, $to);
 
@@ -115,7 +107,7 @@ class Exceptions
      * @param  \Psr\Log\LogLevel::*  $level
      * @return $this
      */
-    public function level(string $type, string $level)
+    public function level(string $type, string $level): static
     {
         $this->handler->level($type, $level);
 
@@ -125,10 +117,9 @@ class Exceptions
     /**
      * Register a closure that should be used to build exception context data.
      *
-     * @param  \Closure  $contextCallback
      * @return $this
      */
-    public function context(Closure $contextCallback)
+    public function context(Closure $contextCallback): static
     {
         $this->handler->buildContextUsing($contextCallback);
 
@@ -138,10 +129,9 @@ class Exceptions
     /**
      * Indicate that the given exception type should not be reported.
      *
-     * @param  array|string  $class
      * @return $this
      */
-    public function dontReport(array|string $class)
+    public function dontReport(array|string $class): static
     {
         foreach (Arr::wrap($class) as $exceptionClass) {
             $this->handler->dontReport($exceptionClass);
@@ -156,7 +146,7 @@ class Exceptions
      * @param  (\Closure(\Throwable): bool)  $dontReportWhen
      * @return $this
      */
-    public function dontReportWhen(Closure $dontReportWhen)
+    public function dontReportWhen(Closure $dontReportWhen): static
     {
         $this->handler->dontReportWhen($dontReportWhen);
 
@@ -168,7 +158,7 @@ class Exceptions
      *
      * @return $this
      */
-    public function dontReportDuplicates()
+    public function dontReportDuplicates(): static
     {
         $this->handler->dontReportDuplicates();
 
@@ -178,10 +168,9 @@ class Exceptions
     /**
      * Indicate that the given attributes should never be flashed to the session on validation errors.
      *
-     * @param  array|string  $attributes
      * @return $this
      */
-    public function dontFlash(array|string $attributes)
+    public function dontFlash(array|string $attributes): static
     {
         $this->handler->dontFlash($attributes);
 
@@ -194,7 +183,7 @@ class Exceptions
      * @param  callable(\Illuminate\Http\Request $request, \Throwable): bool  $callback
      * @return $this
      */
-    public function shouldRenderJsonWhen(callable $callback)
+    public function shouldRenderJsonWhen(callable $callback): static
     {
         $this->handler->shouldRenderJsonWhen($callback);
 
@@ -207,7 +196,7 @@ class Exceptions
      * @param  array<int, class-string<\Throwable>>|class-string<\Throwable>  $class
      * @return $this
      */
-    public function stopIgnoring(array|string $class)
+    public function stopIgnoring(array|string $class): static
     {
         $this->handler->stopIgnoring($class);
 
@@ -217,10 +206,9 @@ class Exceptions
     /**
      * Set the truncation length for request exception messages.
      *
-     * @param  int  $length
      * @return $this
      */
-    public function truncateRequestExceptionsAt(int $length)
+    public function truncateRequestExceptionsAt(int $length): static
     {
         RequestException::truncateAt($length);
 
@@ -232,7 +220,7 @@ class Exceptions
      *
      * @return $this
      */
-    public function dontTruncateRequestExceptions()
+    public function dontTruncateRequestExceptions(): static
     {
         RequestException::dontTruncate();
 

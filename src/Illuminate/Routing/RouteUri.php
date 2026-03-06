@@ -20,9 +20,6 @@ class RouteUri
 
     /**
      * Create a new route URI instance.
-     *
-     * @param  string  $uri
-     * @param  array  $bindingFields
      */
     public function __construct(string $uri, array $bindingFields = [])
     {
@@ -34,9 +31,8 @@ class RouteUri
      * Parse the given URI.
      *
      * @param  string  $uri
-     * @return static
      */
-    public static function parse($uri)
+    public static function parse($uri): static
     {
         preg_match_all('/\{([\w\:]+?)\??\}/', $uri, $matches);
 

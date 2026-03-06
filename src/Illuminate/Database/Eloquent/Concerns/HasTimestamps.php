@@ -126,10 +126,8 @@ trait HasTimestamps
 
     /**
      * Determine if the model uses timestamps.
-     *
-     * @return bool
      */
-    public function usesTimestamps()
+    public function usesTimestamps(): bool
     {
         return $this->timestamps && ! static::isIgnoringTimestamps($this::class);
     }
@@ -181,7 +179,6 @@ trait HasTimestamps
     /**
      * Disable timestamps for the current class during the given callback scope.
      *
-     * @param  callable  $callback
      * @return mixed
      */
     public static function withoutTimestamps(callable $callback)
@@ -215,9 +212,8 @@ trait HasTimestamps
      * Determine if the given model is ignoring timestamps / touches.
      *
      * @param  string|null  $class
-     * @return bool
      */
-    public static function isIgnoringTimestamps($class = null)
+    public static function isIgnoringTimestamps($class = null): bool
     {
         $class ??= static::class;
 

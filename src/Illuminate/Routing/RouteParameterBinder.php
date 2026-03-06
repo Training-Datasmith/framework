@@ -7,20 +7,17 @@ use Illuminate\Support\Arr;
 class RouteParameterBinder
 {
     /**
-     * The route instance.
-     *
-     * @var \Illuminate\Routing\Route
-     */
-    protected $route;
-
-    /**
      * Create a new Route parameter binder instance.
      *
      * @param  \Illuminate\Routing\Route  $route
      */
-    public function __construct($route)
+    public function __construct(
+        /**
+         * The route instance.
+         */
+        protected $route
+    )
     {
-        $this->route = $route;
     }
 
     /**
@@ -65,22 +62,18 @@ class RouteParameterBinder
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  array  $parameters
-     * @return array
      */
-    protected function bindHostParameters($request, $parameters)
+    protected function bindHostParameters($request, $parameters): array
     {
-        preg_match($this->route->compiled->getHostRegex(), $request->getHost(), $matches);
+        preg_match($this->route->compiled->getHostRegex(), (string) $request->getHost(), $matches);
 
         return array_merge($this->matchToKeys(array_slice($matches, 1)), $parameters);
     }
 
     /**
      * Combine a set of parameter matches with the route's keys.
-     *
-     * @param  array  $matches
-     * @return array
      */
-    protected function matchToKeys(array $matches)
+    protected function matchToKeys(array $matches): array
     {
         if (empty($parameterNames = $this->route->parameterNames())) {
             return [];
@@ -88,18 +81,13 @@ class RouteParameterBinder
 
         $parameters = array_intersect_key($matches, array_flip($parameterNames));
 
-        return array_filter($parameters, function ($value) {
-            return is_string($value) && strlen($value) > 0;
-        });
+        return array_filter($parameters, fn($value) => is_string($value) && strlen($value) > 0);
     }
 
     /**
      * Replace null parameters with their defaults.
-     *
-     * @param  array  $parameters
-     * @return array
      */
-    protected function replaceDefaults(array $parameters)
+    protected function replaceDefaults(array $parameters): array
     {
         foreach ($parameters as $key => $value) {
             $parameters[$key] = $value ?? Arr::get($this->route->defaults, $key);

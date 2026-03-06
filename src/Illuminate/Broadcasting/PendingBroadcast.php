@@ -9,29 +9,21 @@ use function Illuminate\Support\enum_value;
 class PendingBroadcast
 {
     /**
-     * The event dispatcher implementation.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
-    /**
-     * The event instance.
-     *
-     * @var mixed
-     */
-    protected $event;
-
-    /**
      * Create a new pending broadcast instance.
      *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @param  mixed  $event
      */
-    public function __construct(Dispatcher $events, $event)
+    public function __construct(
+        /**
+         * The event dispatcher implementation.
+         */
+        protected \Illuminate\Contracts\Events\Dispatcher $events,
+        /**
+         * The event instance.
+         */
+        protected $event
+    )
     {
-        $this->event = $event;
-        $this->events = $events;
     }
 
     /**
@@ -40,7 +32,7 @@ class PendingBroadcast
      * @param  \UnitEnum|string|null  $connection
      * @return $this
      */
-    public function via($connection = null)
+    public function via($connection = null): static
     {
         if (method_exists($this->event, 'broadcastVia')) {
             $this->event->broadcastVia(enum_value($connection));
@@ -54,7 +46,7 @@ class PendingBroadcast
      *
      * @return $this
      */
-    public function toOthers()
+    public function toOthers(): static
     {
         if (method_exists($this->event, 'dontBroadcastToCurrentUser')) {
             $this->event->dontBroadcastToCurrentUser();
@@ -65,8 +57,6 @@ class PendingBroadcast
 
     /**
      * Handle the object's destruction.
-     *
-     * @return void
      */
     public function __destruct()
     {

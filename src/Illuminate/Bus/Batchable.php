@@ -41,10 +41,8 @@ trait Batchable
 
     /**
      * Determine if the batch is still active and processing.
-     *
-     * @return bool
      */
-    public function batching()
+    public function batching(): bool
     {
         $batch = $this->batch();
 
@@ -54,7 +52,6 @@ trait Batchable
     /**
      * Set the batch ID on the job.
      *
-     * @param  string  $batchId
      * @return $this
      */
     public function withBatchId(string $batchId)
@@ -67,16 +64,6 @@ trait Batchable
     /**
      * Indicate that the job should use a fake batch.
      *
-     * @param  string  $id
-     * @param  string  $name
-     * @param  int  $totalJobs
-     * @param  int  $pendingJobs
-     * @param  int  $failedJobs
-     * @param  array  $failedJobIds
-     * @param  array  $options
-     * @param  \Carbon\CarbonImmutable|null  $createdAt
-     * @param  \Carbon\CarbonImmutable|null  $cancelledAt
-     * @param  \Carbon\CarbonImmutable|null  $finishedAt
      * @return array{0: $this, 1: \Illuminate\Support\Testing\Fakes\BatchFake}
      */
     public function withFakeBatch(string $id = '',
@@ -88,7 +75,7 @@ trait Batchable
                                   array $options = [],
                                   ?CarbonImmutable $createdAt = null,
                                   ?CarbonImmutable $cancelledAt = null,
-                                  ?CarbonImmutable $finishedAt = null)
+                                  ?CarbonImmutable $finishedAt = null): array
     {
         $this->fakeBatch = new BatchFake(
             empty($id) ? (string) Str::uuid() : $id,

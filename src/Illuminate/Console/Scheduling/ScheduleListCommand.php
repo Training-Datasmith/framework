@@ -44,12 +44,10 @@ class ScheduleListCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
      *
      * @throws \Exception
      */
-    public function handle(Schedule $schedule)
+    public function handle(Schedule $schedule): void
     {
         $events = new Collection($schedule->events());
 
@@ -73,13 +71,11 @@ class ScheduleListCommand extends Command
     /**
      * Render the scheduled tasks information as JSON.
      *
-     * @param  \Illuminate\Support\Collection  $events
-     * @param  \DateTimeZone  $timezone
      * @return void
      */
     protected function displayJson(Collection $events, DateTimeZone $timezone)
     {
-        $this->output->writeln($events->map(function ($event) use ($timezone) {
+        $this->output->writeln($events->map(function ($event) use ($timezone): array {
             $nextDueDate = $this->getNextDueDateForEvent($event, $timezone);
 
             $command = $event->command ?? '';
@@ -113,8 +109,6 @@ class ScheduleListCommand extends Command
     /**
      * Render the scheduled tasks information formatted for the CLI.
      *
-     * @param  \Illuminate\Support\Collection  $events
-     * @param  \DateTimeZone  $timezone
      * @return void
      */
     protected function displayForCli(Collection $events, DateTimeZone $timezone)
@@ -125,9 +119,7 @@ class ScheduleListCommand extends Command
 
         $repeatExpressionSpacing = $this->getRepeatExpressionSpacing($events);
 
-        $events = $events->map(function ($event) use ($terminalWidth, $expressionSpacing, $repeatExpressionSpacing, $timezone) {
-            return $this->listEvent($event, $terminalWidth, $expressionSpacing, $repeatExpressionSpacing, $timezone);
-        });
+        $events = $events->map(fn($event) => $this->listEvent($event, $terminalWidth, $expressionSpacing, $repeatExpressionSpacing, $timezone));
 
         $this->line(
             $events->flatten()->filter()->prepend('')->push('')->toArray()
@@ -137,12 +129,11 @@ class ScheduleListCommand extends Command
     /**
      * Get the spacing to be used on each event row.
      *
-     * @param  \Illuminate\Support\Collection  $events
      * @return array<int, int>
      */
-    private function getCronExpressionSpacing($events)
+    private function getCronExpressionSpacing(\Illuminate\Support\Collection $events)
     {
-        $rows = $events->map(fn ($event) => array_map(mb_strlen(...), preg_split("/\s+/", $event->expression)));
+        $rows = $events->map(fn ($event): array => array_map(mb_strlen(...), preg_split("/\s+/", (string) $event->expression)));
 
         return (new Collection($rows[0] ?? []))->keys()->map(fn ($key) => $rows->max($key))->all();
     }
@@ -150,12 +141,11 @@ class ScheduleListCommand extends Command
     /**
      * Get the spacing to be used on each event row.
      *
-     * @param  \Illuminate\Support\Collection  $events
      * @return int
      */
-    private function getRepeatExpressionSpacing($events)
+    private function getRepeatExpressionSpacing(\Illuminate\Support\Collection $events)
     {
-        return $events->map(fn ($event) => mb_strlen($this->getRepeatExpression($event)))->max();
+        return $events->map(fn ($event): int => mb_strlen($this->getRepeatExpression($event)))->max();
     }
 
     /**
@@ -165,10 +155,8 @@ class ScheduleListCommand extends Command
      * @param  int  $terminalWidth
      * @param  array  $expressionSpacing
      * @param  int  $repeatExpressionSpacing
-     * @param  \DateTimeZone  $timezone
-     * @return array
      */
-    private function listEvent($event, $terminalWidth, $expressionSpacing, $repeatExpressionSpacing, $timezone)
+    private function listEvent($event, $terminalWidth, $expressionSpacing, $repeatExpressionSpacing, \DateTimeZone $timezone): array
     {
         $expression = $this->formatCronExpression($event->expression, $expressionSpacing);
 
@@ -230,9 +218,8 @@ class ScheduleListCommand extends Command
      * Get the repeat expression for an event.
      *
      * @param  \Illuminate\Console\Scheduling\Event  $event
-     * @return string
      */
-    private function getRepeatExpression($event)
+    private function getRepeatExpression($event): string
     {
         return $event->isRepeatable() ? "{$event->repeatSeconds}s " : '';
     }
@@ -240,8 +227,6 @@ class ScheduleListCommand extends Command
     /**
      * Sort the events by due date if option set.
      *
-     * @param  \Illuminate\Support\Collection  $events
-     * @param  \DateTimeZone  $timezone
      * @return \Illuminate\Support\Collection
      */
     private function sortEvents(\Illuminate\Support\Collection $events, DateTimeZone $timezone)
@@ -254,8 +239,6 @@ class ScheduleListCommand extends Command
     /**
      * Render the scheduled tasks information.
      *
-     * @param  \Illuminate\Support\Collection  $events
-     * @param  \DateTimeZone  $timezone
      * @return void
      */
     protected function display(Collection $events, DateTimeZone $timezone)
@@ -267,7 +250,6 @@ class ScheduleListCommand extends Command
      * Get the next due date for an event.
      *
      * @param  \Illuminate\Console\Scheduling\Event  $event
-     * @param  \DateTimeZone  $timezone
      * @return \Illuminate\Support\Carbon
      */
     private function getNextDueDateForEvent($event, DateTimeZone $timezone)
@@ -311,17 +293,14 @@ class ScheduleListCommand extends Command
         $expressions = preg_split("/\s+/", $expression);
 
         return (new Collection($spacing))
-            ->map(fn ($length, $index) => str_pad($expressions[$index], $length))
+            ->map(fn ($length, $index): string => str_pad($expressions[$index], $length))
             ->implode(' ');
     }
 
     /**
      * Get the file and line number for the event closure.
-     *
-     * @param  \Illuminate\Console\Scheduling\CallbackEvent  $event
-     * @return string
      */
-    private function getClosureLocation(CallbackEvent $event)
+    private function getClosureLocation(CallbackEvent $event): string
     {
         $callback = (new ReflectionClass($event))->getProperty('callback')->getValue($event);
 
@@ -364,9 +343,8 @@ class ScheduleListCommand extends Command
      * Set a callback that should be used when resolving the terminal width.
      *
      * @param  \Closure|null  $resolver
-     * @return void
      */
-    public static function resolveTerminalWidthUsing($resolver)
+    public static function resolveTerminalWidthUsing($resolver): void
     {
         static::$terminalWidthResolver = $resolver;
     }

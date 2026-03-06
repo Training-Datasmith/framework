@@ -20,13 +20,6 @@ class MorphTo extends BelongsTo
     use InteractsWithDictionary;
 
     /**
-     * The type of the polymorphic relation.
-     *
-     * @var string
-     */
-    protected $morphType;
-
-    /**
      * The associated key on the parent model.
      *
      * @var string|null
@@ -82,19 +75,20 @@ class MorphTo extends BelongsTo
      * @param  TDeclaringModel  $parent
      * @param  string  $foreignKey
      * @param  string|null  $ownerKey
-     * @param  string  $type
+     * @param string $morphType
      * @param  string  $relation
      */
-    public function __construct(Builder $query, Model $parent, $foreignKey, $ownerKey, $type, $relation)
+    public function __construct(Builder $query, Model $parent, $foreignKey, $ownerKey, /**
+     * The type of the polymorphic relation.
+     */
+    protected $morphType, $relation)
     {
-        $this->morphType = $type;
-
         parent::__construct($query, $parent, $foreignKey, $ownerKey, $relation);
     }
 
     /** @inheritDoc */
     #[\Override]
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models): void
     {
         $this->buildDictionary($this->models = new EloquentCollection($models));
     }
@@ -113,8 +107,10 @@ class MorphTo extends BelongsTo
             if ($model->{$this->morphType}) {
                 $morphTypeKey = $this->getDictionaryKey($model->{$this->morphType});
                 $foreignKeyKey = $this->getDictionaryKey($model->{$this->foreignKey});
-
-                if ($morphTypeKey === null || $foreignKeyKey === null) {
+                if ($morphTypeKey === null) {
+                    continue;
+                }
+                if ($foreignKeyKey === null) {
                     continue;
                 }
 
@@ -159,13 +155,13 @@ class MorphTo extends BelongsTo
             ->mergeConstraintsFrom($this->getQuery())
             ->with(array_merge(
                 $this->getQuery()->getEagerLoads(),
-                (array) ($this->morphableEagerLoads[get_class($instance)] ?? [])
+                (array) ($this->morphableEagerLoads[$instance::class] ?? [])
             ))
             ->withCount(
-                (array) ($this->morphableEagerLoadCounts[get_class($instance)] ?? [])
+                (array) ($this->morphableEagerLoadCounts[$instance::class] ?? [])
             );
 
-        if ($callback = ($this->morphableConstraints[get_class($instance)] ?? null)) {
+        if ($callback = ($this->morphableConstraints[$instance::class] ?? null)) {
             $callback($query);
         }
 
@@ -181,15 +177,12 @@ class MorphTo extends BelongsTo
      *
      * @param  string  $type
      * @param  string  $keyType
-     * @return array
      */
-    protected function gatherKeysByType($type, $keyType)
+    protected function gatherKeysByType($type, $keyType): array
     {
         return $keyType !== 'string'
             ? array_keys($this->dictionary[$type])
-            : array_map(function ($modelId) {
-                return (string) $modelId;
-            }, array_filter(array_keys($this->dictionary[$type])));
+            : array_map(fn($modelId) => (string) $modelId, array_filter(array_keys($this->dictionary[$type])));
     }
 
     /**
@@ -202,7 +195,7 @@ class MorphTo extends BelongsTo
     {
         $class = Model::getActualClassNameForMorph($type);
 
-        return tap(new $class, function ($instance) {
+        return tap(new $class, function ($instance): void {
             if (! $instance->getConnectionName()) {
                 $instance->setConnection($this->getConnection()->getName());
             }
@@ -211,7 +204,7 @@ class MorphTo extends BelongsTo
 
     /** @inheritDoc */
     #[\Override]
-    public function match(array $models, EloquentCollection $results, $relation)
+    public function match(array $models, EloquentCollection $results, $relation): array
     {
         return $models;
     }
@@ -279,7 +272,7 @@ class MorphTo extends BelongsTo
 
     /** @inheritDoc */
     #[\Override]
-    public function touch()
+    public function touch(): void
     {
         if (! is_null($this->getParentKey())) {
             parent::touch();
@@ -316,10 +309,9 @@ class MorphTo extends BelongsTo
     /**
      * Specify which relations to load for a given morph type.
      *
-     * @param  array  $with
      * @return $this
      */
-    public function morphWith(array $with)
+    public function morphWith(array $with): static
     {
         $this->morphableEagerLoads = array_merge(
             $this->morphableEagerLoads, $with
@@ -331,10 +323,9 @@ class MorphTo extends BelongsTo
     /**
      * Specify which relationship counts to load for a given morph type.
      *
-     * @param  array  $withCount
      * @return $this
      */
-    public function morphWithCount(array $withCount)
+    public function morphWithCount(array $withCount): static
     {
         $this->morphableEagerLoadCounts = array_merge(
             $this->morphableEagerLoadCounts, $withCount
@@ -346,10 +337,9 @@ class MorphTo extends BelongsTo
     /**
      * Specify constraints on the query for a given morph type.
      *
-     * @param  array  $callbacks
      * @return $this
      */
-    public function constrain(array $callbacks)
+    public function constrain(array $callbacks): static
     {
         $this->morphableConstraints = array_merge(
             $this->morphableConstraints, $callbacks
@@ -415,7 +405,7 @@ class MorphTo extends BelongsTo
      * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
      * @return \Illuminate\Database\Eloquent\Builder<TRelatedModel>
      */
-    protected function replayMacros(Builder $query)
+    protected function replayMacros(Builder $query): Builder
     {
         foreach ($this->macroBuffer as $macro) {
             $query->{$macro['method']}(...$macro['parameters']);

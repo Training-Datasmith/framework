@@ -5,13 +5,6 @@ namespace Illuminate\Cache;
 class CacheLock extends Lock
 {
     /**
-     * The cache store implementation.
-     *
-     * @var \Illuminate\Contracts\Cache\Store
-     */
-    protected $store;
-
-    /**
      * Create a new lock instance.
      *
      * @param  \Illuminate\Contracts\Cache\Store  $store
@@ -19,11 +12,12 @@ class CacheLock extends Lock
      * @param  int  $seconds
      * @param  string|null  $owner
      */
-    public function __construct($store, $name, $seconds, $owner = null)
+    public function __construct(/**
+     * The cache store implementation.
+     */
+    protected $store, $name, $seconds, $owner = null)
     {
         parent::__construct($name, $seconds, $owner);
-
-        $this->store = $store;
     }
 
     /**
@@ -64,10 +58,8 @@ class CacheLock extends Lock
 
     /**
      * Releases this lock regardless of ownership.
-     *
-     * @return void
      */
-    public function forceRelease()
+    public function forceRelease(): void
     {
         $this->store->forget($this->name);
     }

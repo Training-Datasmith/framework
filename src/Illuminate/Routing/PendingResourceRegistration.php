@@ -10,34 +10,6 @@ class PendingResourceRegistration
     use CreatesRegularExpressionRouteConstraints, Macroable;
 
     /**
-     * The resource registrar.
-     *
-     * @var \Illuminate\Routing\ResourceRegistrar
-     */
-    protected $registrar;
-
-    /**
-     * The resource name.
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The resource controller.
-     *
-     * @var string
-     */
-    protected $controller;
-
-    /**
-     * The resource options.
-     *
-     * @var array
-     */
-    protected $options = [];
-
-    /**
      * The resource's registration status.
      *
      * @var bool
@@ -47,26 +19,36 @@ class PendingResourceRegistration
     /**
      * Create a new pending resource registration instance.
      *
-     * @param  \Illuminate\Routing\ResourceRegistrar  $registrar
      * @param  string  $name
      * @param  string  $controller
-     * @param  array  $options
      */
-    public function __construct(ResourceRegistrar $registrar, $name, $controller, array $options)
+    public function __construct(
+        /**
+         * The resource registrar.
+         */
+        protected \Illuminate\Routing\ResourceRegistrar $registrar,
+        /**
+         * The resource name.
+         */
+        protected $name,
+        /**
+         * The resource controller.
+         */
+        protected $controller,
+        /**
+         * The resource options.
+         */
+        protected array $options
+    )
     {
-        $this->name = $name;
-        $this->options = $options;
-        $this->registrar = $registrar;
-        $this->controller = $controller;
     }
 
     /**
      * Set the methods the controller should apply to.
      *
      * @param  mixed  $methods
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function only($methods)
+    public function only($methods): static
     {
         $this->options['only'] = is_array($methods) ? $methods : func_get_args();
 
@@ -77,9 +59,8 @@ class PendingResourceRegistration
      * Set the methods the controller should exclude.
      *
      * @param  mixed  $methods
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function except($methods)
+    public function except($methods): static
     {
         $this->options['except'] = is_array($methods) ? $methods : func_get_args();
 
@@ -90,9 +71,8 @@ class PendingResourceRegistration
      * Set the route names for controller actions.
      *
      * @param  array|string  $names
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function names($names)
+    public function names($names): static
     {
         $this->options['names'] = $names;
 
@@ -104,9 +84,8 @@ class PendingResourceRegistration
      *
      * @param  string  $method
      * @param  string  $name
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function name($method, $name)
+    public function name($method, $name): static
     {
         $this->options['names'][$method] = $name;
 
@@ -117,9 +96,8 @@ class PendingResourceRegistration
      * Override the route parameter names.
      *
      * @param  array|string  $parameters
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function parameters($parameters)
+    public function parameters($parameters): static
     {
         $this->options['parameters'] = $parameters;
 
@@ -131,9 +109,8 @@ class PendingResourceRegistration
      *
      * @param  string  $previous
      * @param  string  $new
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function parameter($previous, $new)
+    public function parameter($previous, $new): static
     {
         $this->options['parameters'][$previous] = $new;
 
@@ -144,9 +121,8 @@ class PendingResourceRegistration
      * Add middleware to the resource routes.
      *
      * @param  mixed  $middleware
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function middleware($middleware)
+    public function middleware($middleware): static
     {
         $middleware = Arr::wrap($middleware);
 
@@ -175,7 +151,7 @@ class PendingResourceRegistration
      * @param  array|string  $middleware
      * @return $this
      */
-    public function middlewareFor($methods, $middleware)
+    public function middlewareFor($methods, $middleware): static
     {
         $methods = Arr::wrap($methods);
         $middleware = Arr::wrap($middleware);
@@ -200,7 +176,7 @@ class PendingResourceRegistration
      * @param  array|string  $middleware
      * @return $this
      */
-    public function withoutMiddleware($middleware)
+    public function withoutMiddleware($middleware): static
     {
         $this->options['excluded_middleware'] = array_merge(
             (array) ($this->options['excluded_middleware'] ?? []), Arr::wrap($middleware)
@@ -216,7 +192,7 @@ class PendingResourceRegistration
      * @param  array|string  $middleware
      * @return $this
      */
-    public function withoutMiddlewareFor($methods, $middleware)
+    public function withoutMiddlewareFor($methods, $middleware): static
     {
         $methods = Arr::wrap($methods);
         $middleware = Arr::wrap($middleware);
@@ -232,9 +208,8 @@ class PendingResourceRegistration
      * Add "where" constraints to the resource routes.
      *
      * @param  mixed  $wheres
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function where($wheres)
+    public function where($wheres): static
     {
         $this->options['wheres'] = $wheres;
 
@@ -245,9 +220,8 @@ class PendingResourceRegistration
      * Indicate that the resource routes should have "shallow" nesting.
      *
      * @param  bool  $shallow
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function shallow($shallow = true)
+    public function shallow($shallow = true): static
     {
         $this->options['shallow'] = $shallow;
 
@@ -260,7 +234,7 @@ class PendingResourceRegistration
      * @param  callable  $callback
      * @return $this
      */
-    public function missing($callback)
+    public function missing($callback): static
     {
         $this->options['missing'] = $callback;
 
@@ -269,11 +243,8 @@ class PendingResourceRegistration
 
     /**
      * Indicate that the resource routes should be scoped using the given binding fields.
-     *
-     * @param  array  $fields
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function scoped(array $fields = [])
+    public function scoped(array $fields = []): static
     {
         $this->options['bindingFields'] = $fields;
 
@@ -282,11 +253,8 @@ class PendingResourceRegistration
 
     /**
      * Define which routes should allow "trashed" models to be retrieved when resolving implicit model bindings.
-     *
-     * @param  array  $methods
-     * @return \Illuminate\Routing\PendingResourceRegistration
      */
-    public function withTrashed(array $methods = [])
+    public function withTrashed(array $methods = []): static
     {
         $this->options['trashed'] = $methods;
 
@@ -309,8 +277,6 @@ class PendingResourceRegistration
 
     /**
      * Handle the object's destruction.
-     *
-     * @return void
      */
     public function __destruct()
     {

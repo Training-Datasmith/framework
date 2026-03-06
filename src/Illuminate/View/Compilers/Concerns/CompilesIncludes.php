@@ -8,9 +8,8 @@ trait CompilesIncludes
      * Compile the each statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileEach($expression)
+    protected function compileEach($expression): string
     {
         return "<?php echo \$__env->renderEach{$expression}; ?>";
     }
@@ -19,9 +18,8 @@ trait CompilesIncludes
      * Compile the include statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileInclude($expression)
+    protected function compileInclude($expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -32,9 +30,8 @@ trait CompilesIncludes
      * Compile the include-if statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileIncludeIf($expression)
+    protected function compileIncludeIf($expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -45,9 +42,8 @@ trait CompilesIncludes
      * Compile the include-when statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileIncludeWhen($expression)
+    protected function compileIncludeWhen($expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -58,9 +54,8 @@ trait CompilesIncludes
      * Compile the include-unless statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileIncludeUnless($expression)
+    protected function compileIncludeUnless($expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -71,9 +66,8 @@ trait CompilesIncludes
      * Compile the include-first statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileIncludeFirst($expression)
+    protected function compileIncludeFirst($expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -84,9 +78,8 @@ trait CompilesIncludes
      * Compile the include-isolated statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileIncludeIsolated($expression)
+    protected function compileIncludeIsolated($expression): string
     {
         $expression = $this->stripParentheses($expression);
 

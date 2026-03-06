@@ -10,13 +10,12 @@ trait MassPrunable
     /**
      * Prune all prunable models in the database.
      *
-     * @param  int  $chunkSize
      * @return int
      */
-    public function pruneAll(int $chunkSize = 1000)
+    public function pruneAll(int $chunkSize = 1000): int|float
     {
-        $query = tap($this->prunable(), function ($query) use ($chunkSize) {
-            $query->when(! $query->getQuery()->limit, function ($query) use ($chunkSize) {
+        $query = tap($this->prunable(), function ($query) use ($chunkSize): void {
+            $query->when(! $query->getQuery()->limit, function ($query) use ($chunkSize): void {
                 $query->limit($chunkSize);
             });
         });
@@ -43,7 +42,7 @@ trait MassPrunable
      *
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
-    public function prunable()
+    public function prunable(): never
     {
         throw new LogicException('Please implement the prunable method on your model.');
     }

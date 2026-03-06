@@ -31,7 +31,7 @@ class ProcessDriver implements Driver
     {
         $command = Application::formatCommandString('invoke-serialized-closure');
 
-        $results = $this->processFactory->pool(function (Pool $pool) use ($tasks, $command) {
+        $results = $this->processFactory->pool(function (Pool $pool) use ($tasks, $command): void {
             foreach (Arr::wrap($tasks) as $key => $task) {
                 $pool->as($key)->path(base_path())->env([
                     'LARAVEL_INVOKABLE_CLOSURE' => base64_encode(
@@ -41,7 +41,7 @@ class ProcessDriver implements Driver
             }
         })->start()->wait();
 
-        return $results->collect()->mapWithKeys(function ($result, $key) {
+        return $results->collect()->mapWithKeys(function (array $result, $key): array {
             if ($result->failed()) {
                 throw new Exception('Concurrent process failed with exit code ['.$result->exitCode().']. Message: '.$result->errorOutput());
             }
@@ -67,7 +67,7 @@ class ProcessDriver implements Driver
     {
         $command = Application::formatCommandString('invoke-serialized-closure');
 
-        return defer(function () use ($tasks, $command) {
+        return defer(function () use ($tasks, $command): void {
             foreach (Arr::wrap($tasks) as $task) {
                 $this->processFactory->path(base_path())->env([
                     'LARAVEL_INVOKABLE_CLOSURE' => base64_encode(

@@ -25,30 +25,20 @@ class InstallCommand extends Command
     protected $description = 'Create the migration repository';
 
     /**
-     * The repository instance.
-     *
-     * @var \Illuminate\Database\Migrations\MigrationRepositoryInterface
-     */
-    protected $repository;
-
-    /**
      * Create a new migration install command instance.
-     *
-     * @param  \Illuminate\Database\Migrations\MigrationRepositoryInterface  $repository
      */
-    public function __construct(MigrationRepositoryInterface $repository)
+    public function __construct(/**
+     * The repository instance.
+     */
+    protected \Illuminate\Database\Migrations\MigrationRepositoryInterface $repository)
     {
         parent::__construct();
-
-        $this->repository = $repository;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->repository->setSource($this->input->getOption('database'));
 
@@ -61,10 +51,8 @@ class InstallCommand extends Command
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],

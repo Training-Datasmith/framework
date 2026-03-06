@@ -149,7 +149,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * Get the full URL for the request with the added query string parameters.
      *
-     * @param  array  $query
      * @return string
      */
     public function fullUrlWithQuery(array $query)
@@ -221,9 +220,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     {
         $segments = explode('/', $this->decodedPath());
 
-        return array_values(array_filter($segments, function ($value) {
-            return $value !== '';
-        }));
+        return array_values(array_filter($segments, fn($value) => $value !== ''));
     }
 
     /**
@@ -383,15 +380,14 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * Merge new input into the current request's input array.
      *
-     * @param  array  $input
      * @return $this
      */
     public function merge(array $input)
     {
-        return tap($this, function (Request $request) use ($input) {
+        return tap($this, function (Request $request) use ($input): void {
             $request->getInputSource()
                 ->replace((new Collection($input))->reduce(
-                    fn ($requestInput, $value, $key) => data_set($requestInput, $key, $value),
+                    fn (array $requestInput, $value, $key) => data_set($requestInput, $key, $value),
                     $this->getInputSource()->all()
                 ));
         });
@@ -400,7 +396,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * Merge new input into the request's input, but only when that key is missing from the request.
      *
-     * @param  array  $input
      * @return $this
      */
     public function mergeIfMissing(array $input)
@@ -414,7 +409,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * Replace the input values for the current request.
      *
-     * @param  array  $input
      * @return $this
      */
     public function replace(array $input)
@@ -429,9 +423,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      *
      * Instead, you may use the "input" method.
      *
-     * @param  string  $key
-     * @param  mixed  $default
-     * @return mixed
      *
      * @deprecated use ->input() instead
      */
@@ -478,7 +469,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * Create a new request instance from the given Laravel request.
      *
-     * @param  \Illuminate\Http\Request  $from
      * @param  \Illuminate\Http\Request|null  $to
      * @return static
      */
@@ -520,7 +510,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * Create an Illuminate request from a Symfony instance.
      *
-     * @param  \Symfony\Component\HttpFoundation\Request  $request
      * @return static
      */
     public static function createFromBase(SymfonyRequest $request)
@@ -543,8 +532,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * {@inheritdoc}
-     *
-     * @return static
      */
     #[\Override]
     public function duplicate(?array $query = null, ?array $request = null, ?array $attributes = null, ?array $cookies = null, ?array $files = null, ?array $server = null): static
@@ -619,31 +606,24 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      * Set the session instance on the request.
      *
      * @param  \Illuminate\Contracts\Session\Session  $session
-     * @return void
      */
-    public function setLaravelSession($session)
+    public function setLaravelSession($session): void
     {
         $this->session = new SymfonySessionDecorator($session);
     }
 
     /**
      * Set the locale for the request instance.
-     *
-     * @param  string  $locale
-     * @return void
      */
-    public function setRequestLocale(string $locale)
+    public function setRequestLocale(string $locale): void
     {
         $this->locale = $locale;
     }
 
     /**
      * Set the default locale for the request instance.
-     *
-     * @param  string  $locale
-     * @return void
      */
-    public function setDefaultRequestLocale(string $locale)
+    public function setDefaultRequestLocale(string $locale): void
     {
         $this->defaultLocale = $locale;
     }
@@ -716,7 +696,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      */
     public function getUserResolver()
     {
-        return $this->userResolver ?: function () {
+        return $this->userResolver ?: function (): void {
             //
         };
     }
@@ -724,7 +704,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * Set the user resolver callback.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function setUserResolver(Closure $callback)
@@ -741,7 +720,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      */
     public function getRouteResolver()
     {
-        return $this->routeResolver ?: function () {
+        return $this->routeResolver ?: function (): void {
             //
         };
     }
@@ -749,7 +728,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * Set the route resolver callback.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function setRouteResolver(Closure $callback)
@@ -761,8 +739,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Get all of the input and files for the request.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -773,7 +749,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      * Determine if the given offset exists.
      *
      * @param  string  $offset
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -789,7 +764,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      * Get the value at the given offset.
      *
      * @param  string  $offset
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -801,7 +775,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      *
      * @param  string  $offset
      * @param  mixed  $value
-     * @return void
      */
     public function offsetSet($offset, $value): void
     {
@@ -812,7 +785,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      * Remove the value at the given offset.
      *
      * @param  string  $offset
-     * @return void
      */
     public function offsetUnset($offset): void
     {

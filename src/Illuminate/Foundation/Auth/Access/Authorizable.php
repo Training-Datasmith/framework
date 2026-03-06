@@ -35,9 +35,8 @@ trait Authorizable
      *
      * @param  iterable|\UnitEnum|string  $abilities
      * @param  mixed  $arguments
-     * @return bool
      */
-    public function cant($abilities, $arguments = [])
+    public function cant($abilities, $arguments = []): bool
     {
         return ! $this->can($abilities, $arguments);
     }

@@ -17,8 +17,6 @@ trait PromptsForMissingInput
     /**
      * Interact with the user before validating the input.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
     protected function interact(InputInterface $input, OutputInterface $output)
@@ -33,15 +31,13 @@ trait PromptsForMissingInput
     /**
      * Prompt the user for any missing arguments.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
     protected function promptForMissingArguments(InputInterface $input, OutputInterface $output)
     {
         $prompted = (new Collection($this->getDefinition()->getArguments()))
-            ->reject(fn (InputArgument $argument) => $argument->getName() === 'command')
-            ->filter(fn (InputArgument $argument) => $argument->isRequired() && match (true) {
+            ->reject(fn (InputArgument $argument): bool => $argument->getName() === 'command')
+            ->filter(fn (InputArgument $argument): bool => $argument->isRequired() && match (true) {
                 $argument->isArray() => empty($input->getArgument($argument->getName())),
                 default => is_null($input->getArgument($argument->getName())),
             })
@@ -77,7 +73,7 @@ trait PromptsForMissingInput
      *
      * @return array<string, string|array{string, string}|\Closure(): (array<int|string>|string|int|bool)>
      */
-    protected function promptForMissingArgumentsUsing()
+    protected function promptForMissingArgumentsUsing(): array
     {
         return [];
     }
@@ -85,8 +81,6 @@ trait PromptsForMissingInput
     /**
      * Perform actions after the user was prompted for missing arguments.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
     protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)
@@ -97,13 +91,12 @@ trait PromptsForMissingInput
     /**
      * Whether the input contains any options that differ from the default values.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
      * @return bool
      */
     protected function didReceiveOptions(InputInterface $input)
     {
         return (new Collection($this->getDefinition()->getOptions()))
-            ->reject(fn ($option) => $input->getOption($option->getName()) === $option->getDefault())
+            ->reject(fn ($option): bool => $input->getOption($option->getName()) === $option->getDefault())
             ->isNotEmpty();
     }
 }

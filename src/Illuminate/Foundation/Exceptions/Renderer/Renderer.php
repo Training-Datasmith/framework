@@ -18,20 +18,6 @@ class Renderer
     protected const DIST = __DIR__.'/../../resources/exceptions/renderer/dist/';
 
     /**
-     * The view factory instance.
-     *
-     * @var \Illuminate\Contracts\View\Factory
-     */
-    protected $viewFactory;
-
-    /**
-     * The exception listener instance.
-     *
-     * @var \Illuminate\Foundation\Exceptions\Renderer\Listener
-     */
-    protected $listener;
-
-    /**
      * The HTML error renderer instance.
      *
      * @var \Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer
@@ -39,47 +25,33 @@ class Renderer
     protected $htmlErrorRenderer;
 
     /**
-     * The Blade mapper instance.
-     *
-     * @var \Illuminate\Foundation\Exceptions\Renderer\Mappers\BladeMapper
-     */
-    protected $bladeMapper;
-
-    /**
-     * The application's base path.
-     *
-     * @var string
-     */
-    protected $basePath;
-
-    /**
      * Creates a new exception renderer instance.
-     *
-     * @param  \Illuminate\Contracts\View\Factory  $viewFactory
-     * @param  \Illuminate\Foundation\Exceptions\Renderer\Listener  $listener
-     * @param  \Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer  $htmlErrorRenderer
-     * @param  \Illuminate\Foundation\Exceptions\Renderer\Mappers\BladeMapper  $bladeMapper
-     * @param  string  $basePath
      */
     public function __construct(
-        Factory $viewFactory,
-        Listener $listener,
+        /**
+         * The view factory instance.
+         */
+        protected \Illuminate\Contracts\View\Factory $viewFactory,
+        /**
+         * The exception listener instance.
+         */
+        protected \Illuminate\Foundation\Exceptions\Renderer\Listener $listener,
         HtmlErrorRenderer $htmlErrorRenderer,
-        BladeMapper $bladeMapper,
-        string $basePath,
+        /**
+         * The Blade mapper instance.
+         */
+        protected \Illuminate\Foundation\Exceptions\Renderer\Mappers\BladeMapper $bladeMapper,
+        /**
+         * The application's base path.
+         */
+        protected string $basePath,
     ) {
-        $this->viewFactory = $viewFactory;
-        $this->listener = $listener;
         $this->htmlErrorRenderer = $htmlErrorRenderer;
-        $this->bladeMapper = $bladeMapper;
-        $this->basePath = $basePath;
     }
 
     /**
      * Render the given exception as an HTML string.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $throwable
      * @return string
      */
     public function render(Request $request, Throwable $throwable)
@@ -102,20 +74,16 @@ class Renderer
 
     /**
      * Get the renderer's CSS content.
-     *
-     * @return string
      */
-    public static function css()
+    public static function css(): string
     {
         return '<style>'.file_get_contents(static::DIST.'styles.css').'</style>';
     }
 
     /**
      * Get the renderer's JavaScript content.
-     *
-     * @return string
      */
-    public static function js()
+    public static function js(): string
     {
         $viteJsAutoRefresh = '';
 

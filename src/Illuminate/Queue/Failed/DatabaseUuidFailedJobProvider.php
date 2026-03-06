@@ -9,38 +9,26 @@ use Illuminate\Support\Facades\Date;
 class DatabaseUuidFailedJobProvider implements CountableFailedJobProvider, FailedJobProviderInterface, PrunableFailedJobProvider
 {
     /**
-     * The connection resolver implementation.
-     *
-     * @var \Illuminate\Database\ConnectionResolverInterface
-     */
-    protected $resolver;
-
-    /**
-     * The database connection name.
-     *
-     * @var string
-     */
-    protected $database;
-
-    /**
-     * The database table.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
      * Create a new database failed job provider.
      *
-     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
      * @param  string  $database
      * @param  string  $table
      */
-    public function __construct(ConnectionResolverInterface $resolver, $database, $table)
+    public function __construct(
+        /**
+         * The connection resolver implementation.
+         */
+        protected \Illuminate\Database\ConnectionResolverInterface $resolver,
+        /**
+         * The database connection name.
+         */
+        protected $database,
+        /**
+         * The database table.
+         */
+        protected $table
+    )
     {
-        $this->table = $table;
-        $this->resolver = $resolver;
-        $this->database = $database;
     }
 
     /**
@@ -88,7 +76,7 @@ class DatabaseUuidFailedJobProvider implements CountableFailedJobProvider, Faile
      */
     public function all()
     {
-        return $this->getTable()->orderBy('id', 'desc')->get()->map(function ($record) {
+        return $this->getTable()->orderBy('id', 'desc')->get()->map(function ($record): \stdClass {
             $record->id = $record->uuid;
             unset($record->uuid);
 
@@ -116,9 +104,8 @@ class DatabaseUuidFailedJobProvider implements CountableFailedJobProvider, Faile
      * Delete a single failed job from storage.
      *
      * @param  mixed  $id
-     * @return bool
      */
-    public function forget($id)
+    public function forget($id): bool
     {
         return $this->getTable()->where('uuid', $id)->delete() > 0;
     }
@@ -127,11 +114,10 @@ class DatabaseUuidFailedJobProvider implements CountableFailedJobProvider, Faile
      * Flush all of the failed jobs from storage.
      *
      * @param  int|null  $hours
-     * @return void
      */
-    public function flush($hours = null)
+    public function flush($hours = null): void
     {
-        $this->getTable()->when($hours, function ($query, $hours) {
+        $this->getTable()->when($hours, function ($query, $hours): void {
             $query->where('failed_at', '<=', Date::now()->subHours($hours));
         })->delete();
     }
@@ -139,10 +125,9 @@ class DatabaseUuidFailedJobProvider implements CountableFailedJobProvider, Faile
     /**
      * Prune all of the entries older than the given date.
      *
-     * @param  \DateTimeInterface  $before
      * @return int
      */
-    public function prune(DateTimeInterface $before)
+    public function prune(DateTimeInterface $before): int|float
     {
         $query = $this->getTable()->where('failed_at', '<', $before);
 

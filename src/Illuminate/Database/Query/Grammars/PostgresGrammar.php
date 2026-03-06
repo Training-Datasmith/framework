@@ -49,13 +49,12 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a basic where clause.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $where
      * @return string
      */
     protected function whereBasic(Builder $query, $where)
     {
-        if (str_contains(strtolower($where['operator']), 'like')) {
+        if (str_contains(strtolower((string) $where['operator']), 'like')) {
             return sprintf(
                 '%s::text %s %s',
                 $this->wrap($where['column']),
@@ -70,11 +69,9 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a bitwise operator where clause.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $where
-     * @return string
      */
-    protected function whereBitwise(Builder $query, $where)
+    protected function whereBitwise(Builder $query, $where): string
     {
         $value = $this->parameter($where['value']);
 
@@ -86,7 +83,6 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a "where like" clause.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $where
      * @return string
      */
@@ -102,11 +98,9 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a "where date" clause.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $where
-     * @return string
      */
-    protected function whereDate(Builder $query, $where)
+    protected function whereDate(Builder $query, $where): string
     {
         $column = $this->wrap($where['column']);
         $value = $this->parameter($where['value']);
@@ -121,11 +115,9 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a "where time" clause.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $where
-     * @return string
      */
-    protected function whereTime(Builder $query, $where)
+    protected function whereTime(Builder $query, $where): string
     {
         $column = $this->wrap($where['column']);
         $value = $this->parameter($where['value']);
@@ -141,11 +133,9 @@ class PostgresGrammar extends Grammar
      * Compile a date based where clause.
      *
      * @param  string  $type
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $where
-     * @return string
      */
-    protected function dateBasedWhere($type, Builder $query, $where)
+    protected function dateBasedWhere($type, Builder $query, $where): string
     {
         $value = $this->parameter($where['value']);
 
@@ -155,11 +145,9 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a "where fulltext" clause.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $where
-     * @return string
      */
-    public function whereFullText(Builder $query, $where)
+    public function whereFullText(Builder $query, $where): string
     {
         $language = $where['options']['language'] ?? 'english';
 
@@ -194,10 +182,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Get an array of valid full text languages.
-     *
-     * @return array
      */
-    protected function validFullTextLanguages()
+    protected function validFullTextLanguages(): array
     {
         return [
             'simple',
@@ -228,7 +214,6 @@ class PostgresGrammar extends Grammar
     /**
      * Compile the "select *" portion of the query.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $columns
      * @return string|null
      */
@@ -257,9 +242,8 @@ class PostgresGrammar extends Grammar
      *
      * @param  string  $column
      * @param  string  $value
-     * @return string
      */
-    protected function compileJsonContains($column, $value)
+    protected function compileJsonContains($column, $value): string
     {
         $column = str_replace('->>', '->', $this->wrap($column));
 
@@ -270,9 +254,8 @@ class PostgresGrammar extends Grammar
      * Compile a "JSON contains key" statement into SQL.
      *
      * @param  string  $column
-     * @return string
      */
-    protected function compileJsonContainsKey($column)
+    protected function compileJsonContainsKey($column): string
     {
         $segments = explode('->', $column);
 
@@ -306,9 +289,8 @@ class PostgresGrammar extends Grammar
      * @param  string  $column
      * @param  string  $operator
      * @param  string  $value
-     * @return string
      */
-    protected function compileJsonLength($column, $operator, $value)
+    protected function compileJsonLength($column, $operator, $value): string
     {
         $column = str_replace('->>', '->', $this->wrap($column));
 
@@ -318,7 +300,6 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a single having clause.
      *
-     * @param  array  $having
      * @return string
      */
     protected function compileHaving(array $having)
@@ -332,11 +313,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a having clause involving a bitwise operator.
-     *
-     * @param  array  $having
-     * @return string
      */
-    protected function compileHavingBitwise($having)
+    protected function compileHavingBitwise(array $having): string
     {
         $column = $this->wrap($having['column']);
 
@@ -348,11 +326,9 @@ class PostgresGrammar extends Grammar
     /**
      * Compile the lock into SQL.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  bool|string  $value
-     * @return string
      */
-    protected function compileLock(Builder $query, $value)
+    protected function compileLock(Builder $query, $value): string
     {
         if (! is_string($value)) {
             return $value ? 'for update' : 'for share';
@@ -363,25 +339,16 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile an insert ignore statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $values
-     * @return string
      */
-    public function compileInsertOrIgnore(Builder $query, array $values)
+    public function compileInsertOrIgnore(Builder $query, array $values): string
     {
         return $this->compileInsert($query, $values).' on conflict do nothing';
     }
 
     /**
      * Compile an insert ignore statement using a subquery into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $columns
-     * @param  string  $sql
-     * @return string
      */
-    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql)
+    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql): string
     {
         return $this->compileInsertUsing($query, $columns, $sql).' on conflict do nothing';
     }
@@ -389,12 +356,10 @@ class PostgresGrammar extends Grammar
     /**
      * Compile an insert and get ID statement into SQL.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $values
      * @param  string|null  $sequence
-     * @return string
      */
-    public function compileInsertGetId(Builder $query, $values, $sequence)
+    public function compileInsertGetId(Builder $query, $values, $sequence): string
     {
         return $this->compileInsert($query, $values).' returning '.$this->wrap($sequence ?: 'id');
     }
@@ -402,8 +367,6 @@ class PostgresGrammar extends Grammar
     /**
      * Compile an update statement into SQL.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $values
      * @return string
      */
     public function compileUpdate(Builder $query, array $values)
@@ -417,12 +380,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile the columns for an update statement.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $values
-     * @return string
      */
-    protected function compileUpdateColumns(Builder $query, array $values)
+    protected function compileUpdateColumns(Builder $query, array $values): string
     {
         return (new Collection($values))->map(function ($value, $key) {
             $column = last(explode('.', $key));
@@ -437,34 +396,22 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile an "upsert" statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $values
-     * @param  array  $uniqueBy
-     * @param  array  $update
-     * @return string
      */
-    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update)
+    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update): string
     {
         $sql = $this->compileInsert($query, $values);
 
         $sql .= ' on conflict ('.$this->columnize($uniqueBy).') do update set ';
 
-        $columns = (new Collection($update))->map(function ($value, $key) {
-            return is_numeric($key)
-                ? $this->wrap($value).' = '.$this->wrapValue('excluded').'.'.$this->wrap($value)
-                : $this->wrap($key).' = '.$this->parameter($value);
-        })->implode(', ');
+        $columns = (new Collection($update))->map(fn($value, $key) => is_numeric($key)
+            ? $this->wrap($value).' = '.$this->wrapValue('excluded').'.'.$this->wrap($value)
+            : $this->wrap($key).' = '.$this->parameter($value))->implode(', ');
 
         return $sql.$columns;
     }
 
     /**
      * Compile a "lateral join" clause.
-     *
-     * @param  \Illuminate\Database\Query\JoinLateralClause  $join
-     * @param  string  $expression
-     * @return string
      */
     public function compileJoinLateral(JoinLateralClause $join, string $expression): string
     {
@@ -476,9 +423,8 @@ class PostgresGrammar extends Grammar
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return string
      */
-    protected function compileJsonUpdateColumn($key, $value)
+    protected function compileJsonUpdateColumn($key, $value): string
     {
         $segments = explode('->', $key);
 
@@ -491,12 +437,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile an update from statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $values
-     * @return string
      */
-    public function compileUpdateFrom(Builder $query, $values)
+    public function compileUpdateFrom(Builder $query, array $values): string
     {
         $table = $this->wrapTable($query->from);
 
@@ -528,7 +470,6 @@ class PostgresGrammar extends Grammar
     /**
      * Compile the additional where clauses for updates with joins.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @return string
      */
     protected function compileUpdateWheres(Builder $query)
@@ -553,11 +494,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile the "join" clause where clauses for an update.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return string
      */
-    protected function compileUpdateJoinWheres(Builder $query)
+    protected function compileUpdateJoinWheres(Builder $query): string
     {
         $joinWheres = [];
 
@@ -577,19 +515,13 @@ class PostgresGrammar extends Grammar
 
     /**
      * Prepare the bindings for an update statement.
-     *
-     * @param  array  $bindings
-     * @param  array  $values
-     * @return array
      */
-    public function prepareBindingsForUpdateFrom(array $bindings, array $values)
+    public function prepareBindingsForUpdateFrom(array $bindings, array $values): array
     {
         $values = (new Collection($values))
-            ->map(function ($value, $column) {
-                return is_array($value) || ($this->isJsonSelector($column) && ! $this->isExpression($value))
-                    ? json_encode($value)
-                    : $value;
-            })
+            ->map(fn($value, $column) => is_array($value) || ($this->isJsonSelector($column) && ! $this->isExpression($value))
+                ? json_encode($value)
+                : $value)
             ->all();
 
         $bindingsWithoutWhere = Arr::except($bindings, ['select', 'where']);
@@ -601,12 +533,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile an update statement with joins or limit into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $values
-     * @return string
      */
-    protected function compileUpdateWithJoinsOrLimit(Builder $query, array $values)
+    protected function compileUpdateWithJoinsOrLimit(Builder $query, array $values): string
     {
         $table = $this->wrapTable($query->from);
 
@@ -621,19 +549,13 @@ class PostgresGrammar extends Grammar
 
     /**
      * Prepare the bindings for an update statement.
-     *
-     * @param  array  $bindings
-     * @param  array  $values
-     * @return array
      */
     #[\Override]
-    public function prepareBindingsForUpdate(array $bindings, array $values)
+    public function prepareBindingsForUpdate(array $bindings, array $values): array
     {
-        $values = (new Collection($values))->map(function ($value, $column) {
-            return is_array($value) || ($this->isJsonSelector($column) && ! $this->isExpression($value))
-                ? json_encode($value)
-                : $value;
-        })->all();
+        $values = (new Collection($values))->map(fn($value, $column) => is_array($value) || ($this->isJsonSelector($column) && ! $this->isExpression($value))
+            ? json_encode($value)
+            : $value)->all();
 
         $cleanBindings = Arr::except($bindings, 'select');
 
@@ -647,7 +569,6 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a delete statement into SQL.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @return string
      */
     public function compileDelete(Builder $query)
@@ -661,11 +582,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a delete statement with joins or limit into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return string
      */
-    protected function compileDeleteWithJoinsOrLimit(Builder $query)
+    protected function compileDeleteWithJoinsOrLimit(Builder $query): string
     {
         $table = $this->wrapTable($query->from);
 
@@ -678,21 +596,16 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a truncate table statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return array
      */
-    public function compileTruncate(Builder $query)
+    public function compileTruncate(Builder $query): array
     {
         return ['truncate '.$this->wrapTable($query->from).' restart identity'.(static::$cascadeTruncate ? ' cascade' : '') => []];
     }
 
     /**
      * Compile a query to get the number of open connections for a database.
-     *
-     * @return string
      */
-    public function compileThreadCount()
+    public function compileThreadCount(): string
     {
         return 'select count(*) as "Value" from pg_stat_activity';
     }
@@ -701,9 +614,8 @@ class PostgresGrammar extends Grammar
      * Wrap the given JSON selector.
      *
      * @param  string  $value
-     * @return string
      */
-    protected function wrapJsonSelector($value)
+    protected function wrapJsonSelector($value): string
     {
         $path = explode('->', $value);
 
@@ -724,9 +636,8 @@ class PostgresGrammar extends Grammar
      * Wrap the given JSON selector for boolean values.
      *
      * @param  string  $value
-     * @return string
      */
-    protected function wrapJsonBooleanSelector($value)
+    protected function wrapJsonBooleanSelector($value): string
     {
         $selector = str_replace(
             '->>', '->',
@@ -740,9 +651,8 @@ class PostgresGrammar extends Grammar
      * Wrap the given JSON boolean value.
      *
      * @param  string  $value
-     * @return string
      */
-    protected function wrapJsonBooleanValue($value)
+    protected function wrapJsonBooleanValue($value): string
     {
         return "'".$value."'::jsonb";
     }
@@ -760,11 +670,9 @@ class PostgresGrammar extends Grammar
         return (new Collection($path))
             ->map(fn ($attribute) => $this->parseJsonPathArrayKeys($attribute))
             ->collapse()
-            ->map(function ($attribute) use ($quote) {
-                return filter_var($attribute, FILTER_VALIDATE_INT) !== false
-                    ? $attribute
-                    : $quote.$attribute.$quote;
-            })
+            ->map(fn($attribute) => filter_var($attribute, FILTER_VALIDATE_INT) !== false
+                ? $attribute
+                : $quote.$attribute.$quote)
             ->all();
     }
 
@@ -815,34 +723,26 @@ class PostgresGrammar extends Grammar
 
     /**
      * Get the Postgres grammar specific operators.
-     *
-     * @return array
      */
-    public function getOperators()
+    public function getOperators(): array
     {
         return array_values(array_unique(array_merge(parent::getOperators(), static::$customOperators)));
     }
 
     /**
      * Set any Postgres grammar specific custom operators.
-     *
-     * @param  array  $operators
-     * @return void
      */
-    public static function customOperators(array $operators)
+    public static function customOperators(array $operators): void
     {
         static::$customOperators = array_values(
-            array_merge(static::$customOperators, array_filter(array_filter($operators, 'is_string')))
+            array_merge(static::$customOperators, array_filter(array_filter($operators, is_string(...))))
         );
     }
 
     /**
      * Enable or disable the "cascade" option when compiling the truncate statement.
-     *
-     * @param  bool  $value
-     * @return void
      */
-    public static function cascadeOnTruncate(bool $value = true)
+    public static function cascadeOnTruncate(bool $value = true): void
     {
         static::$cascadeTruncate = $value;
     }
@@ -850,7 +750,7 @@ class PostgresGrammar extends Grammar
     /**
      * @deprecated use cascadeOnTruncate
      */
-    public static function cascadeOnTrucate(bool $value = true)
+    public static function cascadeOnTrucate(bool $value = true): void
     {
         self::cascadeOnTruncate($value);
     }

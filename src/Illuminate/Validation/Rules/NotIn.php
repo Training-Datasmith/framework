@@ -18,10 +18,8 @@ class NotIn implements Stringable
 
     /**
      * The accepted values.
-     *
-     * @var array
      */
-    protected $values;
+    protected array $values;
 
     /**
      * Create a new "not in" rule instance.
@@ -39,12 +37,10 @@ class NotIn implements Stringable
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        $values = array_map(function ($value) {
+        $values = array_map(function ($value): string {
             $value = enum_value($value);
 
             return '"'.str_replace('"', '""', $value).'"';

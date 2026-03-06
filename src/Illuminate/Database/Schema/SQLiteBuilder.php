@@ -12,9 +12,8 @@ class SQLiteBuilder extends Builder
      * Create a database in the schema.
      *
      * @param  string  $name
-     * @return bool
      */
-    public function createDatabase($name)
+    public function createDatabase($name): bool
     {
         return File::put($name, '') !== false;
     }
@@ -23,11 +22,13 @@ class SQLiteBuilder extends Builder
      * Drop a database from the schema if the database exists.
      *
      * @param  string  $name
-     * @return bool
      */
-    public function dropDatabaseIfExists($name)
+    public function dropDatabaseIfExists($name): bool
     {
-        return ! File::exists($name) || File::delete($name);
+        if (! File::exists($name)) {
+            return true;
+        }
+        return File::delete($name);
     }
 
     /** @inheritDoc */
@@ -55,7 +56,7 @@ class SQLiteBuilder extends Builder
 
         return $this->connection->getPostProcessor()->processTables(
             $this->connection->selectFromWriteConnection(
-                $this->grammar->compileTables($schema, $withSize)
+                $this->grammar->compileTables($schema)
             )
         );
     }
@@ -84,8 +85,7 @@ class SQLiteBuilder extends Builder
         $table = $this->connection->getTablePrefix().$table;
 
         return $this->connection->getPostProcessor()->processColumns(
-            $this->connection->selectFromWriteConnection($this->grammar->compileColumns($schema, $table)),
-            $this->connection->scalar($this->grammar->compileSqlCreateStatement($schema, $table))
+            $this->connection->selectFromWriteConnection($this->grammar->compileColumns($schema, $table))
         );
     }
 
@@ -154,9 +154,8 @@ class SQLiteBuilder extends Builder
      * Empty the database file.
      *
      * @param  string|null  $path
-     * @return void
      */
-    public function refreshDatabaseFile($path = null)
+    public function refreshDatabaseFile($path = null): void
     {
         file_put_contents($path ?? $this->connection->getDatabaseName(), '');
     }
@@ -166,7 +165,7 @@ class SQLiteBuilder extends Builder
      *
      * @return string[]|null
      */
-    public function getCurrentSchemaListing()
+    public function getCurrentSchemaListing(): null
     {
         return ['main'];
     }

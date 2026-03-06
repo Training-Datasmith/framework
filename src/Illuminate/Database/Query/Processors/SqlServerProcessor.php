@@ -11,7 +11,6 @@ class SqlServerProcessor extends Processor
     /**
      * Process an "insert get ID" query.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  string  $sql
      * @param  array  $values
      * @param  string|null  $sequence
@@ -35,9 +34,7 @@ class SqlServerProcessor extends Processor
     /**
      * Process an "insert get ID" query for ODBC.
      *
-     * @param  \Illuminate\Database\Connection  $connection
      * @return int
-     *
      * @throws \Exception
      */
     protected function processInsertGetIdForOdbc(Connection $connection)
@@ -56,9 +53,9 @@ class SqlServerProcessor extends Processor
     }
 
     /** @inheritDoc */
-    public function processColumns($results)
+    public function processColumns($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             $type = match ($typeName = $result->type_name) {
@@ -86,15 +83,15 @@ class SqlServerProcessor extends Processor
     }
 
     /** @inheritDoc */
-    public function processIndexes($results)
+    public function processIndexes($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
-                'name' => strtolower($result->name),
-                'columns' => $result->columns ? explode(',', $result->columns) : [],
-                'type' => strtolower($result->type),
+                'name' => strtolower((string) $result->name),
+                'columns' => $result->columns ? explode(',', (string) $result->columns) : [],
+                'type' => strtolower((string) $result->type),
                 'unique' => (bool) $result->unique,
                 'primary' => (bool) $result->primary,
             ];
@@ -102,17 +99,17 @@ class SqlServerProcessor extends Processor
     }
 
     /** @inheritDoc */
-    public function processForeignKeys($results)
+    public function processForeignKeys($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
                 'name' => $result->name,
-                'columns' => explode(',', $result->columns),
+                'columns' => explode(',', (string) $result->columns),
                 'foreign_schema' => $result->foreign_schema,
                 'foreign_table' => $result->foreign_table,
-                'foreign_columns' => explode(',', $result->foreign_columns),
+                'foreign_columns' => explode(',', (string) $result->foreign_columns),
                 'on_update' => strtolower(str_replace('_', ' ', $result->on_update)),
                 'on_delete' => strtolower(str_replace('_', ' ', $result->on_delete)),
             ];

@@ -19,10 +19,8 @@ class Batch
 {
     /**
      * The factory instance.
-     *
-     * @var \Illuminate\Http\Client\Factory
      */
-    protected $factory;
+    protected \Illuminate\Http\Client\Factory $factory;
 
     /**
      * The array of requests.
@@ -64,35 +62,35 @@ class Batch
      *
      * @var (\Closure($this): void)|null
      */
-    protected $beforeCallback = null;
+    protected $beforeCallback;
 
     /**
      * The callback to run after a request from the batch succeeds.
      *
      * @var (\Closure($this, int|string, \Illuminate\Http\Client\Response): void)|null
      */
-    protected $progressCallback = null;
+    protected $progressCallback;
 
     /**
      * The callback to run after a request from the batch fails.
      *
      * @var (\Closure($this, int|string, \Illuminate\Http\Client\Response|\Illuminate\Http\Client\RequestException|\Illuminate\Http\Client\ConnectionException): void)|null
      */
-    protected $catchCallback = null;
+    protected $catchCallback;
 
     /**
      * The callback to run if all the requests from the batch succeeded.
      *
      * @var (\Closure($this, array<int|string, \Illuminate\Http\Client\Response>): void)|null
      */
-    protected $thenCallback = null;
+    protected $thenCallback;
 
     /**
      * The callback to run after all the requests from the batch finish.
      *
      * @var (\Closure($this, array<int|string, \Illuminate\Http\Client\Response>): void)|null
      */
-    protected $finallyCallback = null;
+    protected $finallyCallback;
 
     /**
      * If the batch already was sent.
@@ -106,21 +104,21 @@ class Batch
      *
      * @var \Carbon\CarbonImmutable|null
      */
-    public $createdAt = null;
+    public $createdAt;
 
     /**
      * The date when the batch finished.
      *
      * @var \Carbon\CarbonImmutable|null
      */
-    public $finishedAt = null;
+    public $finishedAt;
 
     /**
      * The maximum number of concurrent requests.
      *
      * @var int|null
      */
-    protected $concurrencyLimit = null;
+    protected $concurrencyLimit;
 
     /**
      * Create a new request batch instance.
@@ -135,9 +133,7 @@ class Batch
     /**
      * Add a request to the batch with a key.
      *
-     * @param  string  $key
      * @return \Illuminate\Http\Client\PendingRequest
-     *
      * @throws \Illuminate\Http\Client\BatchInProgressException
      */
     public function as(string $key)
@@ -173,7 +169,6 @@ class Batch
      * Register a callback to run before the first request from the batch runs.
      *
      * @param  (\Closure($this): void)  $callback
-     * @return Batch
      */
     public function before(Closure $callback): self
     {
@@ -186,7 +181,6 @@ class Batch
      * Register a callback to run after a request from the batch succeeds.
      *
      * @param  (\Closure($this, int|string, \Illuminate\Http\Client\Response): void)  $callback
-     * @return Batch
      */
     public function progress(Closure $callback): self
     {
@@ -199,7 +193,6 @@ class Batch
      * Register a callback to run after a request from the batch fails.
      *
      * @param  (\Closure($this, int|string, \Illuminate\Http\Client\Response|\Illuminate\Http\Client\RequestException|\Illuminate\Http\Client\ConnectionException): void)  $callback
-     * @return Batch
      */
     public function catch(Closure $callback): self
     {
@@ -212,7 +205,6 @@ class Batch
      * Register a callback to run after all the requests from the batch succeed.
      *
      * @param  (\Closure($this, array<int|string, \Illuminate\Http\Client\Response>): void)  $callback
-     * @return Batch
      */
     public function then(Closure $callback): self
     {
@@ -225,7 +217,6 @@ class Batch
      * Register a callback to run after all the requests from the batch finish.
      *
      * @param  (\Closure($this, array<int|string, \Illuminate\Http\Client\Response>): void)  $callback
-     * @return Batch
      */
     public function finally(Closure $callback): self
     {
@@ -236,9 +227,6 @@ class Batch
 
     /**
      * Set the maximum number of concurrent requests.
-     *
-     * @param  int  $limit
-     * @return Batch
      */
     public function concurrency(int $limit): self
     {
@@ -249,12 +237,10 @@ class Batch
 
     /**
      * Defer the batch to run in the background after the current task has finished.
-     *
-     * @return \Illuminate\Support\Defer\DeferredCallback
      */
     public function defer(): DeferredCallback
     {
-        return defer(fn () => $this->send());
+        return defer(fn (): array => $this->send());
     }
 
     /**
@@ -335,10 +321,8 @@ class Batch
         // Before returning the results, we must ensure that the results are sorted
         // in the same order as the requests were defined, respecting any custom
         // key names that were assigned to this request using the "as" method.
-        uksort($results, function ($key1, $key2) {
-            return array_search($key1, array_keys($this->requests), true) <=>
-                   array_search($key2, array_keys($this->requests), true);
-        });
+        uksort($results, fn($key1, $key2) => array_search($key1, array_keys($this->requests), true) <=>
+               array_search($key2, array_keys($this->requests), true));
 
         if (! $this->hasFailures() && $this->thenCallback !== null) {
             call_user_func($this->thenCallback, $this, $results);
@@ -376,8 +360,6 @@ class Batch
 
     /**
      * Determine if the batch has finished executing.
-     *
-     * @return bool
      */
     public function finished(): bool
     {
@@ -386,8 +368,6 @@ class Batch
 
     /**
      * Increment the count of total and pending requests in the batch.
-     *
-     * @return void
      */
     protected function incrementPendingRequests(): void
     {
@@ -397,8 +377,6 @@ class Batch
 
     /**
      * Decrement the count of pending requests in the batch.
-     *
-     * @return void
      */
     protected function decrementPendingRequests(): void
     {
@@ -407,8 +385,6 @@ class Batch
 
     /**
      * Determine if the batch has job failures.
-     *
-     * @return bool
      */
     public function hasFailures(): bool
     {
@@ -417,8 +393,6 @@ class Batch
 
     /**
      * Increment the count of failed requests in the batch.
-     *
-     * @return void
      */
     protected function incrementFailedRequests(): void
     {
@@ -438,8 +412,6 @@ class Batch
     /**
      * Add a request to the batch with a numeric index.
      *
-     * @param  string  $method
-     * @param  array  $parameters
      * @return \Illuminate\Http\Client\PendingRequest|\GuzzleHttp\Promise\Promise
      *
      * @throws \Illuminate\Http\Client\BatchInProgressException

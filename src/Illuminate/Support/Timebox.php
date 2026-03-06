@@ -19,9 +19,7 @@ class Timebox
      * @template TCallReturnType
      *
      * @param  (callable($this): TCallReturnType)  $callback
-     * @param  int  $microseconds
      * @return TCallReturnType
-     *
      * @throws \Throwable
      */
     public function call(callable $callback, int $microseconds)
@@ -54,7 +52,7 @@ class Timebox
      *
      * @return $this
      */
-    public function returnEarly()
+    public function returnEarly(): static
     {
         $this->earlyReturn = true;
 
@@ -66,7 +64,7 @@ class Timebox
      *
      * @return $this
      */
-    public function dontReturnEarly()
+    public function dontReturnEarly(): static
     {
         $this->earlyReturn = false;
 
@@ -76,7 +74,6 @@ class Timebox
     /**
      * Sleep for the specified number of microseconds.
      *
-     * @param  int  $microseconds
      * @return void
      */
     protected function usleep(int $microseconds)

@@ -31,30 +31,20 @@ class FreshCommand extends Command
     protected $description = 'Drop all tables and re-run all migrations';
 
     /**
-     * The migrator instance.
-     *
-     * @var \Illuminate\Database\Migrations\Migrator
-     */
-    protected $migrator;
-
-    /**
      * Create a new fresh command instance.
-     *
-     * @param  \Illuminate\Database\Migrations\Migrator  $migrator
      */
-    public function __construct(Migrator $migrator)
+    public function __construct(/**
+     * The migrator instance.
+     */
+    protected \Illuminate\Database\Migrations\Migrator $migrator)
     {
         parent::__construct();
-
-        $this->migrator = $migrator;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         if ($this->isProhibited() ||
             ! $this->confirmToProceed()) {
@@ -63,11 +53,11 @@ class FreshCommand extends Command
 
         $database = $this->input->getOption('database');
 
-        $this->migrator->usingConnection($database, function () use ($database) {
+        $this->migrator->usingConnection($database, function () use ($database): void {
             if ($this->migrator->repositoryExists()) {
                 $this->newLine();
 
-                $this->components->task('Dropping all tables', fn () => $this->callSilent('db:wipe', array_filter([
+                $this->components->task('Dropping all tables', fn (): bool => $this->callSilent('db:wipe', array_filter([
                     '--database' => $database,
                     '--drop-views' => $this->option('drop-views'),
                     '--drop-types' => $this->option('drop-types'),
@@ -102,12 +92,13 @@ class FreshCommand extends Command
 
     /**
      * Determine if the developer has requested database seeding.
-     *
-     * @return bool
      */
-    protected function needsSeeding()
+    protected function needsSeeding(): bool
     {
-        return $this->option('seed') || $this->option('seeder');
+        if ($this->option('seed')) {
+            return true;
+        }
+        return (bool) $this->option('seeder');
     }
 
     /**
@@ -127,10 +118,8 @@ class FreshCommand extends Command
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],

@@ -11,9 +11,7 @@ class ValidatePostSize
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
-     *
      * @throws \Illuminate\Http\Exceptions\PostTooLargeException
      */
     public function handle($request, Closure $next)
@@ -29,10 +27,8 @@ class ValidatePostSize
 
     /**
      * Determine the server 'post_max_size' as bytes.
-     *
-     * @return int
      */
-    protected function getPostMaxSize()
+    protected function getPostMaxSize(): int
     {
         if (is_numeric($postMaxSize = ini_get('post_max_size'))) {
             return (int) $postMaxSize;

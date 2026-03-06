@@ -14,13 +14,6 @@ class TestComponent implements Stringable
     }
 
     /**
-     * The original component.
-     *
-     * @var \Illuminate\View\Component
-     */
-    public $component;
-
-    /**
      * The rendered component contents.
      *
      * @var string
@@ -33,10 +26,11 @@ class TestComponent implements Stringable
      * @param  \Illuminate\View\Component  $component
      * @param  \Illuminate\View\View  $view
      */
-    public function __construct($component, $view)
+    public function __construct(/**
+     * The original component.
+     */
+    public $component, $view)
     {
-        $this->component = $component;
-
         $this->rendered = $view->render();
     }
 
@@ -47,7 +41,7 @@ class TestComponent implements Stringable
      * @param  bool  $escape
      * @return $this
      */
-    public function assertSee($value, $escape = true)
+    public function assertSee($value, $escape = true): static
     {
         $value = $escape ? e($value) : $value;
 
@@ -59,11 +53,10 @@ class TestComponent implements Stringable
     /**
      * Assert that the given strings are contained in order within the rendered component.
      *
-     * @param  array  $values
      * @param  bool  $escape
      * @return $this
      */
-    public function assertSeeInOrder(array $values, $escape = true)
+    public function assertSeeInOrder(array $values, $escape = true): static
     {
         $values = $escape ? array_map(e(...), $values) : $values;
 
@@ -79,7 +72,7 @@ class TestComponent implements Stringable
      * @param  bool  $escape
      * @return $this
      */
-    public function assertSeeText($value, $escape = true)
+    public function assertSeeText($value, $escape = true): static
     {
         $value = $escape ? e($value) : $value;
 
@@ -91,11 +84,10 @@ class TestComponent implements Stringable
     /**
      * Assert that the given strings are contained in order within the rendered component text.
      *
-     * @param  array  $values
      * @param  bool  $escape
      * @return $this
      */
-    public function assertSeeTextInOrder(array $values, $escape = true)
+    public function assertSeeTextInOrder(array $values, $escape = true): static
     {
         $values = $escape ? array_map(e(...), $values) : $values;
 
@@ -111,7 +103,7 @@ class TestComponent implements Stringable
      * @param  bool  $escape
      * @return $this
      */
-    public function assertDontSee($value, $escape = true)
+    public function assertDontSee($value, $escape = true): static
     {
         $value = $escape ? e($value) : $value;
 
@@ -127,7 +119,7 @@ class TestComponent implements Stringable
      * @param  bool  $escape
      * @return $this
      */
-    public function assertDontSeeText($value, $escape = true)
+    public function assertDontSeeText($value, $escape = true): static
     {
         $value = $escape ? e($value) : $value;
 
@@ -138,21 +130,16 @@ class TestComponent implements Stringable
 
     /**
      * Get the string contents of the rendered component.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->rendered;
     }
 
     /**
      * Dynamically access properties on the underlying component.
-     *
-     * @param  string  $attribute
-     * @return mixed
      */
-    public function __get($attribute)
+    public function __get(string $attribute): mixed
     {
         return $this->component->{$attribute};
     }
@@ -160,11 +147,10 @@ class TestComponent implements Stringable
     /**
      * Dynamically call methods on the underlying component.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);

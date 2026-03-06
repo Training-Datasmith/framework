@@ -86,7 +86,7 @@ class PostgresBuilder extends Builder
      *
      * @return string[]
      */
-    public function getCurrentSchemaListing()
+    public function getCurrentSchemaListing(): null
     {
         return array_map(
             fn ($schema) => $schema === '$user' ? $this->connection->getConfig('username') : $schema,

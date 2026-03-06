@@ -7,29 +7,23 @@ use Illuminate\Contracts\Cache\Repository as Cache;
 class UniqueLock
 {
     /**
-     * The cache repository implementation.
-     *
-     * @var \Illuminate\Contracts\Cache\Repository
-     */
-    protected $cache;
-
-    /**
      * Create a new unique lock manager instance.
-     *
-     * @param  \Illuminate\Contracts\Cache\Repository  $cache
      */
-    public function __construct(Cache $cache)
+    public function __construct(
+        /**
+         * The cache repository implementation.
+         */
+        protected \Illuminate\Contracts\Cache\Repository $cache
+    )
     {
-        $this->cache = $cache;
     }
 
     /**
      * Attempt to acquire a lock for the given job.
      *
      * @param  mixed  $job
-     * @return bool
      */
-    public function acquire($job)
+    public function acquire($job): bool
     {
         $uniqueFor = method_exists($job, 'uniqueFor')
             ? $job->uniqueFor()
@@ -39,31 +33,29 @@ class UniqueLock
             ? ($job->uniqueVia() ?? $this->cache)
             : $this->cache;
 
-        return (bool) $cache->lock($this->getKey($job), $uniqueFor)->get();
+        return (bool) $cache->lock(static::getKey($job), $uniqueFor)->get();
     }
 
     /**
      * Release the lock for the given job.
      *
      * @param  mixed  $job
-     * @return void
      */
-    public function release($job)
+    public function release($job): void
     {
         $cache = method_exists($job, 'uniqueVia')
             ? ($job->uniqueVia() ?? $this->cache)
             : $this->cache;
 
-        $cache->lock($this->getKey($job))->forceRelease();
+        $cache->lock(static::getKey($job))->forceRelease();
     }
 
     /**
      * Generate the lock key for the given job.
      *
      * @param  mixed  $job
-     * @return string
      */
-    public static function getKey($job)
+    public static function getKey($job): string
     {
         $uniqueId = method_exists($job, 'uniqueId')
             ? $job->uniqueId()
@@ -71,7 +63,7 @@ class UniqueLock
 
         $jobName = method_exists($job, 'displayName')
             ? $job->displayName()
-            : get_class($job);
+            : $job::class;
 
         return 'laravel_unique_job:'.$jobName.':'.$uniqueId;
     }

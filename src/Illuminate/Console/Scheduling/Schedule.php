@@ -67,13 +67,6 @@ class Schedule
     protected $schedulingMutex;
 
     /**
-     * The timezone the date should be evaluated on.
-     *
-     * @var \DateTimeZone|string
-     */
-    protected $timezone;
-
-    /**
      * The job dispatcher implementation.
      *
      * @var \Illuminate\Contracts\Bus\Dispatcher
@@ -108,10 +101,11 @@ class Schedule
      *
      * @throws \RuntimeException
      */
-    public function __construct($timezone = null)
+    public function __construct(/**
+     * The timezone the date should be evaluated on.
+     */
+    protected $timezone = null)
     {
-        $this->timezone = $timezone;
-
         if (! class_exists(Container::class)) {
             throw new RuntimeException(
                 'A container implementation is required to use the scheduler. Please install the illuminate/container package.'
@@ -133,7 +127,6 @@ class Schedule
      * Add a new callback event to the schedule.
      *
      * @param  string|callable  $callback
-     * @param  array  $parameters
      * @return \Illuminate\Console\Scheduling\CallbackEvent
      */
     public function call($callback, array $parameters = [])
@@ -151,13 +144,12 @@ class Schedule
      * Add a new Artisan command event to the schedule.
      *
      * @param  \Symfony\Component\Console\Command\Command|string  $command
-     * @param  array  $parameters
      * @return \Illuminate\Console\Scheduling\Event
      */
     public function command($command, array $parameters = [])
     {
         if ($command instanceof SymfonyCommand) {
-            $command = get_class($command);
+            $command = $command::class;
 
             $command = Container::getInstance()->make($command);
 
@@ -201,7 +193,7 @@ class Schedule
         }
 
         $this->events[] = $event = new CallbackEvent(
-            $this->eventMutex, function () use ($job, $queue, $connection) {
+            $this->eventMutex, function () use ($job, $queue, $connection): void {
                 $job = is_string($job) ? Container::getInstance()->make($job) : $job;
 
                 if ($job instanceof ShouldQueue) {
@@ -289,11 +281,9 @@ class Schedule
     /**
      * Add a new command event to the schedule.
      *
-     * @param  string  $command
-     * @param  array  $parameters
      * @return \Illuminate\Console\Scheduling\Event
      */
-    public function exec($command, array $parameters = [])
+    public function exec(string $command, array $parameters = [])
     {
         if (count($parameters)) {
             $command .= ' '.$this->compileParameters($parameters);
@@ -309,12 +299,10 @@ class Schedule
     /**
      * Create new schedule group.
      *
-     * @param  \Closure  $events
-     * @return void
      *
      * @throws \RuntimeException
      */
-    public function group(Closure $events)
+    public function group(Closure $events): void
     {
         if ($this->attributes === null) {
             throw new RuntimeException('Invoke an attribute method such as Schedule::daily() before defining a schedule group.');
@@ -331,7 +319,6 @@ class Schedule
     /**
      * Merge the current group attributes with the given event.
      *
-     * @param  \Illuminate\Console\Scheduling\Event  $event
      * @return void
      */
     protected function mergePendingAttributes(Event $event)
@@ -352,7 +339,6 @@ class Schedule
     /**
      * Compile parameters for a command.
      *
-     * @param  array  $parameters
      * @return string
      */
     protected function compileParameters(array $parameters)
@@ -379,18 +365,12 @@ class Schedule
      */
     public function compileArrayInput($key, $value)
     {
-        $value = (new Collection($value))->map(function ($value) {
-            return ProcessUtils::escapeArgument($value);
-        });
+        $value = (new Collection($value))->map(fn($value) => ProcessUtils::escapeArgument($value));
 
-        if (str_starts_with($key, '--')) {
-            $value = $value->map(function ($value) use ($key) {
-                return "{$key}={$value}";
-            });
-        } elseif (str_starts_with($key, '-')) {
-            $value = $value->map(function ($value) use ($key) {
-                return "{$key} {$value}";
-            });
+        if (str_starts_with((string) $key, '--')) {
+            $value = $value->map(fn($value) => "{$key}={$value}");
+        } elseif (str_starts_with((string) $key, '-')) {
+            $value = $value->map(fn($value) => "{$key} {$value}");
         }
 
         return $value->implode(' ');
@@ -399,8 +379,6 @@ class Schedule
     /**
      * Determine if the server is allowed to run this event.
      *
-     * @param  \Illuminate\Console\Scheduling\Event  $event
-     * @param  \DateTimeInterface  $time
      * @return bool
      */
     public function serverShouldRun(Event $event, DateTimeInterface $time)
@@ -414,7 +392,7 @@ class Schedule
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return \Illuminate\Support\Collection
      */
-    public function dueEvents($app)
+    public function dueEvents($app): bool
     {
         return (new Collection($this->events))->filter->isDue($app);
     }
@@ -435,7 +413,7 @@ class Schedule
      * @param  \UnitEnum|string  $store
      * @return $this
      */
-    public function useCache($store)
+    public function useCache($store): static
     {
         $store = enum_value($store);
 
@@ -476,11 +454,10 @@ class Schedule
     /**
      * Dynamically handle calls into the schedule instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);

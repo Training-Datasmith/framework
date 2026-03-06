@@ -23,20 +23,6 @@ class ThrottlesExceptions
     protected $byJob = false;
 
     /**
-     * The maximum number of attempts allowed before rate limiting applies.
-     *
-     * @var int
-     */
-    protected $maxAttempts;
-
-    /**
-     * The number of seconds until the maximum attempts are reset.
-     *
-     * @var int
-     */
-    protected $decaySeconds;
-
-    /**
      * The number of minutes to wait before retrying the job after an exception.
      *
      * @var int
@@ -91,10 +77,17 @@ class ThrottlesExceptions
      * @param  int  $maxAttempts
      * @param  int  $decaySeconds
      */
-    public function __construct($maxAttempts = 10, $decaySeconds = 600)
+    public function __construct(
+        /**
+         * The maximum number of attempts allowed before rate limiting applies.
+         */
+        protected $maxAttempts = 10,
+        /**
+         * The number of seconds until the maximum attempts are reset.
+         */
+        protected $decaySeconds = 600
+    )
     {
-        $this->maxAttempts = $maxAttempts;
-        $this->decaySeconds = $decaySeconds;
     }
 
     /**
@@ -142,10 +135,9 @@ class ThrottlesExceptions
     /**
      * Specify a callback that should determine if rate limiting behavior should apply.
      *
-     * @param  callable  $callback
      * @return $this
      */
-    public function when(callable $callback)
+    public function when(callable $callback): static
     {
         $this->whenCallback = $callback;
 
@@ -155,13 +147,12 @@ class ThrottlesExceptions
     /**
      * Add a callback that should determine if the job should be deleted.
      *
-     * @param  callable|string  $callback
      * @return $this
      */
-    public function deleteWhen(callable|string $callback)
+    public function deleteWhen(callable|string $callback): static
     {
         $this->deleteWhenCallbacks[] = is_string($callback)
-            ? fn (Throwable $e) => $e instanceof $callback
+            ? fn (Throwable $e): bool => $e instanceof $callback
             : $callback;
 
         return $this;
@@ -170,13 +161,12 @@ class ThrottlesExceptions
     /**
      * Add a callback that should determine if the job should be failed.
      *
-     * @param  callable|string  $callback
      * @return $this
      */
-    public function failWhen(callable|string $callback)
+    public function failWhen(callable|string $callback): static
     {
         $this->failWhenCallbacks[] = is_string($callback)
-            ? fn (Throwable $e) => $e instanceof $callback
+            ? fn (Throwable $e): bool => $e instanceof $callback
             : $callback;
 
         return $this;
@@ -184,9 +174,6 @@ class ThrottlesExceptions
 
     /**
      * Run the skip / delete callbacks to determine if the job should be deleted for the given exception.
-     *
-     * @param  \Throwable  $throwable
-     * @return bool
      */
     protected function shouldDelete(Throwable $throwable): bool
     {
@@ -201,9 +188,6 @@ class ThrottlesExceptions
 
     /**
      * Run the skip / fail callbacks to determine if the job should be failed for the given exception.
-     *
-     * @param  \Throwable  $throwable
-     * @return bool
      */
     protected function shouldFail(Throwable $throwable): bool
     {
@@ -219,10 +203,9 @@ class ThrottlesExceptions
     /**
      * Set the prefix of the rate limiter key.
      *
-     * @param  string  $prefix
      * @return $this
      */
-    public function withPrefix(string $prefix)
+    public function withPrefix(string $prefix): static
     {
         $this->prefix = $prefix;
 
@@ -235,7 +218,7 @@ class ThrottlesExceptions
      * @param  int  $backoff
      * @return $this
      */
-    public function backoff($backoff)
+    public function backoff($backoff): static
     {
         $this->retryAfterMinutes = $backoff;
 
@@ -246,21 +229,21 @@ class ThrottlesExceptions
      * Get the cache key associated for the rate limiter.
      *
      * @param  mixed  $job
-     * @return string
      */
-    protected function getKey($job)
+    protected function getKey($job): string
     {
         if ($this->key) {
             return $this->prefix.$this->key;
-        } elseif ($this->byJob) {
+        }
+        if ($this->byJob) {
             return $this->prefix.$job->job->uuid();
         }
 
         $jobName = method_exists($job, 'displayName')
             ? $job->displayName()
-            : get_class($job);
+            : $job::class;
 
-        return $this->prefix.hash('xxh128', $jobName);
+        return $this->prefix.hash('xxh128', (string) $jobName);
     }
 
     /**
@@ -269,7 +252,7 @@ class ThrottlesExceptions
      * @param  string  $key
      * @return $this
      */
-    public function by($key)
+    public function by($key): static
     {
         $this->key = $key;
 
@@ -281,7 +264,7 @@ class ThrottlesExceptions
      *
      * @return $this
      */
-    public function byJob()
+    public function byJob(): static
     {
         $this->byJob = true;
 
@@ -291,12 +274,11 @@ class ThrottlesExceptions
     /**
      * Report exceptions and optionally specify a callback that determines if the exception should be reported.
      *
-     * @param  callable|null  $callback
      * @return $this
      */
-    public function report(?callable $callback = null)
+    public function report(?callable $callback = null): static
     {
-        $this->reportCallback = $callback ?? fn () => true;
+        $this->reportCallback = $callback ?? fn (): true => true;
 
         return $this;
     }
@@ -307,7 +289,7 @@ class ThrottlesExceptions
      * @param  string  $key
      * @return int
      */
-    protected function getTimeUntilNextRetry($key)
+    protected function getTimeUntilNextRetry($key): int|float
     {
         return $this->limiter->availableIn($key) + 3;
     }

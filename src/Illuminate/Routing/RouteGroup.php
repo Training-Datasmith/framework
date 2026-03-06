@@ -9,12 +9,9 @@ class RouteGroup
     /**
      * Merge route groups into a new array.
      *
-     * @param  array  $new
-     * @param  array  $old
      * @param  bool  $prependExistingPrefix
-     * @return array
      */
-    public static function merge($new, $old, $prependExistingPrefix = true)
+    public static function merge(array $new, array $old, $prependExistingPrefix = true): array
     {
         if (isset($new['domain'])) {
             unset($old['domain']);
@@ -38,11 +35,9 @@ class RouteGroup
     /**
      * Format the namespace for the new group attributes.
      *
-     * @param  array  $new
-     * @param  array  $old
      * @return string|null
      */
-    protected static function formatNamespace($new, $old)
+    protected static function formatNamespace(array $new, array $old)
     {
         if (isset($new['namespace'])) {
             return isset($old['namespace']) && ! str_starts_with($new['namespace'], '\\')
@@ -56,12 +51,10 @@ class RouteGroup
     /**
      * Format the prefix for the new group attributes.
      *
-     * @param  array  $new
-     * @param  array  $old
      * @param  bool  $prependExistingPrefix
      * @return string|null
      */
-    protected static function formatPrefix($new, $old, $prependExistingPrefix = true)
+    protected static function formatPrefix(array $new, array $old, $prependExistingPrefix = true)
     {
         $old = $old['prefix'] ?? '';
 
@@ -74,12 +67,8 @@ class RouteGroup
 
     /**
      * Format the "wheres" for the new group attributes.
-     *
-     * @param  array  $new
-     * @param  array  $old
-     * @return array
      */
-    protected static function formatWhere($new, $old)
+    protected static function formatWhere(array $new, array $old): array
     {
         return array_merge(
             $old['where'] ?? [],
@@ -89,12 +78,8 @@ class RouteGroup
 
     /**
      * Format the "as" clause of the new group attributes.
-     *
-     * @param  array  $new
-     * @param  array  $old
-     * @return array
      */
-    protected static function formatAs($new, $old)
+    protected static function formatAs(array $new, array $old): array
     {
         if (isset($old['as'])) {
             $new['as'] = $old['as'].($new['as'] ?? '');

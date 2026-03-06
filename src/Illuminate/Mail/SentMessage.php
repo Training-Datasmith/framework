@@ -14,20 +14,15 @@ class SentMessage
     use ForwardsCalls;
 
     /**
-     * The Symfony SentMessage instance.
-     *
-     * @var \Symfony\Component\Mailer\SentMessage
-     */
-    protected $sentMessage;
-
-    /**
      * Create a new SentMessage instance.
-     *
-     * @param  \Symfony\Component\Mailer\SentMessage  $sentMessage
      */
-    public function __construct(SymfonySentMessage $sentMessage)
+    public function __construct(
+        /**
+         * The Symfony SentMessage instance.
+         */
+        protected \Symfony\Component\Mailer\SentMessage $sentMessage
+    )
     {
-        $this->sentMessage = $sentMessage;
     }
 
     /**
@@ -43,11 +38,10 @@ class SentMessage
     /**
      * Dynamically pass missing methods to the Symfony instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->forwardCallTo($this->sentMessage, $method, $parameters);
     }
@@ -70,13 +64,12 @@ class SentMessage
     /**
      * Marshal the object from its serialized data.
      *
-     * @param  array  $data
      * @return void
      */
     public function __unserialize(array $data)
     {
         $hasAttachments = ($data['hasAttachments'] ?? false) === true;
 
-        $this->sentMessage = $hasAttachments ? unserialize(base64_decode($data['sentMessage'])) : $data['sentMessage'];
+        $this->sentMessage = $hasAttachments ? unserialize(base64_decode((string) $data['sentMessage'])) : $data['sentMessage'];
     }
 }

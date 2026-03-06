@@ -11,12 +11,9 @@ class RedisTagSet extends TagSet
     /**
      * Add a reference entry to the tag set's underlying sorted set.
      *
-     * @param  string  $key
-     * @param  int|null  $ttl
      * @param  string|null  $updateWhen
-     * @return void
      */
-    public function addEntry(string $key, ?int $ttl = null, $updateWhen = null)
+    public function addEntry(string $key, ?int $ttl = null, $updateWhen = null): void
     {
         $ttl = is_null($ttl) ? -1 : Carbon::now()->addSeconds($ttl)->getTimestamp();
 
@@ -31,10 +28,8 @@ class RedisTagSet extends TagSet
 
     /**
      * Get all of the cache entry keys for the tag set.
-     *
-     * @return \Illuminate\Support\LazyCollection
      */
-    public function entries()
+    public function entries(): \Illuminate\Support\LazyCollection
     {
         $connection = $this->store->connection();
 
@@ -80,12 +75,10 @@ class RedisTagSet extends TagSet
 
     /**
      * Remove the stale entries from the tag set.
-     *
-     * @return void
      */
-    public function flushStaleEntries()
+    public function flushStaleEntries(): void
     {
-        $flushStaleEntries = function ($pipe) {
+        $flushStaleEntries = function ($pipe): void {
             foreach ($this->tagIds() as $tagKey) {
                 $pipe->zremrangebyscore($this->store->getPrefix().$tagKey, 0, Carbon::now()->getTimestamp());
             }
@@ -104,9 +97,8 @@ class RedisTagSet extends TagSet
      * Flush the tag from the cache.
      *
      * @param  string  $name
-     * @return string
      */
-    public function flushTag($name)
+    public function flushTag($name): void
     {
         return $this->resetTag($name);
     }
@@ -117,7 +109,7 @@ class RedisTagSet extends TagSet
      * @param  string  $name
      * @return string
      */
-    public function resetTag($name)
+    public function resetTag($name): string|array
     {
         $this->store->forget($this->tagKey($name));
 
@@ -128,9 +120,8 @@ class RedisTagSet extends TagSet
      * Get the unique tag identifier for a given tag.
      *
      * @param  string  $name
-     * @return string
      */
-    public function tagId($name)
+    public function tagId($name): string
     {
         return "tag:{$name}:entries";
     }
@@ -139,9 +130,8 @@ class RedisTagSet extends TagSet
      * Get the tag identifier key for a given tag.
      *
      * @param  string  $name
-     * @return string
      */
-    public function tagKey($name)
+    public function tagKey($name): string
     {
         return "tag:{$name}:entries";
     }

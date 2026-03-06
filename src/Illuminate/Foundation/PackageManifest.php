@@ -17,25 +17,11 @@ class PackageManifest
     public $files;
 
     /**
-     * The base path.
-     *
-     * @var string
-     */
-    public $basePath;
-
-    /**
      * The vendor path.
      *
      * @var string
      */
     public $vendorPath;
-
-    /**
-     * The manifest path.
-     *
-     * @var string|null
-     */
-    public $manifestPath;
 
     /**
      * The loaded manifest array.
@@ -47,16 +33,19 @@ class PackageManifest
     /**
      * Create a new package manifest instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @param  string  $basePath
      * @param  string  $manifestPath
      */
-    public function __construct(Filesystem $files, $basePath, $manifestPath)
+    public function __construct(Filesystem $files, /**
+     * The base path.
+     */
+    public $basePath, /**
+     * The manifest path.
+     */
+    public $manifestPath)
     {
         $this->files = $files;
-        $this->basePath = $basePath;
-        $this->manifestPath = $manifestPath;
-        $this->vendorPath = Env::get('COMPOSER_VENDOR_DIR') ?: $basePath.'/vendor';
+        $this->vendorPath = Env::get('COMPOSER_VENDOR_DIR') ?: $this->basePath.'/vendor';
     }
 
     /**
@@ -88,7 +77,7 @@ class PackageManifest
     public function config($key)
     {
         return (new Collection($this->getManifest()))
-            ->flatMap(fn ($configuration) => (array) ($configuration[$key] ?? []))
+            ->flatMap(fn ($configuration): array => (array) ($configuration[$key] ?? []))
             ->filter()
             ->all();
     }
@@ -114,10 +103,8 @@ class PackageManifest
 
     /**
      * Build the manifest and write it to disk.
-     *
-     * @return void
      */
-    public function build()
+    public function build(): void
     {
         $packages = [];
 
@@ -129,22 +116,17 @@ class PackageManifest
 
         $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
 
-        $this->write((new Collection($packages))->mapWithKeys(function ($package) {
-            return [$this->format($package['name']) => $package['extra']['laravel'] ?? []];
-        })->each(function ($configuration) use (&$ignore) {
+        $this->write((new Collection($packages))->mapWithKeys(fn($package) => [$this->format($package['name']) => $package['extra']['laravel'] ?? []])->each(function (array $configuration) use (&$ignore): void {
             $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
-        })->reject(function ($configuration, $package) use ($ignore, $ignoreAll) {
-            return $ignoreAll || in_array($package, $ignore);
-        })->filter()->all());
+        })->reject(fn($configuration, $package) => $ignoreAll || in_array($package, $ignore))->filter()->all());
     }
 
     /**
      * Format the given package name.
      *
      * @param  string  $package
-     * @return string
      */
-    protected function format($package)
+    protected function format($package): string
     {
         return str_replace($this->vendorPath.'/', '', $package);
     }
@@ -168,14 +150,12 @@ class PackageManifest
     /**
      * Write the given manifest array to disk.
      *
-     * @param  array  $manifest
      * @return void
-     *
      * @throws \Exception
      */
     protected function write(array $manifest)
     {
-        if (! is_writable($dirname = dirname($this->manifestPath))) {
+        if (! is_writable($dirname = dirname((string) $this->manifestPath))) {
             throw new Exception("The {$dirname} directory must be present and writable.");
         }
 

@@ -34,10 +34,8 @@ class Env
 
     /**
      * Enable the putenv adapter.
-     *
-     * @return void
      */
-    public static function enablePutenv()
+    public static function enablePutenv(): void
     {
         static::$putenv = true;
         static::$repository = null;
@@ -45,10 +43,8 @@ class Env
 
     /**
      * Disable the putenv adapter.
-     *
-     * @return void
      */
-    public static function disablePutenv()
+    public static function disablePutenv(): void
     {
         static::$putenv = false;
         static::$repository = null;
@@ -120,10 +116,6 @@ class Env
     /**
      * Write an array of key-value pairs to the environment file.
      *
-     * @param  array  $variables
-     * @param  string  $pathToFile
-     * @param  bool  $overwrite
-     * @return void
      *
      * @throws \RuntimeException
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
@@ -148,11 +140,6 @@ class Env
     /**
      * Write a single key-value pair to the environment file.
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  string  $pathToFile
-     * @param  bool  $overwrite
-     * @return void
      *
      * @throws \RuntimeException
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
@@ -175,19 +162,13 @@ class Env
 
     /**
      * Add a variable to the environment file contents.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $envLines
-     * @param  bool  $overwrite
-     * @return array
      */
     protected static function addVariableToEnvContents(string $key, mixed $value, array $envLines, bool $overwrite): array
     {
         $prefix = explode('_', $key)[0].'_';
         $lastPrefixIndex = -1;
 
-        $shouldQuote = preg_match('/^[a-zA-z0-9]+$/', $value) === 0;
+        $shouldQuote = preg_match('/^[a-zA-z0-9]+$/', (string) $value) === 0;
 
         $lineToAddVariations = [
             $key.'='.(is_string($value) ? self::prepareQuotedValue($value) : $value),
@@ -201,7 +182,7 @@ class Env
         }
 
         foreach ($envLines as $index => $line) {
-            if (str_starts_with($line, $prefix)) {
+            if (str_starts_with((string) $line, $prefix)) {
                 $lastPrefixIndex = $index;
             }
 
@@ -217,7 +198,7 @@ class Env
                 return $envLines;
             }
 
-            if (str_starts_with($line, $key.'=')) {
+            if (str_starts_with((string) $line, $key.'=')) {
                 if (! $overwrite) {
                     return $envLines;
                 }
@@ -278,11 +259,8 @@ class Env
 
     /**
      * Wrap a string in quotes, choosing double or single quotes.
-     *
-     * @param  string  $input
-     * @return string
      */
-    protected static function prepareQuotedValue(string $input)
+    protected static function prepareQuotedValue(string $input): string
     {
         return str_contains($input, '"')
             ? "'".self::addSlashesExceptFor($input, ['"'])."'"
@@ -292,11 +270,9 @@ class Env
     /**
      * Escape a string using addslashes, excluding the specified characters from being escaped.
      *
-     * @param  string  $value
-     * @param  array  $except
      * @return string
      */
-    protected static function addSlashesExceptFor(string $value, array $except = [])
+    protected static function addSlashesExceptFor(string $value, array $except = []): string|array
     {
         $escaped = addslashes($value);
 

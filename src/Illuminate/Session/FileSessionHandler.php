@@ -10,44 +10,30 @@ use Symfony\Component\Finder\Finder;
 class FileSessionHandler implements SessionHandlerInterface
 {
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
-     * The path where sessions should be stored.
-     *
-     * @var string
-     */
-    protected $path;
-
-    /**
-     * The number of minutes the session should be valid.
-     *
-     * @var int
-     */
-    protected $minutes;
-
-    /**
      * Create a new file driven handler instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @param  string  $path
      * @param  int  $minutes
      */
-    public function __construct(Filesystem $files, $path, $minutes)
+    public function __construct(
+        /**
+         * The filesystem instance.
+         */
+        protected \Illuminate\Filesystem\Filesystem $files,
+        /**
+         * The path where sessions should be stored.
+         */
+        protected $path,
+        /**
+         * The number of minutes the session should be valid.
+         */
+        protected $minutes
+    )
     {
-        $this->path = $path;
-        $this->files = $files;
-        $this->minutes = $minutes;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function open($savePath, $sessionName): bool
     {
@@ -56,8 +42,6 @@ class FileSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function close(): bool
     {
@@ -81,8 +65,6 @@ class FileSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function write($sessionId, $data): bool
     {
@@ -93,8 +75,6 @@ class FileSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function destroy($sessionId): bool
     {
@@ -105,8 +85,6 @@ class FileSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
     public function gc($lifetime): int
     {

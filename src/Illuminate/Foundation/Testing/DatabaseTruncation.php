@@ -14,15 +14,11 @@ trait DatabaseTruncation
 
     /**
      * The cached names of the database tables for each connection.
-     *
-     * @var array
      */
     protected static array $allTables;
 
     /**
      * Truncate the database tables for all configured connections.
-     *
-     * @return void
      */
     protected function truncateDatabaseTables(): void
     {
@@ -55,15 +51,13 @@ trait DatabaseTruncation
 
     /**
      * Truncate the database tables for all configured connections.
-     *
-     * @return void
      */
     protected function truncateTablesForAllConnections(): void
     {
         $database = $this->app->make('db');
 
         (new Collection($this->connectionsToTruncate()))
-            ->each(function ($name) use ($database) {
+            ->each(function ($name) use ($database): void {
                 $connection = $database->connection($name);
 
                 $connection->getSchemaBuilder()->withoutForeignKeyConstraints(
@@ -74,10 +68,6 @@ trait DatabaseTruncation
 
     /**
      * Truncate the database tables for the given database connection.
-     *
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
-     * @param  string|null  $name
-     * @return void
      */
     protected function truncateTablesForConnection(ConnectionInterface $connection, ?string $name): void
     {
@@ -88,17 +78,15 @@ trait DatabaseTruncation
         (new Collection($this->getAllTablesForConnection($connection, $name)))
             ->when(
                 $this->tablesToTruncate($connection, $name),
-                function (Collection $tables, array $tablesToTruncate) {
-                    return $tables->filter(fn (array $table) => $this->tableExistsIn($table, $tablesToTruncate));
-                },
+                fn(Collection $tables, array $tablesToTruncate) => $tables->filter(fn (array $table) => $this->tableExistsIn($table, $tablesToTruncate)),
                 function (Collection $tables) use ($connection, $name) {
                     $exceptTables = $this->exceptTables($connection, $name);
 
                     return $tables->reject(fn (array $table) => $this->tableExistsIn($table, $exceptTables));
                 }
             )
-            ->each(function (array $table) use ($connection) {
-                $connection->withoutTablePrefix(function ($connection) use ($table) {
+            ->each(function (array $table) use ($connection): void {
+                $connection->withoutTablePrefix(function ($connection) use ($table): void {
                     $table = $connection->table($table['schema_qualified_name']);
 
                     if ($table->exists()) {
@@ -136,8 +124,6 @@ trait DatabaseTruncation
 
     /**
      * The database connections that should have their tables truncated.
-     *
-     * @return array
      */
     protected function connectionsToTruncate(): array
     {
@@ -176,8 +162,6 @@ trait DatabaseTruncation
 
     /**
      * Perform any work that should take place before the database has started truncating.
-     *
-     * @return void
      */
     protected function beforeTruncatingDatabase(): void
     {
@@ -186,8 +170,6 @@ trait DatabaseTruncation
 
     /**
      * Perform any work that should take place once the database has finished truncating.
-     *
-     * @return void
      */
     protected function afterTruncatingDatabase(): void
     {

@@ -9,47 +9,31 @@ use Illuminate\Filesystem\Filesystem;
 class ProviderRepository
 {
     /**
-     * The application implementation.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
-     * The path to the manifest file.
-     *
-     * @var string
-     */
-    protected $manifestPath;
-
-    /**
      * Create a new service repository instance.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @param  string  $manifestPath
      */
-    public function __construct(ApplicationContract $app, Filesystem $files, $manifestPath)
+    public function __construct(
+        /**
+         * The application implementation.
+         */
+        protected \Illuminate\Contracts\Foundation\Application $app,
+        /**
+         * The filesystem instance.
+         */
+        protected \Illuminate\Filesystem\Filesystem $files,
+        /**
+         * The path to the manifest file.
+         */
+        protected $manifestPath
+    )
     {
-        $this->app = $app;
-        $this->files = $files;
-        $this->manifestPath = $manifestPath;
     }
 
     /**
      * Register the application service providers.
-     *
-     * @param  array  $providers
-     * @return void
      */
-    public function load(array $providers)
+    public function load(array $providers): void
     {
         $manifest = $this->loadManifest();
 
@@ -99,11 +83,9 @@ class ProviderRepository
     /**
      * Determine if the manifest should be compiled.
      *
-     * @param  array  $manifest
      * @param  array  $providers
-     * @return bool
      */
-    public function shouldRecompile($manifest, $providers)
+    public function shouldRecompile(array $manifest, $providers): bool
     {
         return is_null($manifest) || $manifest['providers'] != $providers;
     }
@@ -112,7 +94,6 @@ class ProviderRepository
      * Register the load events for the given provider.
      *
      * @param  string  $provider
-     * @param  array  $events
      * @return void
      */
     protected function registerLoadEvents($provider, array $events)
@@ -127,10 +108,9 @@ class ProviderRepository
     /**
      * Compile the application service manifest file.
      *
-     * @param  array  $providers
      * @return array
      */
-    protected function compileManifest($providers)
+    protected function compileManifest(array $providers)
     {
         // The service manifest should contain a list of all of the providers for
         // the application so we can compare it on each request to the service
@@ -164,11 +144,8 @@ class ProviderRepository
 
     /**
      * Create a fresh service manifest data structure.
-     *
-     * @param  array  $providers
-     * @return array
      */
-    protected function freshManifest(array $providers)
+    protected function freshManifest(array $providers): array
     {
         return ['providers' => $providers, 'eager' => [], 'deferred' => []];
     }
@@ -177,11 +154,10 @@ class ProviderRepository
      * Write the service manifest file to disk.
      *
      * @param  array  $manifest
-     * @return array
      *
      * @throws \Exception
      */
-    public function writeManifest($manifest)
+    public function writeManifest($manifest): array
     {
         if (! is_writable($dirname = dirname($this->manifestPath))) {
             throw new Exception("The {$dirname} directory must be present and writable.");

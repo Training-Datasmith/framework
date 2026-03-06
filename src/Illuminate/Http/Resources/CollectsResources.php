@@ -47,15 +47,15 @@ trait CollectsResources
      *
      * @throws \LogicException
      */
-    protected function collects()
+    protected function collects(): \Illuminate\Http\Resources\Json\JsonResource|string|null
     {
         $collects = null;
 
         if ($this->collects) {
             $collects = $this->collects;
         } elseif (str_ends_with(class_basename($this), 'Collection') &&
-            (class_exists($class = Str::replaceLast('Collection', '', get_class($this))) ||
-             class_exists($class = Str::replaceLast('Collection', 'Resource', get_class($this))))) {
+            (class_exists($class = Str::replaceLast('Collection', '', $this::class)) ||
+             class_exists($class = Str::replaceLast('Collection', 'Resource', $this::class)))) {
             $collects = $class;
         }
 

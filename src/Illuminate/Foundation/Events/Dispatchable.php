@@ -47,9 +47,8 @@ trait Dispatchable
      * Broadcast the event with the given arguments.
      *
      * @param  mixed  ...$arguments
-     * @return \Illuminate\Broadcasting\PendingBroadcast
      */
-    public static function broadcast(...$arguments)
+    public static function broadcast(...$arguments): \Illuminate\Broadcasting\PendingBroadcast
     {
         return broadcast(new static(...$arguments));
     }

@@ -11,12 +11,8 @@ class RedirectController extends Controller
 {
     /**
      * Invoke the controller method.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Routing\UrlGenerator  $url
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function __invoke(Request $request, UrlGenerator $url)
+    public function __invoke(Request $request, UrlGenerator $url): \Illuminate\Http\RedirectResponse
     {
         $parameters = new Collection($request->route()->parameters());
 
@@ -36,7 +32,7 @@ class RedirectController extends Controller
 
         $url = $url->toRoute($route, $parameters, false);
 
-        if (! str_starts_with($destination, '/') && str_starts_with($url, '/')) {
+        if (! str_starts_with((string) $destination, '/') && str_starts_with($url, '/')) {
             $url = Str::after($url, '/');
         }
 

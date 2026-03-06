@@ -24,9 +24,8 @@ trait ManagesFragments
      * Start injecting content into a fragment.
      *
      * @param  string  $fragment
-     * @return void
      */
-    public function startFragment($fragment)
+    public function startFragment($fragment): void
     {
         if (ob_start()) {
             $this->fragmentStack[] = $fragment;
@@ -40,7 +39,7 @@ trait ManagesFragments
      *
      * @throws \InvalidArgumentException
      */
-    public function stopFragment()
+    public function stopFragment(): string|false
     {
         if (empty($this->fragmentStack)) {
             throw new InvalidArgumentException('Cannot end a fragment without first starting one.');
@@ -77,10 +76,8 @@ trait ManagesFragments
 
     /**
      * Flush all of the fragments.
-     *
-     * @return void
      */
-    public function flushFragments()
+    public function flushFragments(): void
     {
         $this->fragments = [];
         $this->fragmentStack = [];

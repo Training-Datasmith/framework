@@ -16,7 +16,6 @@ trait ResolvesRouteDependencies
     /**
      * Resolve the object method's type-hinted dependencies.
      *
-     * @param  array  $parameters
      * @param  object  $instance
      * @param  string  $method
      * @return array
@@ -34,12 +33,8 @@ trait ResolvesRouteDependencies
 
     /**
      * Resolve the given method's type-hinted dependencies.
-     *
-     * @param  array  $parameters
-     * @param  \ReflectionFunctionAbstract  $reflector
-     * @return array
      */
-    public function resolveMethodDependencies(array $parameters, ReflectionFunctionAbstract $reflector)
+    public function resolveMethodDependencies(array $parameters, ReflectionFunctionAbstract $reflector): array
     {
         $instanceCount = 0;
 
@@ -68,7 +63,6 @@ trait ResolvesRouteDependencies
     /**
      * Attempt to transform the given parameter into a class instance.
      *
-     * @param  \ReflectionParameter  $parameter
      * @param  array  $parameters
      * @param  object  $skippableValue
      * @return mixed
@@ -99,18 +93,15 @@ trait ResolvesRouteDependencies
      * Determine if an object of the given class is in a list of parameters.
      *
      * @param  string  $class
-     * @param  array  $parameters
-     * @return bool
      */
-    protected function alreadyInParameters($class, array $parameters)
+    protected function alreadyInParameters($class, array $parameters): bool
     {
-        return ! is_null(Arr::first($parameters, fn ($value) => $value instanceof $class));
+        return ! is_null(Arr::first($parameters, fn ($value): bool => $value instanceof $class));
     }
 
     /**
      * Splice the given value into the parameter list.
      *
-     * @param  array  $parameters
      * @param  string  $offset
      * @param  mixed  $value
      * @return void

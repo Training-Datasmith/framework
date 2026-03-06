@@ -19,20 +19,6 @@ use Throwable;
 class Batch implements Arrayable, JsonSerializable
 {
     /**
-     * The queue factory implementation.
-     *
-     * @var \Illuminate\Contracts\Queue\Factory
-     */
-    protected $queue;
-
-    /**
-     * The repository implementation.
-     *
-     * @var \Illuminate\Bus\BatchRepository
-     */
-    protected $repository;
-
-    /**
      * The batch ID.
      *
      * @var string
@@ -106,8 +92,14 @@ class Batch implements Arrayable, JsonSerializable
      * Create a new batch instance.
      */
     public function __construct(
-        QueueFactory $queue,
-        BatchRepository $repository,
+        /**
+         * The queue factory implementation.
+         */
+        protected \Illuminate\Contracts\Queue\Factory $queue,
+        /**
+         * The repository implementation.
+         */
+        protected \Illuminate\Bus\BatchRepository $repository,
         string $id,
         string $name,
         int $totalJobs,
@@ -119,8 +111,6 @@ class Batch implements Arrayable, JsonSerializable
         ?CarbonImmutable $cancelledAt = null,
         ?CarbonImmutable $finishedAt = null,
     ) {
-        $this->queue = $queue;
-        $this->repository = $repository;
         $this->id = $id;
         $this->name = $name;
         $this->totalJobs = $totalJobs;
@@ -165,16 +155,14 @@ class Batch implements Arrayable, JsonSerializable
                     ->allOnQueue($this->options['queue'] ?? null)
                     ->allOnConnection($this->options['connection'] ?? null)
                     ->chain($chain->slice(1)->values()->all());
-            } else {
-                $job->withBatchId($this->id);
-
-                $count++;
             }
+            $job->withBatchId($this->id);
+            $count++;
 
             return $job;
         });
 
-        $this->repository->transaction(function () use ($jobs, $count) {
+        $this->repository->transaction(function () use ($jobs, $count): void {
             $this->repository->incrementTotalJobs($this->id, $count);
 
             $this->queue->connection($this->options['connection'] ?? null)->bulk(
@@ -206,7 +194,7 @@ class Batch implements Arrayable, JsonSerializable
      *
      * @return int
      */
-    public function processedJobs()
+    public function processedJobs(): int|float
     {
         return $this->totalJobs - $this->pendingJobs;
     }
@@ -216,17 +204,15 @@ class Batch implements Arrayable, JsonSerializable
      *
      * @return int<0, 100>
      */
-    public function progress()
+    public function progress(): int
     {
         return $this->totalJobs > 0 ? (int) round(($this->processedJobs() / $this->totalJobs) * 100) : 0;
     }
 
     /**
      * Record that a job within the batch finished successfully, executing any callbacks if necessary.
-     *
-     * @return void
      */
-    public function recordSuccessfulJob(string $jobId)
+    public function recordSuccessfulJob(string $jobId): void
     {
         $counts = $this->decrementPendingJobs($jobId);
 
@@ -277,50 +263,40 @@ class Batch implements Arrayable, JsonSerializable
 
     /**
      * Determine if the batch has finished executing.
-     *
-     * @return bool
      */
-    public function finished()
+    public function finished(): bool
     {
         return ! is_null($this->finishedAt);
     }
 
     /**
      * Determine if the batch has "progress" callbacks.
-     *
-     * @return bool
      */
-    public function hasProgressCallbacks()
+    public function hasProgressCallbacks(): bool
     {
         return isset($this->options['progress']) && ! empty($this->options['progress']);
     }
 
     /**
      * Determine if the batch has "success" callbacks.
-     *
-     * @return bool
      */
-    public function hasThenCallbacks()
+    public function hasThenCallbacks(): bool
     {
         return isset($this->options['then']) && ! empty($this->options['then']);
     }
 
     /**
      * Determine if the batch allows jobs to fail without cancelling the batch.
-     *
-     * @return bool
      */
-    public function allowsFailures()
+    public function allowsFailures(): bool
     {
         return Arr::get($this->options, 'allowFailures', false) === true;
     }
 
     /**
      * Determine if the batch has job failures.
-     *
-     * @return bool
      */
-    public function hasFailures()
+    public function hasFailures(): bool
     {
         return $this->failedJobs > 0;
     }
@@ -329,9 +305,8 @@ class Batch implements Arrayable, JsonSerializable
      * Record that a job within the batch failed to finish successfully, executing any callbacks if necessary.
      *
      * @param  \Throwable  $e
-     * @return void
      */
-    public function recordFailedJob(string $jobId, $e)
+    public function recordFailedJob(string $jobId, ?\Throwable $e): void
     {
         $counts = $this->incrementFailedJobs($jobId);
 
@@ -370,10 +345,8 @@ class Batch implements Arrayable, JsonSerializable
 
     /**
      * Determine if the batch has "catch" callbacks.
-     *
-     * @return bool
      */
-    public function hasCatchCallbacks()
+    public function hasCatchCallbacks(): bool
     {
         return isset($this->options['catch']) && ! empty($this->options['catch']);
     }
@@ -388,20 +361,16 @@ class Batch implements Arrayable, JsonSerializable
 
     /**
      * Determine if the batch has "finally" callbacks.
-     *
-     * @return bool
      */
-    public function hasFinallyCallbacks()
+    public function hasFinallyCallbacks(): bool
     {
         return isset($this->options['finally']) && ! empty($this->options['finally']);
     }
 
     /**
      * Cancel the batch.
-     *
-     * @return void
      */
-    public function cancel()
+    public function cancel(): void
     {
         $this->repository->cancel($this->id);
 
@@ -424,20 +393,16 @@ class Batch implements Arrayable, JsonSerializable
 
     /**
      * Determine if the batch has been cancelled.
-     *
-     * @return bool
      */
-    public function cancelled()
+    public function cancelled(): bool
     {
         return ! is_null($this->cancelledAt);
     }
 
     /**
      * Delete the batch from storage.
-     *
-     * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->repository->delete($this->id);
     }
@@ -461,10 +426,8 @@ class Batch implements Arrayable, JsonSerializable
 
     /**
      * Convert the batch to an array.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'id' => $this->id,
@@ -491,11 +454,8 @@ class Batch implements Arrayable, JsonSerializable
 
     /**
      * Dynamically access the batch's "options" via properties.
-     *
-     * @param  string  $key
-     * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         return $this->options[$key] ?? null;
     }

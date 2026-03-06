@@ -33,11 +33,9 @@ class PredisConnection extends Connection implements ConnectionContract
      * Subscribe to a set of given channels for messages.
      *
      * @param  array|string  $channels
-     * @param  \Closure  $callback
      * @param  string  $method
-     * @return void
      */
-    public function createSubscription($channels, Closure $callback, $method = 'subscribe')
+    public function createSubscription($channels, Closure $callback, $method = 'subscribe'): void
     {
         $loop = $this->pubSubLoop();
 
@@ -55,16 +53,13 @@ class PredisConnection extends Connection implements ConnectionContract
     /**
      * Parse the command's parameters for event dispatching.
      *
-     * @param  array  $parameters
      * @return array
      */
     protected function parseParametersForEvent(array $parameters)
     {
         return (new Collection($parameters))
-            ->transform(function ($parameter) {
-                return $parameter instanceof ArrayableArgument
-                    ? $parameter->toArray()
-                    : $parameter;
-            })->all();
+            ->transform(fn($parameter) => $parameter instanceof ArrayableArgument
+                ? $parameter->toArray()
+                : $parameter)->all();
     }
 }

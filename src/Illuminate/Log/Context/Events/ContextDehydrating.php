@@ -5,19 +5,16 @@ namespace Illuminate\Log\Context\Events;
 class ContextDehydrating
 {
     /**
-     * The context instance.
-     *
-     * @var \Illuminate\Log\Context\Repository
-     */
-    public $context;
-
-    /**
      * Create a new event instance.
      *
      * @param  \Illuminate\Log\Context\Repository  $context
      */
-    public function __construct($context)
+    public function __construct(
+        /**
+         * The context instance.
+         */
+        public $context
+    )
     {
-        $this->context = $context;
     }
 }

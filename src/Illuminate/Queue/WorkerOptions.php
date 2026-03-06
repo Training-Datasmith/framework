@@ -5,83 +5,6 @@ namespace Illuminate\Queue;
 class WorkerOptions
 {
     /**
-     * The name of the worker.
-     *
-     * @var string
-     */
-    public $name;
-
-    /**
-     * The number of seconds to wait before retrying a job that encountered an uncaught exception.
-     *
-     * @var int|int[]
-     */
-    public $backoff;
-
-    /**
-     * The maximum amount of RAM the worker may consume.
-     *
-     * @var int
-     */
-    public $memory;
-
-    /**
-     * The maximum number of seconds a child worker may run.
-     *
-     * @var int
-     */
-    public $timeout;
-
-    /**
-     * The number of seconds to wait in between polling the queue.
-     *
-     * @var int
-     */
-    public $sleep;
-
-    /**
-     * The number of seconds to rest between jobs.
-     *
-     * @var int
-     */
-    public $rest;
-
-    /**
-     * The maximum number of times a job may be attempted.
-     *
-     * @var int
-     */
-    public $maxTries;
-
-    /**
-     * Indicates if the worker should run in maintenance mode.
-     *
-     * @var bool
-     */
-    public $force;
-
-    /**
-     * Indicates if the worker should stop when the queue is empty.
-     *
-     * @var bool
-     */
-    public $stopWhenEmpty;
-
-    /**
-     * The maximum number of jobs to run.
-     *
-     * @var int
-     */
-    public $maxJobs;
-
-    /**
-     * The maximum number of seconds a worker may live.
-     *
-     * @var int
-     */
-    public $maxTime;
-
-    /**
      * Create a new worker options instance.
      *
      * @param  string  $name
@@ -97,28 +20,51 @@ class WorkerOptions
      * @param  int  $rest
      */
     public function __construct(
-        $name = 'default',
-        $backoff = 0,
-        $memory = 128,
-        $timeout = 60,
-        $sleep = 3,
-        $maxTries = 1,
-        $force = false,
-        $stopWhenEmpty = false,
-        $maxJobs = 0,
-        $maxTime = 0,
-        $rest = 0,
-    ) {
-        $this->name = $name;
-        $this->backoff = $backoff;
-        $this->sleep = $sleep;
-        $this->rest = $rest;
-        $this->force = $force;
-        $this->memory = $memory;
-        $this->timeout = $timeout;
-        $this->maxTries = $maxTries;
-        $this->stopWhenEmpty = $stopWhenEmpty;
-        $this->maxJobs = $maxJobs;
-        $this->maxTime = $maxTime;
+        /**
+         * The name of the worker.
+         */
+        public $name = 'default',
+        /**
+         * The number of seconds to wait before retrying a job that encountered an uncaught exception.
+         */
+        public $backoff = 0,
+        /**
+         * The maximum amount of RAM the worker may consume.
+         */
+        public $memory = 128,
+        /**
+         * The maximum number of seconds a child worker may run.
+         */
+        public $timeout = 60,
+        /**
+         * The number of seconds to wait in between polling the queue.
+         */
+        public $sleep = 3,
+        /**
+         * The maximum number of times a job may be attempted.
+         */
+        public $maxTries = 1,
+        /**
+         * Indicates if the worker should run in maintenance mode.
+         */
+        public $force = false,
+        /**
+         * Indicates if the worker should stop when the queue is empty.
+         */
+        public $stopWhenEmpty = false,
+        /**
+         * The maximum number of jobs to run.
+         */
+        public $maxJobs = 0,
+        /**
+         * The maximum number of seconds a worker may live.
+         */
+        public $maxTime = 0,
+        /**
+         * The number of seconds to rest between jobs.
+         */
+        public $rest = 0
+    )
+    {
     }
 }

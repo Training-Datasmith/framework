@@ -7,23 +7,16 @@ use Illuminate\Support\Stringable;
 class ForeignIdColumnDefinition extends ColumnDefinition
 {
     /**
-     * The schema builder blueprint instance.
-     *
-     * @var \Illuminate\Database\Schema\Blueprint
-     */
-    protected $blueprint;
-
-    /**
      * Create a new foreign ID column definition.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
      * @param  array  $attributes
      */
-    public function __construct(Blueprint $blueprint, $attributes = [])
+    public function __construct(/**
+     * The schema builder blueprint instance.
+     */
+    protected \Illuminate\Database\Schema\Blueprint $blueprint, $attributes = [])
     {
         parent::__construct($attributes);
-
-        $this->blueprint = $blueprint;
     }
 
     /**

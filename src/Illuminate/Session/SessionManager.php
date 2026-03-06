@@ -169,9 +169,8 @@ class SessionManager extends Manager
      * Create the cache based session handler instance.
      *
      * @param  string  $driver
-     * @return \Illuminate\Session\CacheBasedSessionHandler
      */
-    protected function createCacheHandler($driver)
+    protected function createCacheHandler($driver): \Illuminate\Session\CacheBasedSessionHandler
     {
         $store = $this->config->get('session.store') ?: $driver;
 
@@ -203,9 +202,8 @@ class SessionManager extends Manager
      * Build the encrypted session instance.
      *
      * @param  \SessionHandlerInterface  $handler
-     * @return \Illuminate\Session\EncryptedStore
      */
-    protected function buildEncryptedSession($handler)
+    protected function buildEncryptedSession($handler): \Illuminate\Session\EncryptedStore
     {
         return new EncryptedStore(
             $this->config->get('session.cookie'),
@@ -280,9 +278,8 @@ class SessionManager extends Manager
      * Set the default session driver name.
      *
      * @param  string  $name
-     * @return void
      */
-    public function setDefaultDriver($name)
+    public function setDefaultDriver($name): void
     {
         $this->config->set('session.driver', $name);
     }

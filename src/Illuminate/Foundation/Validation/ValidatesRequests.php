@@ -13,9 +13,7 @@ trait ValidatesRequests
      * Run the validation routine against the given validator.
      *
      * @param  \Illuminate\Contracts\Validation\Validator|array  $validator
-     * @param  \Illuminate\Http\Request|null  $request
      * @return array
-     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function validateWith($validator, ?Request $request = null)
@@ -39,10 +37,6 @@ trait ValidatesRequests
     /**
      * Validate the given request with the given rules.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  array  $rules
-     * @param  array  $messages
-     * @param  array  $attributes
      * @return array
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -68,10 +62,6 @@ trait ValidatesRequests
      * Validate the given request with the given rules.
      *
      * @param  string  $errorBag
-     * @param  \Illuminate\Http\Request  $request
-     * @param  array  $rules
-     * @param  array  $messages
-     * @param  array  $attributes
      * @return array
      *
      * @throws \Illuminate\Validation\ValidationException

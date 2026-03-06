@@ -30,13 +30,6 @@ use Throwable;
 class BroadcastManager implements FactoryContract
 {
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $app;
-
-    /**
      * The array of resolved broadcast drivers.
      *
      * @var array
@@ -55,18 +48,19 @@ class BroadcastManager implements FactoryContract
      *
      * @param  \Illuminate\Contracts\Container\Container  $app
      */
-    public function __construct($app)
+    public function __construct(
+        /**
+         * The application instance.
+         */
+        protected $app
+    )
     {
-        $this->app = $app;
     }
 
     /**
      * Register the routes for handling broadcast channel authentication and sockets.
-     *
-     * @param  array|null  $attributes
-     * @return void
      */
-    public function routes(?array $attributes = null)
+    public function routes(?array $attributes = null): void
     {
         if ($this->app instanceof CachesRoutes && $this->app->routesAreCached()) {
             return;
@@ -74,7 +68,7 @@ class BroadcastManager implements FactoryContract
 
         $attributes = $attributes ?: ['middleware' => ['web']];
 
-        $this->app['router']->group($attributes, function ($router) {
+        $this->app['router']->group($attributes, function ($router): void {
             $router->match(
                 ['get', 'post'], '/broadcasting/auth',
                 '\\'.BroadcastController::class.'@authenticate'
@@ -84,11 +78,8 @@ class BroadcastManager implements FactoryContract
 
     /**
      * Register the routes for handling broadcast user authentication.
-     *
-     * @param  array|null  $attributes
-     * @return void
      */
-    public function userRoutes(?array $attributes = null)
+    public function userRoutes(?array $attributes = null): void
     {
         if ($this->app instanceof CachesRoutes && $this->app->routesAreCached()) {
             return;
@@ -96,7 +87,7 @@ class BroadcastManager implements FactoryContract
 
         $attributes = $attributes ?: ['middleware' => ['web']];
 
-        $this->app['router']->group($attributes, function ($router) {
+        $this->app['router']->group($attributes, function ($router): void {
             $router->match(
                 ['get', 'post'], '/broadcasting/user-auth',
                 '\\'.BroadcastController::class.'@authenticateUser'
@@ -108,11 +99,8 @@ class BroadcastManager implements FactoryContract
      * Register the routes for handling broadcast authentication and sockets.
      *
      * Alias of "routes" method.
-     *
-     * @param  array|null  $attributes
-     * @return void
      */
-    public function channelRoutes(?array $attributes = null)
+    public function channelRoutes(?array $attributes = null): void
     {
         $this->routes($attributes);
     }
@@ -162,9 +150,8 @@ class BroadcastManager implements FactoryContract
      * Begin broadcasting an event.
      *
      * @param  mixed  $event
-     * @return \Illuminate\Broadcasting\PendingBroadcast
      */
-    public function event($event = null)
+    public function event($event = null): \Illuminate\Broadcasting\PendingBroadcast
     {
         return new PendingBroadcast($this->app->make('events'), $event);
     }
@@ -219,9 +206,8 @@ class BroadcastManager implements FactoryContract
      * Determine if the broadcastable event must be unique and determine if we can acquire the necessary lock.
      *
      * @param  mixed  $event
-     * @return bool
      */
-    protected function mustBeUniqueAndCannotAcquireLock($event)
+    protected function mustBeUniqueAndCannotAcquireLock($event): bool
     {
         return ! (new UniqueLock(
             method_exists($event, 'uniqueVia')
@@ -285,7 +271,7 @@ class BroadcastManager implements FactoryContract
             return $this->callCustomCreator($config);
         }
 
-        $driverMethod = 'create'.ucfirst($config['driver']).'Driver';
+        $driverMethod = 'create'.ucfirst((string) $config['driver']).'Driver';
 
         if (! method_exists($this, $driverMethod)) {
             throw new InvalidArgumentException("Driver [{$config['driver']}] is not supported.");
@@ -301,7 +287,6 @@ class BroadcastManager implements FactoryContract
     /**
      * Call a custom driver creator.
      *
-     * @param  array  $config
      * @return mixed
      */
     protected function callCustomCreator(array $config)
@@ -312,7 +297,6 @@ class BroadcastManager implements FactoryContract
     /**
      * Create an instance of the driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Contracts\Broadcasting\Broadcaster
      */
     protected function createReverbDriver(array $config)
@@ -323,10 +307,9 @@ class BroadcastManager implements FactoryContract
     /**
      * Create an instance of the driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Contracts\Broadcasting\Broadcaster
      */
-    protected function createPusherDriver(array $config)
+    protected function createPusherDriver(array $config): \Illuminate\Broadcasting\Broadcasters\PusherBroadcaster
     {
         return new PusherBroadcaster($this->pusher($config), $config['jsonp'] ?? false);
     }
@@ -334,10 +317,9 @@ class BroadcastManager implements FactoryContract
     /**
      * Get a Pusher instance for the given configuration.
      *
-     * @param  array  $config
      * @return \Pusher\Pusher
      */
-    public function pusher(array $config)
+    public function pusher(array $config): \Pusher\Pusher
     {
         $guzzleClient = new GuzzleClient(
             array_merge(
@@ -368,10 +350,9 @@ class BroadcastManager implements FactoryContract
     /**
      * Create an instance of the driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Contracts\Broadcasting\Broadcaster
      */
-    protected function createAblyDriver(array $config)
+    protected function createAblyDriver(array $config): \Illuminate\Broadcasting\Broadcasters\AblyBroadcaster
     {
         return new AblyBroadcaster($this->ably($config));
     }
@@ -379,7 +360,6 @@ class BroadcastManager implements FactoryContract
     /**
      * Get an Ably instance for the given configuration.
      *
-     * @param  array  $config
      * @return \Ably\AblyRest
      */
     public function ably(array $config)
@@ -390,10 +370,9 @@ class BroadcastManager implements FactoryContract
     /**
      * Create an instance of the driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Contracts\Broadcasting\Broadcaster
      */
-    protected function createRedisDriver(array $config)
+    protected function createRedisDriver(array $config): \Illuminate\Broadcasting\Broadcasters\RedisBroadcaster
     {
         return new RedisBroadcaster(
             $this->app->make('redis'), $config['connection'] ?? null,
@@ -404,10 +383,9 @@ class BroadcastManager implements FactoryContract
     /**
      * Create an instance of the driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Contracts\Broadcasting\Broadcaster
      */
-    protected function createLogDriver(array $config)
+    protected function createLogDriver(array $config): \Illuminate\Broadcasting\Broadcasters\LogBroadcaster
     {
         return new LogBroadcaster(
             $this->app->make(LoggerInterface::class)
@@ -417,10 +395,9 @@ class BroadcastManager implements FactoryContract
     /**
      * Create an instance of the driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Contracts\Broadcasting\Broadcaster
      */
-    protected function createNullDriver(array $config)
+    protected function createNullDriver(array $config): \Illuminate\Broadcasting\Broadcasters\NullBroadcaster
     {
         return new NullBroadcaster;
     }
@@ -454,9 +431,8 @@ class BroadcastManager implements FactoryContract
      * Set the default driver name.
      *
      * @param  string  $name
-     * @return void
      */
-    public function setDefaultDriver($name)
+    public function setDefaultDriver($name): void
     {
         $this->app['config']['broadcasting.default'] = $name;
     }
@@ -465,9 +441,8 @@ class BroadcastManager implements FactoryContract
      * Disconnect the given driver / connection and remove it from local cache.
      *
      * @param  string|null  $name
-     * @return void
      */
-    public function purge($name = null)
+    public function purge($name = null): void
     {
         $name ??= $this->getDefaultDriver();
 
@@ -478,10 +453,9 @@ class BroadcastManager implements FactoryContract
      * Register a custom driver creator Closure.
      *
      * @param  string  $driver
-     * @param  \Closure  $callback
      * @return $this
      */
-    public function extend($driver, Closure $callback)
+    public function extend($driver, Closure $callback): static
     {
         $this->customCreators[$driver] = $callback;
 
@@ -491,7 +465,6 @@ class BroadcastManager implements FactoryContract
     /**
      * Execute the given callback using "rescue" if possible.
      *
-     * @param  \Closure  $callback
      * @return mixed
      */
     protected function rescue(Closure $callback)
@@ -519,7 +492,7 @@ class BroadcastManager implements FactoryContract
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return $this
      */
-    public function setApplication($app)
+    public function setApplication($app): static
     {
         $this->app = $app;
 
@@ -531,7 +504,7 @@ class BroadcastManager implements FactoryContract
      *
      * @return $this
      */
-    public function forgetDrivers()
+    public function forgetDrivers(): static
     {
         $this->drivers = [];
 
@@ -541,11 +514,10 @@ class BroadcastManager implements FactoryContract
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->driver()->$method(...$parameters);
     }

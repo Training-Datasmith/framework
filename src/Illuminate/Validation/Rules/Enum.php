@@ -17,13 +17,6 @@ class Enum implements Rule, ValidatorAwareRule, Stringable
     use Conditionable;
 
     /**
-     * The type of the enum.
-     *
-     * @var class-string<\UnitEnum>
-     */
-    protected $type;
-
-    /**
      * The current validator instance.
      *
      * @var \Illuminate\Validation\Validator
@@ -49,9 +42,13 @@ class Enum implements Rule, ValidatorAwareRule, Stringable
      *
      * @param  class-string<\UnitEnum>  $type
      */
-    public function __construct($type)
+    public function __construct(
+        /**
+         * The type of the enum.
+         */
+        protected $type
+    )
     {
-        $this->type = $type;
     }
 
     /**
@@ -59,9 +56,8 @@ class Enum implements Rule, ValidatorAwareRule, Stringable
      *
      * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         if ($value instanceof $this->type) {
             return $this->isDesirable($value);
@@ -86,7 +82,7 @@ class Enum implements Rule, ValidatorAwareRule, Stringable
      * @param  \UnitEnum[]|\UnitEnum|\Illuminate\Contracts\Support\Arrayable<array-key, \UnitEnum>  $values
      * @return $this
      */
-    public function only($values)
+    public function only($values): static
     {
         $this->only = $values instanceof Arrayable ? $values->toArray() : Arr::wrap($values);
 
@@ -99,7 +95,7 @@ class Enum implements Rule, ValidatorAwareRule, Stringable
      * @param  \UnitEnum[]|\UnitEnum|\Illuminate\Contracts\Support\Arrayable<array-key, \UnitEnum>  $values
      * @return $this
      */
-    public function except($values)
+    public function except($values): static
     {
         $this->except = $values instanceof Arrayable ? $values->toArray() : Arr::wrap($values);
 
@@ -141,7 +137,7 @@ class Enum implements Rule, ValidatorAwareRule, Stringable
      * @param  \Illuminate\Validation\Validator  $validator
      * @return $this
      */
-    public function setValidator($validator)
+    public function setValidator($validator): static
     {
         $this->validator = $validator;
 
@@ -150,16 +146,14 @@ class Enum implements Rule, ValidatorAwareRule, Stringable
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $cases = ! empty($this->only)
             ? $this->only
-            : array_filter($this->type::cases(), fn ($case) => ! in_array($case, $this->except, true));
+            : array_filter($this->type::cases(), fn (\UnitEnum $case): bool => ! in_array($case, $this->except, true));
 
-        $values = array_map(function ($case) {
+        $values = array_map(function ($case): string {
             $value = enum_value($case);
 
             return '"'.str_replace('"', '""', (string) $value).'"';

@@ -8,34 +8,6 @@ use Illuminate\Support\Sleep;
 class DurationLimiter
 {
     /**
-     * The Redis factory implementation.
-     *
-     * @var \Illuminate\Redis\Connections\Connection
-     */
-    private $redis;
-
-    /**
-     * The unique name of the lock.
-     *
-     * @var string
-     */
-    private $name;
-
-    /**
-     * The allowed number of concurrent tasks.
-     *
-     * @var int
-     */
-    private $maxLocks;
-
-    /**
-     * The number of seconds a slot should be maintained.
-     *
-     * @var int
-     */
-    private $decay;
-
-    /**
      * The timestamp of the end of the current duration.
      *
      * @var int
@@ -57,12 +29,25 @@ class DurationLimiter
      * @param  int  $maxLocks
      * @param  int  $decay
      */
-    public function __construct($redis, $name, $maxLocks, $decay)
+    public function __construct(
+        /**
+         * The Redis factory implementation.
+         */
+        private $redis,
+        /**
+         * The unique name of the lock.
+         */
+        private $name,
+        /**
+         * The allowed number of concurrent tasks.
+         */
+        private $maxLocks,
+        /**
+         * The number of seconds a slot should be maintained.
+         */
+        private $decay
+    )
     {
-        $this->name = $name;
-        $this->decay = $decay;
-        $this->redis = $redis;
-        $this->maxLocks = $maxLocks;
     }
 
     /**
@@ -96,10 +81,8 @@ class DurationLimiter
 
     /**
      * Attempt to acquire the lock.
-     *
-     * @return bool
      */
-    public function acquire()
+    public function acquire(): bool
     {
         $results = $this->redis->eval(
             $this->luaScript(), 1, $this->name, microtime(true), time(), $this->decay, $this->maxLocks
@@ -114,10 +97,8 @@ class DurationLimiter
 
     /**
      * Determine if the key has been "accessed" too many times.
-     *
-     * @return bool
      */
-    public function tooManyAttempts()
+    public function tooManyAttempts(): bool
     {
         [$this->decaysAt, $this->remaining] = $this->redis->eval(
             $this->tooManyAttemptsLuaScript(), 1, $this->name, microtime(true), time(), $this->decay, $this->maxLocks
@@ -128,10 +109,8 @@ class DurationLimiter
 
     /**
      * Clear the limiter.
-     *
-     * @return void
      */
-    public function clear()
+    public function clear(): void
     {
         $this->redis->del($this->name);
     }
@@ -144,10 +123,8 @@ class DurationLimiter
      * ARGV[2] - Current time in seconds
      * ARGV[3] - Duration of the bucket
      * ARGV[4] - Allowed number of tasks
-     *
-     * @return string
      */
-    protected function luaScript()
+    protected function luaScript(): string
     {
         return <<<'LUA'
 local function reset()
@@ -179,10 +156,8 @@ LUA;
      * ARGV[2] - Current time in seconds
      * ARGV[3] - Duration of the bucket
      * ARGV[4] - Allowed number of tasks
-     *
-     * @return string
      */
-    protected function tooManyAttemptsLuaScript()
+    protected function tooManyAttemptsLuaScript(): string
     {
         return <<<'LUA'
 

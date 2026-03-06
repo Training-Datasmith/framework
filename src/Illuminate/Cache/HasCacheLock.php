@@ -12,7 +12,7 @@ trait HasCacheLock
      * @param  string|null  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function lock($name, $seconds = 0, $owner = null)
+    public function lock($name, $seconds = 0, $owner = null): \Illuminate\Cache\CacheLock
     {
         return new CacheLock($this, $name, $seconds, $owner);
     }

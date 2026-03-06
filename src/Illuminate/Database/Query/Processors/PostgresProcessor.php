@@ -9,7 +9,6 @@ class PostgresProcessor extends Processor
     /**
      * Process an "insert get ID" query.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  string  $sql
      * @param  array  $values
      * @param  string|null  $sequence
@@ -31,9 +30,9 @@ class PostgresProcessor extends Processor
     }
 
     /** @inheritDoc */
-    public function processTypes($results)
+    public function processTypes($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
@@ -41,7 +40,7 @@ class PostgresProcessor extends Processor
                 'schema' => $result->schema,
                 'schema_qualified_name' => $result->schema.'.'.$result->name,
                 'implicit' => (bool) $result->implicit,
-                'type' => match (strtolower($result->type)) {
+                'type' => match (strtolower((string) $result->type)) {
                     'b' => 'base',
                     'c' => 'composite',
                     'd' => 'domain',
@@ -51,7 +50,7 @@ class PostgresProcessor extends Processor
                     'm' => 'multirange',
                     default => null,
                 },
-                'category' => match (strtolower($result->category)) {
+                'category' => match (strtolower((string) $result->category)) {
                     'a' => 'array',
                     'b' => 'boolean',
                     'c' => 'composite',
@@ -75,12 +74,12 @@ class PostgresProcessor extends Processor
     }
 
     /** @inheritDoc */
-    public function processColumns($results)
+    public function processColumns($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
-            $autoincrement = $result->default !== null && str_starts_with($result->default, 'nextval(');
+            $autoincrement = $result->default !== null && str_starts_with((string) $result->default, 'nextval(');
 
             return [
                 'name' => $result->name,
@@ -104,15 +103,15 @@ class PostgresProcessor extends Processor
     }
 
     /** @inheritDoc */
-    public function processIndexes($results)
+    public function processIndexes($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
-                'name' => strtolower($result->name),
-                'columns' => $result->columns ? explode(',', $result->columns) : [],
-                'type' => strtolower($result->type),
+                'name' => strtolower((string) $result->name),
+                'columns' => $result->columns ? explode(',', (string) $result->columns) : [],
+                'type' => strtolower((string) $result->type),
                 'unique' => (bool) $result->unique,
                 'primary' => (bool) $result->primary,
             ];
@@ -120,18 +119,18 @@ class PostgresProcessor extends Processor
     }
 
     /** @inheritDoc */
-    public function processForeignKeys($results)
+    public function processForeignKeys($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
                 'name' => $result->name,
-                'columns' => explode(',', $result->columns),
+                'columns' => explode(',', (string) $result->columns),
                 'foreign_schema' => $result->foreign_schema,
                 'foreign_table' => $result->foreign_table,
-                'foreign_columns' => explode(',', $result->foreign_columns),
-                'on_update' => match (strtolower($result->on_update)) {
+                'foreign_columns' => explode(',', (string) $result->foreign_columns),
+                'on_update' => match (strtolower((string) $result->on_update)) {
                     'a' => 'no action',
                     'r' => 'restrict',
                     'c' => 'cascade',
@@ -139,7 +138,7 @@ class PostgresProcessor extends Processor
                     'd' => 'set default',
                     default => null,
                 },
-                'on_delete' => match (strtolower($result->on_delete)) {
+                'on_delete' => match (strtolower((string) $result->on_delete)) {
                     'a' => 'no action',
                     'r' => 'restrict',
                     'c' => 'cascade',

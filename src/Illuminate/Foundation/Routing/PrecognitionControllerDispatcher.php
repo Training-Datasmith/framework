@@ -11,12 +11,10 @@ class PrecognitionControllerDispatcher extends ControllerDispatcher
     /**
      * Dispatch a request to a given controller and method.
      *
-     * @param  \Illuminate\Routing\Route  $route
      * @param  mixed  $controller
      * @param  string  $method
-     * @return void
      */
-    public function dispatch(Route $route, $controller, $method)
+    public function dispatch(Route $route, $controller, $method): void
     {
         $this->ensureMethodExists($controller, $method);
 
@@ -32,7 +30,7 @@ class PrecognitionControllerDispatcher extends ControllerDispatcher
      * @param  string  $method
      * @return $this
      */
-    protected function ensureMethodExists($controller, $method)
+    protected function ensureMethodExists($controller, $method): static
     {
         if (method_exists($controller, $method)) {
             return $this;

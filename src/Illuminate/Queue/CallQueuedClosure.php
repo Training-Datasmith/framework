@@ -27,7 +27,7 @@ class CallQueuedClosure implements ShouldQueue
      *
      * @var string|null
      */
-    public $name = null;
+    public $name;
 
     /**
      * The callbacks that should be executed on failure.
@@ -55,22 +55,16 @@ class CallQueuedClosure implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param  \Closure  $job
-     * @return self
      */
-    public static function create(Closure $job)
+    public static function create(Closure $job): self
     {
         return new self(new SerializableClosure($job));
     }
 
     /**
      * Execute the job.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return void
      */
-    public function handle(Container $container)
+    public function handle(Container $container): void
     {
         $container->call($this->closure->getClosure(), ['job' => $this]);
     }
@@ -81,7 +75,7 @@ class CallQueuedClosure implements ShouldQueue
      * @param  callable  $callback
      * @return $this
      */
-    public function onFailure($callback)
+    public function onFailure($callback): static
     {
         $this->failureCallbacks[] = $callback instanceof Closure
             ? new SerializableClosure($callback)
@@ -94,9 +88,8 @@ class CallQueuedClosure implements ShouldQueue
      * Handle a job failure.
      *
      * @param  \Throwable  $e
-     * @return void
      */
-    public function failed($e)
+    public function failed($e): void
     {
         foreach ($this->failureCallbacks as $callback) {
             $callback($e);
@@ -105,10 +98,8 @@ class CallQueuedClosure implements ShouldQueue
 
     /**
      * Get the display name for the queued job.
-     *
-     * @return string
      */
-    public function displayName()
+    public function displayName(): string
     {
         $closure = $this->closure instanceof SerializableClosure
                     ? $this->closure->getClosure()
@@ -127,7 +118,7 @@ class CallQueuedClosure implements ShouldQueue
      * @param  string  $name
      * @return $this
      */
-    public function name($name)
+    public function name($name): static
     {
         $this->name = $name;
 

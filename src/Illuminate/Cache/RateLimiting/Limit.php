@@ -5,13 +5,6 @@ namespace Illuminate\Cache\RateLimiting;
 class Limit
 {
     /**
-     * The rate limit signature key.
-     *
-     * @var mixed
-     */
-    public $key;
-
-    /**
      * The maximum number of attempts allowed within the given number of seconds.
      *
      * @var int
@@ -30,7 +23,7 @@ class Limit
      *
      * @var ?callable
      */
-    public $afterCallback = null;
+    public $afterCallback;
 
     /**
      * The response generator callback.
@@ -43,12 +36,12 @@ class Limit
      * Create a new limit instance.
      *
      * @param  mixed  $key
-     * @param  int  $maxAttempts
-     * @param  int  $decaySeconds
      */
-    public function __construct($key = '', int $maxAttempts = 60, int $decaySeconds = 60)
+    public function __construct(/**
+     * The rate limit signature key.
+     */
+    public $key = '', int $maxAttempts = 60, int $decaySeconds = 60)
     {
-        $this->key = $key;
         $this->maxAttempts = $maxAttempts;
         $this->decaySeconds = $decaySeconds;
     }
@@ -58,9 +51,8 @@ class Limit
      *
      * @param  int  $maxAttempts
      * @param  int  $decaySeconds
-     * @return static
      */
-    public static function perSecond($maxAttempts, $decaySeconds = 1)
+    public static function perSecond($maxAttempts, $decaySeconds = 1): static
     {
         return new static('', $maxAttempts, $decaySeconds);
     }
@@ -70,9 +62,8 @@ class Limit
      *
      * @param  int  $maxAttempts
      * @param  int  $decayMinutes
-     * @return static
      */
-    public static function perMinute($maxAttempts, $decayMinutes = 1)
+    public static function perMinute($maxAttempts, $decayMinutes = 1): static
     {
         return new static('', $maxAttempts, 60 * $decayMinutes);
     }
@@ -82,9 +73,8 @@ class Limit
      *
      * @param  int  $decayMinutes
      * @param  int  $maxAttempts
-     * @return static
      */
-    public static function perMinutes($decayMinutes, $maxAttempts)
+    public static function perMinutes($decayMinutes, $maxAttempts): static
     {
         return new static('', $maxAttempts, 60 * $decayMinutes);
     }
@@ -94,9 +84,8 @@ class Limit
      *
      * @param  int  $maxAttempts
      * @param  int  $decayHours
-     * @return static
      */
-    public static function perHour($maxAttempts, $decayHours = 1)
+    public static function perHour($maxAttempts, $decayHours = 1): static
     {
         return new static('', $maxAttempts, 60 * 60 * $decayHours);
     }
@@ -106,9 +95,8 @@ class Limit
      *
      * @param  int  $maxAttempts
      * @param  int  $decayDays
-     * @return static
      */
-    public static function perDay($maxAttempts, $decayDays = 1)
+    public static function perDay($maxAttempts, $decayDays = 1): static
     {
         return new static('', $maxAttempts, 60 * 60 * 24 * $decayDays);
     }
@@ -118,7 +106,7 @@ class Limit
      *
      * @return static
      */
-    public static function none()
+    public static function none(): \Illuminate\Cache\RateLimiting\Unlimited
     {
         return new Unlimited;
     }
@@ -129,7 +117,7 @@ class Limit
      * @param  mixed  $key
      * @return $this
      */
-    public function by($key)
+    public function by($key): static
     {
         $this->key = $key;
 
@@ -142,7 +130,7 @@ class Limit
      * @param  callable  $callback
      * @return $this
      */
-    public function after($callback)
+    public function after($callback): static
     {
         $this->afterCallback = $callback;
 
@@ -152,10 +140,9 @@ class Limit
     /**
      * Set the callback that should generate the response when the limit is exceeded.
      *
-     * @param  callable  $callback
      * @return $this
      */
-    public function response(callable $callback)
+    public function response(callable $callback): static
     {
         $this->responseCallback = $callback;
 
@@ -164,10 +151,8 @@ class Limit
 
     /**
      * Get a potential fallback key for the limit.
-     *
-     * @return string
      */
-    public function fallbackKey()
+    public function fallbackKey(): string
     {
         $prefix = $this->key ? "{$this->key}:" : '';
 

@@ -23,27 +23,6 @@ class Factory implements FactoryContract
         Concerns\ManagesTranslations;
 
     /**
-     * The engine implementation.
-     *
-     * @var \Illuminate\View\Engines\EngineResolver
-     */
-    protected $engines;
-
-    /**
-     * The view finder implementation.
-     *
-     * @var \Illuminate\View\ViewFinderInterface
-     */
-    protected $finder;
-
-    /**
-     * The event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
-    /**
      * The IoC container instance.
      *
      * @var \Illuminate\Contracts\Container\Container
@@ -106,17 +85,18 @@ class Factory implements FactoryContract
 
     /**
      * Create a new view factory instance.
-     *
-     * @param  \Illuminate\View\Engines\EngineResolver  $engines
-     * @param  \Illuminate\View\ViewFinderInterface  $finder
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      */
-    public function __construct(EngineResolver $engines, ViewFinderInterface $finder, Dispatcher $events)
+    public function __construct(/**
+     * The engine implementation.
+     */
+    protected \Illuminate\View\Engines\EngineResolver $engines, /**
+     * The view finder implementation.
+     */
+    protected \Illuminate\View\ViewFinderInterface $finder, /**
+     * The event dispatcher instance.
+     */
+    protected \Illuminate\Contracts\Events\Dispatcher $events)
     {
-        $this->finder = $finder;
-        $this->events = $events;
-        $this->engines = $engines;
-
         $this->share('__env', $this);
     }
 
@@ -132,7 +112,7 @@ class Factory implements FactoryContract
     {
         $data = array_merge($mergeData, $this->parseData($data));
 
-        return tap($this->viewInstance($path, $path, $data), function ($view) {
+        return tap($this->viewInstance($path, $path, $data), function (\Illuminate\Contracts\View\View $view): void {
             $this->callCreator($view);
         });
     }
@@ -156,7 +136,7 @@ class Factory implements FactoryContract
         // the caller for rendering or performing other view manipulations on this.
         $data = array_merge($mergeData, $this->parseData($data));
 
-        return tap($this->viewInstance($view, $path, $data), function ($view) {
+        return tap($this->viewInstance($view, $path, $data), function (\Illuminate\Contracts\View\View $view): void {
             $this->callCreator($view);
         });
     }
@@ -164,18 +144,14 @@ class Factory implements FactoryContract
     /**
      * Get the first view that actually exists from the given list.
      *
-     * @param  array  $views
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
      * @param  array  $mergeData
      * @return \Illuminate\Contracts\View\View
-     *
      * @throws \InvalidArgumentException
      */
     public function first(array $views, $data = [], $mergeData = [])
     {
-        $view = Arr::first($views, function ($view) {
-            return $this->exists($view);
-        });
+        $view = Arr::first($views, fn($view) => $this->exists($view));
 
         if (! $view) {
             throw new InvalidArgumentException('None of the views in the given array exist.');
@@ -282,7 +258,7 @@ class Factory implements FactoryContract
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
      * @return \Illuminate\Contracts\View\View
      */
-    protected function viewInstance($view, $path, $data)
+    protected function viewInstance($view, $path, $data): \Illuminate\View\View
     {
         return new View($this, $this->getEngineFromPath($path), $view, $path, $data);
     }
@@ -291,9 +267,8 @@ class Factory implements FactoryContract
      * Determine if a given view exists.
      *
      * @param  string  $view
-     * @return bool
      */
-    public function exists($view)
+    public function exists($view): bool
     {
         try {
             $this->finder->find($view);
@@ -337,9 +312,7 @@ class Factory implements FactoryContract
     {
         $extensions = array_keys($this->extensions);
 
-        return Arr::first($extensions, function ($value) use ($path) {
-            return str_ends_with($path, '.'.$value);
-        });
+        return Arr::first($extensions, fn($value) => str_ends_with($path, '.'.$value));
     }
 
     /**
@@ -362,52 +335,40 @@ class Factory implements FactoryContract
 
     /**
      * Increment the rendering counter.
-     *
-     * @return void
      */
-    public function incrementRender()
+    public function incrementRender(): void
     {
         $this->renderCount++;
     }
 
     /**
      * Decrement the rendering counter.
-     *
-     * @return void
      */
-    public function decrementRender()
+    public function decrementRender(): void
     {
         $this->renderCount--;
     }
 
     /**
      * Check if there are no active render operations.
-     *
-     * @return bool
      */
-    public function doneRendering()
+    public function doneRendering(): bool
     {
         return $this->renderCount == 0;
     }
 
     /**
      * Determine if the given once token has been rendered.
-     *
-     * @param  string  $id
-     * @return bool
      */
-    public function hasRenderedOnce(string $id)
+    public function hasRenderedOnce(string $id): bool
     {
         return isset($this->renderedOnce[$id]);
     }
 
     /**
      * Mark the given once token as having been rendered.
-     *
-     * @param  string  $id
-     * @return void
      */
-    public function markAsRenderedOnce(string $id)
+    public function markAsRenderedOnce(string $id): void
     {
         $this->renderedOnce[$id] = true;
     }
@@ -416,9 +377,8 @@ class Factory implements FactoryContract
      * Add a location to the array of view locations.
      *
      * @param  string  $location
-     * @return void
      */
-    public function addLocation($location)
+    public function addLocation($location): void
     {
         $this->finder->addLocation($location);
     }
@@ -427,9 +387,8 @@ class Factory implements FactoryContract
      * Prepend a location to the array of view locations.
      *
      * @param  string  $location
-     * @return void
      */
-    public function prependLocation($location)
+    public function prependLocation($location): void
     {
         $this->finder->prependLocation($location);
     }
@@ -441,7 +400,7 @@ class Factory implements FactoryContract
      * @param  string|array  $hints
      * @return $this
      */
-    public function addNamespace($namespace, $hints)
+    public function addNamespace($namespace, $hints): static
     {
         $this->finder->addNamespace($namespace, $hints);
 
@@ -455,7 +414,7 @@ class Factory implements FactoryContract
      * @param  string|array  $hints
      * @return $this
      */
-    public function prependNamespace($namespace, $hints)
+    public function prependNamespace($namespace, $hints): static
     {
         $this->finder->prependNamespace($namespace, $hints);
 
@@ -469,7 +428,7 @@ class Factory implements FactoryContract
      * @param  string|array  $hints
      * @return $this
      */
-    public function replaceNamespace($namespace, $hints)
+    public function replaceNamespace($namespace, $hints): static
     {
         $this->finder->replaceNamespace($namespace, $hints);
 
@@ -482,9 +441,8 @@ class Factory implements FactoryContract
      * @param  string  $extension
      * @param  string  $engine
      * @param  \Closure|null  $resolver
-     * @return void
      */
-    public function addExtension($extension, $engine, $resolver = null)
+    public function addExtension($extension, $engine, $resolver = null): void
     {
         $this->finder->addExtension($extension);
 
@@ -501,10 +459,8 @@ class Factory implements FactoryContract
 
     /**
      * Flush all of the factory state like sections and stacks.
-     *
-     * @return void
      */
-    public function flushState()
+    public function flushState(): void
     {
         $this->renderCount = 0;
         $this->renderedOnce = [];
@@ -517,10 +473,8 @@ class Factory implements FactoryContract
 
     /**
      * Flush all of the section contents if done rendering.
-     *
-     * @return void
      */
-    public function flushStateIfDoneRendering()
+    public function flushStateIfDoneRendering(): void
     {
         if ($this->doneRendering()) {
             $this->flushState();
@@ -559,21 +513,16 @@ class Factory implements FactoryContract
 
     /**
      * Set the view finder instance.
-     *
-     * @param  \Illuminate\View\ViewFinderInterface  $finder
-     * @return void
      */
-    public function setFinder(ViewFinderInterface $finder)
+    public function setFinder(ViewFinderInterface $finder): void
     {
         $this->finder = $finder;
     }
 
     /**
      * Flush the cache of views located by the finder.
-     *
-     * @return void
      */
-    public function flushFinderCache()
+    public function flushFinderCache(): void
     {
         $this->getFinder()->flush();
     }
@@ -590,11 +539,8 @@ class Factory implements FactoryContract
 
     /**
      * Set the event dispatcher instance.
-     *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @return void
      */
-    public function setDispatcher(Dispatcher $events)
+    public function setDispatcher(Dispatcher $events): void
     {
         $this->events = $events;
     }
@@ -611,11 +557,8 @@ class Factory implements FactoryContract
 
     /**
      * Set the IoC container instance.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return void
      */
-    public function setContainer(Container $container)
+    public function setContainer(Container $container): void
     {
         $this->container = $container;
     }

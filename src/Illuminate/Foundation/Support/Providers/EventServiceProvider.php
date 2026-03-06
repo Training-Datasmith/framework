@@ -49,12 +49,10 @@ class EventServiceProvider extends ServiceProvider
 
     /**
      * Register the application's event listeners.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->booting(function () {
+        $this->booting(function (): void {
             $events = $this->getEvents();
 
             foreach ($events as $event => $listeners) {
@@ -72,17 +70,15 @@ class EventServiceProvider extends ServiceProvider
             }
         });
 
-        $this->booted(function () {
+        $this->booted(function (): void {
             $this->configureEmailVerification();
         });
     }
 
     /**
      * Boot any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         //
     }
@@ -107,13 +103,12 @@ class EventServiceProvider extends ServiceProvider
         if ($this->app->eventsAreCached()) {
             $cache = require $this->app->getCachedEventsPath();
 
-            return $cache[get_class($this)] ?? [];
-        } else {
-            return array_merge_recursive(
-                $this->discoveredEvents(),
-                $this->listens()
-            );
+            return $cache[$this::class] ?? [];
         }
+        return array_merge_recursive(
+            $this->discoveredEvents(),
+            $this->listens()
+        );
     }
 
     /**
@@ -130,12 +125,10 @@ class EventServiceProvider extends ServiceProvider
 
     /**
      * Determine if events and listeners should be automatically discovered.
-     *
-     * @return bool
      */
-    public function shouldDiscoverEvents()
+    public function shouldDiscoverEvents(): bool
     {
-        return get_class($this) === __CLASS__ && static::$shouldDiscoverEvents === true;
+        return static::class === self::class && static::$shouldDiscoverEvents === true;
     }
 
     /**
@@ -146,13 +139,9 @@ class EventServiceProvider extends ServiceProvider
     public function discoverEvents()
     {
         return (new LazyCollection($this->discoverEventsWithin()))
-            ->flatMap(function ($directory) {
-                return glob($directory, GLOB_ONLYDIR);
-            })
-            ->reject(function ($directory) {
-                return ! is_dir($directory);
-            })
-            ->pipe(fn ($directories) => DiscoverEvents::within(
+            ->flatMap(fn($directory) => glob($directory, GLOB_ONLYDIR))
+            ->reject(fn($directory) => ! is_dir($directory))
+            ->pipe(fn ($directories): array => DiscoverEvents::within(
                 $directories->all(),
                 $this->eventDiscoveryBasePath(),
             ));
@@ -174,9 +163,8 @@ class EventServiceProvider extends ServiceProvider
      * Add the given event discovery paths to the application's event discovery paths.
      *
      * @param  string|iterable<int, string>  $paths
-     * @return void
      */
-    public static function addEventDiscoveryPaths(iterable|string $paths)
+    public static function addEventDiscoveryPaths(iterable|string $paths): void
     {
         static::$eventDiscoveryPaths = (new LazyCollection(static::$eventDiscoveryPaths))
             ->merge(is_string($paths) ? [$paths] : $paths)
@@ -188,29 +176,24 @@ class EventServiceProvider extends ServiceProvider
      * Set the globally configured event discovery paths.
      *
      * @param  iterable<int, string>  $paths
-     * @return void
      */
-    public static function setEventDiscoveryPaths(iterable $paths)
+    public static function setEventDiscoveryPaths(iterable $paths): void
     {
         static::$eventDiscoveryPaths = $paths;
     }
 
     /**
      * Get the base path to be used during event discovery.
-     *
-     * @return string
      */
-    protected function eventDiscoveryBasePath()
+    protected function eventDiscoveryBasePath(): string
     {
         return base_path();
     }
 
     /**
      * Disable event discovery for the application.
-     *
-     * @return void
      */
-    public static function disableEventDiscovery()
+    public static function disableEventDiscovery(): void
     {
         static::$shouldDiscoverEvents = false;
     }

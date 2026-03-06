@@ -13,29 +13,21 @@ class ValidatedInput implements ValidatedData
     use Dumpable, InteractsWithData;
 
     /**
-     * The underlying input.
-     *
-     * @var array
-     */
-    protected $input;
-
-    /**
      * Create a new validated input container.
-     *
-     * @param  array  $input
      */
-    public function __construct(array $input)
+    public function __construct(
+        /**
+         * The underlying input.
+         */
+        protected array $input
+    )
     {
-        $this->input = $input;
     }
 
     /**
      * Merge the validated input with the given array of additional data.
-     *
-     * @param  array  $items
-     * @return static
      */
-    public function merge(array $items)
+    public function merge(array $items): static
     {
         return new static(array_merge($this->all(), $items));
     }
@@ -75,10 +67,8 @@ class ValidatedInput implements ValidatedData
 
     /**
      * Get the keys for all of the input.
-     *
-     * @return array
      */
-    public function keys()
+    public function keys(): array
     {
         return array_keys($this->input());
     }
@@ -103,7 +93,7 @@ class ValidatedInput implements ValidatedData
      * @param  mixed  ...$keys
      * @return $this
      */
-    public function dump(...$keys)
+    public function dump(...$keys): static
     {
         dump(count($keys) > 0 ? $this->only($keys) : $this->all());
 
@@ -122,11 +112,8 @@ class ValidatedInput implements ValidatedData
 
     /**
      * Dynamically access input data.
-     *
-     * @param  string  $name
-     * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         return $this->input($name);
     }
@@ -134,11 +121,9 @@ class ValidatedInput implements ValidatedData
     /**
      * Dynamically set input data.
      *
-     * @param  string  $name
-     * @param  mixed  $value
      * @return mixed
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value)
     {
         $this->input[$name] = $value;
     }
@@ -146,10 +131,9 @@ class ValidatedInput implements ValidatedData
     /**
      * Determine if an input item is set.
      *
-     * @param  string  $name
      * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name)
     {
         return $this->exists($name);
     }
@@ -157,10 +141,9 @@ class ValidatedInput implements ValidatedData
     /**
      * Remove an input item.
      *
-     * @param  string  $name
      * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name)
     {
         unset($this->input[$name]);
     }
@@ -169,7 +152,6 @@ class ValidatedInput implements ValidatedData
      * Determine if an item exists at an offset.
      *
      * @param  mixed  $key
-     * @return bool
      */
     public function offsetExists($key): bool
     {
@@ -180,7 +162,6 @@ class ValidatedInput implements ValidatedData
      * Get an item at a given offset.
      *
      * @param  mixed  $key
-     * @return mixed
      */
     public function offsetGet($key): mixed
     {
@@ -192,7 +173,6 @@ class ValidatedInput implements ValidatedData
      *
      * @param  mixed  $key
      * @param  mixed  $value
-     * @return void
      */
     public function offsetSet($key, $value): void
     {
@@ -207,7 +187,6 @@ class ValidatedInput implements ValidatedData
      * Unset the item at a given offset.
      *
      * @param  string  $key
-     * @return void
      */
     public function offsetUnset($key): void
     {

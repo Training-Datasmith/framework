@@ -40,15 +40,14 @@ if (! function_exists('data_has')) {
      *
      * @param  mixed  $target
      * @param  string|array|int|null  $key
-     * @return bool
      */
-    function data_has($target, $key): bool
+    function data_has(array $target, $key): bool
     {
         if (is_null($key) || $key === []) {
             return false;
         }
 
-        $key = is_array($key) ? $key : explode('.', $key);
+        $key = is_array($key) ? $key : explode('.', (string) $key);
 
         foreach ($key as $segment) {
             if (Arr::accessible($target) && Arr::exists($target, $segment)) {
@@ -73,13 +72,13 @@ if (! function_exists('data_get')) {
      * @param  mixed  $default
      * @return mixed
      */
-    function data_get($target, $key, $default = null)
+    function data_get(array $target, $key, $default = null)
     {
         if (is_null($key)) {
             return $target;
         }
 
-        $key = is_array($key) ? $key : explode('.', $key);
+        $key = is_array($key) ? $key : explode('.', (string) $key);
 
         foreach ($key as $i => $segment) {
             unset($key[$i]);
@@ -136,7 +135,7 @@ if (! function_exists('data_set')) {
      * @param  bool  $overwrite
      * @return mixed
      */
-    function data_set(&$target, $key, $value, $overwrite = true)
+    function data_set(array &$target, $key, $value, $overwrite = true)
     {
         $segments = is_array($key) ? $key : explode('.', $key);
 
@@ -194,11 +193,10 @@ if (! function_exists('data_forget')) {
      *
      * @param  mixed  $target
      * @param  string|array|int|null  $key
-     * @return mixed
      */
-    function data_forget(&$target, $key)
+    function data_forget(array &$target, $key): array
     {
-        $segments = is_array($key) ? $key : explode('.', $key);
+        $segments = is_array($key) ? $key : explode('.', (string) $key);
 
         if (($segment = array_shift($segments)) === '*' && Arr::accessible($target)) {
             if ($segments) {

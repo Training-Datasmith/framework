@@ -54,11 +54,8 @@ class ConfigurationUrlParser
 
     /**
      * Get the primary database connection options.
-     *
-     * @param  array  $url
-     * @return array
      */
-    protected function getPrimaryOptions($url)
+    protected function getPrimaryOptions(array $url): array
     {
         return array_filter([
             'driver' => $this->getDriver($url),
@@ -67,16 +64,15 @@ class ConfigurationUrlParser
             'port' => $url['port'] ?? null,
             'username' => $url['user'] ?? null,
             'password' => $url['pass'] ?? null,
-        ], fn ($value) => ! is_null($value));
+        ], fn ($value): bool => ! is_null($value));
     }
 
     /**
      * Get the database driver from the URL.
      *
-     * @param  array  $url
      * @return string|null
      */
-    protected function getDriver($url)
+    protected function getDriver(array $url)
     {
         $alias = $url['scheme'] ?? null;
 
@@ -89,24 +85,20 @@ class ConfigurationUrlParser
 
     /**
      * Get the database name from the URL.
-     *
-     * @param  array  $url
-     * @return string|null
      */
-    protected function getDatabase($url)
+    protected function getDatabase(array $url): ?string
     {
         $path = $url['path'] ?? null;
 
-        return $path && $path !== '/' ? substr($path, 1) : null;
+        return $path && $path !== '/' ? substr((string) $path, 1) : null;
     }
 
     /**
      * Get all of the additional database options from the query string.
      *
-     * @param  array  $url
      * @return array
      */
-    protected function getQueryOptions($url)
+    protected function getQueryOptions(array $url)
     {
         $queryString = $url['query'] ?? null;
 
@@ -116,7 +108,7 @@ class ConfigurationUrlParser
 
         $query = [];
 
-        parse_str($queryString, $query);
+        parse_str((string) $queryString, $query);
 
         return $this->parseStringsToNativeTypes($query);
     }
@@ -129,11 +121,11 @@ class ConfigurationUrlParser
      *
      * @throws \InvalidArgumentException
      */
-    protected function parseUrl($url)
+    protected function parseUrl($url): int|string|array|null
     {
         $url = preg_replace('#^(sqlite3?):///#', '$1://null/', $url);
 
-        $parsedUrl = parse_url($url);
+        $parsedUrl = parse_url((string) $url);
 
         if ($parsedUrl === false) {
             throw new InvalidArgumentException('The database configuration URL is malformed.');
@@ -182,9 +174,8 @@ class ConfigurationUrlParser
      *
      * @param  string  $alias
      * @param  string  $driver
-     * @return void
      */
-    public static function addDriverAlias($alias, $driver)
+    public static function addDriverAlias($alias, $driver): void
     {
         static::$driverAliases[$alias] = $driver;
     }

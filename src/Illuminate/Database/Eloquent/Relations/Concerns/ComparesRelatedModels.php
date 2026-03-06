@@ -33,9 +33,8 @@ trait ComparesRelatedModels
      * Determine if the model is not the related instance of the relationship.
      *
      * @param  \Illuminate\Database\Eloquent\Model|null  $model
-     * @return bool
      */
-    public function isNot($model)
+    public function isNot($model): bool
     {
         return ! $this->is($model);
     }
@@ -50,7 +49,6 @@ trait ComparesRelatedModels
     /**
      * Get the value of the model's related key.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return mixed
      */
     abstract protected function getRelatedKeyFrom(Model $model);

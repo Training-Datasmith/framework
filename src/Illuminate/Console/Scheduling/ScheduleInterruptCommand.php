@@ -25,30 +25,20 @@ class ScheduleInterruptCommand extends Command
     protected $description = 'Interrupt the current schedule run';
 
     /**
-     * The cache store implementation.
-     *
-     * @var \Illuminate\Contracts\Cache\Repository
-     */
-    protected $cache;
-
-    /**
      * Create a new schedule interrupt command.
-     *
-     * @param  \Illuminate\Contracts\Cache\Repository  $cache
      */
-    public function __construct(Cache $cache)
+    public function __construct(/**
+     * The cache store implementation.
+     */
+    protected \Illuminate\Contracts\Cache\Repository $cache)
     {
         parent::__construct();
-
-        $this->cache = $cache;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->cache->put('illuminate:schedule:interrupt', true, Date::now()->endOfMinute());
 

@@ -10,13 +10,6 @@ use InvalidArgumentException;
 abstract class Compiler
 {
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * The cache path for the compiled views.
      *
      * @var string
@@ -24,63 +17,42 @@ abstract class Compiler
     protected $cachePath;
 
     /**
-     * The base path that should be removed from paths before hashing.
-     *
-     * @var string
-     */
-    protected $basePath;
-
-    /**
-     * Determines if compiled views should be cached.
-     *
-     * @var bool
-     */
-    protected $shouldCache;
-
-    /**
-     * The compiled view file extension.
-     *
-     * @var string
-     */
-    protected $compiledExtension = 'php';
-
-    /**
-     * Indicates if view cache timestamps should be checked.
-     *
-     * @var bool
-     */
-    protected $shouldCheckTimestamps;
-
-    /**
      * Create a new compiler instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @param  string  $cachePath
      * @param  string  $basePath
      * @param  bool  $shouldCache
      * @param  string  $compiledExtension
      * @param  bool  $shouldCheckTimestamps
-     *
      * @throws \InvalidArgumentException
      */
     public function __construct(
-        Filesystem $files,
+        /**
+         * The filesystem instance.
+         */
+        protected \Illuminate\Filesystem\Filesystem $files,
         $cachePath,
-        $basePath = '',
-        $shouldCache = true,
-        $compiledExtension = 'php',
-        $shouldCheckTimestamps = true,
+        /**
+         * The base path that should be removed from paths before hashing.
+         */
+        protected $basePath = '',
+        /**
+         * Determines if compiled views should be cached.
+         */
+        protected $shouldCache = true,
+        /**
+         * The compiled view file extension.
+         */
+        protected $compiledExtension = 'php',
+        /**
+         * Indicates if view cache timestamps should be checked.
+         */
+        protected $shouldCheckTimestamps = true,
     ) {
         if (! $cachePath) {
             throw new InvalidArgumentException('Please provide a valid cache path.');
         }
-
-        $this->files = $files;
         $this->cachePath = $cachePath;
-        $this->basePath = $basePath;
-        $this->shouldCache = $shouldCache;
-        $this->compiledExtension = $compiledExtension;
-        $this->shouldCheckTimestamps = $shouldCheckTimestamps;
     }
 
     /**

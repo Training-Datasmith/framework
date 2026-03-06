@@ -9,22 +9,16 @@ use Illuminate\Queue\CallQueuedClosure;
 class PendingChainFake extends PendingChain
 {
     /**
-     * The fake bus instance.
-     *
-     * @var \Illuminate\Support\Testing\Fakes\BusFake
-     */
-    protected $bus;
-
-    /**
      * Create a new pending chain instance.
      *
-     * @param  \Illuminate\Support\Testing\Fakes\BusFake  $bus
      * @param  mixed  $job
      * @param  array  $chain
      */
-    public function __construct(BusFake $bus, $job, $chain)
+    public function __construct(/**
+     * The fake bus instance.
+     */
+    protected \Illuminate\Support\Testing\Fakes\BusFake $bus, $job, $chain)
     {
-        $this->bus = $bus;
         $this->job = $job;
         $this->chain = $chain;
     }

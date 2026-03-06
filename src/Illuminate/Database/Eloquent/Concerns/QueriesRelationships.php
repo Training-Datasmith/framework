@@ -98,7 +98,7 @@ trait QueriesRelationships
             $count = 1;
         }
 
-        $closure = function ($q) use (&$closure, &$relations, $operator, $count, $callback, $initialRelations) {
+        $closure = function ($q) use (&$closure, &$relations, $operator, $count, $callback, $initialRelations): void {
             // If the same closure is called multiple times, reset the relation array to loop through them again...
             if ($count === 1 && empty($relations)) {
                 $relations = [...$initialRelations];
@@ -275,15 +275,13 @@ trait QueriesRelationships
             $type = Relation::getMorphedModel($type) ?? $type;
         }
 
-        return $this->where(function ($query) use ($relation, $callback, $operator, $count, $types, $checkMorphNull) {
+        return $this->where(function ($query) use ($relation, $callback, $operator, $count, $types, $checkMorphNull): void {
             foreach ($types as $type) {
-                $query->orWhere(function ($query) use ($relation, $callback, $operator, $count, $type) {
+                $query->orWhere(function ($query) use ($relation, $callback, $operator, $count, $type): void {
                     $belongsTo = $this->getBelongsToRelation($relation, $type);
 
                     if ($callback) {
-                        $callback = function ($query) use ($callback, $type) {
-                            return $callback($query, $type);
-                        };
+                        $callback = (fn($query) => $callback($query, $type));
                     }
 
                     $query->where($this->qualifyColumn($relation->getMorphType()), '=', (new $type)->getMorphClass())
@@ -307,13 +305,11 @@ trait QueriesRelationships
      */
     protected function getBelongsToRelation(MorphTo $relation, $type)
     {
-        $belongsTo = Relation::noConstraints(function () use ($relation, $type) {
-            return $this->model->belongsTo(
-                $type,
-                $relation->getForeignKeyName(),
-                $relation->getOwnerKeyName()
-            );
-        });
+        $belongsTo = Relation::noConstraints(fn() => $this->model->belongsTo(
+            $type,
+            $relation->getForeignKeyName(),
+            $relation->getOwnerKeyName()
+        ));
 
         $belongsTo->getQuery()->mergeConstraintsFrom($relation->getQuery());
 
@@ -439,7 +435,7 @@ trait QueriesRelationships
      */
     public function whereRelation($relation, $column, $operator = null, $value = null)
     {
-        return $this->whereHas($relation, function ($query) use ($column, $operator, $value) {
+        return $this->whereHas($relation, function ($query) use ($column, $operator, $value): void {
             if ($column instanceof Closure) {
                 $column($query);
             } else {
@@ -480,7 +476,7 @@ trait QueriesRelationships
      */
     public function orWhereRelation($relation, $column, $operator = null, $value = null)
     {
-        return $this->orWhereHas($relation, function ($query) use ($column, $operator, $value) {
+        return $this->orWhereHas($relation, function ($query) use ($column, $operator, $value): void {
             if ($column instanceof Closure) {
                 $column($query);
             } else {
@@ -502,7 +498,7 @@ trait QueriesRelationships
      */
     public function whereDoesntHaveRelation($relation, $column, $operator = null, $value = null)
     {
-        return $this->whereDoesntHave($relation, function ($query) use ($column, $operator, $value) {
+        return $this->whereDoesntHave($relation, function ($query) use ($column, $operator, $value): void {
             if ($column instanceof Closure) {
                 $column($query);
             } else {
@@ -524,7 +520,7 @@ trait QueriesRelationships
      */
     public function orWhereDoesntHaveRelation($relation, $column, $operator = null, $value = null)
     {
-        return $this->orWhereDoesntHave($relation, function ($query) use ($column, $operator, $value) {
+        return $this->orWhereDoesntHave($relation, function ($query) use ($column, $operator, $value): void {
             if ($column instanceof Closure) {
                 $column($query);
             } else {
@@ -547,7 +543,7 @@ trait QueriesRelationships
      */
     public function whereMorphRelation($relation, $types, $column, $operator = null, $value = null)
     {
-        return $this->whereHasMorph($relation, $types, function ($query) use ($column, $operator, $value) {
+        return $this->whereHasMorph($relation, $types, function ($query) use ($column, $operator, $value): void {
             $query->where($column, $operator, $value);
         });
     }
@@ -566,7 +562,7 @@ trait QueriesRelationships
      */
     public function orWhereMorphRelation($relation, $types, $column, $operator = null, $value = null)
     {
-        return $this->orWhereHasMorph($relation, $types, function ($query) use ($column, $operator, $value) {
+        return $this->orWhereHasMorph($relation, $types, function ($query) use ($column, $operator, $value): void {
             $query->where($column, $operator, $value);
         });
     }
@@ -585,7 +581,7 @@ trait QueriesRelationships
      */
     public function whereMorphDoesntHaveRelation($relation, $types, $column, $operator = null, $value = null)
     {
-        return $this->whereDoesntHaveMorph($relation, $types, function ($query) use ($column, $operator, $value) {
+        return $this->whereDoesntHaveMorph($relation, $types, function ($query) use ($column, $operator, $value): void {
             $query->where($column, $operator, $value);
         });
     }
@@ -604,7 +600,7 @@ trait QueriesRelationships
      */
     public function orWhereMorphDoesntHaveRelation($relation, $types, $column, $operator = null, $value = null)
     {
-        return $this->orWhereDoesntHaveMorph($relation, $types, function ($query) use ($column, $operator, $value) {
+        return $this->orWhereDoesntHaveMorph($relation, $types, function ($query) use ($column, $operator, $value): void {
             $query->where($column, $operator, $value);
         });
     }
@@ -644,9 +640,9 @@ trait QueriesRelationships
             throw new InvalidArgumentException('Collection given to whereMorphedTo method may not be empty.');
         }
 
-        return $this->where(function ($query) use ($relation, $models) {
-            $models->groupBy(fn ($model) => $model->getMorphClass())->each(function ($models) use ($query, $relation) {
-                $query->orWhere(function ($query) use ($relation, $models) {
+        return $this->where(function ($query) use ($relation, $models): void {
+            $models->groupBy(fn ($model): int|string|false => $model->getMorphClass())->each(function ($models) use ($query, $relation): void {
+                $query->orWhere(function ($query) use ($relation, $models): void {
                     $query->where($relation->qualifyColumn($relation->getMorphType()), $models->first()->getMorphClass())
                         ->whereIn($relation->qualifyColumn($relation->getForeignKeyName()), $models->map->getKey());
                 });
@@ -687,9 +683,9 @@ trait QueriesRelationships
             throw new InvalidArgumentException('Collection given to whereNotMorphedTo method may not be empty.');
         }
 
-        return $this->whereNot(function ($query) use ($relation, $models) {
-            $models->groupBy(fn ($model) => $model->getMorphClass())->each(function ($models) use ($query, $relation) {
-                $query->orWhere(function ($query) use ($relation, $models) {
+        return $this->whereNot(function ($query) use ($relation, $models): void {
+            $models->groupBy(fn ($model): int|string|false => $model->getMorphClass())->each(function ($models) use ($query, $relation): void {
+                $query->orWhere(function ($query) use ($relation, $models): void {
                     $query->whereNullSafeEquals($relation->qualifyColumn($relation->getMorphType()), $models->first()->getMorphClass())
                         ->whereIn($relation->qualifyColumn($relation->getForeignKeyName()), $models->map->getKey());
                 });
@@ -863,7 +859,7 @@ trait QueriesRelationships
             // First we will determine if the name has been aliased using an "as" clause on the name
             // and if it has we will extract the actual relationship name and the desired name of
             // the resulting column. This allows multiple aggregates on the same relationships.
-            $segments = explode(' ', $name);
+            $segments = explode(' ', (string) $name);
 
             unset($alias);
 
@@ -1074,27 +1070,17 @@ trait QueriesRelationships
 
     /**
      * Updates the table name for any columns with a new qualified name.
-     *
-     * @param  array  $wheres
-     * @param  string  $from
-     * @param  string  $to
-     * @return array
      */
     protected function requalifyWhereTables(array $wheres, string $from, string $to): array
     {
-        return (new BaseCollection($wheres))->map(function ($where) use ($from, $to) {
-            return (new BaseCollection($where))->map(function ($value) use ($from, $to) {
-                return is_string($value) && str_starts_with($value, $from.'.')
-                    ? $to.'.'.Str::afterLast($value, '.')
-                    : $value;
-            });
-        })->toArray();
+        return (new BaseCollection($wheres))->map(fn($where) => (new BaseCollection($where))->map(fn($value) => is_string($value) && str_starts_with($value, $from.'.')
+            ? $to.'.'.Str::afterLast($value, '.')
+            : $value))->toArray();
     }
 
     /**
      * Add a sub-query count clause to this query.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  string  $operator
      * @param  \Illuminate\Contracts\Database\Query\Expression|int  $count
      * @param  string  $boolean
@@ -1120,9 +1106,7 @@ trait QueriesRelationships
      */
     protected function getRelationWithoutConstraints($relation)
     {
-        return Relation::noConstraints(function () use ($relation) {
-            return $this->getModel()->{$relation}();
-        });
+        return Relation::noConstraints(fn() => $this->getModel()->{$relation}());
     }
 
     /**
@@ -1130,9 +1114,8 @@ trait QueriesRelationships
      *
      * @param  string  $operator
      * @param  \Illuminate\Contracts\Database\Query\Expression|int  $count
-     * @return bool
      */
-    protected function canUseExistsForExistenceCheck($operator, $count)
+    protected function canUseExistsForExistenceCheck($operator, $count): bool
     {
         return ($operator === '>=' || $operator === '<') && $count === 1;
     }

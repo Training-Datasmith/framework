@@ -52,10 +52,8 @@ class Process extends Facade
 {
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return Factory::class;
     }
@@ -63,12 +61,11 @@ class Process extends Facade
     /**
      * Indicate that the process factory should fake processes.
      *
-     * @param  \Closure|array|null  $callback
      * @return \Illuminate\Process\Factory
      */
     public static function fake(Closure|array|null $callback = null)
     {
-        return tap(static::getFacadeRoot(), function ($fake) use ($callback) {
+        return tap(static::getFacadeRoot(), function ($fake) use ($callback): void {
             static::swap($fake->fake($callback));
         });
     }

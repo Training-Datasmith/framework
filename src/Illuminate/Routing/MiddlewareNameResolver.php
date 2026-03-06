@@ -10,11 +10,9 @@ class MiddlewareNameResolver
      * Resolve the middleware name to a class name(s) preserving passed parameters.
      *
      * @param  \Closure|string  $name
-     * @param  array  $map
-     * @param  array  $middlewareGroups
      * @return \Closure|string|array
      */
-    public static function resolve($name, $map, $middlewareGroups)
+    public static function resolve($name, array $map, array $middlewareGroups)
     {
         // When the middleware is simply a Closure, we will return this Closure instance
         // directly so that Closures can be registered as middleware inline, which is
@@ -46,11 +44,8 @@ class MiddlewareNameResolver
      * Parse the middleware group and format it for usage.
      *
      * @param  string  $name
-     * @param  array  $map
-     * @param  array  $middlewareGroups
-     * @return array
      */
-    protected static function parseMiddlewareGroup($name, $map, $middlewareGroups)
+    protected static function parseMiddlewareGroup($name, array $map, array $middlewareGroups): array
     {
         $results = [];
 
@@ -67,7 +62,7 @@ class MiddlewareNameResolver
             }
 
             [$middleware, $parameters] = array_pad(
-                explode(':', $middleware, 2), 2, null
+                explode(':', (string) $middleware, 2), 2, null
             );
 
             // If this middleware is actually a route middleware, we will extract the full

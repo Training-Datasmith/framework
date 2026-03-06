@@ -17,8 +17,6 @@ class LazyPromise implements PromiseInterface
 
     /**
      * The promise built by the creator.
-     *
-     * @var \GuzzleHttp\Promise\PromiseInterface
      */
     protected PromiseInterface $guzzlePromise;
 
@@ -34,7 +32,6 @@ class LazyPromise implements PromiseInterface
     /**
      * Build the promise from the promise builder.
      *
-     * @return \GuzzleHttp\Promise\PromiseInterface
      *
      * @throws \RuntimeException If the promise has already been built
      */
@@ -119,8 +116,6 @@ class LazyPromise implements PromiseInterface
 
     /**
      * Determine if the promise has been created from the promise builder.
-     *
-     * @return bool
      */
     public function promiseNeedsBuilt(): bool
     {

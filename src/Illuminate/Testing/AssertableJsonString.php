@@ -17,13 +17,6 @@ use function Illuminate\Support\enum_value;
 class AssertableJsonString implements ArrayAccess, Countable
 {
     /**
-     * The original encoded json.
-     *
-     * @var \Illuminate\Contracts\Support\Jsonable|\JsonSerializable|array|string
-     */
-    public $json;
-
-    /**
      * The decoded json contents.
      *
      * @var array|null
@@ -33,20 +26,21 @@ class AssertableJsonString implements ArrayAccess, Countable
     /**
      * Create a new assertable JSON string instance.
      *
-     * @param  \Illuminate\Contracts\Support\Jsonable|\JsonSerializable|array|string  $jsonable
+     * @param \Illuminate\Contracts\Support\Jsonable|\JsonSerializable|array|string $json
      */
-    public function __construct($jsonable)
+    public function __construct(/**
+     * The original encoded json.
+     */
+    public $json)
     {
-        $this->json = $jsonable;
-
-        if ($jsonable instanceof JsonSerializable) {
-            $this->decoded = $jsonable->jsonSerialize();
-        } elseif ($jsonable instanceof Jsonable) {
-            $this->decoded = json_decode($jsonable->toJson(), true);
-        } elseif (is_array($jsonable)) {
-            $this->decoded = $jsonable;
+        if ($this->json instanceof JsonSerializable) {
+            $this->decoded = $this->json->jsonSerialize();
+        } elseif ($this->json instanceof Jsonable) {
+            $this->decoded = json_decode($this->json->toJson(), true);
+        } elseif (is_array($this->json)) {
+            $this->decoded = $this->json;
         } else {
-            $this->decoded = json_decode($jsonable, true);
+            $this->decoded = json_decode($this->json, true);
         }
     }
 
@@ -64,11 +58,10 @@ class AssertableJsonString implements ArrayAccess, Countable
     /**
      * Assert that the response JSON has the expected count of items at the given key.
      *
-     * @param  int  $count
      * @param  string|null  $key
      * @return $this
      */
-    public function assertCount(int $count, $key = null)
+    public function assertCount(int $count, $key = null): static
     {
         if (! is_null($key)) {
             PHPUnit::assertCount(
@@ -90,10 +83,9 @@ class AssertableJsonString implements ArrayAccess, Countable
     /**
      * Assert that the response has the exact given JSON.
      *
-     * @param  array  $data
      * @return $this
      */
-    public function assertExact(array $data)
+    public function assertExact(array $data): static
     {
         $actual = $this->reorderAssocKeys((array) $this->decoded);
 
@@ -110,10 +102,9 @@ class AssertableJsonString implements ArrayAccess, Countable
     /**
      * Assert that the response has the similar JSON as given.
      *
-     * @param  array  $data
      * @return $this
      */
-    public function assertSimilar(array $data)
+    public function assertSimilar(array $data): static
     {
         $actual = json_encode(
             Arr::sortRecursive((array) $this->decoded),
@@ -128,10 +119,9 @@ class AssertableJsonString implements ArrayAccess, Countable
     /**
      * Assert that the response contains the given JSON fragment.
      *
-     * @param  array  $data
      * @return $this
      */
-    public function assertFragment(array $data)
+    public function assertFragment(array $data): static
     {
         $actual = json_encode(
             Arr::sortRecursive((array) $this->decoded),
@@ -156,7 +146,6 @@ class AssertableJsonString implements ArrayAccess, Countable
     /**
      * Assert that the response does not contain the given JSON fragment.
      *
-     * @param  array  $data
      * @param  bool  $exact
      * @return $this
      */
@@ -189,7 +178,6 @@ class AssertableJsonString implements ArrayAccess, Countable
     /**
      * Assert that the response does not contain the exact JSON fragment.
      *
-     * @param  array  $data
      * @return $this
      */
     public function assertMissingExact(array $data)
@@ -221,7 +209,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      * @param  string  $path
      * @return $this
      */
-    public function assertMissingPath($path)
+    public function assertMissingPath($path): static
     {
         PHPUnit::assertFalse(Arr::has($this->json(), $path));
 
@@ -235,7 +223,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      * @param  mixed  $expect
      * @return $this
      */
-    public function assertPath($path, $expect)
+    public function assertPath($path, $expect): static
     {
         if ($expect instanceof Closure) {
             PHPUnit::assertTrue($expect($this->json($path)));
@@ -253,7 +241,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      * @param  array  $expect
      * @return $this
      */
-    public function assertPathCanonicalizing($path, $expect)
+    public function assertPathCanonicalizing($path, $expect): static
     {
         PHPUnit::assertEqualsCanonicalizing($expect, $this->json($path));
 
@@ -263,9 +251,7 @@ class AssertableJsonString implements ArrayAccess, Countable
     /**
      * Assert that the response has a given JSON structure.
      *
-     * @param  array|null  $structure
      * @param  array|null  $responseData
-     * @param  bool  $exact
      * @return $this
      */
     public function assertStructure(?array $structure = null, $responseData = null, bool $exact = false)
@@ -310,11 +296,9 @@ class AssertableJsonString implements ArrayAccess, Countable
     /**
      * Assert that the response is a superset of the given JSON.
      *
-     * @param  array  $data
-     * @param  bool  $strict
      * @return $this
      */
-    public function assertSubset(array $data, $strict = false)
+    public function assertSubset(array $data, bool $strict = false): static
     {
         PHPUnit::assertArraySubset(
             $data, $this->decoded, $strict, $this->assertJsonMessage($data)
@@ -325,11 +309,8 @@ class AssertableJsonString implements ArrayAccess, Countable
 
     /**
      * Reorder associative array keys to make it easy to compare arrays.
-     *
-     * @param  array  $data
-     * @return array
      */
-    protected function reorderAssocKeys(array $data)
+    protected function reorderAssocKeys(array $data): array
     {
         $data = Arr::dot($data);
         ksort($data);
@@ -345,11 +326,8 @@ class AssertableJsonString implements ArrayAccess, Countable
 
     /**
      * Get the assertion message for assertJson.
-     *
-     * @param  array  $data
-     * @return string
      */
-    protected function assertJsonMessage(array $data)
+    protected function assertJsonMessage(array $data): string
     {
         $expected = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
@@ -366,9 +344,8 @@ class AssertableJsonString implements ArrayAccess, Countable
      *
      * @param  string  $key
      * @param  string  $value
-     * @return array
      */
-    protected function jsonSearchStrings($key, $value)
+    protected function jsonSearchStrings($key, $value): array
     {
         $needle = Str::substr(json_encode([$key => $value], JSON_UNESCAPED_UNICODE), 1, -1);
 
@@ -381,8 +358,6 @@ class AssertableJsonString implements ArrayAccess, Countable
 
     /**
      * Get the total number of items in the underlying JSON array.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -393,7 +368,6 @@ class AssertableJsonString implements ArrayAccess, Countable
      * Determine whether an offset exists.
      *
      * @param  mixed  $offset
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -404,7 +378,6 @@ class AssertableJsonString implements ArrayAccess, Countable
      * Get the value at the given offset.
      *
      * @param  string  $offset
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -416,7 +389,6 @@ class AssertableJsonString implements ArrayAccess, Countable
      *
      * @param  string  $offset
      * @param  mixed  $value
-     * @return void
      */
     public function offsetSet($offset, $value): void
     {
@@ -427,7 +399,6 @@ class AssertableJsonString implements ArrayAccess, Countable
      * Unset the value at the given offset.
      *
      * @param  string  $offset
-     * @return void
      */
     public function offsetUnset($offset): void
     {

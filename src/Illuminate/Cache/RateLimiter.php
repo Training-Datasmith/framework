@@ -15,13 +15,6 @@ class RateLimiter
     use InteractsWithTime;
 
     /**
-     * The cache store implementation.
-     *
-     * @var \Illuminate\Contracts\Cache\Repository
-     */
-    protected $cache;
-
-    /**
      * The configured limit object resolvers.
      *
      * @var array
@@ -30,22 +23,23 @@ class RateLimiter
 
     /**
      * Create a new rate limiter instance.
-     *
-     * @param  \Illuminate\Contracts\Cache\Repository  $cache
      */
-    public function __construct(Cache $cache)
+    public function __construct(
+        /**
+         * The cache store implementation.
+         */
+        protected \Illuminate\Contracts\Cache\Repository $cache
+    )
     {
-        $this->cache = $cache;
     }
 
     /**
      * Register a named limiter configuration.
      *
      * @param  \UnitEnum|string  $name
-     * @param  \Closure  $callback
      * @return $this
      */
-    public function for($name, Closure $callback)
+    public function for($name, Closure $callback): static
     {
         $resolvedName = $this->resolveLimiterName($name);
 
@@ -98,7 +92,6 @@ class RateLimiter
      *
      * @param  string  $key
      * @param  int  $maxAttempts
-     * @param  \Closure  $callback
      * @param  \DateTimeInterface|\DateInterval|int  $decaySeconds
      * @return mixed
      */
@@ -112,7 +105,7 @@ class RateLimiter
             $result = true;
         }
 
-        return tap($result, function () use ($key, $decaySeconds) {
+        return tap($result, function () use ($key, $decaySeconds): void {
             $this->hit($key, $decaySeconds);
         });
     }
@@ -122,9 +115,8 @@ class RateLimiter
      *
      * @param  string  $key
      * @param  int  $maxAttempts
-     * @return bool
      */
-    public function tooManyAttempts($key, $maxAttempts)
+    public function tooManyAttempts($key, $maxAttempts): bool
     {
         if ($this->attempts($key) >= $maxAttempts) {
             if ($this->cache->has($this->cleanRateLimiterKey($key).':timer')) {
@@ -155,9 +147,8 @@ class RateLimiter
      * @param  string  $key
      * @param  \DateTimeInterface|\DateInterval|int  $decaySeconds
      * @param  int  $amount
-     * @return int
      */
-    public function increment($key, $decaySeconds = 60, $amount = 1)
+    public function increment($key, $decaySeconds = 60, $amount = 1): int
     {
         $key = $this->cleanRateLimiterKey($key);
 
@@ -226,7 +217,7 @@ class RateLimiter
      * @param  int  $maxAttempts
      * @return int
      */
-    public function remaining($key, $maxAttempts)
+    public function remaining($key, $maxAttempts): float|int
     {
         $key = $this->cleanRateLimiterKey($key);
 
@@ -251,9 +242,8 @@ class RateLimiter
      * Clear the hits and lockout timer for the given key.
      *
      * @param  string  $key
-     * @return void
      */
-    public function clear($key)
+    public function clear($key): void
     {
         $key = $this->cleanRateLimiterKey($key);
 
@@ -268,7 +258,7 @@ class RateLimiter
      * @param  string  $key
      * @return int
      */
-    public function availableIn($key)
+    public function availableIn($key): float|int
     {
         $key = $this->cleanRateLimiterKey($key);
 
@@ -281,7 +271,7 @@ class RateLimiter
      * @param  string  $key
      * @return string
      */
-    public function cleanRateLimiterKey($key)
+    public function cleanRateLimiterKey($key): ?string
     {
         return preg_replace('/&([a-z])[a-z]+;/i', '$1', htmlentities($key));
     }
@@ -289,7 +279,6 @@ class RateLimiter
     /**
      * Execute the given callback without serialization or compression when applicable.
      *
-     * @param  callable  $callback
      * @return mixed
      */
     protected function withoutSerializationOrCompression(callable $callback)
@@ -313,7 +302,6 @@ class RateLimiter
      * Resolve the rate limiter name.
      *
      * @param  \UnitEnum|string  $name
-     * @return string
      */
     private function resolveLimiterName($name): string
     {

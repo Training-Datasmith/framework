@@ -12,13 +12,6 @@ use InvalidArgumentException;
 class Pool
 {
     /**
-     * The process factory instance.
-     *
-     * @var \Illuminate\Process\Factory
-     */
-    protected $factory;
-
-    /**
      * The callback that resolves the pending processes.
      *
      * @var callable
@@ -34,25 +27,23 @@ class Pool
 
     /**
      * Create a new process pool.
-     *
-     * @param  \Illuminate\Process\Factory  $factory
-     * @param  callable  $callback
      */
-    public function __construct(Factory $factory, callable $callback)
+    public function __construct(/**
+     * The process factory instance.
+     */
+    protected \Illuminate\Process\Factory $factory, callable $callback)
     {
-        $this->factory = $factory;
         $this->callback = $callback;
     }
 
     /**
      * Add a process to the pool with a key.
      *
-     * @param  string  $key
      * @return \Illuminate\Process\PendingProcess
      */
     public function as(string $key)
     {
-        return tap($this->factory->newPendingProcess(), function ($pendingProcess) use ($key) {
+        return tap($this->factory->newPendingProcess(), function ($pendingProcess) use ($key): void {
             $this->pendingProcesses[$key] = $pendingProcess;
         });
     }
@@ -60,27 +51,23 @@ class Pool
     /**
      * Start all of the processes in the pool.
      *
-     * @param  callable|null  $output
-     * @return \Illuminate\Process\InvokedProcessPool
      *
      * @throws \InvalidArgumentException
      */
-    public function start(?callable $output = null)
+    public function start(?callable $output = null): \Illuminate\Process\InvokedProcessPool
     {
         call_user_func($this->callback, $this);
 
         return new InvokedProcessPool(
             (new Collection($this->pendingProcesses))
-                ->each(function ($pendingProcess) {
+                ->each(function ($pendingProcess): void {
                     if (! $pendingProcess instanceof PendingProcess) {
                         throw new InvalidArgumentException('Process pool must only contain pending processes.');
                     }
                 })
-                ->mapWithKeys(function ($pendingProcess, $key) use ($output) {
-                    return [$key => $pendingProcess->start(output: $output ? function ($type, $buffer) use ($key, $output) {
-                        $output($type, $buffer, $key);
-                    } : null)];
-                })
+                ->mapWithKeys(fn($pendingProcess, $key) => [$key => $pendingProcess->start(output: $output ? function ($type, $buffer) use ($key, $output): void {
+                    $output($type, $buffer, $key);
+                } : null)])
                 ->all()
         );
     }
@@ -108,13 +95,12 @@ class Pool
     /**
      * Dynamically proxy methods calls to a new pending process.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return \Illuminate\Process\PendingProcess
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
-        return tap($this->factory->{$method}(...$parameters), function ($pendingProcess) {
+        return tap($this->factory->{$method}(...$parameters), function ($pendingProcess): void {
             $this->pendingProcesses[] = $pendingProcess;
         });
     }

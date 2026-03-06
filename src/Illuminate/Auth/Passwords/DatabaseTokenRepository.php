@@ -29,7 +29,6 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
     /**
      * Create a new token record.
      *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
      * @return string
      */
     public function create(CanResetPasswordContract $user)
@@ -51,7 +50,6 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
     /**
      * Delete all existing reset tokens from the database.
      *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
      * @return int
      */
     protected function deleteExisting(CanResetPasswordContract $user)
@@ -64,9 +62,8 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
      *
      * @param  string  $email
      * @param  string  $token
-     * @return array
      */
-    protected function getPayload($email, #[\SensitiveParameter] $token)
+    protected function getPayload($email, #[\SensitiveParameter] $token): array
     {
         return ['email' => $email, 'token' => $this->hasher->make($token), 'created_at' => new Carbon];
     }
@@ -74,11 +71,9 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
     /**
      * Determine if a token record exists and is valid.
      *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
      * @param  string  $token
-     * @return bool
      */
-    public function exists(CanResetPasswordContract $user, #[\SensitiveParameter] $token)
+    public function exists(CanResetPasswordContract $user, #[\SensitiveParameter] $token): bool
     {
         $record = (array) $this->getTable()->where(
             'email', $user->getEmailForPasswordReset()
@@ -102,11 +97,8 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
 
     /**
      * Determine if the given user recently created a password reset token.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
-     * @return bool
      */
-    public function recentlyCreatedToken(CanResetPasswordContract $user)
+    public function recentlyCreatedToken(CanResetPasswordContract $user): bool
     {
         $record = (array) $this->getTable()->where(
             'email', $user->getEmailForPasswordReset()
@@ -134,21 +126,16 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
 
     /**
      * Delete a token record by user.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
-     * @return void
      */
-    public function delete(CanResetPasswordContract $user)
+    public function delete(CanResetPasswordContract $user): void
     {
         $this->deleteExisting($user);
     }
 
     /**
      * Delete expired tokens.
-     *
-     * @return void
      */
-    public function deleteExpired()
+    public function deleteExpired(): void
     {
         $expiredAt = Carbon::now()->subSeconds($this->expires);
 
@@ -157,20 +144,16 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
 
     /**
      * Create a new token for the user.
-     *
-     * @return string
      */
-    public function createNewToken()
+    public function createNewToken(): string
     {
         return hash_hmac('sha256', Str::random(40), $this->hashKey);
     }
 
     /**
      * Get the database connection instance.
-     *
-     * @return \Illuminate\Database\ConnectionInterface
      */
-    public function getConnection()
+    public function getConnection(): \Illuminate\Database\ConnectionInterface
     {
         return $this->connection;
     }
@@ -187,10 +170,8 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
 
     /**
      * Get the hasher instance.
-     *
-     * @return \Illuminate\Contracts\Hashing\Hasher
      */
-    public function getHasher()
+    public function getHasher(): \Illuminate\Contracts\Hashing\Hasher
     {
         return $this->hasher;
     }

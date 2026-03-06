@@ -47,7 +47,7 @@ class BroadcastingInstallCommand extends Command
      *
      * @var string|null
      */
-    protected $driver = null;
+    protected $driver;
 
     /**
      * The framework packages to install.
@@ -61,10 +61,8 @@ class BroadcastingInstallCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->call('config:publish', ['name' => 'broadcasting']);
 
@@ -320,9 +318,7 @@ class BroadcastingInstallCommand extends Command
             ];
         }
 
-        $filePath = array_filter($filePaths, function ($path) {
-            return file_exists($path);
-        })[0] ?? null;
+        $filePath = array_filter($filePaths, fn(string $path) => file_exists($path))[0] ?? null;
 
         if (! $filePath) {
             $this->components->warn("Could not find file [{$filePaths[0]}]. Skipping automatic Echo configuration.");
@@ -449,8 +445,6 @@ class BroadcastingInstallCommand extends Command
 
     /**
      * Resolve the provider to use based on the user's choice.
-     *
-     * @return string
      */
     protected function resolveDriver(): string
     {
@@ -475,18 +469,17 @@ class BroadcastingInstallCommand extends Command
 
     /**
      * Detect if the user is using a supported framework (React or Vue).
-     *
-     * @return bool
      */
     protected function isUsingSupportedFramework(): bool
     {
-        return $this->appUsesReact() || $this->appUsesVue();
+        if ($this->appUsesReact()) {
+            return true;
+        }
+        return $this->appUsesVue();
     }
 
     /**
      * Detect if the user is using React.
-     *
-     * @return bool
      */
     protected function appUsesReact(): bool
     {
@@ -495,8 +488,6 @@ class BroadcastingInstallCommand extends Command
 
     /**
      * Detect if the user is using Vue.
-     *
-     * @return bool
      */
     protected function appUsesVue(): bool
     {
@@ -505,8 +496,6 @@ class BroadcastingInstallCommand extends Command
 
     /**
      * Detect if the package is installed.
-     *
-     * @return bool
      */
     protected function packageDependenciesInclude(string $package): bool
     {

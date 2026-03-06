@@ -17,9 +17,8 @@ trait CompilesConditionals
      * Compile the if-auth statements into valid PHP.
      *
      * @param  string|null  $guard
-     * @return string
      */
-    protected function compileAuth($guard = null)
+    protected function compileAuth($guard = null): string
     {
         $guard = is_null($guard) ? '()' : $guard;
 
@@ -30,9 +29,8 @@ trait CompilesConditionals
      * Compile the else-auth statements into valid PHP.
      *
      * @param  string|null  $guard
-     * @return string
      */
-    protected function compileElseAuth($guard = null)
+    protected function compileElseAuth($guard = null): string
     {
         $guard = is_null($guard) ? '()' : $guard;
 
@@ -41,10 +39,8 @@ trait CompilesConditionals
 
     /**
      * Compile the end-auth statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndAuth()
+    protected function compileEndAuth(): string
     {
         return '<?php endif; ?>';
     }
@@ -53,39 +49,32 @@ trait CompilesConditionals
      * Compile the env statements into valid PHP.
      *
      * @param  string  $environments
-     * @return string
      */
-    protected function compileEnv($environments)
+    protected function compileEnv($environments): string
     {
         return "<?php if(app()->environment{$environments}): ?>";
     }
 
     /**
      * Compile the end-env statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndEnv()
+    protected function compileEndEnv(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the production statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileProduction()
+    protected function compileProduction(): string
     {
         return "<?php if(app()->environment('production')): ?>";
     }
 
     /**
      * Compile the end-production statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndProduction()
+    protected function compileEndProduction(): string
     {
         return '<?php endif; ?>';
     }
@@ -94,9 +83,8 @@ trait CompilesConditionals
      * Compile the if-guest statements into valid PHP.
      *
      * @param  string|null  $guard
-     * @return string
      */
-    protected function compileGuest($guard = null)
+    protected function compileGuest($guard = null): string
     {
         $guard = is_null($guard) ? '()' : $guard;
 
@@ -107,9 +95,8 @@ trait CompilesConditionals
      * Compile the else-guest statements into valid PHP.
      *
      * @param  string|null  $guard
-     * @return string
      */
-    protected function compileElseGuest($guard = null)
+    protected function compileElseGuest($guard = null): string
     {
         $guard = is_null($guard) ? '()' : $guard;
 
@@ -118,10 +105,8 @@ trait CompilesConditionals
 
     /**
      * Compile the end-guest statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndGuest()
+    protected function compileEndGuest(): string
     {
         return '<?php endif; ?>';
     }
@@ -130,9 +115,8 @@ trait CompilesConditionals
      * Compile the has-section statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileHasSection($expression)
+    protected function compileHasSection($expression): string
     {
         return "<?php if (! empty(trim(\$__env->yieldContent{$expression}))): ?>";
     }
@@ -141,9 +125,8 @@ trait CompilesConditionals
      * Compile the has-stack statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileHasStack($expression)
+    protected function compileHasStack($expression): string
     {
         return "<?php if (! \$__env->isStackEmpty{$expression}): ?>";
     }
@@ -152,9 +135,8 @@ trait CompilesConditionals
      * Compile the section-missing statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileSectionMissing($expression)
+    protected function compileSectionMissing($expression): string
     {
         return "<?php if (empty(trim(\$__env->yieldContent{$expression}))): ?>";
     }
@@ -163,9 +145,8 @@ trait CompilesConditionals
      * Compile the if statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileIf($expression)
+    protected function compileIf($expression): string
     {
         return "<?php if{$expression}: ?>";
     }
@@ -174,9 +155,8 @@ trait CompilesConditionals
      * Compile the unless statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileUnless($expression)
+    protected function compileUnless($expression): string
     {
         return "<?php if (! {$expression}): ?>";
     }
@@ -185,39 +165,32 @@ trait CompilesConditionals
      * Compile the else-if statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileElseif($expression)
+    protected function compileElseif($expression): string
     {
         return "<?php elseif{$expression}: ?>";
     }
 
     /**
      * Compile the else statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileElse()
+    protected function compileElse(): string
     {
         return '<?php else: ?>';
     }
 
     /**
      * Compile the end-if statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndif()
+    protected function compileEndif(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the end-unless statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndunless()
+    protected function compileEndunless(): string
     {
         return '<?php endif; ?>';
     }
@@ -226,19 +199,16 @@ trait CompilesConditionals
      * Compile the if-isset statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileIsset($expression)
+    protected function compileIsset($expression): string
     {
         return "<?php if(isset{$expression}): ?>";
     }
 
     /**
      * Compile the end-isset statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndIsset()
+    protected function compileEndIsset(): string
     {
         return '<?php endif; ?>';
     }
@@ -247,9 +217,8 @@ trait CompilesConditionals
      * Compile the switch statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileSwitch($expression)
+    protected function compileSwitch($expression): string
     {
         $this->firstCaseInSwitch = true;
 
@@ -260,9 +229,8 @@ trait CompilesConditionals
      * Compile the case statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileCase($expression)
+    protected function compileCase($expression): string
     {
         if ($this->firstCaseInSwitch) {
             $this->firstCaseInSwitch = false;
@@ -275,20 +243,16 @@ trait CompilesConditionals
 
     /**
      * Compile the default statements in switch case into valid PHP.
-     *
-     * @return string
      */
-    protected function compileDefault()
+    protected function compileDefault(): string
     {
         return '<?php default: ?>';
     }
 
     /**
      * Compile the end switch statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndSwitch()
+    protected function compileEndSwitch(): string
     {
         return '<?php endswitch; ?>';
     }
@@ -297,21 +261,18 @@ trait CompilesConditionals
      * Compile a once block into valid PHP.
      *
      * @param  string|null  $id
-     * @return string
      */
-    protected function compileOnce($id = null)
+    protected function compileOnce($id = null): string
     {
-        $id = $id ? $this->stripParentheses($id) : "'".(string) Str::uuid()."'";
+        $id = $id ? $this->stripParentheses($id) : "'".Str::uuid()."'";
 
         return '<?php if (! $__env->hasRenderedOnce('.$id.')): $__env->markAsRenderedOnce('.$id.'); ?>';
     }
 
     /**
      * Compile an end-once block into valid PHP.
-     *
-     * @return string
      */
-    public function compileEndOnce()
+    public function compileEndOnce(): string
     {
         return '<?php endif; ?>';
     }
@@ -320,9 +281,8 @@ trait CompilesConditionals
      * Compile a boolean value into a raw true / false value for embedding into HTML attributes or JavaScript.
      *
      * @param  bool  $condition
-     * @return string
      */
-    protected function compileBool($condition)
+    protected function compileBool($condition): string
     {
         return "<?php echo ($condition ? 'true' : 'false'); ?>";
     }
@@ -331,9 +291,8 @@ trait CompilesConditionals
      * Compile a checked block into valid PHP.
      *
      * @param  string  $condition
-     * @return string
      */
-    protected function compileChecked($condition)
+    protected function compileChecked($condition): string
     {
         return "<?php if{$condition}: echo 'checked'; endif; ?>";
     }
@@ -342,9 +301,8 @@ trait CompilesConditionals
      * Compile a disabled block into valid PHP.
      *
      * @param  string  $condition
-     * @return string
      */
-    protected function compileDisabled($condition)
+    protected function compileDisabled($condition): string
     {
         return "<?php if{$condition}: echo 'disabled'; endif; ?>";
     }
@@ -353,9 +311,8 @@ trait CompilesConditionals
      * Compile a required block into valid PHP.
      *
      * @param  string  $condition
-     * @return string
      */
-    protected function compileRequired($condition)
+    protected function compileRequired($condition): string
     {
         return "<?php if{$condition}: echo 'required'; endif; ?>";
     }
@@ -364,9 +321,8 @@ trait CompilesConditionals
      * Compile a readonly block into valid PHP.
      *
      * @param  string  $condition
-     * @return string
      */
-    protected function compileReadonly($condition)
+    protected function compileReadonly($condition): string
     {
         return "<?php if{$condition}: echo 'readonly'; endif; ?>";
     }
@@ -375,9 +331,8 @@ trait CompilesConditionals
      * Compile a selected block into valid PHP.
      *
      * @param  string  $condition
-     * @return string
      */
-    protected function compileSelected($condition)
+    protected function compileSelected($condition): string
     {
         return "<?php if{$condition}: echo 'selected'; endif; ?>";
     }
@@ -386,9 +341,8 @@ trait CompilesConditionals
      * Compile the push statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compilePushIf($expression)
+    protected function compilePushIf($expression): string
     {
         $parts = explode(',', $this->stripParentheses($expression));
 
@@ -408,9 +362,8 @@ trait CompilesConditionals
      * Compile the else-if push statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileElsePushIf($expression)
+    protected function compileElsePushIf($expression): string
     {
         $parts = explode(',', $this->stripParentheses($expression), 2);
 
@@ -421,19 +374,16 @@ trait CompilesConditionals
      * Compile the else push statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileElsePush($expression)
+    protected function compileElsePush($expression): string
     {
         return "<?php \$__env->stopPush(); else: \$__env->startPush{$expression}; ?>";
     }
 
     /**
      * Compile the end-push statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndPushIf()
+    protected function compileEndPushIf(): string
     {
         return '<?php $__env->stopPush(); endif; ?>';
     }

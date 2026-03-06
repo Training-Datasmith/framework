@@ -26,9 +26,8 @@ class DiscoverEvents
      *
      * @param  array<int, string>|string  $listenerPath
      * @param  string  $basePath
-     * @return array
      */
-    public static function within($listenerPath, $basePath)
+    public static function within($listenerPath, $basePath): array
     {
         if (Arr::wrap($listenerPath) === []) {
             return [];
@@ -58,9 +57,8 @@ class DiscoverEvents
      *
      * @param  iterable<string, SplFileInfo>  $listeners
      * @param  string  $basePath
-     * @return array
      */
-    protected static function getListenerEvents($listeners, $basePath)
+    protected static function getListenerEvents($listeners, $basePath): array
     {
         $listenerEvents = [];
 
@@ -78,11 +76,12 @@ class DiscoverEvents
             }
 
             foreach ($listener->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                if ((! Str::is('handle*', $method->name) && ! Str::is('__invoke', $method->name)) ||
-                    ! isset($method->getParameters()[0])) {
+                if (! Str::is('handle*', $method->name) && ! Str::is('__invoke', $method->name)) {
                     continue;
                 }
-
+                if (! isset($method->getParameters()[0])) {
+                    continue;
+                }
                 $listenerEvents[$listener->name.'@'.$method->name] =
                                 Reflector::getParameterClassNames($method->getParameters()[0]);
             }
@@ -94,11 +93,10 @@ class DiscoverEvents
     /**
      * Extract the class name from the given file path.
      *
-     * @param  \SplFileInfo  $file
      * @param  string  $basePath
      * @return class-string
      */
-    protected static function classFromFile(SplFileInfo $file, $basePath)
+    protected static function classFromFile(SplFileInfo $file, $basePath): string
     {
         if (static::$guessClassNamesUsingCallback) {
             return call_user_func(static::$guessClassNamesUsingCallback, $file, $basePath);
@@ -117,9 +115,8 @@ class DiscoverEvents
      * Specify a callback to be used to guess class names.
      *
      * @param  callable(SplFileInfo, string): class-string  $callback
-     * @return void
      */
-    public static function guessClassNamesUsing(callable $callback)
+    public static function guessClassNamesUsing(callable $callback): void
     {
         static::$guessClassNamesUsingCallback = $callback;
     }

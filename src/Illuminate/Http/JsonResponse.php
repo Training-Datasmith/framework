@@ -33,8 +33,6 @@ class JsonResponse extends BaseJsonResponse
 
     /**
      * {@inheritdoc}
-     *
-     * @return static
      */
     #[\Override]
     public static function fromJsonString(?string $data = null, int $status = 200, array $headers = []): static
@@ -68,7 +66,6 @@ class JsonResponse extends BaseJsonResponse
     /**
      * {@inheritdoc}
      *
-     * @return static
      *
      * @throws \InvalidArgumentException
      */
@@ -116,8 +113,6 @@ class JsonResponse extends BaseJsonResponse
 
     /**
      * {@inheritdoc}
-     *
-     * @return static
      */
     #[\Override]
     public function setEncodingOptions($options): static

@@ -15,27 +15,6 @@ class CliDumper extends BaseCliDumper
     use ResolvesDumpSource;
 
     /**
-     * The base path of the application.
-     *
-     * @var string
-     */
-    protected $basePath;
-
-    /**
-     * The output instance.
-     *
-     * @var \Symfony\Component\Console\Output\OutputInterface
-     */
-    protected $output;
-
-    /**
-     * The compiled view path for the application.
-     *
-     * @var string
-     */
-    protected $compiledViewPath;
-
-    /**
      * If the dumper is currently dumping.
      *
      * @var bool
@@ -49,13 +28,18 @@ class CliDumper extends BaseCliDumper
      * @param  string  $basePath
      * @param  string  $compiledViewPath
      */
-    public function __construct($output, $basePath, $compiledViewPath)
+    public function __construct(/**
+     * The output instance.
+     */
+    protected $output, /**
+     * The base path of the application.
+     */
+    protected $basePath, /**
+     * The compiled view path for the application.
+     */
+    protected $compiledViewPath)
     {
         parent::__construct();
-
-        $this->basePath = $basePath;
-        $this->output = $output;
-        $this->compiledViewPath = $compiledViewPath;
 
         $this->setColors($this->supportsColors());
     }
@@ -65,9 +49,8 @@ class CliDumper extends BaseCliDumper
      *
      * @param  string  $basePath
      * @param  string  $compiledViewPath
-     * @return void
      */
-    public static function register($basePath, $compiledViewPath)
+    public static function register($basePath, $compiledViewPath): void
     {
         $cloner = tap(new VarCloner())->addCasters(ReflectionCaster::UNSET_CLOSURE_FILE_INFO);
 
@@ -78,11 +61,8 @@ class CliDumper extends BaseCliDumper
 
     /**
      * Dump a variable with its source file / line.
-     *
-     * @param  \Symfony\Component\VarDumper\Cloner\Data  $data
-     * @return void
      */
-    public function dumpWithSource(Data $data)
+    public function dumpWithSource(Data $data): void
     {
         if ($this->dumping) {
             $this->dump($data);

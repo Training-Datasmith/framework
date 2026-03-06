@@ -10,13 +10,6 @@ use Illuminate\Http\Request;
 class HandleCors
 {
     /**
-     * The container instance.
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $container;
-
-    /**
      * The CORS service instance.
      *
      * @var \Fruitcake\Cors\CorsService
@@ -32,13 +25,12 @@ class HandleCors
 
     /**
      * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
-     * @param  \Fruitcake\Cors\CorsService  $cors
      */
-    public function __construct(Container $container, CorsService $cors)
+    public function __construct(/**
+     * The container instance.
+     */
+    protected \Illuminate\Contracts\Container\Container $container, CorsService $cors)
     {
-        $this->container = $container;
         $this->cors = $cors;
     }
 
@@ -46,7 +38,6 @@ class HandleCors
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return \Illuminate\Http\Response
      */
     public function handle($request, Closure $next)
@@ -82,9 +73,6 @@ class HandleCors
 
     /**
      * Get the path from the configuration to determine if the CORS service should run.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return bool
      */
     protected function hasMatchingPath(Request $request): bool
     {
@@ -92,7 +80,7 @@ class HandleCors
 
         foreach ($paths as $path) {
             if ($path !== '/') {
-                $path = trim($path, '/');
+                $path = trim((string) $path, '/');
             }
 
             if ($request->fullUrlIs($path) || $request->is($path)) {
@@ -106,39 +94,27 @@ class HandleCors
     /**
      * Get the CORS paths for the given host.
      *
-     * @param  string  $host
      * @return array
      */
     protected function getPathsByHost(string $host)
     {
         $paths = $this->container['config']->get('cors.paths', []);
 
-        if (isset($paths[$host])) {
-            return $paths[$host];
-        }
-
-        return array_filter($paths, function ($path) {
-            return is_string($path);
-        });
+        return $paths[$host] ?? array_filter($paths, fn($path) => is_string($path));
     }
 
     /**
      * Register a callback that instructs the middleware to be skipped.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
-    public static function skipWhen(Closure $callback)
+    public static function skipWhen(Closure $callback): void
     {
         static::$skipCallbacks[] = $callback;
     }
 
     /**
      * Flush the middleware's global state.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$skipCallbacks = [];
     }

@@ -12,19 +12,15 @@ class MySqlProcessor extends Processor
      * @deprecated Will be removed in a future Laravel version.
      *
      * @param  array  $results
-     * @return array
      */
-    public function processColumnListing($results)
+    public function processColumnListing($results): array
     {
-        return array_map(function ($result) {
-            return ((object) $result)->column_name;
-        }, $results);
+        return array_map(fn($result) => ((object) $result)->column_name, $results);
     }
 
     /**
      * Process an  "insert get ID" query.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  string  $sql
      * @param  array  $values
      * @param  string|null  $sequence
@@ -40,9 +36,9 @@ class MySqlProcessor extends Processor
     }
 
     /** @inheritDoc */
-    public function processColumns($results)
+    public function processColumns($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
@@ -67,15 +63,15 @@ class MySqlProcessor extends Processor
     }
 
     /** @inheritDoc */
-    public function processIndexes($results)
+    public function processIndexes($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
-                'name' => $name = strtolower($result->name),
-                'columns' => $result->columns ? explode(',', $result->columns) : [],
-                'type' => strtolower($result->type),
+                'name' => $name = strtolower((string) $result->name),
+                'columns' => $result->columns ? explode(',', (string) $result->columns) : [],
+                'type' => strtolower((string) $result->type),
                 'unique' => (bool) $result->unique,
                 'primary' => $name === 'primary',
             ];
@@ -83,19 +79,19 @@ class MySqlProcessor extends Processor
     }
 
     /** @inheritDoc */
-    public function processForeignKeys($results)
+    public function processForeignKeys($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
                 'name' => $result->name,
-                'columns' => explode(',', $result->columns),
+                'columns' => explode(',', (string) $result->columns),
                 'foreign_schema' => $result->foreign_schema,
                 'foreign_table' => $result->foreign_table,
-                'foreign_columns' => explode(',', $result->foreign_columns),
-                'on_update' => strtolower($result->on_update),
-                'on_delete' => strtolower($result->on_delete),
+                'foreign_columns' => explode(',', (string) $result->foreign_columns),
+                'on_update' => strtolower((string) $result->on_update),
+                'on_delete' => strtolower((string) $result->on_delete),
             ];
         }, $results);
     }

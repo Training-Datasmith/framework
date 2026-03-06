@@ -23,10 +23,8 @@ trait Macroable
      * @param  object|callable  $macro
      *
      * @param-closure-this static  $macro
-     *
-     * @return void
      */
-    public static function macro($name, $macro)
+    public static function macro($name, $macro): void
     {
         static::$macros[$name] = $macro;
     }
@@ -36,11 +34,10 @@ trait Macroable
      *
      * @param  object  $mixin
      * @param  bool  $replace
-     * @return void
      *
      * @throws \ReflectionException
      */
-    public static function mixin($mixin, $replace = true)
+    public static function mixin($mixin, $replace = true): void
     {
         $methods = (new ReflectionClass($mixin))->getMethods(
             ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
@@ -57,19 +54,16 @@ trait Macroable
      * Checks if macro is registered.
      *
      * @param  string  $name
-     * @return bool
      */
-    public static function hasMacro($name)
+    public static function hasMacro($name): bool
     {
         return isset(static::$macros[$name]);
     }
 
     /**
      * Flush the existing macros.
-     *
-     * @return void
      */
-    public static function flushMacros()
+    public static function flushMacros(): void
     {
         static::$macros = [];
     }

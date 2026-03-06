@@ -13,20 +13,15 @@ use Symfony\Component\Mime\RawMessage;
 class LogTransport implements Stringable, TransportInterface
 {
     /**
-     * The Logger instance.
-     *
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * Create a new log transport instance.
-     *
-     * @param  \Psr\Log\LoggerInterface  $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(
+        /**
+         * The Logger instance.
+         */
+        protected \Psr\Log\LoggerInterface $logger
+    )
     {
-        $this->logger = $logger;
     }
 
     /**
@@ -58,11 +53,8 @@ class LogTransport implements Stringable, TransportInterface
 
     /**
      * Decode the given quoted printable content.
-     *
-     * @param  string  $part
-     * @return string
      */
-    protected function decodeQuotedPrintableContent(string $part)
+    protected function decodeQuotedPrintableContent(string $part): string
     {
         if (! str_contains($part, 'Content-Transfer-Encoding: quoted-printable')) {
             return $part;
@@ -88,8 +80,6 @@ class LogTransport implements Stringable, TransportInterface
 
     /**
      * Get the string representation of the transport.
-     *
-     * @return string
      */
     public function __toString(): string
     {

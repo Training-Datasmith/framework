@@ -33,9 +33,8 @@ class ArrayLoader implements Loader
      *
      * @param  string  $namespace
      * @param  string  $hint
-     * @return void
      */
-    public function addNamespace($namespace, $hint)
+    public function addNamespace($namespace, $hint): void
     {
         //
     }
@@ -44,9 +43,8 @@ class ArrayLoader implements Loader
      * Add a new JSON path to the loader.
      *
      * @param  string  $path
-     * @return void
      */
-    public function addJsonPath($path)
+    public function addJsonPath($path): void
     {
         //
     }
@@ -56,11 +54,10 @@ class ArrayLoader implements Loader
      *
      * @param  string  $locale
      * @param  string  $group
-     * @param  array  $messages
      * @param  string|null  $namespace
      * @return $this
      */
-    public function addMessages($locale, $group, array $messages, $namespace = null)
+    public function addMessages($locale, $group, array $messages, $namespace = null): static
     {
         $namespace = $namespace ?: '*';
 
@@ -71,10 +68,8 @@ class ArrayLoader implements Loader
 
     /**
      * Get an array of all the registered namespaces.
-     *
-     * @return array
      */
-    public function namespaces()
+    public function namespaces(): array
     {
         return [];
     }

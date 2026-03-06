@@ -12,20 +12,15 @@ abstract class Grammar
     use Macroable;
 
     /**
-     * The connection used for escaping values.
-     *
-     * @var \Illuminate\Database\Connection
-     */
-    protected $connection;
-
-    /**
      * Create a new grammar instance.
-     *
-     * @param  \Illuminate\Database\Connection  $connection
      */
-    public function __construct(Connection $connection)
+    public function __construct(
+        /**
+         * The connection used for escaping values.
+         */
+        protected \Illuminate\Database\Connection $connection
+    )
     {
-        $this->connection = $connection;
     }
 
     /**
@@ -141,11 +136,9 @@ abstract class Grammar
      */
     protected function wrapSegments($segments)
     {
-        return (new Collection($segments))->map(function ($segment, $key) use ($segments) {
-            return $key == 0 && count($segments) > 1
-                ? $this->wrapTable($segment)
-                : $this->wrapValue($segment);
-        })->implode('.');
+        return (new Collection($segments))->map(fn($segment, $key) => $key == 0 && count($segments) > 1
+            ? $this->wrapTable($segment)
+            : $this->wrapValue($segment))->implode('.');
     }
 
     /**

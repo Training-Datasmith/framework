@@ -23,32 +23,27 @@ use InvalidArgumentException;
 class Factory
 {
     /**
-     * The output interface implementation.
-     *
-     * @var \Illuminate\Console\OutputStyle
-     */
-    protected $output;
-
-    /**
      * Creates a new factory instance.
      *
      * @param  \Illuminate\Console\OutputStyle  $output
      */
-    public function __construct($output)
+    public function __construct(
+        /**
+         * The output interface implementation.
+         */
+        protected $output
+    )
     {
-        $this->output = $output;
     }
 
     /**
      * Dynamically handle calls into the component instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
-     *
      * @throws \InvalidArgumentException
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         $component = '\Illuminate\Console\View\Components\\'.ucfirst($method);
 

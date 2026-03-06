@@ -47,9 +47,8 @@ class UriQueryString implements Arrayable, Stringable
      *
      * @param  string|null  $key
      * @param  mixed  $default
-     * @return mixed
      */
-    protected function data($key = null, $default = null)
+    protected function data($key = null, $default = null): mixed
     {
         return $this->get($key, $default);
     }

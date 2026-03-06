@@ -23,11 +23,8 @@ class RegisterProviders
 
     /**
      * Bootstrap the given application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return void
      */
-    public function bootstrap(Application $app)
+    public function bootstrap(Application $app): void
     {
         if (! $app->bound('config_loaded_from_cache') ||
             $app->make('config_loaded_from_cache') === false) {
@@ -67,12 +64,8 @@ class RegisterProviders
 
     /**
      * Merge the given providers into the provider configuration before registration.
-     *
-     * @param  array  $providers
-     * @param  string|null  $bootstrapProviderPath
-     * @return void
      */
-    public static function merge(array $providers, ?string $bootstrapProviderPath = null)
+    public static function merge(array $providers, ?string $bootstrapProviderPath = null): void
     {
         static::$bootstrapProviderPath = $bootstrapProviderPath;
 
@@ -83,10 +76,8 @@ class RegisterProviders
 
     /**
      * Flush the bootstrapper's global state.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$bootstrapProviderPath = null;
 

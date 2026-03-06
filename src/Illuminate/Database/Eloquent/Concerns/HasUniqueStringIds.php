@@ -17,16 +17,13 @@ trait HasUniqueStringIds
      * Determine if given key is valid.
      *
      * @param  mixed  $value
-     * @return bool
      */
     abstract protected function isValidUniqueId($value): bool;
 
     /**
      * Initialize the trait.
-     *
-     * @return void
      */
-    public function initializeHasUniqueStringIds()
+    public function initializeHasUniqueStringIds(): void
     {
         $this->usesUniqueIds = true;
     }
@@ -97,12 +94,11 @@ trait HasUniqueStringIds
      *
      * @param  mixed  $value
      * @param  string|null  $field
-     * @return never
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    protected function handleInvalidUniqueId($value, $field)
+    protected function handleInvalidUniqueId($value, $field): never
     {
-        throw (new ModelNotFoundException)->setModel(get_class($this), $value);
+        throw (new ModelNotFoundException)->setModel($this::class, $value);
     }
 }

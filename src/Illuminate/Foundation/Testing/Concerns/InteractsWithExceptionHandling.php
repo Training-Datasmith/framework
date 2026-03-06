@@ -80,31 +80,23 @@ trait InteractsWithExceptionHandling
 
         $exceptionHandler = new class($this->originalExceptionHandler, $except) implements ExceptionHandler, WithoutExceptionHandlingHandler
         {
-            protected $except;
-            protected $originalHandler;
-
             /**
              * Create a new class instance.
              *
              * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $originalHandler
              * @param  list<class-string<\Throwable>>  $except
-             * @return void
              */
-            public function __construct($originalHandler, $except = [])
+            public function __construct(protected $originalHandler, protected $except = [])
             {
-                $this->except = $except;
-                $this->originalHandler = $originalHandler;
             }
 
             /**
              * Report or log an exception.
              *
-             * @param  \Throwable  $e
-             * @return void
              *
              * @throws \Exception
              */
-            public function report(Throwable $e)
+            public function report(Throwable $e): void
             {
                 //
             }
@@ -112,10 +104,9 @@ trait InteractsWithExceptionHandling
             /**
              * Determine if the exception should be reported.
              *
-             * @param  \Throwable  $e
              * @return false
              */
-            public function shouldReport(Throwable $e)
+            public function shouldReport(Throwable $e): bool
             {
                 return false;
             }
@@ -124,9 +115,7 @@ trait InteractsWithExceptionHandling
              * Render an exception into an HTTP response.
              *
              * @param  \Illuminate\Http\Request  $request
-             * @param  \Throwable  $e
              * @return \Symfony\Component\HttpFoundation\Response
-             *
              * @throws \Throwable
              */
             public function render($request, Throwable $e)
@@ -150,10 +139,8 @@ trait InteractsWithExceptionHandling
              * Render an exception to the console.
              *
              * @param  \Symfony\Component\Console\Output\OutputInterface  $output
-             * @param  \Throwable  $e
-             * @return void
              */
-            public function renderForConsole($output, Throwable $e)
+            public function renderForConsole($output, Throwable $e): void
             {
                 (new ConsoleApplication)->renderThrowable($e, $output);
             }
@@ -171,9 +158,7 @@ trait InteractsWithExceptionHandling
     /**
      * Assert that the given callback throws an exception with the given message when invoked.
      *
-     * @param  \Closure  $test
      * @param  (\Closure(\Throwable): bool)|class-string<\Throwable>  $expectedClass
-     * @param  string|null  $expectedMessage
      * @return $this
      */
     protected function assertThrows(Closure $test, string|Closure $expectedClass = Throwable::class, ?string $expectedMessage = null)
@@ -217,7 +202,6 @@ trait InteractsWithExceptionHandling
     /**
      * Assert that the given callback does not throw an exception.
      *
-     * @param  \Closure  $test
      * @return $this
      */
     protected function assertDoesntThrow(Closure $test)
@@ -229,7 +213,7 @@ trait InteractsWithExceptionHandling
         } catch (Throwable $exception) {
             $thrown = true;
 
-            $exceptionClass = get_class($exception);
+            $exceptionClass = $exception::class;
             $exceptionMessage = $exception->getMessage();
         }
 

@@ -10,10 +10,8 @@ class EncryptionServiceProvider extends ServiceProvider
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerEncrypter();
         $this->registerSerializableClosureSecurityKey();
@@ -56,13 +54,12 @@ class EncryptionServiceProvider extends ServiceProvider
     /**
      * Parse the encryption key.
      *
-     * @param  array  $config
      * @return string
      */
     protected function parseKey(array $config)
     {
         if (Str::startsWith($key = $this->key($config), $prefix = 'base64:')) {
-            $key = base64_decode(Str::after($key, $prefix));
+            return base64_decode(Str::after($key, $prefix));
         }
 
         return $key;
@@ -71,14 +68,12 @@ class EncryptionServiceProvider extends ServiceProvider
     /**
      * Extract the encryption key from the given configuration.
      *
-     * @param  array  $config
      * @return string
-     *
      * @throws \Illuminate\Encryption\MissingAppKeyException
      */
     protected function key(array $config)
     {
-        return tap($config['key'], function ($key) {
+        return tap($config['key'], function ($key): void {
             if (empty($key)) {
                 throw new MissingAppKeyException;
             }

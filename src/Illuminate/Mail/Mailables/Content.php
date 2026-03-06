@@ -32,13 +32,6 @@ class Content
     public $text;
 
     /**
-     * The Blade view that represents the Markdown version of the message.
-     *
-     * @var string|null
-     */
-    public $markdown;
-
-    /**
      * The pre-rendered HTML of the message.
      *
      * @var string|null
@@ -55,21 +48,18 @@ class Content
     /**
      * Create a new content definition.
      *
-     * @param  string|null  $view
-     * @param  string|null  $html
-     * @param  string|null  $text
      * @param  string|null  $markdown
-     * @param  array  $with
-     * @param  string|null  $htmlString
      *
      * @named-arguments-supported
      */
-    public function __construct(?string $view = null, ?string $html = null, ?string $text = null, $markdown = null, array $with = [], ?string $htmlString = null)
+    public function __construct(?string $view = null, ?string $html = null, ?string $text = null, /**
+     * The Blade view that represents the Markdown version of the message.
+     */
+    public $markdown = null, array $with = [], ?string $htmlString = null)
     {
         $this->view = $view;
         $this->html = $html;
         $this->text = $text;
-        $this->markdown = $markdown;
         $this->with = $with;
         $this->htmlString = $htmlString;
     }
@@ -77,10 +67,9 @@ class Content
     /**
      * Set the view for the message.
      *
-     * @param  string  $view
      * @return $this
      */
-    public function view(string $view)
+    public function view(string $view): static
     {
         $this->view = $view;
 
@@ -90,7 +79,6 @@ class Content
     /**
      * Set the view for the message.
      *
-     * @param  string  $view
      * @return $this
      */
     public function html(string $view)
@@ -101,10 +89,9 @@ class Content
     /**
      * Set the plain text view for the message.
      *
-     * @param  string  $view
      * @return $this
      */
-    public function text(string $view)
+    public function text(string $view): static
     {
         $this->text = $view;
 
@@ -114,10 +101,9 @@ class Content
     /**
      * Set the Markdown view for the message.
      *
-     * @param  string  $view
      * @return $this
      */
-    public function markdown(string $view)
+    public function markdown(string $view): static
     {
         $this->markdown = $view;
 
@@ -127,10 +113,9 @@ class Content
     /**
      * Set the pre-rendered HTML for the message.
      *
-     * @param  string  $html
      * @return $this
      */
-    public function htmlString(string $html)
+    public function htmlString(string $html): static
     {
         $this->htmlString = $html;
 
@@ -144,7 +129,7 @@ class Content
      * @param  mixed  $value
      * @return $this
      */
-    public function with($key, $value = null)
+    public function with($key, $value = null): static
     {
         if (is_array($key)) {
             $this->with = array_merge($this->with, $key);

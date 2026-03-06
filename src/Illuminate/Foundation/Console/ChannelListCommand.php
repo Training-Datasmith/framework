@@ -36,7 +36,6 @@ class ChannelListCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param  \Illuminate\Contracts\Broadcasting\Broadcaster  $broadcaster
      * @return void
      */
     public function handle(Broadcaster $broadcaster)
@@ -74,15 +73,13 @@ class ChannelListCommand extends Command
      */
     protected function forCli($channels)
     {
-        $maxChannelName = $channels->keys()->max(function ($channelName) {
-            return mb_strlen($channelName);
-        });
+        $maxChannelName = $channels->keys()->max(fn($channelName) => mb_strlen((string) $channelName));
 
-        $terminalWidth = $this->getTerminalWidth();
+        $terminalWidth = static::getTerminalWidth();
 
         $channelCount = $this->determineChannelCountOutput($channels, $terminalWidth);
 
-        return $channels->map(function ($channel, $channelName) use ($maxChannelName, $terminalWidth) {
+        return $channels->map(function ($channel, string $channelName) use ($maxChannelName, $terminalWidth): string {
             $resolver = $channel instanceof Closure ? 'Closure' : $channel;
 
             $spaces = str_repeat(' ', max($maxChannelName + 6 - mb_strlen($channelName), 0));
@@ -113,9 +110,8 @@ class ChannelListCommand extends Command
      *
      * @param  \Illuminate\Support\Collection  $channels
      * @param  int  $terminalWidth
-     * @return string
      */
-    protected function determineChannelCountOutput($channels, $terminalWidth)
+    protected function determineChannelCountOutput($channels, $terminalWidth): string
     {
         $channelCountText = 'Showing ['.$channels->count().'] private channels';
 
@@ -142,9 +138,8 @@ class ChannelListCommand extends Command
      * Set a callback that should be used when resolving the terminal width.
      *
      * @param  \Closure|null  $resolver
-     * @return void
      */
-    public static function resolveTerminalWidthUsing($resolver)
+    public static function resolveTerminalWidthUsing($resolver): void
     {
         static::$terminalWidthResolver = $resolver;
     }

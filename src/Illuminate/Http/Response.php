@@ -23,7 +23,6 @@ class Response extends SymfonyResponse
      *
      * @param  mixed  $content
      * @param  int  $status
-     * @param  array  $headers
      *
      * @throws \InvalidArgumentException
      */
@@ -42,15 +41,13 @@ class Response extends SymfonyResponse
     #[\Override]
     public function getContent(): string|false
     {
-        return transform(parent::getContent(), fn ($content) => $content, '');
+        return transform(parent::getContent(), fn ($content): mixed => $content, '');
     }
 
     /**
      * Set the content on the response.
      *
-     * @param  mixed  $content
      * @return $this
-     *
      * @throws \InvalidArgumentException
      */
     #[\Override]
@@ -108,7 +105,8 @@ class Response extends SymfonyResponse
     {
         if ($content instanceof Jsonable) {
             return $content->toJson();
-        } elseif ($content instanceof Arrayable) {
+        }
+        if ($content instanceof Arrayable) {
             return json_encode($content->toArray());
         }
 

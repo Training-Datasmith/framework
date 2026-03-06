@@ -13,8 +13,6 @@ class ControllerMiddlewareOptions
 
     /**
      * Create a new middleware option instance.
-     *
-     * @param  array  $options
      */
     public function __construct(array &$options)
     {
@@ -27,7 +25,7 @@ class ControllerMiddlewareOptions
      * @param  mixed  $methods
      * @return $this
      */
-    public function only($methods)
+    public function only($methods): static
     {
         $this->options['only'] = is_array($methods) ? $methods : func_get_args();
 
@@ -40,7 +38,7 @@ class ControllerMiddlewareOptions
      * @param  mixed  $methods
      * @return $this
      */
-    public function except($methods)
+    public function except($methods): static
     {
         $this->options['except'] = is_array($methods) ? $methods : func_get_args();
 

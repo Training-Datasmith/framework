@@ -47,9 +47,8 @@ trait AuthorizesRequests
      *
      * @param  mixed  $ability
      * @param  mixed  $arguments
-     * @return array
      */
-    protected function parseAbilityAndArguments($ability, $arguments)
+    protected function parseAbilityAndArguments($ability, $arguments): array
     {
         $ability = enum_value($ability);
 
@@ -80,11 +79,9 @@ trait AuthorizesRequests
      *
      * @param  string|array  $model
      * @param  string|array|null  $parameter
-     * @param  array  $options
      * @param  \Illuminate\Http\Request|null  $request
-     * @return void
      */
-    public function authorizeResource($model, $parameter = null, array $options = [], $request = null)
+    public function authorizeResource($model, $parameter = null, array $options = [], $request = null): void
     {
         $model = is_array($model) ? implode(',', $model) : $model;
 
@@ -110,7 +107,7 @@ trait AuthorizesRequests
      *
      * @return array<string, string>
      */
-    protected function resourceAbilityMap()
+    protected function resourceAbilityMap(): array
     {
         return [
             'index' => 'viewAny',
@@ -128,7 +125,7 @@ trait AuthorizesRequests
      *
      * @return list<string>
      */
-    protected function resourceMethodsWithoutModels()
+    protected function resourceMethodsWithoutModels(): array
     {
         return ['index', 'create', 'store'];
     }

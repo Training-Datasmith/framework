@@ -125,7 +125,6 @@ class UploadedFile extends SymfonyUploadedFile
     /**
      * Create a new file instance from a base instance.
      *
-     * @param  \Symfony\Component\HttpFoundation\File\UploadedFile  $file
      * @param  bool  $test
      * @return static
      */
@@ -149,7 +148,7 @@ class UploadedFile extends SymfonyUploadedFile
     protected function parseOptions($options)
     {
         if (is_string($options)) {
-            $options = ['disk' => $options];
+            return ['disk' => $options];
         }
 
         return $options;

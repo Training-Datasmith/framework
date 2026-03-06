@@ -32,10 +32,8 @@ class SeederMakeCommand extends GeneratorCommand
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         parent::handle();
     }
@@ -53,10 +51,9 @@ class SeederMakeCommand extends GeneratorCommand
     /**
      * Resolve the fully-qualified path to the stub.
      *
-     * @param  string  $stub
      * @return string
      */
-    protected function resolveStubPath($stub)
+    protected function resolveStubPath(string $stub)
     {
         return is_file($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
@@ -67,9 +64,8 @@ class SeederMakeCommand extends GeneratorCommand
      * Get the destination class path.
      *
      * @param  string  $name
-     * @return string
      */
-    protected function getPath($name)
+    protected function getPath($name): string
     {
         $name = str_replace('\\', '/', Str::replaceFirst($this->rootNamespace(), '', $name));
 
@@ -82,10 +78,8 @@ class SeederMakeCommand extends GeneratorCommand
 
     /**
      * Get the root namespace for the class.
-     *
-     * @return string
      */
-    protected function rootNamespace()
+    protected function rootNamespace(): string
     {
         return 'Database\Seeders\\';
     }

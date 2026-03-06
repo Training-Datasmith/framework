@@ -55,7 +55,7 @@ class Event extends Facade
             ? static::getFacadeRoot()->dispatcher
             : static::getFacadeRoot();
 
-        return tap(new EventFake($actualDispatcher, $eventsToFake), function ($fake) {
+        return tap(new EventFake($actualDispatcher, $eventsToFake), function ($fake): void {
             static::swap($fake);
 
             Model::setEventDispatcher($fake);
@@ -72,17 +72,13 @@ class Event extends Facade
     public static function fakeExcept($eventsToAllow)
     {
         return static::fake([
-            function ($eventName) use ($eventsToAllow) {
-                return ! in_array($eventName, (array) $eventsToAllow);
-            },
+            fn($eventName) => ! in_array($eventName, (array) $eventsToAllow),
         ]);
     }
 
     /**
      * Replace the bound instance with a fake during the given callable's execution.
      *
-     * @param  callable  $callable
-     * @param  array  $eventsToFake
      * @return mixed
      */
     public static function fakeFor(callable $callable, array $eventsToFake = [])
@@ -104,8 +100,6 @@ class Event extends Facade
     /**
      * Replace the bound instance with a fake during the given callable's execution.
      *
-     * @param  callable  $callable
-     * @param  array  $eventsToAllow
      * @return mixed
      */
     public static function fakeExceptFor(callable $callable, array $eventsToAllow = [])
@@ -126,10 +120,8 @@ class Event extends Facade
 
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'events';
     }

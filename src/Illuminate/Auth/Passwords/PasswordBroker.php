@@ -15,68 +15,38 @@ use UnexpectedValueException;
 class PasswordBroker implements PasswordBrokerContract
 {
     /**
-     * The password token repository.
-     *
-     * @var \Illuminate\Auth\Passwords\TokenRepositoryInterface
-     */
-    protected $tokens;
-
-    /**
-     * The user provider implementation.
-     *
-     * @var \Illuminate\Contracts\Auth\UserProvider
-     */
-    protected $users;
-
-    /**
-     * The event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher|null
-     */
-    protected $events;
-
-    /**
      * The timebox instance.
-     *
-     * @var \Illuminate\Support\Timebox
      */
-    protected $timebox;
-
-    /**
-     * The number of microseconds that the timebox should wait for.
-     *
-     * @var int
-     */
-    protected $timeboxDuration;
+    protected \Illuminate\Support\Timebox $timebox;
 
     /**
      * Create a new password broker instance.
-     *
-     * @param  \Illuminate\Auth\Passwords\TokenRepositoryInterface  $tokens
-     * @param  \Illuminate\Contracts\Auth\UserProvider  $users
-     * @param  \Illuminate\Contracts\Events\Dispatcher|null  $dispatcher
-     * @param  \Illuminate\Support\Timebox|null  $timebox
-     * @param  int  $timeboxDuration
      */
     public function __construct(
-        #[\SensitiveParameter] TokenRepositoryInterface $tokens,
-        UserProvider $users,
-        ?Dispatcher $dispatcher = null,
+        /**
+         * The password token repository.
+         */
+        #[\SensitiveParameter] protected \Illuminate\Auth\Passwords\TokenRepositoryInterface $tokens,
+        /**
+         * The user provider implementation.
+         */
+        protected \Illuminate\Contracts\Auth\UserProvider $users,
+        /**
+         * The event dispatcher instance.
+         */
+        protected ?\Illuminate\Contracts\Events\Dispatcher $events = null,
         ?Timebox $timebox = null,
-        int $timeboxDuration = 200000,
+        /**
+         * The number of microseconds that the timebox should wait for.
+         */
+        protected int $timeboxDuration = 200000,
     ) {
-        $this->users = $users;
-        $this->tokens = $tokens;
-        $this->events = $dispatcher;
         $this->timebox = $timebox ?: new Timebox;
-        $this->timeboxDuration = $timeboxDuration;
     }
 
     /**
      * Send a password reset link to a user.
      *
-     * @param  array  $credentials
-     * @param  \Closure|null  $callback
      * @return string
      */
     public function sendResetLink(#[\SensitiveParameter] array $credentials, ?Closure $callback = null)
@@ -115,8 +85,6 @@ class PasswordBroker implements PasswordBrokerContract
     /**
      * Reset the password for the given token.
      *
-     * @param  array  $credentials
-     * @param  \Closure  $callback
      * @return string
      */
     public function reset(#[\SensitiveParameter] array $credentials, Closure $callback)
@@ -149,7 +117,6 @@ class PasswordBroker implements PasswordBrokerContract
     /**
      * Validate a password reset for the given credentials.
      *
-     * @param  array  $credentials
      * @return \Illuminate\Contracts\Auth\CanResetPassword|string
      */
     protected function validateReset(#[\SensitiveParameter] array $credentials)
@@ -168,12 +135,10 @@ class PasswordBroker implements PasswordBrokerContract
     /**
      * Get the user for the given credentials.
      *
-     * @param  array  $credentials
-     * @return \Illuminate\Contracts\Auth\CanResetPassword|null
      *
      * @throws \UnexpectedValueException
      */
-    public function getUser(#[\SensitiveParameter] array $credentials)
+    public function getUser(#[\SensitiveParameter] array $credentials): ?\Illuminate\Contracts\Auth\CanResetPassword
     {
         $credentials = Arr::except($credentials, ['token']);
 
@@ -189,7 +154,6 @@ class PasswordBroker implements PasswordBrokerContract
     /**
      * Create a new password reset token for the given user.
      *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
      * @return string
      */
     public function createToken(CanResetPasswordContract $user)
@@ -199,11 +163,8 @@ class PasswordBroker implements PasswordBrokerContract
 
     /**
      * Delete password reset tokens of the given user.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
-     * @return void
      */
-    public function deleteToken(CanResetPasswordContract $user)
+    public function deleteToken(CanResetPasswordContract $user): void
     {
         $this->tokens->delete($user);
     }
@@ -211,7 +172,6 @@ class PasswordBroker implements PasswordBrokerContract
     /**
      * Validate the given password reset token.
      *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
      * @param  string  $token
      * @return bool
      */

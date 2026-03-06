@@ -27,15 +27,13 @@ class OptimizeCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->components->info('Caching framework bootstrap, configuration, and metadata.');
 
         $exceptions = Collection::wrap(explode(',', $this->option('except') ?? ''))
-            ->map(fn ($except) => trim($except))
+            ->map(fn ($except): string => trim($except))
             ->filter()
             ->unique()
             ->flip();
@@ -45,7 +43,7 @@ class OptimizeCommand extends Command
             ->toArray();
 
         foreach ($tasks as $description => $command) {
-            $this->components->task($description, fn () => $this->callSilently($command) == 0);
+            $this->components->task($description, fn (): bool => $this->callSilently($command) == 0);
         }
 
         $this->newLine();
@@ -53,10 +51,8 @@ class OptimizeCommand extends Command
 
     /**
      * Get the commands that should be run to optimize the framework.
-     *
-     * @return array
      */
-    protected function getOptimizeTasks()
+    protected function getOptimizeTasks(): array
     {
         return [
             'config' => 'config:cache',
@@ -69,10 +65,8 @@ class OptimizeCommand extends Command
 
     /**
      * Get the console command arguments.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['except', 'e', InputOption::VALUE_OPTIONAL, 'Do not run the commands matching the key or name'],

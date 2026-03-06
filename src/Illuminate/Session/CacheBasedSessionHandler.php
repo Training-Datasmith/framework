@@ -8,35 +8,25 @@ use SessionHandlerInterface;
 class CacheBasedSessionHandler implements SessionHandlerInterface
 {
     /**
-     * The cache repository instance.
-     *
-     * @var \Illuminate\Contracts\Cache\Repository
-     */
-    protected $cache;
-
-    /**
-     * The number of minutes to store the data in the cache.
-     *
-     * @var int
-     */
-    protected $minutes;
-
-    /**
      * Create a new cache driven handler instance.
      *
-     * @param  \Illuminate\Contracts\Cache\Repository  $cache
      * @param  int  $minutes
      */
-    public function __construct(CacheContract $cache, $minutes)
+    public function __construct(
+        /**
+         * The cache repository instance.
+         */
+        protected \Illuminate\Contracts\Cache\Repository $cache,
+        /**
+         * The number of minutes to store the data in the cache.
+         */
+        protected $minutes
+    )
     {
-        $this->cache = $cache;
-        $this->minutes = $minutes;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function open($savePath, $sessionName): bool
     {
@@ -45,8 +35,6 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function close(): bool
     {
@@ -55,8 +43,6 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return string
      */
     public function read($sessionId): string
     {
@@ -65,8 +51,6 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function write($sessionId, $data): bool
     {
@@ -75,8 +59,6 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function destroy($sessionId): bool
     {
@@ -85,8 +67,6 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
     public function gc($lifetime): int
     {

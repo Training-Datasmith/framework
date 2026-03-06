@@ -26,10 +26,8 @@ class UpCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         try {
             if (! $this->laravel->maintenanceMode()->active()) {

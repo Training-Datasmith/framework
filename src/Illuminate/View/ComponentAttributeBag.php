@@ -31,8 +31,6 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
 
     /**
      * Create a new component attribute bag instance.
-     *
-     * @param  array  $attributes
      */
     public function __construct(array $attributes = [])
     {
@@ -97,9 +95,8 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Only include the given attribute from the attribute array.
      *
      * @param  mixed  $keys
-     * @return static
      */
-    public function only($keys)
+    public function only($keys): static
     {
         if (is_null($keys)) {
             $values = $this->attributes;
@@ -116,9 +113,8 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Exclude the given attribute from the attribute array.
      *
      * @param  mixed  $keys
-     * @return static
      */
-    public function except($keys)
+    public function except($keys): static
     {
         if (is_null($keys)) {
             $values = $this->attributes;
@@ -135,9 +131,8 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Filter the attributes, returning a bag of attributes that pass the filter.
      *
      * @param  callable  $callback
-     * @return static
      */
-    public function filter($callback)
+    public function filter(?callable $callback): static
     {
         return new static((new Collection($this->attributes))->filter($callback)->all());
     }
@@ -150,9 +145,7 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      */
     public function whereStartsWith($needles)
     {
-        return $this->filter(function ($value, $key) use ($needles) {
-            return Str::startsWith($key, $needles);
-        });
+        return $this->filter(fn($value, $key) => Str::startsWith($key, $needles));
     }
 
     /**
@@ -163,9 +156,7 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      */
     public function whereDoesntStartWith($needles)
     {
-        return $this->filter(function ($value, $key) use ($needles) {
-            return ! Str::startsWith($key, $needles);
-        });
+        return $this->filter(fn($value, $key) => ! Str::startsWith($key, $needles));
     }
 
     /**
@@ -185,7 +176,7 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * @param  mixed  $keys
      * @return static
      */
-    public function onlyProps($keys)
+    public function onlyProps(array $keys)
     {
         return $this->only(static::extractPropNames($keys));
     }
@@ -196,7 +187,7 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * @param  mixed  $keys
      * @return static
      */
-    public function exceptProps($keys)
+    public function exceptProps(array $keys)
     {
         return $this->except(static::extractPropNames($keys));
     }
@@ -230,27 +221,21 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
     /**
      * Merge additional attributes / values into the attribute bag.
      *
-     * @param  array  $attributeDefaults
      * @param  bool  $escape
-     * @return static
      */
-    public function merge(array $attributeDefaults = [], $escape = true)
+    public function merge(array $attributeDefaults = [], $escape = true): static
     {
-        $attributeDefaults = array_map(function ($value) use ($escape) {
-            return $this->shouldEscapeAttributeValue($escape, $value)
-                ? e($value)
-                : $value;
-        }, $attributeDefaults);
+        $attributeDefaults = array_map(fn($value) => $this->shouldEscapeAttributeValue($escape, $value)
+            ? e($value)
+            : $value, $attributeDefaults);
 
         [$appendableAttributes, $nonAppendableAttributes] = (new Collection($this->attributes))
-            ->partition(function ($value, $key) use ($attributeDefaults) {
-                return $key === 'class' || $key === 'style' || (
-                    isset($attributeDefaults[$key]) &&
-                    $attributeDefaults[$key] instanceof AppendableAttributeValue
-                );
-            });
+            ->partition(fn($value, $key) => $key === 'class' || $key === 'style' || (
+                isset($attributeDefaults[$key]) &&
+                $attributeDefaults[$key] instanceof AppendableAttributeValue
+            ));
 
-        $attributes = $appendableAttributes->mapWithKeys(function ($value, $key) use ($attributeDefaults, $escape) {
+        $attributes = $appendableAttributes->mapWithKeys(function ($value, $key) use ($attributeDefaults, $escape): array {
             $defaultsValue = isset($attributeDefaults[$key]) && $attributeDefaults[$key] instanceof AppendableAttributeValue
                 ? $this->resolveAppendableAttributeDefault($attributeDefaults, $key, $escape)
                 : ($attributeDefaults[$key] ?? '');
@@ -287,9 +272,8 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Create a new appendable attribute value.
      *
      * @param  mixed  $value
-     * @return \Illuminate\View\AppendableAttributeValue
      */
-    public function prepends($value)
+    public function prepends($value): \Illuminate\View\AppendableAttributeValue
     {
         return new AppendableAttributeValue($value);
     }
@@ -297,15 +281,14 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
     /**
      * Resolve an appendable attribute value default value.
      *
-     * @param  array  $attributeDefaults
      * @param  string  $key
      * @param  bool  $escape
      * @return mixed
      */
-    protected function resolveAppendableAttributeDefault($attributeDefaults, $key, $escape)
+    protected function resolveAppendableAttributeDefault(array $attributeDefaults, $key, $escape)
     {
         if ($this->shouldEscapeAttributeValue($escape, $value = $attributeDefaults[$key]->value)) {
-            $value = e($value);
+            return e($value);
         }
 
         return $value;
@@ -313,20 +296,16 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
 
     /**
      * Determine if the attribute bag is empty.
-     *
-     * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return trim((string) $this) === '';
     }
 
     /**
      * Determine if the attribute bag is not empty.
-     *
-     * @return bool
      */
-    public function isNotEmpty()
+    public function isNotEmpty(): bool
     {
         return ! $this->isEmpty();
     }
@@ -343,11 +322,8 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
 
     /**
      * Set the underlying attributes.
-     *
-     * @param  array  $attributes
-     * @return void
      */
-    public function setAttributes(array $attributes)
+    public function setAttributes(array $attributes): void
     {
         if (isset($attributes['attributes']) &&
             $attributes['attributes'] instanceof self) {
@@ -363,11 +339,8 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
 
     /**
      * Extract "prop" names from given keys.
-     *
-     * @param  array  $keys
-     * @return array
      */
-    public static function extractPropNames(array $keys)
+    public static function extractPropNames(array $keys): array
     {
         $props = [];
 
@@ -383,21 +356,16 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
 
     /**
      * Get content as a string of HTML.
-     *
-     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         return (string) $this;
     }
 
     /**
      * Merge additional attributes / values into the attribute bag.
-     *
-     * @param  array  $attributeDefaults
-     * @return \Illuminate\Support\HtmlString
      */
-    public function __invoke(array $attributeDefaults = [])
+    public function __invoke(array $attributeDefaults = []): \Illuminate\Support\HtmlString
     {
         return new HtmlString((string) $this->merge($attributeDefaults));
     }
@@ -406,7 +374,6 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Determine if the given offset exists.
      *
      * @param  string  $offset
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -417,7 +384,6 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Get the value at the given offset.
      *
      * @param  string  $offset
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -429,7 +395,6 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      *
      * @param  string  $offset
      * @param  mixed  $value
-     * @return void
      */
     public function offsetSet($offset, $value): void
     {
@@ -440,7 +405,6 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
      * Remove the value at the given offset.
      *
      * @param  string  $offset
-     * @return void
      */
     public function offsetUnset($offset): void
     {
@@ -459,8 +423,6 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
 
     /**
      * Convert the object into a JSON serializable form.
-     *
-     * @return mixed
      */
     public function jsonSerialize(): mixed
     {
@@ -479,23 +441,23 @@ class ComponentAttributeBag implements Arrayable, ArrayAccess, IteratorAggregate
 
     /**
      * Implode the attributes into a single HTML ready string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $string = '';
 
         foreach ($this->attributes as $key => $value) {
-            if ($value === false || is_null($value)) {
+            if ($value === false) {
                 continue;
             }
-
+            if (is_null($value)) {
+                continue;
+            }
             if ($value === true) {
-                $value = $key === 'x-data' || str_starts_with($key, 'wire:') ? '' : $key;
+                $value = $key === 'x-data' || str_starts_with((string) $key, 'wire:') ? '' : $key;
             }
 
-            $string .= ' '.$key.'="'.str_replace('"', '\\"', trim($value)).'"';
+            $string .= ' '.$key.'="'.str_replace('"', '\\"', trim((string) $value)).'"';
         }
 
         return trim($string);

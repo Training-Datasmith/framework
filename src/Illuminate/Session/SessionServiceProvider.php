@@ -10,20 +10,14 @@ class SessionServiceProvider extends ServiceProvider
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerSessionManager();
 
         $this->registerSessionDriver();
 
-        $this->app->singleton(StartSession::class, function ($app) {
-            return new StartSession($app->make(SessionManager::class), function () use ($app) {
-                return $app->make(CacheFactory::class);
-            });
-        });
+        $this->app->singleton(StartSession::class, fn($app) => new StartSession($app->make(SessionManager::class), fn() => $app->make(CacheFactory::class)));
     }
 
     /**
@@ -33,9 +27,7 @@ class SessionServiceProvider extends ServiceProvider
      */
     protected function registerSessionManager()
     {
-        $this->app->singleton('session', function ($app) {
-            return new SessionManager($app);
-        });
+        $this->app->singleton('session', fn($app) => new SessionManager($app));
     }
 
     /**
@@ -45,11 +37,10 @@ class SessionServiceProvider extends ServiceProvider
      */
     protected function registerSessionDriver()
     {
-        $this->app->singleton('session.store', function ($app) {
+        $this->app->singleton('session.store', 
             // First, we will create the session manager which is responsible for the
             // creation of the various session drivers when they are needed by the
             // application instance, and will resolve them on a lazy load basis.
-            return $app->make('session')->driver();
-        });
+            fn($app) => $app->make('session')->driver());
     }
 }

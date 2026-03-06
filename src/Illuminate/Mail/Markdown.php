@@ -15,13 +15,6 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 class Markdown
 {
     /**
-     * The view factory implementation.
-     *
-     * @var \Illuminate\Contracts\View\Factory
-     */
-    protected $view;
-
-    /**
      * The current theme being used when generating emails.
      *
      * @var string
@@ -44,13 +37,12 @@ class Markdown
 
     /**
      * Create a new Markdown renderer instance.
-     *
-     * @param  \Illuminate\Contracts\View\Factory  $view
-     * @param  array  $options
      */
-    public function __construct(ViewFactory $view, array $options = [])
+    public function __construct(/**
+     * The view factory implementation.
+     */
+    protected \Illuminate\Contracts\View\Factory $view, array $options = [])
     {
-        $this->view = $view;
         $this->theme = $options['theme'] ?? 'default';
         $this->loadComponentsFrom($options['paths'] ?? []);
     }
@@ -59,11 +51,9 @@ class Markdown
      * Render the Markdown template into HTML.
      *
      * @param  string  $view
-     * @param  array  $data
      * @param  \TijsVerkoyen\CssToInlineStyles\CssToInlineStyles|null  $inliner
-     * @return \Illuminate\Support\HtmlString
      */
-    public function render($view, array $data = [], $inliner = null)
+    public function render($view, array $data = [], $inliner = null): \Illuminate\Support\HtmlString
     {
         $this->view->flushFinderCache();
 
@@ -76,7 +66,7 @@ class Markdown
             'new \Illuminate\Support\EncodedHtmlString(%s)',
             function () use ($view, $data) {
                 if (static::$withSecuredEncoding === true) {
-                    EncodedHtmlString::encodeUsing(function ($value) {
+                    EncodedHtmlString::encodeUsing(function ($value): string|array {
                         $replacements = [
                             '[' => '\[',
                             '<' => '&lt;',
@@ -116,10 +106,8 @@ class Markdown
      * Render the Markdown template into text.
      *
      * @param  string  $view
-     * @param  array  $data
-     * @return \Illuminate\Support\HtmlString
      */
-    public function renderText($view, array $data = [])
+    public function renderText($view, array $data = []): \Illuminate\Support\HtmlString
     {
         $this->view->flushFinderCache();
 
@@ -128,7 +116,7 @@ class Markdown
         )->make($view, $data)->render();
 
         return new HtmlString(
-            html_entity_decode(preg_replace("/[\r\n]{2,}/", "\n\n", $contents), ENT_QUOTES, 'UTF-8')
+            html_entity_decode((string) preg_replace("/[\r\n]{2,}/", "\n\n", $contents), ENT_QUOTES, 'UTF-8')
         );
     }
 
@@ -136,10 +124,8 @@ class Markdown
      * Parse the given Markdown text into HTML.
      *
      * @param  string  $text
-     * @param  bool  $encoded
-     * @return \Illuminate\Support\HtmlString
      */
-    public static function parse($text, bool $encoded = false)
+    public static function parse($text, bool $encoded = false): \Illuminate\Support\HtmlString
     {
         if ($encoded === false) {
             return new HtmlString(static::converter()->convert($text)->getContent());
@@ -193,34 +179,24 @@ class Markdown
 
     /**
      * Get the HTML component paths.
-     *
-     * @return array
      */
-    public function htmlComponentPaths()
+    public function htmlComponentPaths(): array
     {
-        return array_map(function ($path) {
-            return $path.'/html';
-        }, $this->componentPaths());
+        return array_map(fn($path) => $path.'/html', $this->componentPaths());
     }
 
     /**
      * Get the text component paths.
-     *
-     * @return array
      */
-    public function textComponentPaths()
+    public function textComponentPaths(): array
     {
-        return array_map(function ($path) {
-            return $path.'/text';
-        }, $this->componentPaths());
+        return array_map(fn($path) => $path.'/text', $this->componentPaths());
     }
 
     /**
      * Get the component paths.
-     *
-     * @return array
      */
-    protected function componentPaths()
+    protected function componentPaths(): array
     {
         return array_unique(array_merge($this->componentPaths, [
             __DIR__.'/resources/views',
@@ -229,11 +205,8 @@ class Markdown
 
     /**
      * Register new mail component paths.
-     *
-     * @param  array  $paths
-     * @return void
      */
-    public function loadComponentsFrom(array $paths = [])
+    public function loadComponentsFrom(array $paths = []): void
     {
         $this->componentPaths = $paths;
     }
@@ -244,7 +217,7 @@ class Markdown
      * @param  string  $theme
      * @return $this
      */
-    public function theme($theme)
+    public function theme($theme): static
     {
         $this->theme = $theme;
 
@@ -263,30 +236,24 @@ class Markdown
 
     /**
      * Enable secured encoding when parsing Markdown.
-     *
-     * @return void
      */
-    public static function withSecuredEncoding()
+    public static function withSecuredEncoding(): void
     {
         static::$withSecuredEncoding = true;
     }
 
     /**
      * Disable secured encoding when parsing Markdown.
-     *
-     * @return void
      */
-    public static function withoutSecuredEncoding()
+    public static function withoutSecuredEncoding(): void
     {
         static::$withSecuredEncoding = false;
     }
 
     /**
      * Flush the class's global state.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$withSecuredEncoding = false;
     }

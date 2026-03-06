@@ -8,9 +8,8 @@ trait CompilesAuthorizations
      * Compile the can statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileCan($expression)
+    protected function compileCan($expression): string
     {
         return "<?php if (app(\Illuminate\\Contracts\\Auth\\Access\\Gate::class)->check{$expression}): ?>";
     }
@@ -19,9 +18,8 @@ trait CompilesAuthorizations
      * Compile the cannot statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileCannot($expression)
+    protected function compileCannot($expression): string
     {
         return "<?php if (app(\Illuminate\\Contracts\\Auth\\Access\\Gate::class)->denies{$expression}): ?>";
     }
@@ -30,9 +28,8 @@ trait CompilesAuthorizations
      * Compile the canany statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileCanany($expression)
+    protected function compileCanany($expression): string
     {
         return "<?php if (app(\Illuminate\\Contracts\\Auth\\Access\\Gate::class)->any{$expression}): ?>";
     }
@@ -41,9 +38,8 @@ trait CompilesAuthorizations
      * Compile the else-can statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileElsecan($expression)
+    protected function compileElsecan($expression): string
     {
         return "<?php elseif (app(\Illuminate\\Contracts\\Auth\\Access\\Gate::class)->check{$expression}): ?>";
     }
@@ -52,9 +48,8 @@ trait CompilesAuthorizations
      * Compile the else-cannot statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileElsecannot($expression)
+    protected function compileElsecannot($expression): string
     {
         return "<?php elseif (app(\Illuminate\\Contracts\\Auth\\Access\\Gate::class)->denies{$expression}): ?>";
     }
@@ -63,39 +58,32 @@ trait CompilesAuthorizations
      * Compile the else-canany statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileElsecanany($expression)
+    protected function compileElsecanany($expression): string
     {
         return "<?php elseif (app(\Illuminate\\Contracts\\Auth\\Access\\Gate::class)->any{$expression}): ?>";
     }
 
     /**
      * Compile the end-can statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndcan()
+    protected function compileEndcan(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the end-cannot statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndcannot()
+    protected function compileEndcannot(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the end-canany statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndcanany()
+    protected function compileEndcanany(): string
     {
         return '<?php endif; ?>';
     }

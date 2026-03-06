@@ -25,13 +25,6 @@ class Factory
     }
 
     /**
-     * The event dispatcher implementation.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher|null
-     */
-    protected $dispatcher;
-
-    /**
      * The middleware to apply to every request.
      *
      * @var array
@@ -47,10 +40,8 @@ class Factory
 
     /**
      * The stub callables that will handle requests.
-     *
-     * @var \Illuminate\Support\Collection
      */
-    protected $stubCallbacks;
+    protected \Illuminate\Support\Collection $stubCallbacks;
 
     /**
      * Indicates if the factory is recording requests and responses.
@@ -89,13 +80,12 @@ class Factory
 
     /**
      * Create a new factory instance.
-     *
-     * @param  \Illuminate\Contracts\Events\Dispatcher|null  $dispatcher
      */
-    public function __construct(?Dispatcher $dispatcher = null)
+    public function __construct(/**
+     * The event dispatcher implementation.
+     */
+    protected ?\Illuminate\Contracts\Events\Dispatcher $dispatcher = null)
     {
-        $this->dispatcher = $dispatcher;
-
         $this->stubCallbacks = new Collection;
     }
 
@@ -105,7 +95,7 @@ class Factory
      * @param  callable  $middleware
      * @return $this
      */
-    public function globalMiddleware($middleware)
+    public function globalMiddleware($middleware): static
     {
         $this->globalMiddleware[] = $middleware;
 
@@ -118,7 +108,7 @@ class Factory
      * @param  callable  $middleware
      * @return $this
      */
-    public function globalRequestMiddleware($middleware)
+    public function globalRequestMiddleware($middleware): static
     {
         $this->globalMiddleware[] = Middleware::mapRequest($middleware);
 
@@ -131,7 +121,7 @@ class Factory
      * @param  callable  $middleware
      * @return $this
      */
-    public function globalResponseMiddleware($middleware)
+    public function globalResponseMiddleware($middleware): static
     {
         $this->globalMiddleware[] = Middleware::mapResponse($middleware);
 
@@ -144,7 +134,7 @@ class Factory
      * @param  \Closure|array  $options
      * @return $this
      */
-    public function globalOptions($options)
+    public function globalOptions($options): static
     {
         $this->globalOptions = $options;
 
@@ -174,7 +164,7 @@ class Factory
      * @param  array<string, mixed>  $headers
      * @return \GuzzleHttp\Psr7\Response
      */
-    public static function psr7Response($body = null, $status = 200, $headers = [])
+    public static function psr7Response($body = null, $status = 200, array $headers = [])
     {
         if (is_array($body)) {
             $body = json_encode($body);
@@ -191,9 +181,8 @@ class Factory
      * @param  array|string|null  $body
      * @param  int  $status
      * @param  array<string, mixed>  $headers
-     * @return \Illuminate\Http\Client\RequestException
      */
-    public static function failedRequest($body = null, $status = 200, $headers = [])
+    public static function failedRequest($body = null, $status = 200, $headers = []): \Illuminate\Http\Client\RequestException
     {
         return new RequestException(new Response(static::psr7Response($body, $status, $headers)));
     }
@@ -206,18 +195,15 @@ class Factory
      */
     public static function failedConnection($message = null)
     {
-        return function ($request) use ($message) {
-            return Create::rejectionFor(new ConnectException(
-                $message ?? "cURL error 6: Could not resolve host: {$request->toPsrRequest()->getUri()->getHost()} (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for {$request->toPsrRequest()->getUri()}.",
-                $request->toPsrRequest(),
-            ));
-        };
+        return fn($request) => Create::rejectionFor(new ConnectException(
+            $message ?? "cURL error 6: Could not resolve host: {$request->toPsrRequest()->getUri()->getHost()} (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for {$request->toPsrRequest()->getUri()}.",
+            $request->toPsrRequest(),
+        ));
     }
 
     /**
      * Get an invokable object that returns a sequence of responses in order for use during stubbing.
      *
-     * @param  array  $responses
      * @return \Illuminate\Http\Client\ResponseSequence
      */
     public function sequence(array $responses = [])
@@ -231,16 +217,14 @@ class Factory
      * @param  callable|array<string, mixed>|null  $callback
      * @return $this
      */
-    public function fake($callback = null)
+    public function fake($callback = null): static
     {
         $this->record();
 
         $this->recorded = [];
 
         if (is_null($callback)) {
-            $callback = function () {
-                return static::response();
-            };
+            $callback = (fn() => static::response());
         }
 
         if (is_array($callback)) {
@@ -252,7 +236,7 @@ class Factory
         }
 
         $this->stubCallbacks = $this->stubCallbacks->merge(new Collection([
-            function ($request, $options) use ($callback) {
+            function ($request, array $options) use ($callback) {
                 $response = $callback;
 
                 while ($response instanceof Closure) {
@@ -281,7 +265,7 @@ class Factory
      */
     public function fakeSequence($url = '*')
     {
-        return tap($this->sequence(), function ($sequence) use ($url) {
+        return tap($this->sequence(), function ($sequence) use ($url): void {
             $this->fake([$url => $sequence]);
         });
     }
@@ -322,7 +306,7 @@ class Factory
      * @param  bool  $prevent
      * @return $this
      */
-    public function preventStrayRequests($prevent = true)
+    public function preventStrayRequests($prevent = true): static
     {
         $this->preventStrayRequests = $prevent;
 
@@ -345,7 +329,7 @@ class Factory
      * @param  array<int, string>|null  $only
      * @return $this
      */
-    public function allowStrayRequests(?array $only = null)
+    public function allowStrayRequests(?array $only = null): static
     {
         if (is_null($only)) {
             $this->preventStrayRequests(false);
@@ -363,7 +347,7 @@ class Factory
      *
      * @return $this
      */
-    public function record()
+    public function record(): static
     {
         $this->recording = true;
 
@@ -375,9 +359,8 @@ class Factory
      *
      * @param  \Illuminate\Http\Client\Request  $request
      * @param  \Illuminate\Http\Client\Response|null  $response
-     * @return void
      */
-    public function recordRequestResponsePair($request, $response)
+    public function recordRequestResponsePair($request, $response): void
     {
         if ($this->recording) {
             $this->recorded[] = [$request, $response];
@@ -388,9 +371,8 @@ class Factory
      * Assert that a request / response pair was recorded matching a given truth test.
      *
      * @param  callable|(\Closure(\Illuminate\Http\Client\Request, \Illuminate\Http\Client\Response|null): bool)  $callback
-     * @return void
      */
-    public function assertSent($callback)
+    public function assertSent($callback): void
     {
         PHPUnit::assertTrue(
             $this->recorded($callback)->count() > 0,
@@ -402,16 +384,13 @@ class Factory
      * Assert that the given request was sent in the given order.
      *
      * @param  list<string|(\Closure(\Illuminate\Http\Client\Request, \Illuminate\Http\Client\Response|null): bool)|callable>  $callbacks
-     * @return void
      */
-    public function assertSentInOrder($callbacks)
+    public function assertSentInOrder($callbacks): void
     {
         $this->assertSentCount(count($callbacks));
 
         foreach ($callbacks as $index => $url) {
-            $callback = is_callable($url) ? $url : function ($request) use ($url) {
-                return $request->url() == $url;
-            };
+            $callback = is_callable($url) ? $url : (fn($request) => $request->url() == $url);
 
             PHPUnit::assertTrue($callback(
                 $this->recorded[$index][0],
@@ -424,9 +403,8 @@ class Factory
      * Assert that a request / response pair was not recorded matching a given truth test.
      *
      * @param  callable|(\Closure(\Illuminate\Http\Client\Request, \Illuminate\Http\Client\Response|null): bool)  $callback
-     * @return void
      */
-    public function assertNotSent($callback)
+    public function assertNotSent($callback): void
     {
         PHPUnit::assertFalse(
             $this->recorded($callback)->count() > 0,
@@ -436,10 +414,8 @@ class Factory
 
     /**
      * Assert that no request / response pair was recorded.
-     *
-     * @return void
      */
-    public function assertNothingSent()
+    public function assertNothingSent(): void
     {
         PHPUnit::assertEmpty(
             $this->recorded,
@@ -451,19 +427,16 @@ class Factory
      * Assert how many requests have been recorded.
      *
      * @param  int  $count
-     * @return void
      */
-    public function assertSentCount($count)
+    public function assertSentCount($count): void
     {
         PHPUnit::assertCount($count, $this->recorded);
     }
 
     /**
      * Assert that every created response sequence is empty.
-     *
-     * @return void
      */
-    public function assertSequencesAreEmpty()
+    public function assertSequencesAreEmpty(): void
     {
         foreach ($this->responseSequences as $responseSequence) {
             PHPUnit::assertTrue(
@@ -479,7 +452,7 @@ class Factory
      * @param  (\Closure(\Illuminate\Http\Client\Request, \Illuminate\Http\Client\Response|null): bool)|callable  $callback
      * @return \Illuminate\Support\Collection<int, array{0: \Illuminate\Http\Client\Request, 1: \Illuminate\Http\Client\Response|null}>
      */
-    public function recorded($callback = null)
+    public function recorded($callback = null): \Illuminate\Support\Collection
     {
         if (empty($this->recorded)) {
             return new Collection;
@@ -501,7 +474,7 @@ class Factory
      */
     public function createPendingRequest()
     {
-        return tap($this->newPendingRequest(), function ($request) {
+        return tap($this->newPendingRequest(), function ($request): void {
             $request
                 ->stub($this->stubCallbacks)
                 ->preventStrayRequests($this->preventStrayRequests)
@@ -542,11 +515,10 @@ class Factory
     /**
      * Execute a method against a new pending request instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);

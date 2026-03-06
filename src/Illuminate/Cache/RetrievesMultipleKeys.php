@@ -10,16 +10,13 @@ trait RetrievesMultipleKeys
      * Retrieve multiple items from the cache by key.
      *
      * Items not found in the cache will have a null value.
-     *
-     * @param  array  $keys
-     * @return array
      */
-    public function many(array $keys)
+    public function many(array $keys): array
     {
         $return = [];
 
         $keys = (new Collection($keys))
-            ->mapWithKeys(fn ($value, $key) => [is_string($key) ? $key : $value => is_string($key) ? $value : null])
+            ->mapWithKeys(fn ($value, $key): array => [is_string($key) ? $key : $value => is_string($key) ? $value : null])
             ->all();
 
         foreach ($keys as $key => $default) {
@@ -33,7 +30,6 @@ trait RetrievesMultipleKeys
     /**
      * Store multiple items in the cache for a given number of seconds.
      *
-     * @param  array  $values
      * @param  int  $seconds
      * @return bool
      */

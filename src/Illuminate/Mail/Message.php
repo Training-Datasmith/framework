@@ -35,8 +35,6 @@ class Message
 
     /**
      * Create a new message instance.
-     *
-     * @param  \Symfony\Component\Mime\Email  $message
      */
     public function __construct(Email $message)
     {
@@ -50,7 +48,7 @@ class Message
      * @param  string|null  $name
      * @return $this
      */
-    public function from($address, $name = null)
+    public function from($address, $name = null): static
     {
         is_array($address)
             ? $this->message->from(...$address)
@@ -66,7 +64,7 @@ class Message
      * @param  string|null  $name
      * @return $this
      */
-    public function sender($address, $name = null)
+    public function sender($address, $name = null): static
     {
         is_array($address)
             ? $this->message->sender(...$address)
@@ -81,7 +79,7 @@ class Message
      * @param  string  $address
      * @return $this
      */
-    public function returnPath($address)
+    public function returnPath($address): static
     {
         $this->message->returnPath($address);
 
@@ -114,7 +112,7 @@ class Message
      *
      * @return $this
      */
-    public function forgetTo()
+    public function forgetTo(): static
     {
         if ($header = $this->message->getHeaders()->get('To')) {
             $this->addAddressDebugHeader('X-To', $this->message->getTo());
@@ -151,7 +149,7 @@ class Message
      *
      * @return $this
      */
-    public function forgetCc()
+    public function forgetCc(): static
     {
         if ($header = $this->message->getHeaders()->get('Cc')) {
             $this->addAddressDebugHeader('X-Cc', $this->message->getCC());
@@ -188,7 +186,7 @@ class Message
      *
      * @return $this
      */
-    public function forgetBcc()
+    public function forgetBcc(): static
     {
         if ($header = $this->message->getHeaders()->get('Bcc')) {
             $this->addAddressDebugHeader('X-Bcc', $this->message->getBcc());
@@ -219,7 +217,7 @@ class Message
      * @param  string  $type
      * @return $this
      */
-    protected function addAddresses($address, $name, $type)
+    protected function addAddresses($address, $name, $type): static
     {
         if (is_array($address)) {
             $type = lcfirst($type);
@@ -251,15 +249,14 @@ class Message
     /**
      * Add an address debug header for a list of recipients.
      *
-     * @param  string  $header
      * @param  \Symfony\Component\Mime\Address[]  $addresses
      * @return $this
      */
-    protected function addAddressDebugHeader(string $header, array $addresses)
+    protected function addAddressDebugHeader(string $header, array $addresses): static
     {
         $this->message->getHeaders()->addTextHeader(
             $header,
-            implode(', ', array_map(fn ($a) => $a->toString(), $addresses)),
+            implode(', ', array_map(fn (\Symfony\Component\Mime\Address $a) => $a->toString(), $addresses)),
         );
 
         return $this;
@@ -271,7 +268,7 @@ class Message
      * @param  string  $subject
      * @return $this
      */
-    public function subject($subject)
+    public function subject($subject): static
     {
         $this->message->subject($subject);
 
@@ -284,7 +281,7 @@ class Message
      * @param  int  $level
      * @return $this
      */
-    public function priority($level)
+    public function priority($level): static
     {
         $this->message->priority($level);
 
@@ -295,7 +292,6 @@ class Message
      * Attach a file to the message.
      *
      * @param  string|\Illuminate\Contracts\Mail\Attachable|\Illuminate\Mail\Attachment  $file
-     * @param  array  $options
      * @return $this
      */
     public function attach($file, array $options = [])
@@ -318,10 +314,9 @@ class Message
      *
      * @param  string|resource  $data
      * @param  string  $name
-     * @param  array  $options
      * @return $this
      */
-    public function attachData($data, $name, array $options = [])
+    public function attachData($data, $name, array $options = []): static
     {
         $this->message->attach($data, $name, $options['mime'] ?? null);
 
@@ -342,14 +337,14 @@ class Message
 
         if ($file instanceof Attachment) {
             return $file->attachWith(
-                function ($path) use ($file) {
+                function ($path) use ($file): string {
                     $part = (new DataPart(new File($path), $file->as, $file->mime))->asInline();
 
                     $this->message->addPart($part);
 
                     return "cid:{$part->getContentId()}";
                 },
-                function ($data) use ($file) {
+                function ($data) use ($file): string {
                     $this->message->addPart(
                         $part = $part = (new DataPart($data(), $file->as, $file->mime))->asInline()
                     );
@@ -374,9 +369,8 @@ class Message
      * @param  string|resource  $data
      * @param  string  $name
      * @param  string|null  $contentType
-     * @return string
      */
-    public function embedData($data, $name, $contentType = null)
+    public function embedData($data, $name, $contentType = null): string
     {
         $part = (new DataPart($data, $name, $contentType))->asInline();
 
@@ -398,11 +392,10 @@ class Message
     /**
      * Dynamically pass missing methods to the Symfony instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->forwardDecoratedCallTo($this->message, $method, $parameters);
     }

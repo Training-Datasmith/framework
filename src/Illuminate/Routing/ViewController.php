@@ -7,20 +7,15 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 class ViewController extends Controller
 {
     /**
-     * The response factory implementation.
-     *
-     * @var \Illuminate\Contracts\Routing\ResponseFactory
-     */
-    protected $response;
-
-    /**
      * Create a new controller instance.
-     *
-     * @param  \Illuminate\Contracts\Routing\ResponseFactory  $response
      */
-    public function __construct(ResponseFactory $response)
+    public function __construct(
+        /**
+         * The response factory implementation.
+         */
+        protected \Illuminate\Contracts\Routing\ResponseFactory $response
+    )
     {
-        $this->response = $response;
     }
 
     /**
@@ -31,9 +26,7 @@ class ViewController extends Controller
      */
     public function __invoke(...$args)
     {
-        $routeParameters = array_filter($args, function ($key) {
-            return ! in_array($key, ['view', 'data', 'status', 'headers']);
-        }, ARRAY_FILTER_USE_KEY);
+        $routeParameters = array_filter($args, fn($key) => ! in_array($key, ['view', 'data', 'status', 'headers']), ARRAY_FILTER_USE_KEY);
 
         $args['data'] = array_merge($args['data'], $routeParameters);
 

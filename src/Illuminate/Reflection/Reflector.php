@@ -34,7 +34,7 @@ class Reflector
             return true;
         }
 
-        $class = is_object($var[0]) ? get_class($var[0]) : $var[0];
+        $class = is_object($var[0]) ? $var[0]::class : $var[0];
 
         $method = $var[1];
 
@@ -83,7 +83,7 @@ class Reflector
      * @param  bool  $includeParents
      * @return ($includeParents is true ? Collection<class-string<contravariant TTarget>, Collection<int, TAttribute>> : Collection<int, TAttribute>)
      */
-    public static function getClassAttributes($objectOrClass, $attribute, $includeParents = false)
+    public static function getClassAttributes($objectOrClass, ?string $attribute, $includeParents = false)
     {
         $reflectionClass = new ReflectionClass($objectOrClass);
 
@@ -91,7 +91,7 @@ class Reflector
 
         do {
             $attributes[$reflectionClass->name] = new Collection(array_map(
-                fn (ReflectionAttribute $reflectionAttribute) => $reflectionAttribute->newInstance(),
+                fn (ReflectionAttribute $reflectionAttribute): object => $reflectionAttribute->newInstance(),
                 $reflectionClass->getAttributes($attribute)
             ));
         } while ($includeParents && false !== $reflectionClass = $reflectionClass->getParentClass());
@@ -120,9 +120,8 @@ class Reflector
      * Get the class names of the given parameter's type, including union types.
      *
      * @param  \ReflectionParameter  $parameter
-     * @return array
      */
-    public static function getParameterClassNames($parameter)
+    public static function getParameterClassNames($parameter): array
     {
         $type = $parameter->getType();
 
@@ -133,10 +132,12 @@ class Reflector
         $unionTypes = [];
 
         foreach ($type->getTypes() as $listedType) {
-            if (! $listedType instanceof ReflectionNamedType || $listedType->isBuiltin()) {
+            if (! $listedType instanceof ReflectionNamedType) {
                 continue;
             }
-
+            if ($listedType->isBuiltin()) {
+                continue;
+            }
             $unionTypes[] = static::getTypeName($parameter, $listedType);
         }
 
@@ -172,9 +173,8 @@ class Reflector
      *
      * @param  \ReflectionParameter  $parameter
      * @param  string  $className
-     * @return bool
      */
-    public static function isParameterSubclassOf($parameter, $className)
+    public static function isParameterSubclassOf($parameter, $className): bool
     {
         $paramClassName = static::getParameterClassName($parameter);
 

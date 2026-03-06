@@ -33,17 +33,15 @@ class SetCacheHeaders
             })
             ->filter()
             ->map(fn ($value) => Str::finish($value, ';'))
-            ->pipe(fn ($options) => rtrim(static::class.':'.$options->implode(''), ';'));
+            ->pipe(fn ($options): string => rtrim(static::class.':'.$options->implode(''), ';'));
     }
 
     /**
      * Add cache related HTTP headers.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @param  string|array  $options
      * @return \Symfony\Component\HttpFoundation\Response
-     *
      * @throws \InvalidArgumentException
      */
     public function handle($request, Closure $next, $options = [])
@@ -63,7 +61,7 @@ class SetCacheHeaders
         }
 
         if (isset($options['etag']) && $options['etag'] === true) {
-            $options['etag'] = $response->getEtag() ?? ($response->getContent() ? hash('xxh128', $response->getContent()) : null);
+            $options['etag'] = $response->getEtag() ?? ($response->getContent() ? hash('xxh128', (string) $response->getContent()) : null);
         }
 
         if (isset($options['last_modified'])) {
@@ -88,7 +86,7 @@ class SetCacheHeaders
      */
     protected function parseOptions($options)
     {
-        return (new Collection(explode(';', rtrim($options, ';'))))->mapWithKeys(function ($option) {
+        return (new Collection(explode(';', rtrim($options, ';'))))->mapWithKeys(function ($option): array {
             $data = explode('=', $option, 2);
 
             return [$data[0] => $data[1] ?? true];

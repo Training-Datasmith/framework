@@ -10,61 +10,32 @@ use Throwable;
 class QueryException extends PDOException
 {
     /**
-     * The database connection name.
-     *
-     * @var string
-     */
-    public $connectionName;
-
-    /**
-     * The SQL for the query.
-     *
-     * @var string
-     */
-    protected $sql;
-
-    /**
-     * The bindings for the query.
-     *
-     * @var array
-     */
-    protected $bindings;
-
-    /**
-     * The PDO read / write type for the executed query.
-     *
-     * @var null|'read'|'write'
-     */
-    public $readWriteType;
-
-    /**
-     * The connection details for the query (host, port, database, etc.).
-     *
-     * @var array
-     */
-    protected $connectionDetails = [];
-
-    /**
      * Create a new query exception instance.
      *
      * @param  string  $connectionName
      * @param  string  $sql
-     * @param  array  $bindings
-     * @param  \Throwable  $previous
-     * @param  array  $connectionDetails
      * @param  null|'read'|'write'  $readWriteType
      */
-    public function __construct($connectionName, $sql, array $bindings, Throwable $previous, array $connectionDetails = [], $readWriteType = null)
+    public function __construct(/**
+     * The database connection name.
+     */
+    public $connectionName, /**
+     * The SQL for the query.
+     */
+    protected $sql, /**
+     * The bindings for the query.
+     */
+    protected array $bindings, Throwable $previous, /**
+     * The connection details for the query (host, port, database, etc.).
+     */
+    protected array $connectionDetails = [], /**
+     * The PDO read / write type for the executed query.
+     */
+    public $readWriteType = null)
     {
         parent::__construct('', 0, $previous);
-
-        $this->connectionName = $connectionName;
-        $this->sql = $sql;
-        $this->bindings = $bindings;
-        $this->connectionDetails = $connectionDetails;
-        $this->readWriteType = $readWriteType;
         $this->code = $previous->getCode();
-        $this->message = $this->formatMessage($connectionName, $sql, $bindings, $previous);
+        $this->message = $this->formatMessage($this->connectionName, $this->sql, $this->bindings, $previous);
 
         if ($previous instanceof PDOException) {
             $this->errorInfo = $previous->errorInfo;
@@ -74,13 +45,10 @@ class QueryException extends PDOException
     /**
      * Format the SQL error message.
      *
-     * @param  string  $connectionName
      * @param  string  $sql
      * @param  array  $bindings
-     * @param  \Throwable  $previous
-     * @return string
      */
-    protected function formatMessage($connectionName, $sql, $bindings, Throwable $previous)
+    protected function formatMessage(string $connectionName, $sql, $bindings, Throwable $previous): string
     {
         $details = $this->formatConnectionDetails();
 
@@ -89,10 +57,8 @@ class QueryException extends PDOException
 
     /**
      * Format the connection details for the error message.
-     *
-     * @return string
      */
-    protected function formatConnectionDetails()
+    protected function formatConnectionDetails(): string
     {
         if (empty($this->connectionDetails)) {
             return '';

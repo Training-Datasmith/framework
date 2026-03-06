@@ -10,20 +10,15 @@ class Dimensions implements Stringable
     use Conditionable;
 
     /**
-     * The constraints for the dimensions rule.
-     *
-     * @var array
-     */
-    protected $constraints = [];
-
-    /**
      * Create a new dimensions rule instance.
-     *
-     * @param  array  $constraints
      */
-    public function __construct(array $constraints = [])
+    public function __construct(
+        /**
+         * The constraints for the dimensions rule.
+         */
+        protected array $constraints = []
+    )
     {
-        $this->constraints = $constraints;
     }
 
     /**
@@ -32,7 +27,7 @@ class Dimensions implements Stringable
      * @param  int  $value
      * @return $this
      */
-    public function width($value)
+    public function width($value): static
     {
         $this->constraints['width'] = $value;
 
@@ -45,7 +40,7 @@ class Dimensions implements Stringable
      * @param  int  $value
      * @return $this
      */
-    public function height($value)
+    public function height($value): static
     {
         $this->constraints['height'] = $value;
 
@@ -58,7 +53,7 @@ class Dimensions implements Stringable
      * @param  int  $value
      * @return $this
      */
-    public function minWidth($value)
+    public function minWidth($value): static
     {
         $this->constraints['min_width'] = $value;
 
@@ -71,7 +66,7 @@ class Dimensions implements Stringable
      * @param  int  $value
      * @return $this
      */
-    public function minHeight($value)
+    public function minHeight($value): static
     {
         $this->constraints['min_height'] = $value;
 
@@ -84,7 +79,7 @@ class Dimensions implements Stringable
      * @param  int  $value
      * @return $this
      */
-    public function maxWidth($value)
+    public function maxWidth($value): static
     {
         $this->constraints['max_width'] = $value;
 
@@ -97,7 +92,7 @@ class Dimensions implements Stringable
      * @param  int  $value
      * @return $this
      */
-    public function maxHeight($value)
+    public function maxHeight($value): static
     {
         $this->constraints['max_height'] = $value;
 
@@ -110,7 +105,7 @@ class Dimensions implements Stringable
      * @param  float  $value
      * @return $this
      */
-    public function ratio($value)
+    public function ratio($value): static
     {
         $this->constraints['ratio'] = $value;
 
@@ -123,7 +118,7 @@ class Dimensions implements Stringable
      * @param  float  $value
      * @return $this
      */
-    public function minRatio($value)
+    public function minRatio($value): static
     {
         $this->constraints['min_ratio'] = $value;
 
@@ -136,7 +131,7 @@ class Dimensions implements Stringable
      * @param  float  $value
      * @return $this
      */
-    public function maxRatio($value)
+    public function maxRatio($value): static
     {
         $this->constraints['max_ratio'] = $value;
 
@@ -150,7 +145,7 @@ class Dimensions implements Stringable
      * @param  float  $max
      * @return $this
      */
-    public function ratioBetween($min, $max)
+    public function ratioBetween($min, $max): static
     {
         $this->constraints['min_ratio'] = $min;
         $this->constraints['max_ratio'] = $max;
@@ -160,10 +155,8 @@ class Dimensions implements Stringable
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $result = '';
 

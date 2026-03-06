@@ -10,7 +10,7 @@ trait Dumpable
      * @param  mixed  ...$args
      * @return never
      */
-    public function dd(...$args)
+    public function dd(...$args): void
     {
         dd($this, ...$args);
     }

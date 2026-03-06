@@ -37,27 +37,6 @@ class PendingCommand
     public $test;
 
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $app;
-
-    /**
-     * The command to run.
-     *
-     * @var string
-     */
-    protected $command;
-
-    /**
-     * The parameters to pass to the command.
-     *
-     * @var array
-     */
-    protected $parameters;
-
-    /**
      * The expected exit code.
      *
      * @var int
@@ -81,17 +60,21 @@ class PendingCommand
     /**
      * Create a new pending console command run.
      *
-     * @param  \PHPUnit\Framework\TestCase  $test
-     * @param  \Illuminate\Contracts\Container\Container  $app
      * @param  string  $command
      * @param  array  $parameters
      */
-    public function __construct(PHPUnitTestCase $test, Container $app, $command, $parameters)
+    public function __construct(PHPUnitTestCase $test, /**
+     * The application instance.
+     */
+    protected \Illuminate\Contracts\Container\Container $app, /**
+     * The command to run.
+     */
+    protected $command, /**
+     * The parameters to pass to the command.
+     */
+    protected $parameters)
     {
-        $this->app = $app;
         $this->test = $test;
-        $this->command = $command;
-        $this->parameters = $parameters;
     }
 
     /**
@@ -101,7 +84,7 @@ class PendingCommand
      * @param  string|bool  $answer
      * @return $this
      */
-    public function expectsQuestion($question, $answer)
+    public function expectsQuestion($question, $answer): static
     {
         $this->test->expectedQuestions[] = [$question, $answer];
 
@@ -161,7 +144,7 @@ class PendingCommand
      * @param  string|null  $output
      * @return $this
      */
-    public function expectsOutput($output = null)
+    public function expectsOutput($output = null): static
     {
         if ($output === null) {
             $this->test->expectsOutput = true;
@@ -180,7 +163,7 @@ class PendingCommand
      * @param  string|null  $output
      * @return $this
      */
-    public function doesntExpectOutput($output = null)
+    public function doesntExpectOutput($output = null): static
     {
         if ($output === null) {
             $this->test->expectsOutput = false;
@@ -199,7 +182,7 @@ class PendingCommand
      * @param  string  $string
      * @return $this
      */
-    public function expectsOutputToContain($string)
+    public function expectsOutputToContain($string): static
     {
         $this->test->expectedOutputSubstrings[] = $string;
 
@@ -212,7 +195,7 @@ class PendingCommand
      * @param  string  $string
      * @return $this
      */
-    public function doesntExpectOutputToContain($string)
+    public function doesntExpectOutputToContain($string): static
     {
         $this->test->unexpectedOutputSubstrings[$string] = false;
 
@@ -225,10 +208,9 @@ class PendingCommand
      * @param  array  $headers
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $rows
      * @param  string  $tableStyle
-     * @param  array  $columnStyles
      * @return $this
      */
-    public function expectsTable($headers, $rows, $tableStyle = 'default', array $columnStyles = [])
+    public function expectsTable($headers, $rows, \Symfony\Component\Console\Helper\TableStyle|string $tableStyle = 'default', array $columnStyles = []): static
     {
         $table = (new Table($output = new BufferedOutput))
             ->setHeaders((array) $headers)
@@ -257,7 +239,7 @@ class PendingCommand
      *
      * @return $this
      */
-    public function expectsPromptsInfo(string $message)
+    public function expectsPromptsInfo(string $message): static
     {
         $this->expectOutputToContainPrompt(
             new PromptsNote($message, 'info')
@@ -271,7 +253,7 @@ class PendingCommand
      *
      * @return $this
      */
-    public function expectsPromptsWarning(string $message)
+    public function expectsPromptsWarning(string $message): static
     {
         $this->expectOutputToContainPrompt(
             new PromptsNote($message, 'warning')
@@ -285,7 +267,7 @@ class PendingCommand
      *
      * @return $this
      */
-    public function expectsPromptsError(string $message)
+    public function expectsPromptsError(string $message): static
     {
         $this->expectOutputToContainPrompt(
             new PromptsNote($message, 'error')
@@ -299,7 +281,7 @@ class PendingCommand
      *
      * @return $this
      */
-    public function expectsPromptsAlert(string $message)
+    public function expectsPromptsAlert(string $message): static
     {
         $this->expectOutputToContainPrompt(
             new PromptsNote($message, 'alert')
@@ -313,7 +295,7 @@ class PendingCommand
      *
      * @return $this
      */
-    public function expectsPromptsIntro(string $message)
+    public function expectsPromptsIntro(string $message): static
     {
         $this->expectOutputToContainPrompt(
             new PromptsNote($message, 'intro')
@@ -327,7 +309,7 @@ class PendingCommand
      *
      * @return $this
      */
-    public function expectsPromptsOutro(string $message)
+    public function expectsPromptsOutro(string $message): static
     {
         $this->expectOutputToContainPrompt(
             new PromptsNote($message, 'outro')
@@ -345,7 +327,7 @@ class PendingCommand
      *
      * @phpstan-param ($rows is null ? list<list<string>>|Collection<int, list<string>> : list<string|list<string>>|Collection<int, string|list<string>>) $headers
      */
-    public function expectsPromptsTable(array|Collection $headers, array|Collection|null $rows)
+    public function expectsPromptsTable(array|Collection $headers, array|Collection|null $rows): static
     {
         $this->expectOutputToContainPrompt(
             new PromptsTable($headers, $rows)
@@ -374,7 +356,7 @@ class PendingCommand
      * @param  int  $exitCode
      * @return $this
      */
-    public function assertExitCode($exitCode)
+    public function assertExitCode($exitCode): static
     {
         $this->expectedExitCode = $exitCode;
 
@@ -387,7 +369,7 @@ class PendingCommand
      * @param  int  $exitCode
      * @return $this
      */
-    public function assertNotExitCode($exitCode)
+    public function assertNotExitCode($exitCode): static
     {
         $this->unexpectedExitCode = $exitCode;
 
@@ -484,7 +466,7 @@ class PendingCommand
      *
      * @return never
      */
-    public function dd()
+    public function dd(): void
     {
         $consoleOutput = new OutputStyle(new ArrayInput($this->parameters), new ConsoleOutput());
         $exitCode = $this->app->make(Kernel::class)->call($this->command, $this->parameters, $consoleOutput);
@@ -511,16 +493,14 @@ class PendingCommand
             $this->test->fail('Question "'.Arr::first($this->test->expectedQuestions)[0].'" was not asked.');
         }
 
-        if (count($this->test->expectedChoices) > 0) {
-            foreach ($this->test->expectedChoices as $question => $answers) {
-                $assertion = $answers['strict'] ? 'assertEquals' : 'assertEqualsCanonicalizing';
+        foreach ($this->test->expectedChoices as $question => $answers) {
+            $assertion = $answers['strict'] ? 'assertEquals' : 'assertEqualsCanonicalizing';
 
-                $this->test->{$assertion}(
-                    $answers['expected'],
-                    $answers['actual'],
-                    'Question "'.$question.'" has different options.'
-                );
-            }
+            $this->test->{$assertion}(
+                $answers['expected'],
+                $answers['actual'],
+                'Question "'.$question.'" has different options.'
+            );
         }
 
         if (count($this->test->expectedOutput)) {
@@ -555,7 +535,7 @@ class PendingCommand
             $mock->shouldReceive('askQuestion')
                 ->once()
                 ->ordered()
-                ->with(Mockery::on(function ($argument) use ($question) {
+                ->with(Mockery::on(function ($argument) use ($question): bool {
                     if (isset($this->test->expectedChoices[$question[0]])) {
                         $this->test->expectedChoices[$question[0]]['actual'] = $argument instanceof ChoiceQuestion && ! array_is_list($this->test->expectedChoices[$question[0]]['expected'])
                             ? $argument->getChoices()
@@ -571,9 +551,7 @@ class PendingCommand
                 });
         }
 
-        $this->app->bind(OutputStyle::class, function () use ($mock) {
-            return $mock;
-        });
+        $this->app->bind(OutputStyle::class, fn() => $mock);
 
         return $mock;
     }
@@ -606,7 +584,7 @@ class PendingCommand
                 ->once()
                 ->ordered()
                 ->with($output, Mockery::any())
-                ->andReturnUsing(function () use ($i) {
+                ->andReturnUsing(function () use ($i): void {
                     unset($this->test->expectedOutput[$i]);
                 });
         }
@@ -615,8 +593,8 @@ class PendingCommand
             $mock->shouldReceive('doWrite')
                 ->atLeast()
                 ->times(0)
-                ->withArgs(fn ($output) => str_contains($output, $text))
-                ->andReturnUsing(function () use ($i) {
+                ->withArgs(fn ($output): bool => str_contains((string) $output, (string) $text))
+                ->andReturnUsing(function () use ($i): void {
                     unset($this->test->expectedOutputSubstrings[$i]);
                 });
         }
@@ -627,7 +605,7 @@ class PendingCommand
                 ->times(0)
                 ->ordered()
                 ->with($output, Mockery::any())
-                ->andReturnUsing(function () use ($output) {
+                ->andReturnUsing(function () use ($output): void {
                     $this->test->unexpectedOutput[$output] = true;
                 });
         }
@@ -636,8 +614,8 @@ class PendingCommand
             $mock->shouldReceive('doWrite')
                 ->atLeast()
                 ->times(0)
-                ->withArgs(fn ($output) => str_contains($output, $text))
-                ->andReturnUsing(function () use ($text) {
+                ->withArgs(fn ($output): bool => str_contains((string) $output, (string) $text))
+                ->andReturnUsing(function () use ($text): void {
                     $this->test->unexpectedOutputSubstrings[$text] = true;
                 });
         }
@@ -663,8 +641,6 @@ class PendingCommand
 
     /**
      * Handle the object's destruction.
-     *
-     * @return void
      */
     public function __destruct()
     {

@@ -26,7 +26,6 @@ class AuthorizationException extends Exception
      *
      * @param  string|null  $message
      * @param  mixed  $code
-     * @param  \Throwable|null  $previous
      */
     public function __construct($message = null, $code = null, ?Throwable $previous = null)
     {
@@ -51,7 +50,7 @@ class AuthorizationException extends Exception
      * @param  \Illuminate\Auth\Access\Response  $response
      * @return $this
      */
-    public function setResponse($response)
+    public function setResponse($response): static
     {
         $this->response = $response;
 
@@ -64,7 +63,7 @@ class AuthorizationException extends Exception
      * @param  int|null  $status
      * @return $this
      */
-    public function withStatus($status)
+    public function withStatus($status): static
     {
         $this->status = $status;
 
@@ -83,10 +82,8 @@ class AuthorizationException extends Exception
 
     /**
      * Determine if the HTTP status code has been set.
-     *
-     * @return bool
      */
-    public function hasStatus()
+    public function hasStatus(): bool
     {
         return $this->status !== null;
     }

@@ -12,21 +12,13 @@ class PendingBatchFake extends PendingBatch
     use ReflectsClosures;
 
     /**
-     * The fake bus instance.
-     *
-     * @var \Illuminate\Support\Testing\Fakes\BusFake
-     */
-    protected $bus;
-
-    /**
      * Create a new pending batch instance.
-     *
-     * @param  \Illuminate\Support\Testing\Fakes\BusFake  $bus
-     * @param  \Illuminate\Support\Collection  $jobs
      */
-    public function __construct(BusFake $bus, Collection $jobs)
+    public function __construct(/**
+     * The fake bus instance.
+     */
+    protected \Illuminate\Support\Testing\Fakes\BusFake $bus, Collection $jobs)
     {
-        $this->bus = $bus;
         $this->jobs = $jobs->filter()->values();
     }
 
@@ -52,11 +44,8 @@ class PendingBatchFake extends PendingBatch
 
     /**
      * Determine if the jobs in the batch match the given jobs.
-     *
-     * @param  array  $expectedJobs
-     * @return bool
      */
-    public function hasJobs(array $expectedJobs)
+    public function hasJobs(array $expectedJobs): bool
     {
         if (count($this->jobs) !== count($expectedJobs)) {
             return false;
@@ -74,7 +63,7 @@ class PendingBatchFake extends PendingBatch
                     return false;
                 }
             } elseif (is_string($expectedJob)) {
-                if ($expectedJob != get_class($this->jobs[$index])) {
+                if ($expectedJob != $this->jobs[$index]::class) {
                     return false;
                 }
             } elseif (serialize($expectedJob) != serialize($this->jobs[$index])) {

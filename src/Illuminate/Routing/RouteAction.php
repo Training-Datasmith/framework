@@ -25,7 +25,6 @@ class RouteAction
         if (is_null($action)) {
             return static::missingAction($uri);
         }
-
         // If the action is already a Closure instance, we will just set that instance
         // as the "uses" property, because there is nothing else we need to do when
         // it is available. Otherwise we will need to find it in the action list.
@@ -39,7 +38,7 @@ class RouteAction
         // If no "uses" property has been set, we will dig through the array to find a
         // Closure instance within this list. We will set the first Closure we come
         // across into the "uses" property that will get fired off by this route.
-        elseif (! isset($action['uses'])) {
+        if (! isset($action['uses'])) {
             $action['uses'] = static::findCallable($action);
         }
 
@@ -54,13 +53,12 @@ class RouteAction
      * Get an action for a route that has no action.
      *
      * @param  string  $uri
-     * @return array
      *
      * @throws \LogicException
      */
-    protected static function missingAction($uri)
+    protected static function missingAction($uri): array
     {
-        return ['uses' => function () use ($uri) {
+        return ['uses' => function () use ($uri): void {
             throw new LogicException("Route for [{$uri}] has no action.");
         }];
     }
@@ -68,25 +66,20 @@ class RouteAction
     /**
      * Find the callable in an action array.
      *
-     * @param  array  $action
      * @return callable
      */
     protected static function findCallable(array $action)
     {
-        return Arr::first($action, function ($value, $key) {
-            return Reflector::isCallable($value) && is_numeric($key);
-        });
+        return Arr::first($action, fn($value, $key) => Reflector::isCallable($value) && is_numeric($key));
     }
 
     /**
      * Make an action for an invokable controller.
      *
-     * @param  string  $action
-     * @return string
      *
      * @throws \UnexpectedValueException
      */
-    protected static function makeInvokable($action)
+    protected static function makeInvokable(string $action): string
     {
         if (! method_exists($action, '__invoke')) {
             throw new UnexpectedValueException("Invalid route action: [{$action}].");
@@ -97,11 +90,8 @@ class RouteAction
 
     /**
      * Determine if the given array actions contain a serialized Closure.
-     *
-     * @param  array  $action
-     * @return bool
      */
-    public static function containsSerializedClosure(array $action)
+    public static function containsSerializedClosure(array $action): bool
     {
         return is_string($action['uses']) && Str::startsWith($action['uses'], [
             'O:47:"Laravel\\SerializableClosure\\SerializableClosure',

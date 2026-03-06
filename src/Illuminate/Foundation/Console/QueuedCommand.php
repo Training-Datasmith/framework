@@ -12,29 +12,23 @@ class QueuedCommand implements ShouldQueue
     use Dispatchable, Queueable;
 
     /**
-     * The data to pass to the Artisan command.
-     *
-     * @var array
-     */
-    protected $data;
-
-    /**
      * Create a new job instance.
      *
      * @param  array  $data
      */
-    public function __construct($data)
+    public function __construct(
+        /**
+         * The data to pass to the Artisan command.
+         */
+        protected $data
+    )
     {
-        $this->data = $data;
     }
 
     /**
      * Handle the job.
-     *
-     * @param  \Illuminate\Contracts\Console\Kernel  $kernel
-     * @return void
      */
-    public function handle(KernelContract $kernel)
+    public function handle(KernelContract $kernel): void
     {
         $kernel->call(...array_values($this->data));
     }

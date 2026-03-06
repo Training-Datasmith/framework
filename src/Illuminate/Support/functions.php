@@ -13,9 +13,6 @@ if (! function_exists('Illuminate\Support\defer')) {
     /**
      * Defer execution of the given callback.
      *
-     * @param  callable|null  $callback
-     * @param  string|null  $name
-     * @param  bool  $always
      * @return ($callback is null ? \Illuminate\Support\Defer\DeferredCallbackCollection : \Illuminate\Support\Defer\DeferredCallback)
      */
     function defer(?callable $callback = null, ?string $name = null, bool $always = false): DeferredCallback|DeferredCallbackCollection
@@ -26,7 +23,7 @@ if (! function_exists('Illuminate\Support\defer')) {
 
         return tap(
             new DeferredCallback($callback, $name, $always),
-            fn ($deferred) => app(DeferredCallbackCollection::class)[] = $deferred
+            fn ($deferred): \Illuminate\Support\Defer\DeferredCallback => app(DeferredCallbackCollection::class)[] = $deferred
         );
     }
 }

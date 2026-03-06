@@ -8,13 +8,6 @@ use Illuminate\Support\Str;
 class ParallelTesting
 {
     /**
-     * The container instance.
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $container;
-
-    /**
      * The options resolver callback.
      *
      * @var \Closure|null
@@ -72,21 +65,22 @@ class ParallelTesting
 
     /**
      * Create a new parallel testing instance.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      */
-    public function __construct(Container $container)
+    public function __construct(
+        /**
+         * The container instance.
+         */
+        protected \Illuminate\Contracts\Container\Container $container
+    )
     {
-        $this->container = $container;
     }
 
     /**
      * Set a callback that should be used when resolving options.
      *
      * @param  \Closure|null  $resolver
-     * @return void
      */
-    public function resolveOptionsUsing($resolver)
+    public function resolveOptionsUsing($resolver): void
     {
         $this->optionsResolver = $resolver;
     }
@@ -95,9 +89,8 @@ class ParallelTesting
      * Set a callback that should be used when resolving the unique process token.
      *
      * @param  \Closure|null  $resolver
-     * @return void
      */
-    public function resolveTokenUsing($resolver)
+    public function resolveTokenUsing($resolver): void
     {
         $this->tokenResolver = $resolver;
     }
@@ -106,9 +99,8 @@ class ParallelTesting
      * Register a "setUp" process callback.
      *
      * @param  callable  $callback
-     * @return void
      */
-    public function setUpProcess($callback)
+    public function setUpProcess($callback): void
     {
         $this->setUpProcessCallbacks[] = $callback;
     }
@@ -117,9 +109,8 @@ class ParallelTesting
      * Register a "setUp" test case callback.
      *
      * @param  callable  $callback
-     * @return void
      */
-    public function setUpTestCase($callback)
+    public function setUpTestCase($callback): void
     {
         $this->setUpTestCaseCallbacks[] = $callback;
     }
@@ -128,9 +119,8 @@ class ParallelTesting
      * Register a "setUp" test database callback that runs prior to the migrations.
      *
      * @param  callable  $callback
-     * @return void
      */
-    public function setUpTestDatabaseBeforeMigrating($callback)
+    public function setUpTestDatabaseBeforeMigrating($callback): void
     {
         $this->setUpTestDatabaseBeforeMigratingCallbacks[] = $callback;
     }
@@ -139,9 +129,8 @@ class ParallelTesting
      * Register a "setUp" test database callback.
      *
      * @param  callable  $callback
-     * @return void
      */
-    public function setUpTestDatabase($callback)
+    public function setUpTestDatabase($callback): void
     {
         $this->setUpTestDatabaseCallbacks[] = $callback;
     }
@@ -150,9 +139,8 @@ class ParallelTesting
      * Register a "tearDown" process callback.
      *
      * @param  callable  $callback
-     * @return void
      */
-    public function tearDownProcess($callback)
+    public function tearDownProcess($callback): void
     {
         $this->tearDownProcessCallbacks[] = $callback;
     }
@@ -161,21 +149,18 @@ class ParallelTesting
      * Register a "tearDown" test case callback.
      *
      * @param  callable  $callback
-     * @return void
      */
-    public function tearDownTestCase($callback)
+    public function tearDownTestCase($callback): void
     {
         $this->tearDownTestCaseCallbacks[] = $callback;
     }
 
     /**
      * Call all of the "setUp" process callbacks.
-     *
-     * @return void
      */
-    public function callSetUpProcessCallbacks()
+    public function callSetUpProcessCallbacks(): void
     {
-        $this->whenRunningInParallel(function () {
+        $this->whenRunningInParallel(function (): void {
             foreach ($this->setUpProcessCallbacks as $callback) {
                 $this->container->call($callback, [
                     'token' => $this->token(),
@@ -188,11 +173,10 @@ class ParallelTesting
      * Call all of the "setUp" test case callbacks.
      *
      * @param  \Illuminate\Foundation\Testing\TestCase  $testCase
-     * @return void
      */
-    public function callSetUpTestCaseCallbacks($testCase)
+    public function callSetUpTestCaseCallbacks($testCase): void
     {
-        $this->whenRunningInParallel(function () use ($testCase) {
+        $this->whenRunningInParallel(function () use ($testCase): void {
             foreach ($this->setUpTestCaseCallbacks as $callback) {
                 $this->container->call($callback, [
                     'testCase' => $testCase,
@@ -206,11 +190,10 @@ class ParallelTesting
      * Call all of the "setUp" test database callbacks that run prior to migrations.
      *
      * @param  string  $database
-     * @return void
      */
-    public function callSetUpTestDatabaseBeforeMigratingCallbacks($database)
+    public function callSetUpTestDatabaseBeforeMigratingCallbacks($database): void
     {
-        $this->whenRunningInParallel(function () use ($database) {
+        $this->whenRunningInParallel(function () use ($database): void {
             foreach ($this->setUpTestDatabaseBeforeMigratingCallbacks as $callback) {
                 $this->container->call($callback, [
                     'database' => $database,
@@ -224,11 +207,10 @@ class ParallelTesting
      * Call all of the "setUp" test database callbacks.
      *
      * @param  string  $database
-     * @return void
      */
-    public function callSetUpTestDatabaseCallbacks($database)
+    public function callSetUpTestDatabaseCallbacks($database): void
     {
-        $this->whenRunningInParallel(function () use ($database) {
+        $this->whenRunningInParallel(function () use ($database): void {
             foreach ($this->setUpTestDatabaseCallbacks as $callback) {
                 $this->container->call($callback, [
                     'database' => $database,
@@ -240,12 +222,10 @@ class ParallelTesting
 
     /**
      * Call all of the "tearDown" process callbacks.
-     *
-     * @return void
      */
-    public function callTearDownProcessCallbacks()
+    public function callTearDownProcessCallbacks(): void
     {
-        $this->whenRunningInParallel(function () {
+        $this->whenRunningInParallel(function (): void {
             foreach ($this->tearDownProcessCallbacks as $callback) {
                 $this->container->call($callback, [
                     'token' => $this->token(),
@@ -258,11 +238,10 @@ class ParallelTesting
      * Call all of the "tearDown" test case callbacks.
      *
      * @param  \Illuminate\Foundation\Testing\TestCase  $testCase
-     * @return void
      */
-    public function callTearDownTestCaseCallbacks($testCase)
+    public function callTearDownTestCaseCallbacks($testCase): void
     {
-        $this->whenRunningInParallel(function () use ($testCase) {
+        $this->whenRunningInParallel(function () use ($testCase): void {
             foreach ($this->tearDownTestCaseCallbacks as $callback) {
                 $this->container->call($callback, [
                     'testCase' => $testCase,
@@ -316,10 +295,8 @@ class ParallelTesting
 
     /**
      * Indicates if the current tests are been run in parallel.
-     *
-     * @return bool
      */
-    protected function inParallel()
+    protected function inParallel(): bool
     {
         return ! empty($_SERVER['LARAVEL_PARALLEL_TESTING']) && $this->token();
     }

@@ -15,12 +15,11 @@ class ImplicitRouteBinding
      *
      * @param  \Illuminate\Container\Container  $container
      * @param  \Illuminate\Routing\Route  $route
-     * @return void
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
      * @throws \Illuminate\Routing\Exceptions\BackedEnumCaseNotFoundException
      */
-    public static function resolveForRoute($container, $route)
+    public static function resolveForRoute($container, $route): void
     {
         $parameters = $route->parameters();
 
@@ -55,10 +54,10 @@ class ImplicitRouteBinding
                 if (! $model = $parent->{$childRouteBindingMethod}(
                     $parameterName, $parameterValue, $route->bindingFieldFor($parameterName)
                 )) {
-                    throw (new ModelNotFoundException)->setModel(get_class($instance), [$parameterValue]);
+                    throw (new ModelNotFoundException)->setModel($instance::class, [$parameterValue]);
                 }
             } elseif (! $model = $instance->{$routeBindingMethod}($parameterValue, $route->bindingFieldFor($parameterName))) {
-                throw (new ModelNotFoundException)->setModel(get_class($instance), [$parameterValue]);
+                throw (new ModelNotFoundException)->setModel($instance::class, [$parameterValue]);
             }
 
             $route->setParameter($parameterName, $model);
@@ -69,12 +68,10 @@ class ImplicitRouteBinding
      * Resolve the Backed Enums route bindings for the route.
      *
      * @param  \Illuminate\Routing\Route  $route
-     * @param  array  $parameters
      * @return \Illuminate\Routing\Route
-     *
      * @throws \Illuminate\Routing\Exceptions\BackedEnumCaseNotFoundException
      */
-    protected static function resolveBackedEnumsForRoute($route, $parameters)
+    protected static function resolveBackedEnumsForRoute($route, array $parameters)
     {
         foreach ($route->signatureParameters(['backedEnum' => true]) as $parameter) {
             if (! $parameterName = static::getParameterName($parameter->getName(), $parameters)) {

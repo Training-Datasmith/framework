@@ -25,7 +25,7 @@ class ThrottlesExceptionsWithRedis extends ThrottlesExceptions
      *
      * @var string|null
      */
-    protected $connectionName = null;
+    protected $connectionName;
 
     /**
      * The rate limiter instance.
@@ -85,10 +85,9 @@ class ThrottlesExceptionsWithRedis extends ThrottlesExceptions
     /**
      * Specify the Redis connection that should be used.
      *
-     * @param  string  $name
      * @return $this
      */
-    public function connection(string $name)
+    public function connection(string $name): static
     {
         $this->connectionName = $name;
 

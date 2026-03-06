@@ -10,20 +10,6 @@ use InvalidArgumentException;
 class MigrationCreator
 {
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
-     * The custom app stubs directory.
-     *
-     * @var string
-     */
-    protected $customStubPath;
-
-    /**
      * The registered post create hooks.
      *
      * @var (\Closure(string, string): void)[]
@@ -33,13 +19,19 @@ class MigrationCreator
     /**
      * Create a new migration creator instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @param  string  $customStubPath
      */
-    public function __construct(Filesystem $files, $customStubPath)
+    public function __construct(
+        /**
+         * The filesystem instance.
+         */
+        protected \Illuminate\Filesystem\Filesystem $files,
+        /**
+         * The custom app stubs directory.
+         */
+        protected $customStubPath
+    )
     {
-        $this->files = $files;
-        $this->customStubPath = $customStubPath;
     }
 
     /**
@@ -141,7 +133,7 @@ class MigrationCreator
         // the developer, which is useful for quickly creating a tables creation
         // or update migration from the console instead of typing it manually.
         if (! is_null($table)) {
-            $stub = str_replace(
+            return str_replace(
                 ['DummyTable', '{{ table }}', '{{table}}'],
                 $table, $stub
             );
@@ -163,12 +155,8 @@ class MigrationCreator
 
     /**
      * Get the full path to the migration.
-     *
-     * @param  string  $name
-     * @param  string  $path
-     * @return string
      */
-    protected function getPath($name, $path)
+    protected function getPath(string $name, string $path): string
     {
         return $path.'/'.$this->getDatePrefix().'_'.$name.'.php';
     }
@@ -191,29 +179,24 @@ class MigrationCreator
      * Register a post migration create hook.
      *
      * @param  (\Closure(string, string): void)  $callback
-     * @return void
      */
-    public function afterCreate(Closure $callback)
+    public function afterCreate(Closure $callback): void
     {
         $this->postCreate[] = $callback;
     }
 
     /**
      * Get the date prefix for the migration.
-     *
-     * @return string
      */
-    protected function getDatePrefix()
+    protected function getDatePrefix(): string
     {
         return date('Y_m_d_His');
     }
 
     /**
      * Get the path to the stubs.
-     *
-     * @return string
      */
-    public function stubPath()
+    public function stubPath(): string
     {
         return __DIR__.'/stubs';
     }

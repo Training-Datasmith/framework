@@ -38,13 +38,13 @@ class ServeFile
 
             return tap(
                 Storage::disk($this->disk)->serve($request, $path, headers: $headers),
-                function ($response) use ($headers) {
+                function ($response) use ($headers): void {
                     if (! $response->headers->has('Content-Security-Policy')) {
                         $response->headers->replace($headers);
                     }
                 }
             );
-        } catch (PathTraversalDetected $e) {
+        } catch (PathTraversalDetected) {
             abort(404);
         }
     }

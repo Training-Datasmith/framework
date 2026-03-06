@@ -47,9 +47,8 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      * Create a new fluent instance.
      *
      * @param  iterable<TKey, TValue>  $attributes
-     * @return static
      */
-    public static function make($attributes = [])
+    public static function make($attributes = []): static
     {
         return new static($attributes);
     }
@@ -75,7 +74,7 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      * @param  TValue  $value
      * @return $this
      */
-    public function set($key, $value)
+    public function set($key, $value): static
     {
         data_set($this->attributes, $key, $value);
 
@@ -88,7 +87,7 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      * @param  iterable<TKey, TValue>  $attributes
      * @return $this
      */
-    public function fill($attributes)
+    public function fill($attributes): static
     {
         foreach ($attributes as $key => $value) {
             $this->attributes[$key] = $value;
@@ -118,9 +117,8 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      *
      * @param  string  $key
      * @param  mixed  $default
-     * @return static
      */
-    public function scope($key, $default = null)
+    public function scope($key, $default = null): static
     {
         return new static(
             (array) $this->get($key, $default)
@@ -217,8 +215,6 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
 
     /**
      * Determine if the fluent instance is empty.
-     *
-     * @return bool
      */
     public function isEmpty(): bool
     {
@@ -227,8 +223,6 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
 
     /**
      * Determine if the fluent instance is not empty.
-     *
-     * @return bool
      */
     public function isNotEmpty(): bool
     {
@@ -239,7 +233,6 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      * Determine if the given offset exists.
      *
      * @param  TKey  $offset
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -262,7 +255,6 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      *
      * @param  TKey  $offset
      * @param  TValue  $value
-     * @return void
      */
     public function offsetSet($offset, $value): void
     {
@@ -273,7 +265,6 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      * Unset the value at the given offset.
      *
      * @param  TKey  $offset
-     * @return void
      */
     public function offsetUnset($offset): void
     {
@@ -297,7 +288,7 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      * @param  array{0: ?TValue}  $parameters
      * @return $this
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);
@@ -314,7 +305,7 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      * @param  TKey  $key
      * @return TValue|null
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         return $this->value($key);
     }
@@ -326,7 +317,7 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      * @param  TValue  $value
      * @return void
      */
-    public function __set($key, $value)
+    public function __set(string $key, mixed $value)
     {
         $this->offsetSet($key, $value);
     }
@@ -337,7 +328,7 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      * @param  TKey  $key
      * @return bool
      */
-    public function __isset($key)
+    public function __isset(string $key)
     {
         return $this->offsetExists($key);
     }
@@ -348,7 +339,7 @@ class Fluent implements Arrayable, ArrayAccess, IteratorAggregate, Jsonable, Jso
      * @param  TKey  $key
      * @return void
      */
-    public function __unset($key)
+    public function __unset(string $key)
     {
         $this->offsetUnset($key);
     }

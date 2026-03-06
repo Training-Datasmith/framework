@@ -32,10 +32,8 @@ class ClearCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int|null
      */
-    public function handle()
+    public function handle(): int
     {
         if (! $this->confirmToProceed()) {
             return 1;
@@ -79,10 +77,8 @@ class ClearCommand extends Command
 
     /**
      *  Get the console command arguments.
-     *
-     * @return array
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['connection', InputArgument::OPTIONAL, 'The name of the queue connection to clear'],
@@ -91,10 +87,8 @@ class ClearCommand extends Command
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['queue', null, InputOption::VALUE_OPTIONAL, 'The name of the queue to clear'],

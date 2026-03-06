@@ -9,11 +9,8 @@ class PredisClusterConnection extends PredisConnection
 {
     /**
      * Get the keys that match the given pattern.
-     *
-     * @param  string  $pattern
-     * @return array
      */
-    public function keys(string $pattern)
+    public function keys(string $pattern): array
     {
         $keys = [];
 
@@ -26,10 +23,8 @@ class PredisClusterConnection extends PredisConnection
 
     /**
      * Flush the selected Redis database on all cluster nodes.
-     *
-     * @return void
      */
-    public function flushdb()
+    public function flushdb(): void
     {
         $command = class_exists(ServerFlushDatabase::class)
             ? ServerFlushDatabase::class

@@ -8,9 +8,8 @@ trait DispatchesJobs
      * Dispatch a job to its appropriate handler.
      *
      * @param  mixed  $job
-     * @return mixed
      */
-    protected function dispatch($job)
+    protected function dispatch($job): \Illuminate\Foundation\Bus\PendingDispatch
     {
         return dispatch($job);
     }

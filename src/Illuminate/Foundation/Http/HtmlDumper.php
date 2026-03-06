@@ -28,20 +28,6 @@ class HtmlDumper extends BaseHtmlDumper
     const NON_EXPANDED_SEPARATOR = "\n</pre><script>";
 
     /**
-     * The base path of the application.
-     *
-     * @var string
-     */
-    protected $basePath;
-
-    /**
-     * The compiled view path of the application.
-     *
-     * @var string
-     */
-    protected $compiledViewPath;
-
-    /**
      * If the dumper is currently dumping.
      *
      * @var bool
@@ -54,12 +40,15 @@ class HtmlDumper extends BaseHtmlDumper
      * @param  string  $basePath
      * @param  string  $compiledViewPath
      */
-    public function __construct($basePath, $compiledViewPath)
+    public function __construct(/**
+     * The base path of the application.
+     */
+    protected $basePath, /**
+     * The compiled view path of the application.
+     */
+    protected $compiledViewPath)
     {
         parent::__construct();
-
-        $this->basePath = $basePath;
-        $this->compiledViewPath = $compiledViewPath;
     }
 
     /**
@@ -67,9 +56,8 @@ class HtmlDumper extends BaseHtmlDumper
      *
      * @param  string  $basePath
      * @param  string  $compiledViewPath
-     * @return void
      */
-    public static function register($basePath, $compiledViewPath)
+    public static function register($basePath, $compiledViewPath): void
     {
         $cloner = tap(new VarCloner())->addCasters(ReflectionCaster::UNSET_CLOSURE_FILE_INFO);
 
@@ -80,11 +68,8 @@ class HtmlDumper extends BaseHtmlDumper
 
     /**
      * Dump a variable with its source file / line.
-     *
-     * @param  \Symfony\Component\VarDumper\Cloner\Data  $data
-     * @return void
      */
-    public function dumpWithSource(Data $data)
+    public function dumpWithSource(Data $data): void
     {
         if ($this->dumping) {
             $this->dump($data);

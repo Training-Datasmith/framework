@@ -36,10 +36,8 @@ class ApiInstallCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         if ($this->option('passport')) {
             $this->installPassport();
@@ -126,9 +124,7 @@ class ApiInstallCommand extends Command
             'laravel/sanctum:^4.0',
         ]);
 
-        $migrationPublished = (new Collection(scandir($this->laravel->databasePath('migrations'))))->contains(function ($migration) {
-            return preg_match('/\d{4}_\d{2}_\d{2}_\d{6}_create_personal_access_tokens_table.php/', $migration);
-        });
+        $migrationPublished = (new Collection(scandir($this->laravel->databasePath('migrations'))))->contains(fn($migration) => preg_match('/\d{4}_\d{2}_\d{2}_\d{6}_create_personal_access_tokens_table.php/', (string) $migration));
 
         if (! $migrationPublished) {
             Process::run([

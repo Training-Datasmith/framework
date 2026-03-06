@@ -45,7 +45,7 @@ class Pluralizer
             $count = count($count);
         }
 
-        if ((int) abs($count) === 1 || static::uncountable($value) || preg_match('/^(.*)[A-Za-z0-9\x{0080}-\x{FFFF}]$/u', $value) == 0) {
+        if (abs($count) === 1 || static::uncountable($value) || preg_match('/^(.*)[A-Za-z0-9\x{0080}-\x{FFFF}]$/u', $value) == 0) {
             return $value;
         }
 
@@ -71,9 +71,8 @@ class Pluralizer
      * Determine if the given value is uncountable.
      *
      * @param  string  $value
-     * @return bool
      */
-    protected static function uncountable($value)
+    protected static function uncountable($value): bool
     {
         return in_array(strtolower($value), static::$uncountable);
     }
@@ -114,11 +113,8 @@ class Pluralizer
 
     /**
      * Specify the language that should be used by the inflector.
-     *
-     * @param  string  $language
-     * @return void
      */
-    public static function useLanguage(string $language)
+    public static function useLanguage(string $language): void
     {
         static::$language = $language;
 

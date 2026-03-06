@@ -37,30 +37,20 @@ class EnvironmentEncryptCommand extends Command
     protected $description = 'Encrypt an environment file';
 
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * Create a new command instance.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      */
-    public function __construct(Filesystem $files)
+    public function __construct(/**
+     * The filesystem instance.
+     */
+    protected \Illuminate\Filesystem\Filesystem $files)
     {
         parent::__construct();
-
-        $this->files = $files;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $cipher = $this->option('cipher') ?: 'AES-256-CBC';
 
@@ -121,7 +111,7 @@ class EnvironmentEncryptCommand extends Command
 
         $this->components->info('Environment successfully encrypted.');
 
-        $this->components->twoColumnDetail('Key', $keyPassed ? $key : 'base64:'.base64_encode($key));
+        $this->components->twoColumnDetail('Key', $keyPassed ? $key : 'base64:'.base64_encode((string) $key));
         $this->components->twoColumnDetail('Cipher', $cipher);
         $this->components->twoColumnDetail('Encrypted file', $encryptedFile);
 
@@ -130,10 +120,6 @@ class EnvironmentEncryptCommand extends Command
 
     /**
      * Encrypt the environment file in readable format.
-     *
-     * @param  string  $contents
-     * @param  \Illuminate\Encryption\Encrypter  $encrypter
-     * @return string
      */
     protected function encryptReadableFormat(string $contents, Encrypter $encrypter): string
     {
@@ -158,13 +144,12 @@ class EnvironmentEncryptCommand extends Command
     /**
      * Parse the encryption key.
      *
-     * @param  string  $key
      * @return string
      */
-    protected function parseKey(string $key)
+    protected function parseKey(string $key): string|false
     {
         if (Str::startsWith($key, $prefix = 'base64:')) {
-            $key = base64_decode(Str::after($key, $prefix));
+            return base64_decode(Str::after($key, $prefix));
         }
 
         return $key;

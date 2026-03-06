@@ -42,10 +42,8 @@ class MailMakeCommand extends GeneratorCommand
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         if (parent::handle() === false && ! $this->option('force')) {
             return;
@@ -128,7 +126,7 @@ class MailMakeCommand extends GeneratorCommand
      * @param  string  $name
      * @return string
      */
-    protected function buildClass($name)
+    protected function buildClass($name): string|array
     {
         $class = str_replace(
             '{{ subject }}',
@@ -137,7 +135,7 @@ class MailMakeCommand extends GeneratorCommand
         );
 
         if ($this->option('markdown') !== false || $this->option('view') !== false) {
-            $class = str_replace(['DummyView', '{{ view }}'], $this->getView(), $class);
+            return str_replace(['DummyView', '{{ view }}'], $this->getView(), $class);
         }
 
         return $class;
@@ -184,10 +182,9 @@ class MailMakeCommand extends GeneratorCommand
     /**
      * Resolve the fully-qualified path to the stub.
      *
-     * @param  string  $stub
      * @return string
      */
-    protected function resolveStubPath($stub)
+    protected function resolveStubPath(string $stub)
     {
         return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
@@ -198,19 +195,16 @@ class MailMakeCommand extends GeneratorCommand
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
-     * @return string
      */
-    protected function getDefaultNamespace($rootNamespace)
+    protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\Mail';
     }
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the mailable already exists'],
@@ -222,8 +216,6 @@ class MailMakeCommand extends GeneratorCommand
     /**
      * Interact further with the user if they were prompted for missing arguments.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
     protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)

@@ -8,13 +8,6 @@ use Illuminate\Http\Request;
 class TrustHosts
 {
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
      * The trusted hosts that have been configured to always be trusted.
      *
      * @var array<int, string>|(callable(): array<int, string>)|null
@@ -30,12 +23,14 @@ class TrustHosts
 
     /**
      * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
      */
-    public function __construct(Application $app)
+    public function __construct(
+        /**
+         * The application instance.
+         */
+        protected \Illuminate\Contracts\Foundation\Application $app
+    )
     {
-        $this->app = $app;
     }
 
     /**
@@ -65,7 +60,6 @@ class TrustHosts
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
      * @return \Illuminate\Http\Response
      */
@@ -82,10 +76,8 @@ class TrustHosts
      * Specify the hosts that should always be trusted.
      *
      * @param  array<int, string>|(callable(): array<int, string>)  $hosts
-     * @param  bool  $subdomains
-     * @return void
      */
-    public static function at(array|callable $hosts, bool $subdomains = true)
+    public static function at(array|callable $hosts, bool $subdomains = true): void
     {
         static::$alwaysTrust = $hosts;
         static::$subdomains = $subdomains;
@@ -93,10 +85,8 @@ class TrustHosts
 
     /**
      * Determine if the application should specify trusted hosts.
-     *
-     * @return bool
      */
-    protected function shouldSpecifyTrustedHosts()
+    protected function shouldSpecifyTrustedHosts(): bool
     {
         return ! $this->app->environment('local') &&
                ! $this->app->runningUnitTests();
@@ -109,17 +99,15 @@ class TrustHosts
      */
     protected function allSubdomainsOfApplicationUrl()
     {
-        if ($host = parse_url($this->app['config']->get('app.url'), PHP_URL_HOST)) {
+        if ($host = parse_url((string) $this->app['config']->get('app.url'), PHP_URL_HOST)) {
             return '^(.+\.)?'.preg_quote($host).'$';
         }
     }
 
     /**
      * Flush the state of the middleware.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$alwaysTrust = null;
         static::$subdomains = null;

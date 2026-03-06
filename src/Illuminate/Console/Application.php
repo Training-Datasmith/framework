@@ -25,20 +25,6 @@ use function Illuminate\Support\php_binary;
 class Application extends SymfonyApplication implements ApplicationContract
 {
     /**
-     * The Laravel application instance.
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $laravel;
-
-    /**
-     * The event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
-    /**
      * The output from the previous command.
      *
      * @var \Symfony\Component\Console\Output\BufferedOutput
@@ -61,17 +47,16 @@ class Application extends SymfonyApplication implements ApplicationContract
 
     /**
      * Create a new Artisan console application.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $laravel
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @param  string  $version
      */
-    public function __construct(Container $laravel, Dispatcher $events, $version)
+    public function __construct(/**
+     * The Laravel application instance.
+     */
+    protected \Illuminate\Contracts\Container\Container $laravel, /**
+     * The event dispatcher instance.
+     */
+    protected \Illuminate\Contracts\Events\Dispatcher $events, string $version)
     {
         parent::__construct('Laravel Framework', $version);
-
-        $this->laravel = $laravel;
-        $this->events = $events;
         $this->setAutoExit(false);
         $this->setCatchExceptions(false);
 
@@ -104,9 +89,8 @@ class Application extends SymfonyApplication implements ApplicationContract
      * Format the given command as a fully-qualified executable command.
      *
      * @param  string  $string
-     * @return string
      */
-    public static function formatCommandString($string)
+    public static function formatCommandString($string): string
     {
         return sprintf('%s %s %s', static::phpBinary(), static::artisanBinary(), $string);
     }
@@ -115,9 +99,8 @@ class Application extends SymfonyApplication implements ApplicationContract
      * Register a console "starting" bootstrapper.
      *
      * @param  \Closure($this): void  $callback
-     * @return void
      */
-    public static function starting(Closure $callback)
+    public static function starting(Closure $callback): void
     {
         static::$bootstrappers[] = $callback;
     }
@@ -136,10 +119,8 @@ class Application extends SymfonyApplication implements ApplicationContract
 
     /**
      * Clear the console application bootstrappers.
-     *
-     * @return void
      */
-    public static function forgetBootstrappers()
+    public static function forgetBootstrappers(): void
     {
         static::$bootstrappers = [];
     }
@@ -148,13 +129,11 @@ class Application extends SymfonyApplication implements ApplicationContract
      * Run an Artisan console command by name.
      *
      * @param  \Symfony\Component\Console\Command\Command|string  $command
-     * @param  array  $parameters
      * @param  \Symfony\Component\Console\Output\OutputInterface|null  $outputBuffer
-     * @return int
      *
      * @throws \Symfony\Component\Console\Exception\CommandNotFoundException
      */
-    public function call($command, array $parameters = [], $outputBuffer = null)
+    public function call($command, array $parameters = [], $outputBuffer = null): int
     {
         [$command, $input] = $this->parseCommand($command, $parameters);
 
@@ -174,13 +153,13 @@ class Application extends SymfonyApplication implements ApplicationContract
      * @param  array  $parameters
      * @return array<string, \Symfony\Component\Console\Input\ArrayInput>
      */
-    protected function parseCommand($command, $parameters)
+    protected function parseCommand($command, $parameters): array
     {
         if (is_subclass_of($command, SymfonyCommand::class)) {
             $callingClass = true;
 
             if (is_object($command)) {
-                $command = get_class($command);
+                $command = $command::class;
             }
 
             $command = $this->laravel->make($command)->getName();
@@ -213,7 +192,6 @@ class Application extends SymfonyApplication implements ApplicationContract
      * Add an array of commands to the console.
      *
      * @param  array<int, \Symfony\Component\Console\Command\Command>  $commands
-     * @return void
      */
     #[\Override]
     public function addCommands(array $commands): void
@@ -225,9 +203,6 @@ class Application extends SymfonyApplication implements ApplicationContract
 
     /**
      * Add a command to the console.
-     *
-     * @param  \Symfony\Component\Console\Command\Command  $command
-     * @return \Symfony\Component\Console\Command\Command|null
      */
     #[\Override]
     public function add(SymfonyCommand $command): ?SymfonyCommand
@@ -237,9 +212,6 @@ class Application extends SymfonyApplication implements ApplicationContract
 
     /**
      * Add a command to the console.
-     *
-     * @param  \Symfony\Component\Console\Command\Command|callable  $command
-     * @return \Symfony\Component\Console\Command\Command|null
      */
     public function addCommand(SymfonyCommand|callable $command): ?SymfonyCommand
     {
@@ -253,7 +225,6 @@ class Application extends SymfonyApplication implements ApplicationContract
     /**
      * Add the command to the parent instance.
      *
-     * @param  \Symfony\Component\Console\Command\Command  $command
      * @return \Symfony\Component\Console\Command\Command
      */
     protected function addToParent(SymfonyCommand $command)
@@ -269,9 +240,8 @@ class Application extends SymfonyApplication implements ApplicationContract
      * Add a command, resolving through the application.
      *
      * @param  \Illuminate\Console\Command|string  $command
-     * @return \Symfony\Component\Console\Command\Command|null
      */
-    public function resolve($command)
+    public function resolve($command): ?\Symfony\Component\Console\Command\Command
     {
         if (is_subclass_of($command, SymfonyCommand::class)) {
             $attribute = (new ReflectionClass($command))->getAttributes(AsCommand::class);
@@ -300,7 +270,7 @@ class Application extends SymfonyApplication implements ApplicationContract
      * @param  mixed  $commands
      * @return $this
      */
-    public function resolveCommands($commands)
+    public function resolveCommands($commands): static
     {
         $commands = is_array($commands) ? $commands : func_get_args();
 
@@ -316,7 +286,7 @@ class Application extends SymfonyApplication implements ApplicationContract
      *
      * @return $this
      */
-    public function setContainerCommandLoader()
+    public function setContainerCommandLoader(): static
     {
         $this->setCommandLoader(new ContainerCommandLoader($this->laravel, $this->commandMap));
 
@@ -327,23 +297,19 @@ class Application extends SymfonyApplication implements ApplicationContract
      * Get the default input definition for the application.
      *
      * This is used to add the --env option to every available command.
-     *
-     * @return \Symfony\Component\Console\Input\InputDefinition
      */
     #[\Override]
     protected function getDefaultInputDefinition(): InputDefinition
     {
-        return tap(parent::getDefaultInputDefinition(), function ($definition) {
+        return tap(parent::getDefaultInputDefinition(), function ($definition): void {
             $definition->addOption($this->getEnvironmentOption());
         });
     }
 
     /**
      * Get the global environment option for the definition.
-     *
-     * @return \Symfony\Component\Console\Input\InputOption
      */
-    protected function getEnvironmentOption()
+    protected function getEnvironmentOption(): \Symfony\Component\Console\Input\InputOption
     {
         $message = 'The environment the command should run under';
 

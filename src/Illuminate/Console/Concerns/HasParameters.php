@@ -48,7 +48,7 @@ trait HasParameters
      *    4?: list<string|Suggestion>|\Closure(CompletionInput, CompletionSuggestions): list<string|Suggestion>
      * })[]
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [];
     }
@@ -65,7 +65,7 @@ trait HasParameters
      *    5?: list<string|Suggestion>|\Closure(CompletionInput, CompletionSuggestions): list<string|Suggestion>
      * })[]
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [];
     }

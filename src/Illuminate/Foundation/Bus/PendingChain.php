@@ -17,20 +17,6 @@ class PendingChain
     use Conditionable;
 
     /**
-     * The class name of the job being dispatched.
-     *
-     * @var mixed
-     */
-    public $job;
-
-    /**
-     * The jobs to be chained.
-     *
-     * @var array
-     */
-    public $chain;
-
-    /**
      * The name of the connection the chain should be sent to.
      *
      * @var string|null
@@ -64,10 +50,17 @@ class PendingChain
      * @param  mixed  $job
      * @param  array  $chain
      */
-    public function __construct($job, $chain)
+    public function __construct(
+        /**
+         * The class name of the job being dispatched.
+         */
+        public $job,
+        /**
+         * The jobs to be chained.
+         */
+        public $chain
+    )
     {
-        $this->job = $job;
-        $this->chain = $chain;
     }
 
     /**
@@ -76,7 +69,7 @@ class PendingChain
      * @param  \UnitEnum|string|null  $connection
      * @return $this
      */
-    public function onConnection($connection)
+    public function onConnection($connection): static
     {
         $this->connection = enum_value($connection);
 
@@ -89,7 +82,7 @@ class PendingChain
      * @param  \UnitEnum|string|null  $queue
      * @return $this
      */
-    public function onQueue($queue)
+    public function onQueue($queue): static
     {
         $this->queue = enum_value($queue);
 
@@ -102,7 +95,7 @@ class PendingChain
      * @param  mixed  $job
      * @return $this
      */
-    public function prepend($job)
+    public function prepend($job): static
     {
         $jobs = ChainedBatch::prepareNestedBatches(
             Collection::wrap($job)
@@ -125,7 +118,7 @@ class PendingChain
      * @param  mixed  $job
      * @return $this
      */
-    public function append($job)
+    public function append($job): static
     {
         $jobs = ChainedBatch::prepareNestedBatches(
             Collection::wrap($job)
@@ -146,7 +139,7 @@ class PendingChain
      * @param  \DateTimeInterface|\DateInterval|int|null  $delay
      * @return $this
      */
-    public function delay($delay)
+    public function delay($delay): static
     {
         $this->delay = $delay;
 
@@ -159,7 +152,7 @@ class PendingChain
      * @param  callable  $callback
      * @return $this
      */
-    public function catch($callback)
+    public function catch($callback): static
     {
         $this->catchCallbacks[] = $callback instanceof Closure
             ? new SerializableClosure($callback)

@@ -28,7 +28,6 @@ class ScheduleTestCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     public function handle(Schedule $schedule)
@@ -50,9 +49,7 @@ class ScheduleTestCommand extends Command
         if (! empty($name = $this->option('name'))) {
             $commandBinary = $phpBinary.' '.Application::artisanBinary();
 
-            $matches = array_filter($commandNames, function ($commandName) use ($commandBinary, $name) {
-                return trim(str_replace($commandBinary, '', $commandName)) === $name;
-            });
+            $matches = array_filter($commandNames, fn($commandName) => trim(str_replace($commandBinary, '', $commandName)) === $name);
 
             if (count($matches) !== 1) {
                 $this->components->info('No matching scheduled command found.');
@@ -93,27 +90,23 @@ class ScheduleTestCommand extends Command
     /**
      * Get the selected command name by index.
      *
-     * @param  array  $commandNames
      * @return int
      */
-    protected function getSelectedCommandByIndex(array $commandNames)
+    protected function getSelectedCommandByIndex(array $commandNames): int|string|false
     {
         if (count($commandNames) !== count(array_unique($commandNames))) {
             // Some commands (likely closures) have the same name, append unique indexes to each one...
-            $uniqueCommandNames = array_map(function ($index, $value) {
-                return "$value [$index]";
-            }, array_keys($commandNames), $commandNames);
+            $uniqueCommandNames = array_map(fn($index, int|string $value) => "$value [$index]", array_keys($commandNames), $commandNames);
 
             $selectedCommand = select('Which command would you like to run?', $uniqueCommandNames);
 
             preg_match('/\[(\d+)\]/', $selectedCommand, $choice);
 
             return (int) $choice[1];
-        } else {
-            return array_search(
-                select('Which command would you like to run?', $commandNames),
-                $commandNames
-            );
         }
+        return array_search(
+            select('Which command would you like to run?', $commandNames),
+            $commandNames
+        );
     }
 }

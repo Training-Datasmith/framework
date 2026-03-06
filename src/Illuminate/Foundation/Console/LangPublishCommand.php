@@ -27,10 +27,8 @@ class LangPublishCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         if (! is_dir($langPath = $this->laravel->basePath('lang/en'))) {
             (new Filesystem)->makeDirectory($langPath, recursive: true);

@@ -11,8 +11,6 @@ class Onceable
     /**
      * Create a new onceable instance.
      *
-     * @param  string  $hash
-     * @param  object|null  $object
      * @param  callable  $callable
      */
     public function __construct(
@@ -53,9 +51,8 @@ class Onceable
      * Computes the hash of the onceable from the given trace.
      *
      * @param  array<int, array<string, mixed>>  $trace
-     * @return string|null
      */
-    protected static function hashFromTrace(array $trace, callable $callable)
+    protected static function hashFromTrace(array $trace, callable $callable): ?string
     {
         if (str_contains($trace[0]['file'] ?? '', 'eval()\'d code')) {
             return null;
@@ -78,7 +75,7 @@ class Onceable
 
         $class = $callable instanceof Closure ? (new ReflectionClosure($callable))->getClosureCalledClass()?->getName() : null;
 
-        $class ??= isset($trace[1]['class']) ? $trace[1]['class'] : null;
+        $class ??= $trace[1]['class'] ?? null;
 
         return hash('xxh128', sprintf(
             '%s@%s%s:%s (%s)',

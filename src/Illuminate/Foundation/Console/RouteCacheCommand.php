@@ -26,22 +26,14 @@ class RouteCacheCommand extends Command
     protected $description = 'Create a route cache file for faster route registration';
 
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * Create a new route command instance.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      */
-    public function __construct(Filesystem $files)
+    public function __construct(/**
+     * The filesystem instance.
+     */
+    protected \Illuminate\Filesystem\Filesystem $files)
     {
         parent::__construct();
-
-        $this->files = $files;
     }
 
     /**
@@ -77,7 +69,7 @@ class RouteCacheCommand extends Command
      */
     protected function getFreshApplicationRoutes()
     {
-        return tap($this->getFreshApplication()['router']->getRoutes(), function ($routes) {
+        return tap($this->getFreshApplication()['router']->getRoutes(), function ($routes): void {
             $routes->refreshNameLookups();
             $routes->refreshActionLookups();
         });
@@ -90,18 +82,15 @@ class RouteCacheCommand extends Command
      */
     protected function getFreshApplication()
     {
-        return tap(require $this->laravel->bootstrapPath('app.php'), function ($app) {
+        return tap(require $this->laravel->bootstrapPath('app.php'), function ($app): void {
             $app->make(ConsoleKernelContract::class)->bootstrap();
         });
     }
 
     /**
      * Build the route cache file.
-     *
-     * @param  \Illuminate\Routing\RouteCollection  $routes
-     * @return string
      */
-    protected function buildRouteCacheFile(RouteCollection $routes)
+    protected function buildRouteCacheFile(RouteCollection $routes): string
     {
         $stub = $this->files->get(__DIR__.'/stubs/routes.stub');
 

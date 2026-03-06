@@ -12,38 +12,25 @@ use Illuminate\Database\ConnectionInterface;
 class DatabaseUserProvider implements UserProvider
 {
     /**
-     * The active database connection.
-     *
-     * @var \Illuminate\Database\ConnectionInterface
-     */
-    protected $connection;
-
-    /**
-     * The hasher implementation.
-     *
-     * @var \Illuminate\Contracts\Hashing\Hasher
-     */
-    protected $hasher;
-
-    /**
-     * The table containing the users.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
      * Create a new database user provider.
      *
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
-     * @param  \Illuminate\Contracts\Hashing\Hasher  $hasher
      * @param  string  $table
      */
-    public function __construct(ConnectionInterface $connection, HasherContract $hasher, $table)
+    public function __construct(
+        /**
+         * The active database connection.
+         */
+        protected \Illuminate\Database\ConnectionInterface $connection,
+        /**
+         * The hasher implementation.
+         */
+        protected \Illuminate\Contracts\Hashing\Hasher $hasher,
+        /**
+         * The table containing the users.
+         */
+        protected $table
+    )
     {
-        $this->connection = $connection;
-        $this->table = $table;
-        $this->hasher = $hasher;
     }
 
     /**
@@ -80,11 +67,9 @@ class DatabaseUserProvider implements UserProvider
     /**
      * Update the "remember me" token for the given user in storage.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  string  $token
-     * @return void
      */
-    public function updateRememberToken(UserContract $user, #[\SensitiveParameter] $token)
+    public function updateRememberToken(UserContract $user, #[\SensitiveParameter] $token): void
     {
         $this->connection->table($this->table)
             ->where($user->getAuthIdentifierName(), $user->getAuthIdentifier())
@@ -94,14 +79,13 @@ class DatabaseUserProvider implements UserProvider
     /**
      * Retrieve a user by the given credentials.
      *
-     * @param  array  $credentials
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function retrieveByCredentials(#[\SensitiveParameter] array $credentials)
     {
         $credentials = array_filter(
             $credentials,
-            fn ($key) => ! str_contains($key, 'password'),
+            fn ($key): bool => ! str_contains((string) $key, 'password'),
             ARRAY_FILTER_USE_KEY
         );
 
@@ -148,8 +132,6 @@ class DatabaseUserProvider implements UserProvider
     /**
      * Validate a user against the given credentials.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  array  $credentials
      * @return bool
      */
     public function validateCredentials(UserContract $user, #[\SensitiveParameter] array $credentials)
@@ -167,13 +149,8 @@ class DatabaseUserProvider implements UserProvider
 
     /**
      * Rehash the user's password if required and supported.
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  array  $credentials
-     * @param  bool  $force
-     * @return void
      */
-    public function rehashPasswordIfRequired(UserContract $user, #[\SensitiveParameter] array $credentials, bool $force = false)
+    public function rehashPasswordIfRequired(UserContract $user, #[\SensitiveParameter] array $credentials, bool $force = false): void
     {
         if (! $this->hasher->needsRehash($user->getAuthPassword()) && ! $force) {
             return;

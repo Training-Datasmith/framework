@@ -15,16 +15,10 @@ class BusServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->app->singleton(Dispatcher::class, function ($app) {
-            return new Dispatcher($app, function ($connection = null) {
-                return Container::getInstance()->make(QueueFactoryContract::class)->connection($connection);
-            });
-        });
+        $this->app->singleton(Dispatcher::class, fn($app) => new Dispatcher($app, fn($connection = null) => Container::getInstance()->make(QueueFactoryContract::class)->connection($connection)));
 
         $this->registerBatchServices();
 
@@ -52,15 +46,13 @@ class BusServiceProvider extends ServiceProvider implements DeferrableProvider
                 : $app->make(DatabaseBatchRepository::class);
         });
 
-        $this->app->singleton(DatabaseBatchRepository::class, function ($app) {
-            return new DatabaseBatchRepository(
-                $app->make(BatchFactory::class),
-                $app->make('db')->connection($app->config->get('queue.batching.database')),
-                $app->config->get('queue.batching.table', 'job_batches')
-            );
-        });
+        $this->app->singleton(DatabaseBatchRepository::class, fn($app) => new DatabaseBatchRepository(
+            $app->make(BatchFactory::class),
+            $app->make('db')->connection($app->config->get('queue.batching.database')),
+            $app->config->get('queue.batching.table', 'job_batches')
+        ));
 
-        $this->app->singleton(DynamoBatchRepository::class, function ($app) {
+        $this->app->singleton(DynamoBatchRepository::class, function ($app): \Illuminate\Bus\DynamoBatchRepository {
             $config = $app->config->get('queue.batching');
 
             $dynamoConfig = [
@@ -90,10 +82,8 @@ class BusServiceProvider extends ServiceProvider implements DeferrableProvider
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return [
             Dispatcher::class,

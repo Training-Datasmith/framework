@@ -10,7 +10,7 @@ trait ParsesQueue
      * @param  string  $queue
      * @return array{string, string}
      */
-    protected function parseQueue($queue)
+    protected function parseQueue($queue): array
     {
         [$connection, $queue] = array_pad(explode(':', $queue, 2), -2, null);
 

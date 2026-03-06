@@ -13,20 +13,6 @@ abstract class Lock implements LockContract
     use InteractsWithTime;
 
     /**
-     * The name of the lock.
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The number of seconds the lock should be maintained.
-     *
-     * @var int
-     */
-    protected $seconds;
-
-    /**
      * The scope identifier of this lock.
      *
      * @var string
@@ -47,15 +33,18 @@ abstract class Lock implements LockContract
      * @param  int  $seconds
      * @param  string|null  $owner
      */
-    public function __construct($name, $seconds, $owner = null)
+    public function __construct(/**
+     * The name of the lock.
+     */
+    protected $name, /**
+     * The number of seconds the lock should be maintained.
+     */
+    protected $seconds, $owner = null)
     {
         if (is_null($owner)) {
             $owner = Str::random();
         }
-
-        $this->name = $name;
         $this->owner = $owner;
-        $this->seconds = $seconds;
     }
 
     /**

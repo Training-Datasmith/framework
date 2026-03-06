@@ -25,12 +25,11 @@ class PhpRedisClusterConnection extends PhpRedisConnection
      *
      * @param  mixed  $cursor
      * @param  array  $options
-     * @return mixed
      *
      * @throws \InvalidArgumentException
      */
     #[\Override]
-    public function scan($cursor, $options = [])
+    public function scan($cursor, $options = []): array|false
     {
         $result = $this->client->scan($cursor,
             $options['node'] ?? $this->defaultNode(),
@@ -47,10 +46,8 @@ class PhpRedisClusterConnection extends PhpRedisConnection
 
     /**
      * Flush the selected Redis database on all master nodes.
-     *
-     * @return void
      */
-    public function flushdb()
+    public function flushdb(): void
     {
         $arguments = func_get_args();
 

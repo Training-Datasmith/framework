@@ -55,10 +55,8 @@ class Request implements ArrayAccess
 
     /**
      * Get the URL of the request.
-     *
-     * @return string
      */
-    public function url()
+    public function url(): string
     {
         return (string) $this->request->getUri();
     }
@@ -91,9 +89,8 @@ class Request implements ArrayAccess
      * Determine if the request has the given headers.
      *
      * @param  array|string  $headers
-     * @return bool
      */
-    public function hasHeaders($headers)
+    public function hasHeaders($headers): bool
     {
         if (is_string($headers)) {
             $headers = [$headers => null];
@@ -131,10 +128,8 @@ class Request implements ArrayAccess
 
     /**
      * Get the body of the request.
-     *
-     * @return string
      */
-    public function body()
+    public function body(): string
     {
         return (string) $this->request->getBody();
     }
@@ -153,11 +148,9 @@ class Request implements ArrayAccess
             return false;
         }
 
-        return (new Collection($this->data))->reject(function ($file) use ($name, $value, $filename) {
-            return $file['name'] != $name ||
-                ($value && $file['contents'] != $value) ||
-                ($filename && $file['filename'] != $filename);
-        })->count() > 0;
+        return (new Collection($this->data))->reject(fn($file) => $file['name'] != $name ||
+            ($value && $file['contents'] != $value) ||
+            ($filename && $file['filename'] != $filename))->count() > 0;
     }
 
     /**
@@ -169,7 +162,8 @@ class Request implements ArrayAccess
     {
         if ($this->isForm()) {
             return $this->parameters();
-        } elseif ($this->isJson()) {
+        }
+        if ($this->isJson()) {
             return $this->json();
         }
 
@@ -218,33 +212,28 @@ class Request implements ArrayAccess
 
     /**
      * Determine if the request is JSON.
-     *
-     * @return bool
      */
-    public function isJson()
+    public function isJson(): bool
     {
         return $this->hasHeader('Content-Type') &&
-               str_contains($this->header('Content-Type')[0], 'json');
+               str_contains((string) $this->header('Content-Type')[0], 'json');
     }
 
     /**
      * Determine if the request is multipart.
-     *
-     * @return bool
      */
-    public function isMultipart()
+    public function isMultipart(): bool
     {
         return $this->hasHeader('Content-Type') &&
-               str_contains($this->header('Content-Type')[0], 'multipart');
+               str_contains((string) $this->header('Content-Type')[0], 'multipart');
     }
 
     /**
      * Set the decoded data on the request.
      *
-     * @param  array  $data
      * @return $this
      */
-    public function withData(array $data)
+    public function withData(array $data): static
     {
         $this->data = $data;
 
@@ -267,7 +256,7 @@ class Request implements ArrayAccess
      * @param  array<array-key, mixed>  $attributes
      * @return $this
      */
-    public function setRequestAttributes($attributes)
+    public function setRequestAttributes($attributes): static
     {
         $this->attributes = $attributes;
 
@@ -288,7 +277,6 @@ class Request implements ArrayAccess
      * Determine if the given offset exists.
      *
      * @param  string  $offset
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -299,7 +287,6 @@ class Request implements ArrayAccess
      * Get the value for a given offset.
      *
      * @param  string  $offset
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -311,7 +298,6 @@ class Request implements ArrayAccess
      *
      * @param  string  $offset
      * @param  mixed  $value
-     * @return void
      *
      * @throws \LogicException
      */
@@ -324,7 +310,6 @@ class Request implements ArrayAccess
      * Unset the value at the given offset.
      *
      * @param  string  $offset
-     * @return void
      *
      * @throws \LogicException
      */

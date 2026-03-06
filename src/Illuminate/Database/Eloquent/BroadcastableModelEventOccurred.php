@@ -13,20 +13,6 @@ class BroadcastableModelEventOccurred implements ShouldBroadcast
     use InteractsWithSockets, SerializesModels;
 
     /**
-     * The model instance corresponding to the event.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    public $model;
-
-    /**
-     * The event name (created, updated, etc.).
-     *
-     * @var string
-     */
-    protected $event;
-
-    /**
      * The channels that the event should be broadcast on.
      *
      * @var array
@@ -60,10 +46,17 @@ class BroadcastableModelEventOccurred implements ShouldBroadcast
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $event
      */
-    public function __construct($model, $event)
+    public function __construct(
+        /**
+         * The model instance corresponding to the event.
+         */
+        public $model,
+        /**
+         * The event name (created, updated, etc.).
+         */
+        protected $event
+    )
     {
-        $this->model = $model;
-        $this->event = $event;
     }
 
     /**
@@ -78,7 +71,7 @@ class BroadcastableModelEventOccurred implements ShouldBroadcast
             : $this->channels;
 
         return (new BaseCollection($channels))
-            ->map(fn ($channel) => $channel instanceof Model ? new PrivateChannel($channel) : $channel)
+            ->map(fn ($channel): mixed => $channel instanceof Model ? new PrivateChannel($channel) : $channel)
             ->all();
     }
 
@@ -111,10 +104,9 @@ class BroadcastableModelEventOccurred implements ShouldBroadcast
     /**
      * Manually specify the channels the event should broadcast on.
      *
-     * @param  array  $channels
      * @return $this
      */
-    public function onChannels(array $channels)
+    public function onChannels(array $channels): static
     {
         $this->channels = $channels;
 
@@ -123,10 +115,8 @@ class BroadcastableModelEventOccurred implements ShouldBroadcast
 
     /**
      * Determine if the event should be broadcast synchronously.
-     *
-     * @return bool
      */
-    public function shouldBroadcastNow()
+    public function shouldBroadcastNow(): bool
     {
         return $this->event === 'deleted' &&
                ! method_exists($this->model, 'bootSoftDeletes');

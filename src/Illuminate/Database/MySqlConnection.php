@@ -24,7 +24,7 @@ class MySqlConnection extends Connection
     /**
      * {@inheritdoc}
      */
-    public function getDriverTitle()
+    public function getDriverTitle(): string
     {
         return $this->isMaria() ? 'MariaDB' : 'MySQL';
     }
@@ -39,7 +39,7 @@ class MySqlConnection extends Connection
      */
     public function insert($query, $bindings = [], $sequence = null)
     {
-        return $this->run($query, $bindings, function ($query, $bindings) use ($sequence) {
+        return $this->run($query, $bindings, function ($query, array $bindings) use ($sequence) {
             if ($this->pretending()) {
                 return true;
             }
@@ -62,9 +62,8 @@ class MySqlConnection extends Connection
      * Escape a binary value for safe SQL embedding.
      *
      * @param  string  $value
-     * @return string
      */
-    protected function escapeBinary($value)
+    protected function escapeBinary($value): string
     {
         $hex = bin2hex($value);
 
@@ -73,11 +72,8 @@ class MySqlConnection extends Connection
 
     /**
      * Determine if the given database exception was caused by a unique constraint violation.
-     *
-     * @param  \Exception  $exception
-     * @return bool
      */
-    protected function isUniqueConstraintError(Exception $exception)
+    protected function isUniqueConstraintError(Exception $exception): bool
     {
         return (bool) preg_match('#Integrity constraint violation: 1062#i', $exception->getMessage());
     }
@@ -94,18 +90,14 @@ class MySqlConnection extends Connection
 
     /**
      * Determine if the connected database is a MariaDB database.
-     *
-     * @return bool
      */
-    public function isMaria()
+    public function isMaria(): bool
     {
-        return str_contains($this->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION), 'MariaDB');
+        return str_contains((string) $this->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION), 'MariaDB');
     }
 
     /**
      * Get the server version for the connection.
-     *
-     * @return string
      */
     public function getServerVersion(): string
     {
@@ -116,20 +108,16 @@ class MySqlConnection extends Connection
 
     /**
      * Get the default query grammar instance.
-     *
-     * @return \Illuminate\Database\Query\Grammars\MySqlGrammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): \Illuminate\Database\Query\Grammars\MySqlGrammar
     {
         return new QueryGrammar($this);
     }
 
     /**
      * Get a schema builder instance for the connection.
-     *
-     * @return \Illuminate\Database\Schema\MySqlBuilder
      */
-    public function getSchemaBuilder()
+    public function getSchemaBuilder(): \Illuminate\Database\Schema\MySqlBuilder
     {
         if (is_null($this->schemaGrammar)) {
             $this->useDefaultSchemaGrammar();
@@ -140,32 +128,24 @@ class MySqlConnection extends Connection
 
     /**
      * Get the default schema grammar instance.
-     *
-     * @return \Illuminate\Database\Schema\Grammars\MySqlGrammar
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): \Illuminate\Database\Schema\Grammars\MySqlGrammar
     {
         return new SchemaGrammar($this);
     }
 
     /**
      * Get the schema state for the connection.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem|null  $files
-     * @param  callable|null  $processFactory
-     * @return \Illuminate\Database\Schema\MySqlSchemaState
      */
-    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null)
+    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null): \Illuminate\Database\Schema\MySqlSchemaState
     {
         return new MySqlSchemaState($this, $files, $processFactory);
     }
 
     /**
      * Get the default post processor instance.
-     *
-     * @return \Illuminate\Database\Query\Processors\MySqlProcessor
      */
-    protected function getDefaultPostProcessor()
+    protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\MySqlProcessor
     {
         return new MySqlProcessor;
     }

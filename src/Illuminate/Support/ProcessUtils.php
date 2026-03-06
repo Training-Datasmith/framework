@@ -46,7 +46,7 @@ class ProcessUtils
             }
 
             if ($quote) {
-                $escapedArgument = '"'.$escapedArgument.'"';
+                return '"'.$escapedArgument.'"';
             }
 
             return $escapedArgument;
@@ -60,9 +60,8 @@ class ProcessUtils
      *
      * @param  string  $arg
      * @param  string  $char
-     * @return bool
      */
-    protected static function isSurroundedBy($arg, $char)
+    protected static function isSurroundedBy($arg, $char): bool
     {
         return strlen($arg) > 2 && $char === $arg[0] && $char === $arg[strlen($arg) - 1];
     }

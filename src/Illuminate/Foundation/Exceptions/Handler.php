@@ -58,13 +58,6 @@ class Handler implements ExceptionHandlerContract
     use ReflectsClosures;
 
     /**
-     * The container implementation.
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $container;
-
-    /**
      * A list of the exception types that are not reported.
      *
      * @var array<int, class-string<\Throwable>>
@@ -188,13 +181,12 @@ class Handler implements ExceptionHandlerContract
 
     /**
      * Create a new exception handler instance.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      */
-    public function __construct(Container $container)
+    public function __construct(/**
+     * The container implementation.
+     */
+    protected \Illuminate\Contracts\Container\Container $container)
     {
-        $this->container = $container;
-
         $this->reportedExceptionMap = new WeakMap;
 
         $this->register();
@@ -202,10 +194,8 @@ class Handler implements ExceptionHandlerContract
 
     /**
      * Register the exception handling callbacks for the application.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         //
     }
@@ -213,7 +203,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Register a reportable callback.
      *
-     * @param  callable  $reportUsing
      * @return \Illuminate\Foundation\Exceptions\ReportableHandler
      */
     public function reportable(callable $reportUsing)
@@ -222,7 +211,7 @@ class Handler implements ExceptionHandlerContract
             $reportUsing = Closure::fromCallable($reportUsing);
         }
 
-        return tap(new ReportableHandler($reportUsing), function ($callback) {
+        return tap(new ReportableHandler($reportUsing), function ($callback): void {
             $this->reportCallbacks[] = $callback;
         });
     }
@@ -230,10 +219,9 @@ class Handler implements ExceptionHandlerContract
     /**
      * Register a renderable callback.
      *
-     * @param  callable  $renderUsing
      * @return $this
      */
-    public function renderable(callable $renderUsing)
+    public function renderable(callable $renderUsing): static
     {
         if (! $renderUsing instanceof Closure) {
             $renderUsing = Closure::fromCallable($renderUsing);
@@ -253,10 +241,10 @@ class Handler implements ExceptionHandlerContract
      *
      * @throws \InvalidArgumentException
      */
-    public function map($from, $to = null)
+    public function map($from, $to = null): static
     {
         if (is_string($to)) {
-            $to = fn ($exception) => new $to('', 0, $exception);
+            $to = fn ($exception): object => new $to('', 0, $exception);
         }
 
         if (is_callable($from) && is_null($to)) {
@@ -277,7 +265,6 @@ class Handler implements ExceptionHandlerContract
      *
      * Alias of "ignore".
      *
-     * @param  array|string  $exceptions
      * @return $this
      */
     public function dontReport(array|string $exceptions)
@@ -291,7 +278,7 @@ class Handler implements ExceptionHandlerContract
      * @param  (callable(\Throwable): bool)  $dontReportWhen
      * @return $this
      */
-    public function dontReportWhen(callable $dontReportWhen)
+    public function dontReportWhen(callable $dontReportWhen): static
     {
         if (! $dontReportWhen instanceof Closure) {
             $dontReportWhen = Closure::fromCallable($dontReportWhen);
@@ -305,10 +292,9 @@ class Handler implements ExceptionHandlerContract
     /**
      * Indicate that the given exception type should not be reported.
      *
-     * @param  array|string  $exceptions
      * @return $this
      */
-    public function ignore(array|string $exceptions)
+    public function ignore(array|string $exceptions): static
     {
         $exceptions = Arr::wrap($exceptions);
 
@@ -320,10 +306,9 @@ class Handler implements ExceptionHandlerContract
     /**
      * Indicate that the given attributes should never be flashed to the session on validation errors.
      *
-     * @param  array|string  $attributes
      * @return $this
      */
-    public function dontFlash(array|string $attributes)
+    public function dontFlash(array|string $attributes): static
     {
         $this->dontFlash = array_values(array_unique(
             array_merge($this->dontFlash, Arr::wrap($attributes))
@@ -339,7 +324,7 @@ class Handler implements ExceptionHandlerContract
      * @param  \Psr\Log\LogLevel::*  $level
      * @return $this
      */
-    public function level($type, $level)
+    public function level(string $type, $level): static
     {
         $this->levels[$type] = $level;
 
@@ -349,12 +334,10 @@ class Handler implements ExceptionHandlerContract
     /**
      * Report or log an exception.
      *
-     * @param  \Throwable  $e
-     * @return void
      *
      * @throws \Throwable
      */
-    public function report(Throwable $e)
+    public function report(Throwable $e): void
     {
         $e = $this->mapException($e);
 
@@ -368,8 +351,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Reports error based on report method on exception or to logger.
      *
-     * @param  \Throwable  $e
-     * @return void
      *
      * @throws \Throwable
      */
@@ -405,11 +386,8 @@ class Handler implements ExceptionHandlerContract
 
     /**
      * Determine if the exception should be reported.
-     *
-     * @param  \Throwable  $e
-     * @return bool
      */
-    public function shouldReport(Throwable $e)
+    public function shouldReport(Throwable $e): bool
     {
         return ! $this->shouldntReport($e);
     }
@@ -417,7 +395,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Determine if the exception is in the "do not report" list.
      *
-     * @param  \Throwable  $e
      * @return bool
      */
     protected function shouldntReport(Throwable $e)
@@ -432,7 +409,7 @@ class Handler implements ExceptionHandlerContract
 
         $dontReport = array_merge($this->dontReport, $this->internalDontReport);
 
-        if (! is_null(Arr::first($dontReport, fn ($type) => $e instanceof $type))) {
+        if (! is_null(Arr::first($dontReport, fn ($type): bool => $e instanceof $type))) {
             return true;
         }
 
@@ -442,7 +419,7 @@ class Handler implements ExceptionHandlerContract
             }
         }
 
-        return rescue(fn () => with($this->throttle($e), function ($throttle) use ($e) {
+        return rescue(fn () => with($this->throttle($e), function ($throttle) use ($e): bool {
             if ($throttle instanceof Unlimited || $throttle === null) {
                 return false;
             }
@@ -452,9 +429,9 @@ class Handler implements ExceptionHandlerContract
             }
 
             return ! $this->container->make(RateLimiter::class)->attempt(
-                with($throttle->key ?: 'illuminate:foundation:exceptions:'.$e::class, fn ($key) => $this->hashThrottleKeys ? hash('xxh128', $key) : $key),
+                with($throttle->key ?: 'illuminate:foundation:exceptions:'.$e::class, fn ($key): mixed => $this->hashThrottleKeys ? hash('xxh128', $key) : $key),
                 $throttle->maxAttempts,
-                fn () => true,
+                fn (): true => true,
                 $throttle->decaySeconds
             );
         }), rescue: false, report: false);
@@ -463,7 +440,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Throttle the given exception.
      *
-     * @param  \Throwable  $e
      * @return \Illuminate\Support\Lottery|\Illuminate\Cache\RateLimiting\Limit|null
      */
     protected function throttle(Throwable $e)
@@ -486,10 +462,9 @@ class Handler implements ExceptionHandlerContract
     /**
      * Specify the callback that should be used to throttle reportable exceptions.
      *
-     * @param  callable  $throttleUsing
      * @return $this
      */
-    public function throttleUsing(callable $throttleUsing)
+    public function throttleUsing(callable $throttleUsing): static
     {
         if (! $throttleUsing instanceof Closure) {
             $throttleUsing = Closure::fromCallable($throttleUsing);
@@ -503,20 +478,19 @@ class Handler implements ExceptionHandlerContract
     /**
      * Remove the given exception class from the list of exceptions that should be ignored.
      *
-     * @param  array|string  $exceptions
      * @return $this
      */
-    public function stopIgnoring(array|string $exceptions)
+    public function stopIgnoring(array|string $exceptions): static
     {
         $exceptions = Arr::wrap($exceptions);
 
         $this->dontReport = (new Collection($this->dontReport))
-            ->reject(fn ($ignored) => in_array($ignored, $exceptions))
+            ->reject(fn ($ignored): bool => in_array($ignored, $exceptions))
             ->values()
             ->all();
 
         $this->internalDontReport = (new Collection($this->internalDontReport))
-            ->reject(fn ($ignored) => in_array($ignored, $exceptions))
+            ->reject(fn ($ignored): bool => in_array($ignored, $exceptions))
             ->values()
             ->all();
 
@@ -525,11 +499,8 @@ class Handler implements ExceptionHandlerContract
 
     /**
      * Create the context array for logging the given exception.
-     *
-     * @param  \Throwable  $e
-     * @return array
      */
-    protected function buildExceptionContext(Throwable $e)
+    protected function buildExceptionContext(Throwable $e): array
     {
         return array_merge(
             $this->exceptionContext($e),
@@ -541,7 +512,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Get the default exception context variables for logging.
      *
-     * @param  \Throwable  $e
      * @return array
      */
     protected function exceptionContext(Throwable $e)
@@ -561,10 +531,8 @@ class Handler implements ExceptionHandlerContract
 
     /**
      * Get the default context variables for logging.
-     *
-     * @return array
      */
-    protected function context()
+    protected function context(): array
     {
         try {
             return array_filter([
@@ -578,10 +546,9 @@ class Handler implements ExceptionHandlerContract
     /**
      * Register a closure that should be used to build exception context data.
      *
-     * @param  \Closure  $contextCallback
      * @return $this
      */
-    public function buildContextUsing(Closure $contextCallback)
+    public function buildContextUsing(Closure $contextCallback): static
     {
         $this->contextCallbacks[] = $contextCallback;
 
@@ -592,9 +559,7 @@ class Handler implements ExceptionHandlerContract
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
      * @return \Symfony\Component\HttpFoundation\Response
-     *
      * @throws \Throwable
      */
     public function render($request, Throwable $e)
@@ -632,7 +597,6 @@ class Handler implements ExceptionHandlerContract
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Symfony\Component\HttpFoundation\Response  $response
-     * @param  \Throwable  $e
      * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function finalizeRenderedResponse($request, $response, Throwable $e)
@@ -648,7 +612,7 @@ class Handler implements ExceptionHandlerContract
      * @param  callable  $callback
      * @return $this
      */
-    public function respondUsing($callback)
+    public function respondUsing($callback): static
     {
         $this->finalizeResponseCallback = $callback;
 
@@ -658,10 +622,9 @@ class Handler implements ExceptionHandlerContract
     /**
      * Prepare exception for rendering.
      *
-     * @param  \Throwable  $e
      * @return \Throwable
      */
-    protected function prepareException(Throwable $e)
+    protected function prepareException(Throwable $e): \Symfony\Component\HttpKernel\Exception\NotFoundHttpException|\Symfony\Component\HttpKernel\Exception\HttpException|\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException|\Symfony\Component\HttpKernel\Exception\BadRequestHttpException|\Throwable
     {
         return match (true) {
             $e instanceof BackedEnumCaseNotFoundException => new NotFoundHttpException($e->getMessage(), $e),
@@ -681,7 +644,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Map the exception using a registered mapper if possible.
      *
-     * @param  \Throwable  $e
      * @return \Throwable
      */
     protected function mapException(Throwable $e)
@@ -704,9 +666,7 @@ class Handler implements ExceptionHandlerContract
      * Try to render a response from request and exception via render callbacks.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
      * @return mixed
-     *
      * @throws \ReflectionException
      */
     protected function renderViaCallbacks($request, Throwable $e)
@@ -728,7 +688,6 @@ class Handler implements ExceptionHandlerContract
      * Render a default exception response if any.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     protected function renderExceptionResponse($request, Throwable $e)
@@ -742,7 +701,6 @@ class Handler implements ExceptionHandlerContract
      * Convert an authentication exception into a response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Auth\AuthenticationException  $exception
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     protected function unauthenticated($request, AuthenticationException $exception)
@@ -755,7 +713,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Create a response object from the given validation exception.
      *
-     * @param  \Illuminate\Validation\ValidationException  $e
      * @param  \Illuminate\Http\Request  $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -774,7 +731,6 @@ class Handler implements ExceptionHandlerContract
      * Convert a validation exception into a response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Validation\ValidationException  $exception
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     protected function invalid($request, ValidationException $exception)
@@ -788,7 +744,6 @@ class Handler implements ExceptionHandlerContract
      * Convert a validation exception into a JSON response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Validation\ValidationException  $exception
      * @return \Illuminate\Http\JsonResponse
      */
     protected function invalidJson($request, ValidationException $exception)
@@ -803,7 +758,6 @@ class Handler implements ExceptionHandlerContract
      * Determine if the exception handler response should be JSON.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
      * @return bool
      */
     protected function shouldReturnJson($request, Throwable $e)
@@ -819,7 +773,7 @@ class Handler implements ExceptionHandlerContract
      * @param  callable(\Illuminate\Http\Request $request, \Throwable): bool  $callback
      * @return $this
      */
-    public function shouldRenderJsonWhen($callback)
+    public function shouldRenderJsonWhen($callback): static
     {
         $this->shouldRenderJsonWhenCallback = $callback;
 
@@ -830,7 +784,6 @@ class Handler implements ExceptionHandlerContract
      * Prepare a response for the given exception.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     protected function prepareResponse($request, Throwable $e)
@@ -851,7 +804,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Create a Symfony response for the given exception.
      *
-     * @param  \Throwable  $e
      * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function convertExceptionToResponse(Throwable $e)
@@ -866,18 +818,19 @@ class Handler implements ExceptionHandlerContract
     /**
      * Get the response content for the given exception.
      *
-     * @param  \Throwable  $e
      * @return string
      */
     protected function renderExceptionContent(Throwable $e)
     {
         try {
-            if (config('app.debug')) {
-                if (app()->has(ExceptionRenderer::class)) {
-                    return $this->renderExceptionWithCustomRenderer($e);
-                } elseif ($this->container->bound(Renderer::class)) {
-                    return $this->container->make(Renderer::class)->render(request(), $e);
-                }
+            if (!config('app.debug')) {
+                return $this->renderExceptionWithSymfony($e, config('app.debug'));
+            }
+            if (app()->has(ExceptionRenderer::class)) {
+                return $this->renderExceptionWithCustomRenderer($e);
+            }
+            if ($this->container->bound(Renderer::class)) {
+                return $this->container->make(Renderer::class)->render(request(), $e);
             }
 
             return $this->renderExceptionWithSymfony($e, config('app.debug'));
@@ -889,7 +842,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Render an exception to a string using the registered `ExceptionRenderer`.
      *
-     * @param  \Throwable  $e
      * @return string
      */
     protected function renderExceptionWithCustomRenderer(Throwable $e)
@@ -900,7 +852,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Render an exception to a string using Symfony.
      *
-     * @param  \Throwable  $e
      * @param  bool  $debug
      * @return string
      */
@@ -914,7 +865,6 @@ class Handler implements ExceptionHandlerContract
     /**
      * Render the given HttpException.
      *
-     * @param  \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface  $e
      * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function renderHttpException(HttpExceptionInterface $e)
@@ -949,11 +899,8 @@ class Handler implements ExceptionHandlerContract
 
     /**
      * Get the view used to render HTTP exceptions.
-     *
-     * @param  \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface  $e
-     * @return string|null
      */
-    protected function getHttpExceptionView(HttpExceptionInterface $e)
+    protected function getHttpExceptionView(HttpExceptionInterface $e): ?string
     {
         $view = 'errors::'.$e->getStatusCode();
 
@@ -974,7 +921,6 @@ class Handler implements ExceptionHandlerContract
      * Map the given exception into an Illuminate response.
      *
      * @param  \Symfony\Component\HttpFoundation\Response  $response
-     * @param  \Throwable  $e
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     protected function toIlluminateResponse($response, Throwable $e)
@@ -996,7 +942,6 @@ class Handler implements ExceptionHandlerContract
      * Prepare a JSON response for the given exception.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
      * @return \Illuminate\Http\JsonResponse
      */
     protected function prepareJsonResponse($request, Throwable $e)
@@ -1011,15 +956,12 @@ class Handler implements ExceptionHandlerContract
 
     /**
      * Convert the given exception to an array.
-     *
-     * @param  \Throwable  $e
-     * @return array
      */
-    protected function convertExceptionToArray(Throwable $e)
+    protected function convertExceptionToArray(Throwable $e): array
     {
         return config('app.debug') ? [
             'message' => $e->getMessage(),
-            'exception' => get_class($e),
+            'exception' => $e::class,
             'file' => $e->getFile(),
             'line' => $e->getLine(),
             'trace' => (new Collection($e->getTrace()))->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
@@ -1032,12 +974,10 @@ class Handler implements ExceptionHandlerContract
      * Render an exception to the console.
      *
      * @param  \Symfony\Component\Console\Output\OutputInterface  $output
-     * @param  \Throwable  $e
-     * @return void
      *
      * @internal This method is not meant to be used or overwritten outside the framework.
      */
-    public function renderForConsole($output, Throwable $e)
+    public function renderForConsole($output, Throwable $e): void
     {
         if ($e instanceof CommandNotFoundException) {
             $message = Str::of($e->getMessage())->explode('.')->first();
@@ -1064,7 +1004,7 @@ class Handler implements ExceptionHandlerContract
      *
      * @return $this
      */
-    public function dontReportDuplicates()
+    public function dontReportDuplicates(): static
     {
         $this->withoutDuplicates = true;
 
@@ -1073,11 +1013,8 @@ class Handler implements ExceptionHandlerContract
 
     /**
      * Determine if the given exception is an HTTP exception.
-     *
-     * @param  \Throwable  $e
-     * @return bool
      */
-    protected function isHttpException(Throwable $e)
+    protected function isHttpException(Throwable $e): bool
     {
         return $e instanceof HttpExceptionInterface;
     }
@@ -1085,13 +1022,12 @@ class Handler implements ExceptionHandlerContract
     /**
      * Map the exception to a log level.
      *
-     * @param  \Throwable  $e
      * @return \Psr\Log\LogLevel::*
      */
     protected function mapLogLevel(Throwable $e)
     {
         return Arr::first(
-            $this->levels, fn ($level, $type) => $e instanceof $type, LogLevel::ERROR
+            $this->levels, fn ($level, $type): bool => $e instanceof $type, LogLevel::ERROR
         );
     }
 

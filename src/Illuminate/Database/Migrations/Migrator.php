@@ -25,34 +25,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Migrator
 {
     /**
-     * The event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
-    /**
-     * The migration repository implementation.
-     *
-     * @var \Illuminate\Database\Migrations\MigrationRepositoryInterface
-     */
-    protected $repository;
-
-    /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
-     * The connection resolver instance.
-     *
-     * @var \Illuminate\Database\ConnectionResolverInterface
-     */
-    protected $resolver;
-
-    /**
      * The custom connection resolver callback.
      *
      * @var (\Closure(\Illuminate\Database\ConnectionResolverInterface, ?string): \Illuminate\Database\Connection)|null
@@ -96,22 +68,26 @@ class Migrator
 
     /**
      * Create a new migrator instance.
-     *
-     * @param  \Illuminate\Database\Migrations\MigrationRepositoryInterface  $repository
-     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
-     * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  \Illuminate\Contracts\Events\Dispatcher|null  $dispatcher
      */
     public function __construct(
-        MigrationRepositoryInterface $repository,
-        Resolver $resolver,
-        Filesystem $files,
-        ?Dispatcher $dispatcher = null,
-    ) {
-        $this->files = $files;
-        $this->events = $dispatcher;
-        $this->resolver = $resolver;
-        $this->repository = $repository;
+        /**
+         * The migration repository implementation.
+         */
+        protected \Illuminate\Database\Migrations\MigrationRepositoryInterface $repository,
+        /**
+         * The connection resolver instance.
+         */
+        protected \Illuminate\Database\ConnectionResolverInterface $resolver,
+        /**
+         * The filesystem instance.
+         */
+        protected \Illuminate\Filesystem\Filesystem $files,
+        /**
+         * The event dispatcher instance.
+         */
+        protected ?\Illuminate\Contracts\Events\Dispatcher $events = null
+    )
+    {
     }
 
     /**
@@ -152,7 +128,7 @@ class Migrator
         $migrationsToSkip = $this->migrationsToSkip();
 
         return (new Collection($files))
-            ->reject(fn ($file) => in_array($migrationName = $this->getMigrationName($file), $ran) ||
+            ->reject(fn ($file): bool => in_array($migrationName = $this->getMigrationName($file), $ran) ||
                 in_array($migrationName, $migrationsToSkip)
             )
             ->values()
@@ -176,9 +152,8 @@ class Migrator
      *
      * @param  string[]  $migrations
      * @param  array<string, mixed>  $options
-     * @return void
      */
-    public function runPending(array $migrations, array $options = [])
+    public function runPending(array $migrations, array $options = []): void
     {
         // First we will just make sure that there are any migrations to run. If there
         // aren't, we will just make a note of it to the developer so they're aware
@@ -281,7 +256,7 @@ class Migrator
             return [];
         }
 
-        return tap($this->rollbackMigrations($migrations, $paths, $options), function () {
+        return tap($this->rollbackMigrations($migrations, $paths, $options), function (): void {
             $this->output?->writeln('');
         });
     }
@@ -308,12 +283,11 @@ class Migrator
     /**
      * Rollback the given migrations.
      *
-     * @param  array  $migrations
      * @param  string[]|string  $paths
      * @param  array<string, mixed>  $options
      * @return string[]
      */
-    protected function rollbackMigrations(array $migrations, $paths, array $options)
+    protected function rollbackMigrations(array $migrations, $paths, array $options): array
     {
         $rolledBack = [];
 
@@ -368,7 +342,7 @@ class Migrator
             return [];
         }
 
-        return tap($this->resetMigrations($migrations, Arr::wrap($paths), $pretend), function () {
+        return tap($this->resetMigrations($migrations, Arr::wrap($paths), $pretend), function (): void {
             $this->output?->writeln('');
         });
     }
@@ -435,7 +409,7 @@ class Migrator
             $migration->getConnection()
         );
 
-        $callback = function () use ($connection, $migration, $method) {
+        $callback = function () use ($connection, $migration, $method): void {
             if (method_exists($migration, $method)) {
                 $this->fireMigrationEvent(new MigrationStarted($migration, $method));
 
@@ -460,7 +434,7 @@ class Migrator
      */
     protected function pretendToRun($migration, $method)
     {
-        $name = get_class($migration);
+        $name = $migration::class;
 
         $reflectionClass = new ReflectionClass($migration);
 
@@ -492,7 +466,7 @@ class Migrator
             $migration->getConnection()
         );
 
-        return $db->pretend(function () use ($db, $migration, $method) {
+        return $db->pretend(function () use ($db, $migration, $method): void {
             if (method_exists($migration, $method)) {
                 $this->runMethod($db, $migration, $method);
             }
@@ -523,10 +497,9 @@ class Migrator
     /**
      * Resolve a migration instance from a file.
      *
-     * @param  string  $file
      * @return object
      */
-    public function resolve($file)
+    public function resolve(string $file)
     {
         $class = $this->getMigrationClass($file);
 
@@ -536,7 +509,6 @@ class Migrator
     /**
      * Resolve a migration instance from a migration path.
      *
-     * @param  string  $path
      * @return object
      */
     protected function resolvePath(string $path)
@@ -560,9 +532,6 @@ class Migrator
 
     /**
      * Generate a migration class name based on the migration file name.
-     *
-     * @param  string  $migrationName
-     * @return string
      */
     protected function getMigrationClass(string $migrationName): string
     {
@@ -578,11 +547,11 @@ class Migrator
     public function getMigrationFiles($paths)
     {
         return (new Collection($paths))
-            ->flatMap(fn ($path) => str_ends_with($path, '.php') ? [$path] : $this->files->glob($path.'/*_*.php'))
+            ->flatMap(fn ($path) => str_ends_with((string) $path, '.php') ? [$path] : $this->files->glob($path.'/*_*.php'))
             ->filter()
             ->values()
             ->keyBy(fn ($file) => $this->getMigrationName($file))
-            ->sortBy(fn ($file, $key) => $key)
+            ->sortBy(fn ($file, $key): string => $key)
             ->all();
     }
 
@@ -590,9 +559,8 @@ class Migrator
      * Require in all the migration files in a given path.
      *
      * @param  string[]  $files
-     * @return void
      */
-    public function requireFiles(array $files)
+    public function requireFiles(array $files): void
     {
         foreach ($files as $file) {
             $this->files->requireOnce($file);
@@ -603,9 +571,8 @@ class Migrator
      * Get the name of the migration.
      *
      * @param  string  $path
-     * @return string
      */
-    public function getMigrationName($path)
+    public function getMigrationName($path): string
     {
         return str_replace('.php', '', basename($path));
     }
@@ -614,9 +581,8 @@ class Migrator
      * Register a custom migration path.
      *
      * @param  string  $path
-     * @return void
      */
-    public function path($path)
+    public function path($path): void
     {
         $this->paths = array_unique(array_merge($this->paths, [$path]));
     }
@@ -635,9 +601,8 @@ class Migrator
      * Set the pending migrations to skip.
      *
      * @param  list<string>  $migrations
-     * @return void
      */
-    public static function withoutMigrations(array $migrations)
+    public static function withoutMigrations(array $migrations): void
     {
         static::$withoutMigrations = $migrations;
     }
@@ -678,9 +643,8 @@ class Migrator
      * Set the default connection name.
      *
      * @param  string  $name
-     * @return void
      */
-    public function setConnection($name)
+    public function setConnection($name): void
     {
         if (! is_null($name)) {
             $this->resolver->setDefaultConnection($name);
@@ -705,18 +669,16 @@ class Migrator
                 $this->resolver,
                 $connection ?: $this->connection
             );
-        } else {
-            return $this->resolver->connection($connection ?: $this->connection);
         }
+        return $this->resolver->connection($connection ?: $this->connection);
     }
 
     /**
      * Set a connection resolver callback.
      *
      * @param  \Closure(\Illuminate\Database\ConnectionResolverInterface, ?string): \Illuminate\Database\Connection  $callback
-     * @return void
      */
-    public static function resolveConnectionsUsing(Closure $callback)
+    public static function resolveConnectionsUsing(Closure $callback): void
     {
         static::$connectionResolverCallback = $callback;
     }
@@ -760,20 +722,16 @@ class Migrator
 
     /**
      * Determine if any migrations have been run.
-     *
-     * @return bool
      */
-    public function hasRunAnyMigrations()
+    public function hasRunAnyMigrations(): bool
     {
         return $this->repositoryExists() && count($this->repository->getRan()) > 0;
     }
 
     /**
      * Delete the migration repository data store.
-     *
-     * @return void
      */
-    public function deleteRepository()
+    public function deleteRepository(): void
     {
         $this->repository->deleteRepository();
     }
@@ -791,10 +749,9 @@ class Migrator
     /**
      * Set the output implementation that should be used by the console.
      *
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return $this
      */
-    public function setOutput(OutputInterface $output)
+    public function setOutput(OutputInterface $output): static
     {
         $this->output = $output;
 
@@ -825,9 +782,8 @@ class Migrator
      * Fire the given event for the migration.
      *
      * @param  \Illuminate\Contracts\Database\Events\MigrationEvent  $event
-     * @return void
      */
-    public function fireMigrationEvent($event)
+    public function fireMigrationEvent($event): void
     {
         $this->events?->dispatch($event);
     }

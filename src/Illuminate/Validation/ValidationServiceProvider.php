@@ -11,10 +11,8 @@ class ValidationServiceProvider extends ServiceProvider implements DeferrablePro
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerPresenceVerifier();
         $this->registerUncompromisedVerifier();
@@ -28,7 +26,7 @@ class ValidationServiceProvider extends ServiceProvider implements DeferrablePro
      */
     protected function registerValidationFactory()
     {
-        $this->app->singleton('validator', function ($app) {
+        $this->app->singleton('validator', function (array $app): \Illuminate\Validation\Factory {
             $validator = new Factory($app['translator'], $app);
 
             // The validation presence verifier is responsible for determining the existence of
@@ -49,9 +47,7 @@ class ValidationServiceProvider extends ServiceProvider implements DeferrablePro
      */
     protected function registerPresenceVerifier()
     {
-        $this->app->singleton('validation.presence', function ($app) {
-            return new DatabasePresenceVerifier($app['db']);
-        });
+        $this->app->singleton('validation.presence', fn($app) => new DatabasePresenceVerifier($app['db']));
     }
 
     /**
@@ -61,17 +57,13 @@ class ValidationServiceProvider extends ServiceProvider implements DeferrablePro
      */
     protected function registerUncompromisedVerifier()
     {
-        $this->app->singleton(UncompromisedVerifier::class, function ($app) {
-            return new NotPwnedVerifier($app[HttpFactory::class]);
-        });
+        $this->app->singleton(UncompromisedVerifier::class, fn($app) => new NotPwnedVerifier($app[HttpFactory::class]));
     }
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return ['validator', 'validation.presence', UncompromisedVerifier::class];
     }

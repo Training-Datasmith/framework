@@ -66,10 +66,8 @@ class DatabaseNotification extends Model
 
     /**
      * Mark the notification as read.
-     *
-     * @return void
      */
-    public function markAsRead()
+    public function markAsRead(): void
     {
         if (is_null($this->read_at)) {
             $this->forceFill(['read_at' => $this->freshTimestamp()])->save();
@@ -78,10 +76,8 @@ class DatabaseNotification extends Model
 
     /**
      * Mark the notification as unread.
-     *
-     * @return void
      */
-    public function markAsUnread()
+    public function markAsUnread(): void
     {
         if (! is_null($this->read_at)) {
             $this->forceFill(['read_at' => null])->save();
@@ -90,20 +86,16 @@ class DatabaseNotification extends Model
 
     /**
      * Determine if a notification has been read.
-     *
-     * @return bool
      */
-    public function read()
+    public function read(): bool
     {
         return $this->read_at !== null;
     }
 
     /**
      * Determine if a notification has not been read.
-     *
-     * @return bool
      */
-    public function unread()
+    public function unread(): bool
     {
         return $this->read_at === null;
     }
@@ -125,7 +117,7 @@ class DatabaseNotification extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
-    public function scopeUnread(Builder $query)
+    public function scopeUnread(Builder $query): \Illuminate\Database\Query\Builder
     {
         return $query->whereNull('read_at');
     }

@@ -27,9 +27,8 @@ class Cookie extends Facade
      * Determine if a cookie exists on the request.
      *
      * @param  string  $key
-     * @return bool
      */
-    public static function has($key)
+    public static function has($key): bool
     {
         return ! is_null(static::$app['request']->cookie($key, null));
     }
@@ -48,10 +47,8 @@ class Cookie extends Facade
 
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'cookie';
     }

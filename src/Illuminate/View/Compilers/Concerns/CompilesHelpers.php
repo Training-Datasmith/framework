@@ -8,10 +8,8 @@ trait CompilesHelpers
 {
     /**
      * Compile the CSRF statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileCsrf()
+    protected function compileCsrf(): string
     {
         return '<?php echo csrf_field(); ?>';
     }
@@ -20,9 +18,8 @@ trait CompilesHelpers
      * Compile the "dd" statements into valid PHP.
      *
      * @param  string  $arguments
-     * @return string
      */
-    protected function compileDd($arguments)
+    protected function compileDd($arguments): string
     {
         return "<?php dd{$arguments}; ?>";
     }
@@ -31,9 +28,8 @@ trait CompilesHelpers
      * Compile the "dump" statements into valid PHP.
      *
      * @param  string  $arguments
-     * @return string
      */
-    protected function compileDump($arguments)
+    protected function compileDump($arguments): string
     {
         return "<?php dump{$arguments}; ?>";
     }
@@ -42,9 +38,8 @@ trait CompilesHelpers
      * Compile the method statements into valid PHP.
      *
      * @param  string  $method
-     * @return string
      */
-    protected function compileMethod($method)
+    protected function compileMethod($method): string
     {
         return "<?php echo method_field{$method}; ?>";
     }
@@ -53,9 +48,8 @@ trait CompilesHelpers
      * Compile the "vite" statements into valid PHP.
      *
      * @param  string|null  $arguments
-     * @return string
      */
-    protected function compileVite($arguments)
+    protected function compileVite($arguments): string
     {
         $arguments ??= '()';
 
@@ -66,10 +60,8 @@ trait CompilesHelpers
 
     /**
      * Compile the "viteReactRefresh" statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileViteReactRefresh()
+    protected function compileViteReactRefresh(): string
     {
         $class = Vite::class;
 

@@ -34,11 +34,10 @@ class InvokeSerializedClosureCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return void
      *
      * @throws \RuntimeException
      */
-    public function handle()
+    public function handle(): void
     {
         try {
             $this->output->write(json_encode([
@@ -46,9 +45,9 @@ class InvokeSerializedClosureCommand extends Command
                 'result' => serialize($this->laravel->call(match (true) {
                     ! is_null($this->argument('code')) => unserialize($this->argument('code')),
                     isset($_SERVER['LARAVEL_INVOKABLE_CLOSURE']) => unserialize(
-                        base64_decode($_SERVER['LARAVEL_INVOKABLE_CLOSURE'])
+                        base64_decode((string) $_SERVER['LARAVEL_INVOKABLE_CLOSURE'])
                     ),
-                    default => fn () => null,
+                    default => fn (): null => null,
                 })),
             ]));
         } catch (Throwable $e) {
@@ -70,7 +69,7 @@ class InvokeSerializedClosureCommand extends Command
 
             $this->output->write(json_encode([
                 'successful' => false,
-                'exception' => get_class($e),
+                'exception' => $e::class,
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),

@@ -26,48 +26,6 @@ abstract class HasOneOrManyThrough extends Relation
     use InteractsWithDictionary;
 
     /**
-     * The "through" parent model instance.
-     *
-     * @var TIntermediateModel
-     */
-    protected $throughParent;
-
-    /**
-     * The far parent model instance.
-     *
-     * @var TDeclaringModel
-     */
-    protected $farParent;
-
-    /**
-     * The near key on the relationship.
-     *
-     * @var string
-     */
-    protected $firstKey;
-
-    /**
-     * The far key on the relationship.
-     *
-     * @var string
-     */
-    protected $secondKey;
-
-    /**
-     * The local key on the relationship.
-     *
-     * @var string
-     */
-    protected $localKey;
-
-    /**
-     * The local key on the intermediary model.
-     *
-     * @var string
-     */
-    protected $secondLocalKey;
-
-    /**
      * Create a new has many through relationship instance.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
@@ -78,24 +36,33 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  string  $localKey
      * @param  string  $secondLocalKey
      */
-    public function __construct(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
+    public function __construct(Builder $query, /**
+     * The far parent model instance.
+     */
+    protected \Illuminate\Database\Eloquent\Model $farParent, /**
+     * The "through" parent model instance.
+     */
+    protected \Illuminate\Database\Eloquent\Model $throughParent, /**
+     * The near key on the relationship.
+     */
+    protected $firstKey, /**
+     * The far key on the relationship.
+     */
+    protected $secondKey, /**
+     * The local key on the relationship.
+     */
+    protected $localKey, /**
+     * The local key on the intermediary model.
+     */
+    protected $secondLocalKey)
     {
-        $this->localKey = $localKey;
-        $this->firstKey = $firstKey;
-        $this->secondKey = $secondKey;
-        $this->farParent = $farParent;
-        $this->throughParent = $throughParent;
-        $this->secondLocalKey = $secondLocalKey;
-
-        parent::__construct($query, $throughParent);
+        parent::__construct($query, $this->throughParent);
     }
 
     /**
      * Set the base constraints on the relation query.
-     *
-     * @return void
      */
-    public function addConstraints()
+    public function addConstraints(): void
     {
         $query = $this->getRelationQuery();
 
@@ -123,7 +90,7 @@ abstract class HasOneOrManyThrough extends Relation
         $query->join($this->throughParent->getTable(), $this->getQualifiedParentKeyName(), '=', $farKey);
 
         if ($this->throughParentSoftDeletes()) {
-            $query->withGlobalScope('SoftDeletableHasManyThrough', function ($query) {
+            $query->withGlobalScope('SoftDeletableHasManyThrough', function ($query): void {
                 $query->whereNull($this->throughParent->getQualifiedDeletedAtColumn());
             });
         }
@@ -162,7 +129,7 @@ abstract class HasOneOrManyThrough extends Relation
     }
 
     /** @inheritDoc */
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models): void
     {
         $whereIn = $this->whereInMethod($this->farParent, $this->localKey);
 
@@ -203,8 +170,6 @@ abstract class HasOneOrManyThrough extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return TRelatedModel
      */
     public function firstOrNew(array $attributes = [], array $values = [])
@@ -219,7 +184,6 @@ abstract class HasOneOrManyThrough extends Relation
     /**
      * Get the first record matching the attributes. If the record is not found, create it.
      *
-     * @param  array  $attributes
      * @param  (\Closure(): array)|array  $values
      * @return TRelatedModel
      */
@@ -235,7 +199,6 @@ abstract class HasOneOrManyThrough extends Relation
     /**
      * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
      *
-     * @param  array  $attributes
      * @param  (\Closure(): array)|array  $values
      * @return TRelatedModel
      */
@@ -251,13 +214,11 @@ abstract class HasOneOrManyThrough extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return TRelatedModel
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
-        return tap($this->firstOrCreate($attributes, $values), function ($instance) use ($values) {
+        return tap($this->firstOrCreate($attributes, $values), function ($instance) use ($values): void {
             if (! $instance->wasRecentlyCreated) {
                 $instance->fill($values)->save();
             }
@@ -305,7 +266,7 @@ abstract class HasOneOrManyThrough extends Relation
             return $model;
         }
 
-        throw (new ModelNotFoundException)->setModel(get_class($this->related));
+        throw (new ModelNotFoundException)->setModel($this->related::class);
     }
 
     /**
@@ -410,7 +371,7 @@ abstract class HasOneOrManyThrough extends Relation
             return $result;
         }
 
-        throw (new ModelNotFoundException)->setModel(get_class($this->related), $id);
+        throw (new ModelNotFoundException)->setModel($this->related::class, $id);
     }
 
     /**
@@ -520,7 +481,6 @@ abstract class HasOneOrManyThrough extends Relation
     /**
      * Set the select clause for the relation query.
      *
-     * @param  array  $columns
      * @return array
      */
     protected function shouldSelect(array $columns = ['*'])
@@ -536,7 +496,6 @@ abstract class HasOneOrManyThrough extends Relation
      * Chunk the results of the query.
      *
      * @param  int  $count
-     * @param  callable  $callback
      * @return bool
      */
     public function chunk($count, callable $callback)
@@ -548,7 +507,6 @@ abstract class HasOneOrManyThrough extends Relation
      * Chunk the results of a query by comparing numeric IDs.
      *
      * @param  int  $count
-     * @param  callable  $callback
      * @param  string|null  $column
      * @param  string|null  $alias
      * @return bool
@@ -566,7 +524,6 @@ abstract class HasOneOrManyThrough extends Relation
      * Chunk the results of a query by comparing IDs in descending order.
      *
      * @param  int  $count
-     * @param  callable  $callback
      * @param  string|null  $column
      * @param  string|null  $alias
      * @return bool
@@ -583,7 +540,6 @@ abstract class HasOneOrManyThrough extends Relation
     /**
      * Execute a callback over each item while chunking by ID.
      *
-     * @param  callable  $callback
      * @param  int  $count
      * @param  string|null  $column
      * @param  string|null  $alias
@@ -591,9 +547,9 @@ abstract class HasOneOrManyThrough extends Relation
      */
     public function eachById(callable $callback, $count = 1000, $column = null, $alias = null)
     {
-        $column = $column ?? $this->getRelated()->getQualifiedKeyName();
+        $column ??= $this->getRelated()->getQualifiedKeyName();
 
-        $alias = $alias ?? $this->getRelated()->getKeyName();
+        $alias ??= $this->getRelated()->getKeyName();
 
         return $this->prepareQueryBuilder()->eachById($callback, $count, $column, $alias);
     }
@@ -611,7 +567,6 @@ abstract class HasOneOrManyThrough extends Relation
     /**
      * Execute a callback over each item while chunking.
      *
-     * @param  callable  $callback
      * @param  int  $count
      * @return bool
      */

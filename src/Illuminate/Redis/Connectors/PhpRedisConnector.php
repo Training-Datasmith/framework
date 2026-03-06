@@ -17,12 +17,8 @@ class PhpRedisConnector implements Connector
 {
     /**
      * Create a new connection.
-     *
-     * @param  array  $config
-     * @param  array  $options
-     * @return \Illuminate\Redis\Connections\PhpRedisConnection
      */
-    public function connect(array $config, array $options)
+    public function connect(array $config, array $options): \Illuminate\Redis\Connections\PhpRedisConnection
     {
         $formattedOptions = Arr::pull($config, 'options', []);
 
@@ -30,24 +26,17 @@ class PhpRedisConnector implements Connector
             $formattedOptions['prefix'] = $config['prefix'];
         }
 
-        $connector = function () use ($config, $options, $formattedOptions) {
-            return $this->createClient(array_merge(
-                $config, $options, $formattedOptions
-            ));
-        };
+        $connector = (fn() => $this->createClient(array_merge(
+            $config, $options, $formattedOptions
+        )));
 
         return new PhpRedisConnection($connector(), $connector, $config);
     }
 
     /**
      * Create a new clustered PhpRedis connection.
-     *
-     * @param  array  $config
-     * @param  array  $clusterOptions
-     * @param  array  $options
-     * @return \Illuminate\Redis\Connections\PhpRedisClusterConnection
      */
-    public function connectToCluster(array $config, array $clusterOptions, array $options)
+    public function connectToCluster(array $config, array $clusterOptions, array $options): \Illuminate\Redis\Connections\PhpRedisClusterConnection
     {
         $options = array_merge($options, $clusterOptions, Arr::pull($config, 'options', []));
 
@@ -58,11 +47,8 @@ class PhpRedisConnector implements Connector
 
     /**
      * Build a single cluster seed string from an array.
-     *
-     * @param  array  $server
-     * @return string
      */
-    protected function buildClusterConnectionString(array $server)
+    protected function buildClusterConnectionString(array $server): string
     {
         return $this->formatHost($server).':'.$server['port'];
     }
@@ -70,14 +56,12 @@ class PhpRedisConnector implements Connector
     /**
      * Create the Redis client instance.
      *
-     * @param  array  $config
      * @return \Redis
-     *
      * @throws \LogicException
      */
     protected function createClient(array $config)
     {
-        return tap(new Redis, function ($client) use ($config) {
+        return tap(new Redis, function ($client) use ($config): void {
             if ($client instanceof RedisFacade) {
                 throw new LogicException(
                     extension_loaded('redis')
@@ -155,7 +139,6 @@ class PhpRedisConnector implements Connector
      * Establish a connection with the Redis host.
      *
      * @param  \Redis  $client
-     * @param  array  $config
      * @return void
      */
     protected function establishConnection($client, array $config)
@@ -166,7 +149,7 @@ class PhpRedisConnector implements Connector
             $this->formatHost($config),
             $config['port'],
             Arr::get($config, 'timeout', 0.0),
-            $persistent ? Arr::get($config, 'persistent_id', null) : null,
+            $persistent ? Arr::get($config, 'persistent_id') : null,
             Arr::get($config, 'retry_interval', 0),
         ];
 
@@ -184,8 +167,6 @@ class PhpRedisConnector implements Connector
     /**
      * Create a new redis cluster instance.
      *
-     * @param  array  $servers
-     * @param  array  $options
      * @return \RedisCluster
      */
     protected function createRedisClusterInstance(array $servers, array $options)
@@ -206,7 +187,7 @@ class PhpRedisConnector implements Connector
             $parameters[] = $context;
         }
 
-        return tap(new RedisCluster(...$parameters), function ($client) use ($options) {
+        return tap(new RedisCluster(...$parameters), function ($client) use ($options): void {
             if (! empty($options['prefix'])) {
                 $client->setOption(Redis::OPT_PREFIX, $options['prefix']);
             }
@@ -236,7 +217,6 @@ class PhpRedisConnector implements Connector
     /**
      * Format the host using the scheme if available.
      *
-     * @param  array  $options
      * @return string
      */
     protected function formatHost(array $options)
@@ -251,12 +231,10 @@ class PhpRedisConnector implements Connector
     /**
      * Parse a "friendly" backoff algorithm name into an integer.
      *
-     * @param  mixed  $algorithm
-     * @return int
      *
      * @throws \InvalidArgumentException
      */
-    protected function parseBackoffAlgorithm(mixed $algorithm)
+    protected function parseBackoffAlgorithm(mixed $algorithm): int
     {
         if (is_int($algorithm)) {
             return $algorithm;

@@ -110,19 +110,16 @@ trait GuardsAttributes
      * Disable all mass assignable restrictions.
      *
      * @param  bool  $state
-     * @return void
      */
-    public static function unguard($state = true)
+    public static function unguard($state = true): void
     {
         static::$unguarded = $state;
     }
 
     /**
      * Enable the mass assignment restrictions.
-     *
-     * @return void
      */
-    public static function reguard()
+    public static function reguard(): void
     {
         static::$unguarded = false;
     }
@@ -202,10 +199,13 @@ trait GuardsAttributes
         if (empty($this->getGuarded())) {
             return false;
         }
-
-        return $this->getGuarded() == ['*'] ||
-               ! empty(preg_grep('/^'.preg_quote($key, '/').'$/i', $this->getGuarded())) ||
-               ! $this->isGuardableColumn($key);
+        if ($this->getGuarded() == ['*']) {
+            return true;
+        }
+        if (! empty(preg_grep('/^'.preg_quote($key, '/').'$/i', $this->getGuarded()))) {
+            return true;
+        }
+        return ! $this->isGuardableColumn($key);
     }
 
     /**
@@ -220,7 +220,7 @@ trait GuardsAttributes
             return true;
         }
 
-        if (! isset(static::$guardableColumns[get_class($this)])) {
+        if (! isset(static::$guardableColumns[$this::class])) {
             $columns = $this->getConnection()
                 ->getSchemaBuilder()
                 ->getColumnListing($this->getTable());
@@ -229,18 +229,16 @@ trait GuardsAttributes
                 return true;
             }
 
-            static::$guardableColumns[get_class($this)] = $columns;
+            static::$guardableColumns[$this::class] = $columns;
         }
 
-        return in_array($key, static::$guardableColumns[get_class($this)]);
+        return in_array($key, static::$guardableColumns[$this::class]);
     }
 
     /**
      * Determine if the model is totally guarded.
-     *
-     * @return bool
      */
-    public function totallyGuarded()
+    public function totallyGuarded(): bool
     {
         return count($this->getFillable()) === 0 && $this->getGuarded() == ['*'];
     }
@@ -251,7 +249,7 @@ trait GuardsAttributes
      * @param  array<string, mixed>  $attributes
      * @return array<string, mixed>
      */
-    protected function fillableFromArray(array $attributes)
+    protected function fillableFromArray(array $attributes): array
     {
         if (count($this->getFillable()) > 0 && ! static::$unguarded) {
             return array_intersect_key($attributes, array_flip($this->getFillable()));

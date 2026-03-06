@@ -57,20 +57,6 @@ class WorkCommand extends Command
     protected $description = 'Start processing jobs on the queue as a daemon';
 
     /**
-     * The queue worker instance.
-     *
-     * @var \Illuminate\Queue\Worker
-     */
-    protected $worker;
-
-    /**
-     * The cache store implementation.
-     *
-     * @var \Illuminate\Contracts\Cache\Repository
-     */
-    protected $cache;
-
-    /**
      * Holds the start time of the last processed job, if any.
      *
      * @var float|null
@@ -79,23 +65,21 @@ class WorkCommand extends Command
 
     /**
      * Indicates if the worker's event listeners have been registered.
-     *
-     * @var bool
      */
-    private static $hasRegisteredListeners = false;
+    private static bool $hasRegisteredListeners = false;
 
     /**
      * Create a new queue work command.
-     *
-     * @param  \Illuminate\Queue\Worker  $worker
-     * @param  \Illuminate\Contracts\Cache\Repository  $cache
      */
-    public function __construct(Worker $worker, Cache $cache)
+    public function __construct(/**
+     * The queue worker instance.
+     */
+    protected \Illuminate\Queue\Worker $worker, /**
+     * The cache store implementation.
+     */
+    protected \Illuminate\Contracts\Cache\Repository $cache)
     {
         parent::__construct();
-
-        $this->cache = $cache;
-        $this->worker = $worker;
     }
 
     /**
@@ -152,10 +136,8 @@ class WorkCommand extends Command
 
     /**
      * Gather all of the queue worker options as a single object.
-     *
-     * @return \Illuminate\Queue\WorkerOptions
      */
-    protected function gatherWorkerOptions()
+    protected function gatherWorkerOptions(): \Illuminate\Queue\WorkerOptions
     {
         return new WorkerOptions(
             $this->option('name'),
@@ -183,19 +165,19 @@ class WorkCommand extends Command
             return;
         }
 
-        $this->laravel['events']->listen(JobProcessing::class, function ($event) {
+        $this->laravel['events']->listen(JobProcessing::class, function ($event): void {
             $this->writeOutput($event->job, 'starting');
         });
 
-        $this->laravel['events']->listen(JobProcessed::class, function ($event) {
+        $this->laravel['events']->listen(JobProcessed::class, function ($event): void {
             $this->writeOutput($event->job, 'success');
         });
 
-        $this->laravel['events']->listen(JobReleasedAfterException::class, function ($event) {
+        $this->laravel['events']->listen(JobReleasedAfterException::class, function ($event): void {
             $this->writeOutput($event->job, 'released_after_exception');
         });
 
-        $this->laravel['events']->listen(JobFailed::class, function ($event) {
+        $this->laravel['events']->listen(JobFailed::class, function (\Illuminate\Queue\Events\JobFailed $event): void {
             $this->writeOutput($event->job, 'failed', $event->exception);
 
             $this->logFailedJob($event);
@@ -207,9 +189,7 @@ class WorkCommand extends Command
     /**
      * Write the status output for the queue worker for JSON or TTY.
      *
-     * @param  Job  $job
      * @param  string  $status
-     * @param  \Throwable|null  $exception
      * @return void
      */
     protected function writeOutput(Job $job, $status, ?Throwable $exception = null)
@@ -226,7 +206,6 @@ class WorkCommand extends Command
     /**
      * Write the status output for the queue worker.
      *
-     * @param  \Illuminate\Contracts\Queue\Job  $job
      * @param  string  $status
      * @return void
      */
@@ -274,9 +253,7 @@ class WorkCommand extends Command
     /**
      * Write the status output for the queue worker in JSON format.
      *
-     * @param  \Illuminate\Contracts\Queue\Job  $job
      * @param  string  $status
-     * @param  \Throwable|null  $exception
      * @return void
      */
     protected function writeOutputAsJson(Job $job, $status, ?Throwable $exception = null)
@@ -330,7 +307,6 @@ class WorkCommand extends Command
     /**
      * Store a failed job event.
      *
-     * @param  \Illuminate\Queue\Events\JobFailed  $event
      * @return void
      */
     protected function logFailedJob(JobFailed $event)
@@ -382,10 +358,8 @@ class WorkCommand extends Command
 
     /**
      * Reset static variables.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$hasRegisteredListeners = false;
     }

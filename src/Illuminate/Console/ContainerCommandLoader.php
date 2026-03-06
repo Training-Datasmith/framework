@@ -10,36 +10,26 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 class ContainerCommandLoader implements CommandLoaderInterface
 {
     /**
-     * The container instance.
-     *
-     * @var \Psr\Container\ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * A map of command names to classes.
-     *
-     * @var array<string, \Illuminate\Console\Command|string>
-     */
-    protected $commandMap;
-
-    /**
      * Create a new command loader instance.
      *
-     * @param  \Psr\Container\ContainerInterface  $container
      * @param  array<string, \Illuminate\Console\Command|string>  $commandMap
      */
-    public function __construct(ContainerInterface $container, array $commandMap)
+    public function __construct(
+        /**
+         * The container instance.
+         */
+        protected \Psr\Container\ContainerInterface $container,
+        /**
+         * A map of command names to classes.
+         */
+        protected array $commandMap
+    )
     {
-        $this->container = $container;
-        $this->commandMap = $commandMap;
     }
 
     /**
      * Resolve a command from the container.
      *
-     * @param  string  $name
-     * @return \Symfony\Component\Console\Command\Command
      *
      * @throws \Symfony\Component\Console\Exception\CommandNotFoundException
      */
@@ -54,9 +44,6 @@ class ContainerCommandLoader implements CommandLoaderInterface
 
     /**
      * Determines if a command exists.
-     *
-     * @param  string  $name
-     * @return bool
      */
     public function has(string $name): bool
     {

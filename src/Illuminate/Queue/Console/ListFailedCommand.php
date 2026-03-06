@@ -64,11 +64,8 @@ class ListFailedCommand extends Command
 
     /**
      * Parse the failed job row.
-     *
-     * @param  array  $failed
-     * @return array
      */
-    protected function parseFailedJob(array $failed)
+    protected function parseFailedJob(array $failed): array
     {
         $row = array_values(Arr::except($failed, ['payload', 'exception']));
 
@@ -86,10 +83,11 @@ class ListFailedCommand extends Command
     private function extractJobName($payload)
     {
         $payload = json_decode($payload, true);
-
         if ($payload && (! isset($payload['data']['command']))) {
             return $payload['job'] ?? null;
-        } elseif ($payload && isset($payload['data']['command'])) {
+        }
+
+        if ($payload && isset($payload['data']['command'])) {
             return $this->matchJobName($payload);
         }
     }
@@ -97,12 +95,11 @@ class ListFailedCommand extends Command
     /**
      * Match the job name from the payload.
      *
-     * @param  array  $payload
      * @return string|null
      */
-    protected function matchJobName($payload)
+    protected function matchJobName(array $payload)
     {
-        preg_match('/"([^"]+)"/', $payload['data']['command'], $matches);
+        preg_match('/"([^"]+)"/', (string) $payload['data']['command'], $matches);
 
         return $matches[1] ?? $payload['job'] ?? null;
     }
@@ -110,7 +107,6 @@ class ListFailedCommand extends Command
     /**
      * Display the failed jobs in the console.
      *
-     * @param  array  $jobs
      * @return void
      */
     protected function displayFailedJobs(array $jobs)

@@ -11,25 +11,11 @@ use Illuminate\Support\Str;
 class Factory implements FactoryContract
 {
     /**
-     * The Translator implementation.
-     *
-     * @var \Illuminate\Contracts\Translation\Translator
-     */
-    protected $translator;
-
-    /**
      * The Presence Verifier implementation.
      *
      * @var \Illuminate\Validation\PresenceVerifierInterface
      */
     protected $verifier;
-
-    /**
-     * The IoC container instance.
-     *
-     * @var \Illuminate\Contracts\Container\Container|null
-     */
-    protected $container;
 
     /**
      * All of the custom validator extensions.
@@ -82,23 +68,23 @@ class Factory implements FactoryContract
 
     /**
      * Create a new Validator factory instance.
-     *
-     * @param  \Illuminate\Contracts\Translation\Translator  $translator
-     * @param  \Illuminate\Contracts\Container\Container|null  $container
      */
-    public function __construct(Translator $translator, ?Container $container = null)
+    public function __construct(
+        /**
+         * The Translator implementation.
+         */
+        protected \Illuminate\Contracts\Translation\Translator $translator,
+        /**
+         * The IoC container instance.
+         */
+        protected ?\Illuminate\Contracts\Container\Container $container = null
+    )
     {
-        $this->container = $container;
-        $this->translator = $translator;
     }
 
     /**
      * Create a new Validator instance.
      *
-     * @param  array  $data
-     * @param  array  $rules
-     * @param  array  $messages
-     * @param  array  $attributes
      * @return \Illuminate\Validation\Validator
      */
     public function make(array $data, array $rules, array $messages = [], array $attributes = [])
@@ -131,10 +117,6 @@ class Factory implements FactoryContract
     /**
      * Validate the given data against the provided rules.
      *
-     * @param  array  $data
-     * @param  array  $rules
-     * @param  array  $messages
-     * @param  array  $attributes
      * @return array
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -147,10 +129,6 @@ class Factory implements FactoryContract
     /**
      * Resolve a new Validator instance.
      *
-     * @param  array  $data
-     * @param  array  $rules
-     * @param  array  $messages
-     * @param  array  $attributes
      * @return \Illuminate\Validation\Validator
      */
     protected function resolve(array $data, array $rules, array $messages, array $attributes)
@@ -165,7 +143,6 @@ class Factory implements FactoryContract
     /**
      * Add the extensions to a validator instance.
      *
-     * @param  \Illuminate\Validation\Validator  $validator
      * @return void
      */
     protected function addExtensions(Validator $validator)
@@ -190,9 +167,8 @@ class Factory implements FactoryContract
      * @param  string  $rule
      * @param  \Closure|string  $extension
      * @param  string|null  $message
-     * @return void
      */
-    public function extend($rule, $extension, $message = null)
+    public function extend($rule, $extension, $message = null): void
     {
         $this->extensions[$rule] = $extension;
 
@@ -207,9 +183,8 @@ class Factory implements FactoryContract
      * @param  string  $rule
      * @param  \Closure|string  $extension
      * @param  string|null  $message
-     * @return void
      */
-    public function extendImplicit($rule, $extension, $message = null)
+    public function extendImplicit($rule, $extension, $message = null): void
     {
         $this->implicitExtensions[$rule] = $extension;
 
@@ -221,12 +196,10 @@ class Factory implements FactoryContract
     /**
      * Register a custom dependent validator extension.
      *
-     * @param  string  $rule
      * @param  \Closure|string  $extension
      * @param  string|null  $message
-     * @return void
      */
-    public function extendDependent($rule, $extension, $message = null)
+    public function extendDependent(string $rule, $extension, $message = null): void
     {
         $this->dependentExtensions[$rule] = $extension;
 
@@ -240,40 +213,32 @@ class Factory implements FactoryContract
      *
      * @param  string  $rule
      * @param  \Closure|string  $replacer
-     * @return void
      */
-    public function replacer($rule, $replacer)
+    public function replacer($rule, $replacer): void
     {
         $this->replacers[$rule] = $replacer;
     }
 
     /**
      * Indicate that unvalidated array keys should be included in validated data when the parent array is validated.
-     *
-     * @return void
      */
-    public function includeUnvalidatedArrayKeys()
+    public function includeUnvalidatedArrayKeys(): void
     {
         $this->excludeUnvalidatedArrayKeys = false;
     }
 
     /**
      * Indicate that unvalidated array keys should be excluded from the validated data, even if the parent array was validated.
-     *
-     * @return void
      */
-    public function excludeUnvalidatedArrayKeys()
+    public function excludeUnvalidatedArrayKeys(): void
     {
         $this->excludeUnvalidatedArrayKeys = true;
     }
 
     /**
      * Set the Validator instance resolver.
-     *
-     * @param  \Closure  $resolver
-     * @return void
      */
-    public function resolver(Closure $resolver)
+    public function resolver(Closure $resolver): void
     {
         $this->resolver = $resolver;
     }
@@ -300,11 +265,8 @@ class Factory implements FactoryContract
 
     /**
      * Set the Presence Verifier implementation.
-     *
-     * @param  \Illuminate\Validation\PresenceVerifierInterface  $presenceVerifier
-     * @return void
      */
-    public function setPresenceVerifier(PresenceVerifierInterface $presenceVerifier)
+    public function setPresenceVerifier(PresenceVerifierInterface $presenceVerifier): void
     {
         $this->verifier = $presenceVerifier;
     }
@@ -322,10 +284,9 @@ class Factory implements FactoryContract
     /**
      * Set the container instance used by the validation factory.
      *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return $this
      */
-    public function setContainer(Container $container)
+    public function setContainer(Container $container): static
     {
         $this->container = $container;
 

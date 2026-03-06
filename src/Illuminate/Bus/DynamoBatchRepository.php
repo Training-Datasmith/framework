@@ -11,46 +11,11 @@ use Illuminate\Support\Str;
 class DynamoBatchRepository implements BatchRepository
 {
     /**
-     * The batch factory instance.
-     *
-     * @var \Illuminate\Bus\BatchFactory
-     */
-    protected $factory;
-
-    /**
      * The database connection instance.
      *
      * @var \Aws\DynamoDb\DynamoDbClient
      */
     protected $dynamoDbClient;
-
-    /**
-     * The application name.
-     *
-     * @var string
-     */
-    protected $applicationName;
-
-    /**
-     * The table to use to store batch information.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * The time-to-live value for batch records.
-     *
-     * @var int
-     */
-    protected $ttl;
-
-    /**
-     * The name of the time-to-live attribute for batch records.
-     *
-     * @var string
-     */
-    protected $ttlAttribute;
 
     /**
      * The DynamoDB marshaler instance.
@@ -63,19 +28,29 @@ class DynamoBatchRepository implements BatchRepository
      * Create a new batch repository instance.
      */
     public function __construct(
-        BatchFactory $factory,
+        /**
+         * The batch factory instance.
+         */
+        protected \Illuminate\Bus\BatchFactory $factory,
         DynamoDbClient $dynamoDbClient,
-        string $applicationName,
-        string $table,
-        ?int $ttl,
-        ?string $ttlAttribute,
+        /**
+         * The application name.
+         */
+        protected string $applicationName,
+        /**
+         * The table to use to store batch information.
+         */
+        protected string $table,
+        /**
+         * The time-to-live value for batch records.
+         */
+        protected ?int $ttl,
+        /**
+         * The name of the time-to-live attribute for batch records.
+         */
+        protected ?string $ttlAttribute,
     ) {
-        $this->factory = $factory;
         $this->dynamoDbClient = $dynamoDbClient;
-        $this->applicationName = $applicationName;
-        $this->table = $table;
-        $this->ttl = $ttl;
-        $this->ttlAttribute = $ttlAttribute;
         $this->marshaler = new Marshaler;
     }
 
@@ -86,7 +61,7 @@ class DynamoBatchRepository implements BatchRepository
      * @param  mixed  $before
      * @return \Illuminate\Bus\Batch[]
      */
-    public function get($limit = 50, $before = null)
+    public function get($limit = 50, $before = null): array
     {
         $condition = 'application = :application';
 
@@ -114,7 +89,6 @@ class DynamoBatchRepository implements BatchRepository
     /**
      * Retrieve information about an existing batch.
      *
-     * @param  string  $batchId
      * @return \Illuminate\Bus\Batch|null
      */
     public function find(string $batchId)
@@ -157,7 +131,6 @@ class DynamoBatchRepository implements BatchRepository
     /**
      * Store a new pending batch.
      *
-     * @param  \Illuminate\Bus\PendingBatch  $batch
      * @return \Illuminate\Bus\Batch
      */
     public function store(PendingBatch $batch)
@@ -193,12 +166,8 @@ class DynamoBatchRepository implements BatchRepository
 
     /**
      * Increment the total number of jobs within the batch.
-     *
-     * @param  string  $batchId
-     * @param  int  $amount
-     * @return void
      */
-    public function incrementTotalJobs(string $batchId, int $amount)
+    public function incrementTotalJobs(string $batchId, int $amount): void
     {
         $update = 'SET total_jobs = total_jobs + :val, pending_jobs = pending_jobs + :val';
 
@@ -224,12 +193,8 @@ class DynamoBatchRepository implements BatchRepository
 
     /**
      * Decrement the total number of pending jobs for the batch.
-     *
-     * @param  string  $batchId
-     * @param  string  $jobId
-     * @return \Illuminate\Bus\UpdatedBatchJobCounts
      */
-    public function decrementPendingJobs(string $batchId, string $jobId)
+    public function decrementPendingJobs(string $batchId, string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
         $update = 'SET pending_jobs = pending_jobs - :inc';
 
@@ -262,12 +227,8 @@ class DynamoBatchRepository implements BatchRepository
 
     /**
      * Increment the total number of failed jobs for the batch.
-     *
-     * @param  string  $batchId
-     * @param  string  $jobId
-     * @return \Illuminate\Bus\UpdatedBatchJobCounts
      */
-    public function incrementFailedJobs(string $batchId, string $jobId)
+    public function incrementFailedJobs(string $batchId, string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
         $update = 'SET failed_jobs = failed_jobs + :inc, failed_job_ids = list_append(failed_job_ids, :jobId)';
 
@@ -301,11 +262,8 @@ class DynamoBatchRepository implements BatchRepository
 
     /**
      * Mark the batch that has the given ID as finished.
-     *
-     * @param  string  $batchId
-     * @return void
      */
-    public function markAsFinished(string $batchId)
+    public function markAsFinished(string $batchId): void
     {
         $update = 'SET finished_at = :timestamp';
 
@@ -330,11 +288,8 @@ class DynamoBatchRepository implements BatchRepository
 
     /**
      * Cancel the batch that has the given ID.
-     *
-     * @param  string  $batchId
-     * @return void
      */
-    public function cancel(string $batchId)
+    public function cancel(string $batchId): void
     {
         $update = 'SET cancelled_at = :timestamp, finished_at = :timestamp';
 
@@ -359,11 +314,8 @@ class DynamoBatchRepository implements BatchRepository
 
     /**
      * Delete the batch that has the given ID.
-     *
-     * @param  string  $batchId
-     * @return void
      */
-    public function delete(string $batchId)
+    public function delete(string $batchId): void
     {
         $this->dynamoDbClient->deleteItem([
             'TableName' => $this->table,
@@ -377,7 +329,6 @@ class DynamoBatchRepository implements BatchRepository
     /**
      * Execute the given Closure within a storage specific transaction.
      *
-     * @param  \Closure  $callback
      * @return mixed
      */
     public function transaction(Closure $callback)
@@ -419,8 +370,6 @@ class DynamoBatchRepository implements BatchRepository
 
     /**
      * Create the underlying DynamoDB table.
-     *
-     * @return void
      */
     public function createAwsDynamoTable(): void
     {
@@ -474,8 +423,6 @@ class DynamoBatchRepository implements BatchRepository
 
     /**
      * Get the expiry time based on the configured time-to-live.
-     *
-     * @return string|null
      */
     protected function getExpiryTime(): ?string
     {
@@ -484,8 +431,6 @@ class DynamoBatchRepository implements BatchRepository
 
     /**
      * Get the expression attribute name for the time-to-live attribute.
-     *
-     * @return array
      */
     protected function ttlExpressionAttributeName(): array
     {
@@ -496,9 +441,8 @@ class DynamoBatchRepository implements BatchRepository
      * Serialize the given value.
      *
      * @param  mixed  $value
-     * @return string
      */
-    protected function serialize($value)
+    protected function serialize($value): string
     {
         return serialize($value);
     }
@@ -507,17 +451,14 @@ class DynamoBatchRepository implements BatchRepository
      * Unserialize the given value.
      *
      * @param  string  $serialized
-     * @return mixed
      */
-    protected function unserialize($serialized)
+    protected function unserialize($serialized): mixed
     {
         return unserialize($serialized);
     }
 
     /**
      * Get the underlying DynamoDB client instance.
-     *
-     * @return \Aws\DynamoDb\DynamoDbClient
      */
     public function getDynamoClient(): DynamoDbClient
     {
@@ -526,8 +467,6 @@ class DynamoBatchRepository implements BatchRepository
 
     /**
      * The name of the table that contains the batch records.
-     *
-     * @return string
      */
     public function getTable(): string
     {

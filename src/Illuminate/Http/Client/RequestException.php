@@ -14,13 +14,6 @@ class RequestException extends HttpClientException
     public $response;
 
     /**
-     * The current truncation length for the exception message.
-     *
-     * @var int|false|null
-     */
-    public $truncateExceptionsAt;
-
-    /**
      * The global truncation length for the exception message.
      *
      * @var int|false
@@ -37,55 +30,46 @@ class RequestException extends HttpClientException
     /**
      * Create a new exception instance.
      *
-     * @param  \Illuminate\Http\Client\Response  $response
      * @param  int|false|null  $truncateExceptionsAt
      */
-    public function __construct(Response $response, $truncateExceptionsAt = null)
+    public function __construct(Response $response, /**
+     * The current truncation length for the exception message.
+     */
+    public $truncateExceptionsAt = null)
     {
         parent::__construct($this->prepareMessage($response), $response->status());
-
-        $this->truncateExceptionsAt = $truncateExceptionsAt;
 
         $this->response = $response;
     }
 
     /**
      * Enable truncation of request exception messages.
-     *
-     * @return void
      */
-    public static function truncate()
+    public static function truncate(): void
     {
         static::$truncateAt = 120;
     }
 
     /**
      * Set the truncation length for request exception messages.
-     *
-     * @param  int  $length
-     * @return void
      */
-    public static function truncateAt(int $length)
+    public static function truncateAt(int $length): void
     {
         static::$truncateAt = $length;
     }
 
     /**
      * Disable truncation of request exception messages.
-     *
-     * @return void
      */
-    public static function dontTruncate()
+    public static function dontTruncate(): void
     {
         static::$truncateAt = false;
     }
 
     /**
      * Prepare the exception message.
-     *
-     * @return bool
      */
-    public function report()
+    public function report(): bool
     {
         if (! $this->hasBeenSummarized) {
             $this->message = $this->prepareMessage($this->response);
@@ -98,11 +82,8 @@ class RequestException extends HttpClientException
 
     /**
      * Prepare the exception message.
-     *
-     * @param  \Illuminate\Http\Client\Response  $response
-     * @return string
      */
-    protected function prepareMessage(Response $response)
+    protected function prepareMessage(Response $response): string
     {
         $message = "HTTP request returned status code {$response->status()}";
 

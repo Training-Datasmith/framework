@@ -19,8 +19,6 @@ class RouteParameter implements ContextualAttribute
     /**
      * Resolve the route parameter.
      *
-     * @param  self  $attribute
-     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return mixed
      */
     public static function resolve(self $attribute, Container $container)

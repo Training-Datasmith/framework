@@ -18,11 +18,9 @@ class BaseCommand extends Command
         // use the path relative to the root of the installation folder so our database
         // migrations may be run for any customized path from within the application.
         if ($this->input->hasOption('path') && $this->option('path')) {
-            return (new Collection($this->option('path')))->map(function ($path) {
-                return ! $this->usingRealPath()
-                    ? $this->laravel->basePath().'/'.$path
-                    : $path;
-            })->all();
+            return (new Collection($this->option('path')))->map(fn($path) => ! $this->usingRealPath()
+                ? $this->laravel->basePath().'/'.$path
+                : $path)->all();
         }
 
         return array_merge(
@@ -32,20 +30,16 @@ class BaseCommand extends Command
 
     /**
      * Determine if the given path(s) are pre-resolved "real" paths.
-     *
-     * @return bool
      */
-    protected function usingRealPath()
+    protected function usingRealPath(): bool
     {
         return $this->input->hasOption('realpath') && $this->option('realpath');
     }
 
     /**
      * Get the path to the migration directory.
-     *
-     * @return string
      */
-    protected function getMigrationPath()
+    protected function getMigrationPath(): string
     {
         return $this->laravel->databasePath().DIRECTORY_SEPARATOR.'migrations';
     }

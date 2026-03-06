@@ -33,13 +33,11 @@ class TestResponseAssert
     /**
      * Pass method calls to the Assert class and decorate the exception message.
      *
-     * @param  string  $name
      * @param  array  $arguments
      * @return void
-     *
      * @throws \PHPUnit\Framework\ExpectationFailedException
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         try {
             Assert::$name(...$arguments);
@@ -51,13 +49,11 @@ class TestResponseAssert
     /**
      * Pass static method calls to the Assert class.
      *
-     * @param  string  $name
      * @param  array  $arguments
      * @return void
-     *
      * @throws \PHPUnit\Framework\ExpectationFailedException
      */
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic(string $name, array $arguments)
     {
         Assert::$name(...$arguments);
     }
@@ -134,7 +130,7 @@ class TestResponseAssert
             : implode(PHP_EOL, Arr::flatten($errors));
 
         // JSON error messages may already contain the errors, so we shouldn't duplicate them...
-        if (str_contains($exception->getMessage(), $errors)) {
+        if (str_contains((string) $exception->getMessage(), $errors)) {
             return $exception;
         }
 
@@ -150,11 +146,10 @@ class TestResponseAssert
     /**
      * Append a message to an exception.
      *
-     * @param  string  $message
      * @param  \PHPUnit\Framework\ExpectationFailedException  $exception
      * @return \PHPUnit\Framework\ExpectationFailedException
      */
-    protected function appendMessageToException($message, $exception)
+    protected function appendMessageToException(string $message, $exception)
     {
         $property = new ReflectionProperty($exception, 'message');
 

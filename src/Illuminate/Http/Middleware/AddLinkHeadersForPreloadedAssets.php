@@ -12,9 +12,8 @@ class AddLinkHeadersForPreloadedAssets
      * Configure the middleware.
      *
      * @param  int  $limit
-     * @return string
      */
-    public static function using($limit)
+    public static function using($limit): string
     {
         return static::class.':'.$limit;
     }
@@ -29,11 +28,11 @@ class AddLinkHeadersForPreloadedAssets
      */
     public function handle($request, $next, $limit = null)
     {
-        return tap($next($request), function ($response) use ($limit) {
+        return tap($next($request), function ($response) use ($limit): void {
             if ($response instanceof Response && Vite::preloadedAssets() !== []) {
                 $response->header('Link', (new Collection(Vite::preloadedAssets()))
                     ->when($limit, fn ($assets, $limit) => $assets->take($limit))
-                    ->map(fn ($attributes, $url) => "<{$url}>; ".implode('; ', $attributes))
+                    ->map(fn ($attributes, $url): string => "<{$url}>; ".implode('; ', $attributes))
                     ->join(', '), false);
             }
         });

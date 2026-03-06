@@ -24,10 +24,8 @@ class Notification
 
     /**
      * Get the channels the event should broadcast on.
-     *
-     * @return array
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         return [];
     }
@@ -38,7 +36,7 @@ class Notification
      * @param  string  $locale
      * @return $this
      */
-    public function locale($locale)
+    public function locale($locale): static
     {
         $this->locale = $locale;
 

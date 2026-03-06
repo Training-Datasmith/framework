@@ -20,7 +20,7 @@ class BufferedConsoleOutput extends ConsoleOutput
      */
     public function fetch()
     {
-        return tap($this->buffer, function () {
+        return tap($this->buffer, function (): void {
             $this->buffer = '';
         });
     }

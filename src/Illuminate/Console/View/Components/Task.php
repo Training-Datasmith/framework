@@ -18,10 +18,8 @@ class Task extends Component
      *
      * @param  string  $description
      * @param  (callable(): bool)|null  $task
-     * @param  int  $verbosity
-     * @return void
      */
-    public function render($description, $task = null, $verbosity = OutputInterface::VERBOSITY_NORMAL)
+    public function render($description, $task = null, int $verbosity = OutputInterface::VERBOSITY_NORMAL): void
     {
         $description = $this->mutate($description, [
             Mutators\EnsureDynamicContentIsHighlighted::class,

@@ -30,10 +30,8 @@ class DbCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $connection = $this->getConnection();
 
@@ -50,7 +48,7 @@ class DbCommand extends Command
                 array_merge([$command = $this->getCommand($connection)], $this->commandArguments($connection)),
                 null,
                 $this->commandEnvironment($connection)
-            ))->setTimeout(null)->setTty(true)->mustRun(function ($type, $buffer) {
+            ))->setTimeout(null)->setTty(true)->mustRun(function ($type, string|iterable $buffer): void {
                 $this->output->write($buffer);
             });
         } catch (ProcessFailedException $e) {
@@ -105,12 +103,11 @@ class DbCommand extends Command
     /**
      * Get the arguments for the database client command.
      *
-     * @param  array  $connection
      * @return array
      */
     public function commandArguments(array $connection)
     {
-        $driver = ucfirst($connection['driver']);
+        $driver = ucfirst((string) $connection['driver']);
 
         return $this->{"get{$driver}Arguments"}($connection);
     }
@@ -118,12 +115,11 @@ class DbCommand extends Command
     /**
      * Get the environment variables for the database client command.
      *
-     * @param  array  $connection
      * @return array|null
      */
     public function commandEnvironment(array $connection)
     {
-        $driver = ucfirst($connection['driver']);
+        $driver = ucfirst((string) $connection['driver']);
 
         if (method_exists($this, "get{$driver}Environment")) {
             return $this->{"get{$driver}Environment"}($connection);
@@ -134,11 +130,8 @@ class DbCommand extends Command
 
     /**
      * Get the database client command to run.
-     *
-     * @param  array  $connection
-     * @return string
      */
-    public function getCommand(array $connection)
+    public function getCommand(array $connection): string
     {
         return [
             'mysql' => 'mysql',
@@ -151,11 +144,8 @@ class DbCommand extends Command
 
     /**
      * Get the arguments for the MySQL CLI.
-     *
-     * @param  array  $connection
-     * @return array
      */
-    protected function getMysqlArguments(array $connection)
+    protected function getMysqlArguments(array $connection): array
     {
         $optionalArguments = [
             'password' => '--password='.$connection['password'],
@@ -177,7 +167,6 @@ class DbCommand extends Command
     /**
      * Get the arguments for the MariaDB CLI.
      *
-     * @param  array  $connection
      * @return array
      */
     protected function getMariaDbArguments(array $connection)
@@ -187,33 +176,24 @@ class DbCommand extends Command
 
     /**
      * Get the arguments for the Postgres CLI.
-     *
-     * @param  array  $connection
-     * @return array
      */
-    protected function getPgsqlArguments(array $connection)
+    protected function getPgsqlArguments(array $connection): array
     {
         return [$connection['database']];
     }
 
     /**
      * Get the arguments for the SQLite CLI.
-     *
-     * @param  array  $connection
-     * @return array
      */
-    protected function getSqliteArguments(array $connection)
+    protected function getSqliteArguments(array $connection): array
     {
         return [$connection['database']];
     }
 
     /**
      * Get the arguments for the SQL Server CLI.
-     *
-     * @param  array  $connection
-     * @return array
      */
-    protected function getSqlsrvArguments(array $connection)
+    protected function getSqlsrvArguments(array $connection): array
     {
         return array_merge(...$this->getOptionalArguments([
             'database' => ['-d', $connection['database']],
@@ -227,11 +207,8 @@ class DbCommand extends Command
 
     /**
      * Get the environment variables for the Postgres CLI.
-     *
-     * @param  array  $connection
-     * @return array|null
      */
-    protected function getPgsqlEnvironment(array $connection)
+    protected function getPgsqlEnvironment(array $connection): array
     {
         return array_merge(...$this->getOptionalArguments([
             'username' => ['PGUSER' => $connection['username']],
@@ -243,15 +220,9 @@ class DbCommand extends Command
 
     /**
      * Get the optional arguments based on the connection configuration.
-     *
-     * @param  array  $args
-     * @param  array  $connection
-     * @return array
      */
-    protected function getOptionalArguments(array $args, array $connection)
+    protected function getOptionalArguments(array $args, array $connection): array
     {
-        return array_values(array_filter($args, function ($key) use ($connection) {
-            return ! empty($connection[$key]);
-        }, ARRAY_FILTER_USE_KEY));
+        return array_values(array_filter($args, fn($key) => ! empty($connection[$key]), ARRAY_FILTER_USE_KEY));
     }
 }

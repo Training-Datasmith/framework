@@ -30,9 +30,8 @@ trait InteractsWithInput
      * Determine if a header is set on the request.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function hasHeader($key)
+    public function hasHeader($key): bool
     {
         return ! is_null($this->header($key));
     }
@@ -58,10 +57,10 @@ trait InteractsWithInput
     {
         $header = $this->header('Authorization', '');
 
-        $position = strripos($header, 'Bearer ');
+        $position = strripos((string) $header, 'Bearer ');
 
         if ($position !== false) {
-            $header = substr($header, $position + 7);
+            $header = substr((string) $header, $position + 7);
 
             return str_contains($header, ',') ? strstr($header, ',', true) : $header;
         }
@@ -69,10 +68,8 @@ trait InteractsWithInput
 
     /**
      * Get the keys for all of the input and files.
-     *
-     * @return array
      */
-    public function keys()
+    public function keys(): array
     {
         return array_merge(array_keys($this->input()), $this->files->keys());
     }
@@ -81,9 +78,8 @@ trait InteractsWithInput
      * Get all of the input and files for the request.
      *
      * @param  mixed  $keys
-     * @return array
      */
-    public function all($keys = null)
+    public function all($keys = null): array
     {
         $input = array_replace_recursive($this->input(), $this->allFiles());
 
@@ -118,10 +114,8 @@ trait InteractsWithInput
      * Retrieve input from the request as a Fluent object instance.
      *
      * @param  array|string|null  $key
-     * @param  array  $default
-     * @return \Illuminate\Support\Fluent
      */
-    public function fluent($key = null, array $default = [])
+    public function fluent($key = null, array $default = []): \Illuminate\Support\Fluent
     {
         $value = is_array($key) ? $this->only($key) : $this->input($key);
 
@@ -156,9 +150,8 @@ trait InteractsWithInput
      * Determine if a cookie is set on the request.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function hasCookie($key)
+    public function hasCookie($key): bool
     {
         return ! is_null($this->cookie($key));
     }
@@ -184,7 +177,7 @@ trait InteractsWithInput
     {
         $files = $this->files->all();
 
-        return $this->convertedFiles = $this->convertedFiles ?? $this->convertUploadedFiles($files);
+        return $this->convertedFiles ??= $this->convertUploadedFiles($files);
     }
 
     /**
@@ -193,10 +186,10 @@ trait InteractsWithInput
      * @param  array<string, \Symfony\Component\HttpFoundation\File\UploadedFile|\Symfony\Component\HttpFoundation\File\UploadedFile[]>  $files
      * @return array<string, \Illuminate\Http\UploadedFile|\Illuminate\Http\UploadedFile[]>
      */
-    protected function convertUploadedFiles(array $files)
+    protected function convertUploadedFiles(array $files): array
     {
-        return array_map(function ($file) {
-            if (is_null($file) || (is_array($file) && empty(array_filter($file)))) {
+        return array_map(function (array|\Symfony\Component\HttpFoundation\File\UploadedFile $file) {
+            if (is_array($file) && empty(array_filter($file))) {
                 return $file;
             }
 
@@ -210,9 +203,8 @@ trait InteractsWithInput
      * Determine if the uploaded data contains a file.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function hasFile($key)
+    public function hasFile($key): bool
     {
         if (! is_array($files = $this->file($key))) {
             $files = [$files];
@@ -231,9 +223,8 @@ trait InteractsWithInput
      * Check that the given file is a valid file instance.
      *
      * @param  mixed  $file
-     * @return bool
      */
-    protected function isValidFile($file)
+    protected function isValidFile($file): bool
     {
         return $file instanceof SplFileInfo && $file->getPath() !== '';
     }

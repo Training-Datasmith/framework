@@ -38,10 +38,8 @@ class EventListCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $events = $this->getEvents()->sortKeys();
 
@@ -65,17 +63,14 @@ class EventListCommand extends Command
     /**
      * Display events and their listeners in JSON.
      *
-     * @param  \Illuminate\Support\Collection  $events
      * @return void
      */
     protected function displayJson(Collection $events)
     {
-        $data = $events->map(function ($listeners, $event) {
-            return [
-                'event' => strip_tags($this->appendEventInterfaces($event)),
-                'listeners' => (new Collection($listeners))->map(fn ($listener) => strip_tags($listener))->values()->all(),
-            ];
-        })->values();
+        $data = $events->map(fn($listeners, $event) => [
+            'event' => strip_tags($this->appendEventInterfaces($event)),
+            'listeners' => (new Collection($listeners))->map(fn ($listener): string => strip_tags((string) $listener))->values()->all(),
+        ])->values();
 
         $this->output->writeln($data->toJson());
     }
@@ -83,14 +78,13 @@ class EventListCommand extends Command
     /**
      * Display the events and their listeners for the CLI.
      *
-     * @param  \Illuminate\Support\Collection  $events
      * @return void
      */
     protected function displayForCli(Collection $events)
     {
         $this->newLine();
 
-        $events->each(function ($listeners, $event) {
+        $events->each(function ($listeners, $event): void {
             $this->components->twoColumnDetail($this->appendEventInterfaces($event));
             $this->components->bulletList($listeners);
         });
@@ -108,7 +102,7 @@ class EventListCommand extends Command
         $events = new Collection($this->getListenersOnDispatcher());
 
         if ($this->filteringByEvent()) {
-            $events = $this->filterEvents($events);
+            return $this->filterEvents($events);
         }
 
         return $events;
@@ -116,10 +110,8 @@ class EventListCommand extends Command
 
     /**
      * Get the event / listeners from the dispatcher object.
-     *
-     * @return array
      */
-    protected function getListenersOnDispatcher()
+    protected function getListenersOnDispatcher(): array
     {
         $events = [];
 
@@ -131,7 +123,7 @@ class EventListCommand extends Command
                     $events[$event][] = $this->stringifyClosure($rawListener);
                 } elseif (is_array($rawListener) && count($rawListener) === 2) {
                     if (is_object($rawListener[0])) {
-                        $rawListener[0] = get_class($rawListener[0]);
+                        $rawListener[0] = $rawListener[0]::class;
                     }
 
                     $events[$event][] = $this->appendListenerInterfaces(implode('@', $rawListener));
@@ -167,9 +159,8 @@ class EventListCommand extends Command
      * Add the listener implemented interfaces to the output.
      *
      * @param  string  $listener
-     * @return string
      */
-    protected function appendListenerInterfaces($listener)
+    protected function appendListenerInterfaces($listener): string
     {
         $listener = explode('@', $listener);
 
@@ -186,11 +177,8 @@ class EventListCommand extends Command
 
     /**
      * Get a displayable string representation of a Closure listener.
-     *
-     * @param  \Closure  $rawListener
-     * @return string
      */
-    protected function stringifyClosure(Closure $rawListener)
+    protected function stringifyClosure(Closure $rawListener): string
     {
         $reflection = new ReflectionFunction($rawListener);
 
@@ -212,16 +200,14 @@ class EventListCommand extends Command
         }
 
         return $events->filter(
-            fn ($listeners, $event) => str_contains($event, $eventName)
+            fn ($listeners, $event): bool => str_contains((string) $event, $eventName)
         );
     }
 
     /**
      * Determine whether the user is filtering by an event name.
-     *
-     * @return bool
      */
-    protected function filteringByEvent()
+    protected function filteringByEvent(): bool
     {
         return ! empty($this->option('event'));
     }
@@ -256,9 +242,8 @@ class EventListCommand extends Command
      * Set a callback that should be used when resolving the events dispatcher.
      *
      * @param  \Closure|null  $resolver
-     * @return void
      */
-    public static function resolveEventsUsing($resolver)
+    public static function resolveEventsUsing($resolver): void
     {
         static::$eventsResolver = $resolver;
     }

@@ -8,10 +8,8 @@ class CookieServiceProvider extends ServiceProvider
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->app->singleton('cookie', function ($app) {
             $config = $app->make('config')->get('session');

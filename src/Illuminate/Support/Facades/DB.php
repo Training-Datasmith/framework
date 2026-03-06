@@ -125,11 +125,8 @@ class DB extends Facade
      * Indicate if destructive Artisan commands should be prohibited.
      *
      * Prohibits: db:wipe, migrate:fresh, migrate:refresh, migrate:reset, and migrate:rollback
-     *
-     * @param  bool  $prohibit
-     * @return void
      */
-    public static function prohibitDestructiveCommands(bool $prohibit = true)
+    public static function prohibitDestructiveCommands(bool $prohibit = true): void
     {
         FreshCommand::prohibit($prohibit);
         RefreshCommand::prohibit($prohibit);
@@ -140,10 +137,8 @@ class DB extends Facade
 
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'db';
     }

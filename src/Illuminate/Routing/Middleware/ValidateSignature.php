@@ -28,9 +28,8 @@ class ValidateSignature
      * Specify that the URL signature is for a relative URL.
      *
      * @param  array|string  $ignore
-     * @return string
      */
-    public static function relative($ignore = [])
+    public static function relative($ignore = []): string
     {
         $ignore = Arr::wrap($ignore);
 
@@ -43,7 +42,7 @@ class ValidateSignature
      * @param  array|string  $ignore
      * @return class-string
      */
-    public static function absolute($ignore = [])
+    public static function absolute($ignore = []): string
     {
         $ignore = Arr::wrap($ignore);
 
@@ -56,10 +55,8 @@ class ValidateSignature
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @param  array|null  $args
      * @return \Illuminate\Http\Response
-     *
      * @throws \Illuminate\Routing\Exceptions\InvalidSignatureException
      */
     public function handle($request, Closure $next, ...$args)
@@ -75,11 +72,8 @@ class ValidateSignature
 
     /**
      * Parse the additional arguments given to the middleware.
-     *
-     * @param  array  $args
-     * @return array
      */
-    protected function parseArguments(array $args)
+    protected function parseArguments(array $args): array
     {
         $relative = ! empty($args) && $args[0] === 'relative';
 
@@ -99,9 +93,8 @@ class ValidateSignature
      * Indicate that the given parameters should be ignored during signature validation.
      *
      * @param  array|string  $parameters
-     * @return void
      */
-    public static function except($parameters)
+    public static function except($parameters): void
     {
         static::$neverValidate = array_values(array_unique(
             array_merge(static::$neverValidate, Arr::wrap($parameters))

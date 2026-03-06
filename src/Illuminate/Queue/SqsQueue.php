@@ -18,30 +18,8 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
     protected $sqs;
 
     /**
-     * The name of the default queue.
-     *
-     * @var string
-     */
-    protected $default;
-
-    /**
-     * The queue URL prefix.
-     *
-     * @var string
-     */
-    protected $prefix;
-
-    /**
-     * The queue name suffix.
-     *
-     * @var string
-     */
-    protected $suffix;
-
-    /**
      * Create a new Amazon SQS queue instance.
      *
-     * @param  \Aws\Sqs\SqsClient  $sqs
      * @param  string  $default
      * @param  string  $prefix
      * @param  string  $suffix
@@ -49,15 +27,21 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      */
     public function __construct(
         SqsClient $sqs,
-        $default,
-        $prefix = '',
-        $suffix = '',
+        /**
+         * The name of the default queue.
+         */
+        protected $default,
+        /**
+         * The queue URL prefix.
+         */
+        protected $prefix = '',
+        /**
+         * The queue name suffix.
+         */
+        protected $suffix = '',
         $dispatchAfterCommit = false,
     ) {
         $this->sqs = $sqs;
-        $this->prefix = $prefix;
-        $this->default = $default;
-        $this->suffix = $suffix;
         $this->dispatchAfterCommit = $dispatchAfterCommit;
     }
 
@@ -65,9 +49,8 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      * Get the size of the queue.
      *
      * @param  string|null  $queue
-     * @return int
      */
-    public function size($queue = null)
+    public function size($queue = null): int
     {
         $response = $this->sqs->getQueueAttributes([
             'QueueUrl' => $this->getQueue($queue),
@@ -89,9 +72,8 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      * Get the number of pending jobs.
      *
      * @param  string|null  $queue
-     * @return int
      */
-    public function pendingSize($queue = null)
+    public function pendingSize($queue = null): int
     {
         $response = $this->sqs->getQueueAttributes([
             'QueueUrl' => $this->getQueue($queue),
@@ -105,9 +87,8 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      * Get the number of delayed jobs.
      *
      * @param  string|null  $queue
-     * @return int
      */
-    public function delayedSize($queue = null)
+    public function delayedSize($queue = null): int
     {
         $response = $this->sqs->getQueueAttributes([
             'QueueUrl' => $this->getQueue($queue),
@@ -121,9 +102,8 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      * Get the number of reserved jobs.
      *
      * @param  string|null  $queue
-     * @return int
      */
-    public function reservedSize($queue = null)
+    public function reservedSize($queue = null): int
     {
         $response = $this->sqs->getQueueAttributes([
             'QueueUrl' => $this->getQueue($queue),
@@ -141,7 +121,7 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      * @param  string|null  $queue
      * @return int|null
      */
-    public function creationTimeOfOldestPendingJob($queue = null)
+    public function creationTimeOfOldestPendingJob($queue = null): null
     {
         // Not supported by SQS...
         return null;
@@ -162,9 +142,7 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
             $this->createPayload($job, $queue ?: $this->default, $data),
             $queue,
             null,
-            function ($payload, $queue) use ($job) {
-                return $this->pushRaw($payload, $queue, $this->getQueueableOptions($job, $queue, $payload));
-            }
+            fn($payload, $queue) => $this->pushRaw($payload, $queue, $this->getQueueableOptions($job, $queue, $payload))
         );
     }
 
@@ -173,7 +151,6 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      *
      * @param  string  $payload
      * @param  string|null  $queue
-     * @param  array  $options
      * @return mixed
      */
     public function pushRaw($payload, $queue = null, array $options = [])
@@ -199,9 +176,7 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
             $this->createPayload($job, $queue ?: $this->default, $data, $delay),
             $queue,
             $delay,
-            function ($payload, $queue, $delay) use ($job) {
-                return $this->pushRaw($payload, $queue, $this->getQueueableOptions($job, $queue, $payload, $delay));
-            }
+            fn($payload, $queue, $delay) => $this->pushRaw($payload, $queue, $this->getQueueableOptions($job, $queue, $payload, $delay))
         );
     }
 
@@ -234,7 +209,7 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
             return $options;
         }
 
-        $transformToString = fn ($value) => (string) $value;
+        $transformToString = fn ($value): string => (string) $value;
 
         // The message group ID is required for FIFO queues and is optional for
         // standard queues. Job objects contain a group ID. With string jobs
@@ -273,9 +248,8 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      * @param  array  $jobs
      * @param  mixed  $data
      * @param  string|null  $queue
-     * @return void
      */
-    public function bulk($jobs, $data = '', $queue = null)
+    public function bulk($jobs, $data = '', $queue = null): void
     {
         foreach ((array) $jobs as $job) {
             if (isset($job->delay)) {
@@ -315,7 +289,7 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      */
     public function clear($queue)
     {
-        return tap($this->size($queue), function () use ($queue) {
+        return tap($this->size($queue), function () use ($queue): void {
             $this->sqs->purgeQueue([
                 'QueueUrl' => $this->getQueue($queue),
             ]);
@@ -342,9 +316,8 @@ class SqsQueue extends Queue implements QueueContract, ClearableQueue
      *
      * @param  string  $queue
      * @param  string  $suffix
-     * @return string
      */
-    protected function suffixQueue($queue, $suffix = '')
+    protected function suffixQueue($queue, $suffix = ''): string
     {
         if (str_ends_with($queue, '.fifo')) {
             $queue = Str::beforeLast($queue, '.fifo');

@@ -33,10 +33,8 @@ class RetryCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $jobsFound = count($ids = $this->getJobIds()) > 0;
 
@@ -115,17 +113,14 @@ class RetryCommand extends Command
 
     /**
      * Get the job IDs ranges, if applicable.
-     *
-     * @param  array  $ranges
-     * @return array
      */
-    protected function getJobIdsByRanges(array $ranges)
+    protected function getJobIdsByRanges(array $ranges): array
     {
         $ids = [];
 
         foreach ($ranges as $range) {
-            if (preg_match('/^[0-9]+\-[0-9]+$/', $range)) {
-                $ids = array_merge($ids, range(...explode('-', $range)));
+            if (preg_match('/^[0-9]+\-[0-9]+$/', (string) $range)) {
+                $ids = array_merge($ids, range(...explode('-', (string) $range)));
             }
         }
 
@@ -210,7 +205,7 @@ class RetryCommand extends Command
             return [];
         }
 
-        $payload = json_decode($job->payload, true);
+        $payload = json_decode((string) $job->payload, true);
 
         if (! isset($payload['data']['command'])) {
             return [];
@@ -222,14 +217,12 @@ class RetryCommand extends Command
     /**
      * Get the job instance from the given payload.
      *
-     * @param  array  $payload
-     * @return mixed
      *
      * @throws \RuntimeException
      */
-    protected function getInstanceFromPayload($payload)
+    protected function getInstanceFromPayload(array $payload): mixed
     {
-        if (str_starts_with($payload['data']['command'], 'O:')) {
+        if (str_starts_with((string) $payload['data']['command'], 'O:')) {
             return unserialize($payload['data']['command']);
         }
 

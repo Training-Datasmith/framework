@@ -15,20 +15,6 @@ class FileStore implements Store, LockProvider
     use InteractsWithTime, RetrievesMultipleKeys;
 
     /**
-     * The Illuminate Filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
-     * The file cache directory.
-     *
-     * @var string
-     */
-    protected $directory;
-
-    /**
      * The file cache lock directory.
      *
      * @var string|null
@@ -36,33 +22,31 @@ class FileStore implements Store, LockProvider
     protected $lockDirectory;
 
     /**
-     * Octal representation of the cache file permissions.
-     *
-     * @var int|null
-     */
-    protected $filePermission;
-
-    /**
-     * The classes that should be allowed during unserialization.
-     *
-     * @var array|bool|null
-     */
-    protected $serializableClasses;
-
-    /**
      * Create a new file cache store instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @param  string  $directory
      * @param  int|null  $filePermission
      * @param  array|bool|null  $serializableClasses
      */
-    public function __construct(Filesystem $files, $directory, $filePermission = null, $serializableClasses = null)
+    public function __construct(
+        /**
+         * The Illuminate Filesystem instance.
+         */
+        protected \Illuminate\Filesystem\Filesystem $files,
+        /**
+         * The file cache directory.
+         */
+        protected $directory,
+        /**
+         * Octal representation of the cache file permissions.
+         */
+        protected $filePermission = null,
+        /**
+         * The classes that should be allowed during unserialization.
+         */
+        protected $serializableClasses = null
+    )
     {
-        $this->files = $files;
-        $this->directory = $directory;
-        $this->filePermission = $filePermission;
-        $this->serializableClasses = $serializableClasses;
     }
 
     /**
@@ -82,9 +66,8 @@ class FileStore implements Store, LockProvider
      * @param  string  $key
      * @param  mixed  $value
      * @param  int  $seconds
-     * @return bool
      */
-    public function put($key, $value, $seconds)
+    public function put($key, $value, $seconds): bool
     {
         $this->ensureCacheDirectoryExists($path = $this->path($key));
 
@@ -107,9 +90,8 @@ class FileStore implements Store, LockProvider
      * @param  string  $key
      * @param  mixed  $value
      * @param  int  $seconds
-     * @return bool
      */
-    public function add($key, $value, $seconds)
+    public function add($key, $value, $seconds): bool
     {
         $this->ensureCacheDirectoryExists($path = $this->path($key));
 
@@ -186,7 +168,7 @@ class FileStore implements Store, LockProvider
     {
         $raw = $this->getPayload($key);
 
-        return tap(((int) $raw['data']) + $value, function ($newValue) use ($key, $raw) {
+        return tap(((int) $raw['data']) + $value, function ($newValue) use ($key, $raw): void {
             $this->put($key, $newValue, $raw['time'] ?? 0);
         });
     }
@@ -223,7 +205,7 @@ class FileStore implements Store, LockProvider
      * @param  string|null  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function lock($name, $seconds = 0, $owner = null)
+    public function lock($name, $seconds = 0, $owner = null): \Illuminate\Cache\FileLock
     {
         $this->ensureCacheDirectoryExists($this->lockDirectory ?? $this->directory);
 
@@ -256,7 +238,7 @@ class FileStore implements Store, LockProvider
     public function forget($key)
     {
         if ($this->files->exists($file = $this->path($key))) {
-            return tap($this->files->delete($file), function ($forgotten) use ($key) {
+            return tap($this->files->delete($file), function ($forgotten) use ($key): void {
                 if ($forgotten && $this->files->exists($file = $this->path("illuminate:cache:flexible:created:{$key}"))) {
                     $this->files->delete($file);
                 }
@@ -268,10 +250,8 @@ class FileStore implements Store, LockProvider
 
     /**
      * Remove all items from the cache.
-     *
-     * @return bool
      */
-    public function flush()
+    public function flush(): bool
     {
         if (! $this->files->isDirectory($this->directory)) {
             return false;
@@ -340,9 +320,8 @@ class FileStore implements Store, LockProvider
      * Unserialize the given value.
      *
      * @param  string  $value
-     * @return mixed
      */
-    protected function unserialize($value)
+    protected function unserialize($value): mixed
     {
         if ($this->serializableClasses !== null) {
             return unserialize($value, ['allowed_classes' => $this->serializableClasses]);
@@ -353,10 +332,8 @@ class FileStore implements Store, LockProvider
 
     /**
      * Get a default empty payload for the cache.
-     *
-     * @return array
      */
-    protected function emptyPayload()
+    protected function emptyPayload(): array
     {
         return ['data' => null, 'time' => null];
     }
@@ -365,9 +342,8 @@ class FileStore implements Store, LockProvider
      * Get the full path for the given cache key.
      *
      * @param  string  $key
-     * @return string
      */
-    public function path($key)
+    public function path($key): string
     {
         $parts = array_slice(str_split($hash = sha1($key), 2), 0, 2);
 
@@ -413,7 +389,7 @@ class FileStore implements Store, LockProvider
      * @param  string  $directory
      * @return $this
      */
-    public function setDirectory($directory)
+    public function setDirectory($directory): static
     {
         $this->directory = $directory;
 
@@ -426,7 +402,7 @@ class FileStore implements Store, LockProvider
      * @param  string|null  $lockDirectory
      * @return $this
      */
-    public function setLockDirectory($lockDirectory)
+    public function setLockDirectory($lockDirectory): static
     {
         $this->lockDirectory = $lockDirectory;
 
@@ -435,10 +411,8 @@ class FileStore implements Store, LockProvider
 
     /**
      * Get the cache key prefix.
-     *
-     * @return string
      */
-    public function getPrefix()
+    public function getPrefix(): string
     {
         return '';
     }

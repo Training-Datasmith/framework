@@ -9,100 +9,77 @@ use Symfony\Component\Process\Process;
 class ProcessResult implements ProcessResultContract
 {
     /**
-     * The underlying process instance.
-     *
-     * @var \Symfony\Component\Process\Process
-     */
-    protected $process;
-
-    /**
      * Create a new process result instance.
-     *
-     * @param  \Symfony\Component\Process\Process  $process
      */
-    public function __construct(Process $process)
+    public function __construct(
+        /**
+         * The underlying process instance.
+         */
+        protected \Symfony\Component\Process\Process $process
+    )
     {
-        $this->process = $process;
     }
 
     /**
      * Get the original command executed by the process.
-     *
-     * @return string
      */
-    public function command()
+    public function command(): string
     {
         return $this->process->getCommandLine();
     }
 
     /**
      * Determine if the process was successful.
-     *
-     * @return bool
      */
-    public function successful()
+    public function successful(): bool
     {
         return $this->process->isSuccessful();
     }
 
     /**
      * Determine if the process failed.
-     *
-     * @return bool
      */
-    public function failed()
+    public function failed(): bool
     {
         return ! $this->successful();
     }
 
     /**
      * Get the exit code of the process.
-     *
-     * @return int|null
      */
-    public function exitCode()
+    public function exitCode(): ?int
     {
         return $this->process->getExitCode();
     }
 
     /**
      * Get the standard output of the process.
-     *
-     * @return string
      */
-    public function output()
+    public function output(): string
     {
         return $this->process->getOutput();
     }
 
     /**
      * Determine if the output contains the given string.
-     *
-     * @param  string  $output
-     * @return bool
      */
-    public function seeInOutput(string $output)
+    public function seeInOutput(string $output): bool
     {
         return str_contains($this->output(), $output);
     }
 
     /**
      * Get the error output of the process.
-     *
-     * @return string
      */
-    public function errorOutput()
+    public function errorOutput(): string
     {
         return $this->process->getErrorOutput();
     }
 
     /**
      * Determine if the error output contains the given string.
-     *
-     * @param  string  $output
-     * @return bool
      */
-    public function seeInErrorOutput(string $output)
+    public function seeInErrorOutput(string $output): bool
     {
         return str_contains($this->errorOutput(), $output);
     }
@@ -110,12 +87,10 @@ class ProcessResult implements ProcessResultContract
     /**
      * Throw an exception if the process failed.
      *
-     * @param  callable|null  $callback
      * @return $this
-     *
      * @throws \Illuminate\Process\Exceptions\ProcessFailedException
      */
-    public function throw(?callable $callback = null)
+    public function throw(?callable $callback = null): static
     {
         if ($this->successful()) {
             return $this;
@@ -133,8 +108,6 @@ class ProcessResult implements ProcessResultContract
     /**
      * Throw an exception if the process failed and the given condition is true.
      *
-     * @param  bool  $condition
-     * @param  callable|null  $callback
      * @return $this
      *
      * @throws \Throwable

@@ -53,7 +53,7 @@ class ModelInspector
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function inspect($model, $connection = null)
+    public function inspect($model, $connection = null): array
     {
         $class = $this->qualifyModel($model);
 
@@ -65,7 +65,7 @@ class ModelInspector
         }
 
         return [
-            'class' => get_class($model),
+            'class' => $model::class,
             'database' => $model->getConnection()->getName(),
             'table' => $model->getConnection()->getTablePrefix().$model->getTable(),
             'policy' => $this->getPolicy($model),
@@ -85,7 +85,7 @@ class ModelInspector
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Support\Collection<int, array<string, mixed>>
      */
-    protected function getAttributes($model)
+    protected function getAttributes($model): \Illuminate\Support\Collection
     {
         $connection = $model->getConnection();
         $schema = $connection->getSchemaBuilder();
@@ -94,7 +94,7 @@ class ModelInspector
         $indexes = $schema->getIndexes($table);
 
         return (new BaseCollection($columns))
-            ->map(fn ($column) => [
+            ->map(fn ($column): array => [
                 'name' => $column['name'],
                 'type' => $column['type'],
                 'increments' => $column['auto_increment'],
@@ -114,29 +114,28 @@ class ModelInspector
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  array  $columns
-     * @return \Illuminate\Support\Collection
      */
-    protected function getVirtualAttributes($model, $columns)
+    protected function getVirtualAttributes($model, $columns): \Illuminate\Support\Collection
     {
         $class = new ReflectionClass($model);
 
         return (new BaseCollection($class->getMethods()))
             ->reject(
-                fn (ReflectionMethod $method) => $method->isStatic()
+                fn (ReflectionMethod $method): bool => $method->isStatic()
                     || $method->isAbstract()
                     || $method->getDeclaringClass()->getName() === Model::class
             )
-            ->mapWithKeys(function (ReflectionMethod $method) use ($model) {
+            ->mapWithKeys(function (ReflectionMethod $method) use ($model): array {
                 if (preg_match('/^get(.+)Attribute$/', $method->getName(), $matches) === 1) {
                     return [Str::snake($matches[1]) => 'accessor'];
-                } elseif ($model->hasAttributeMutator($method->getName())) {
-                    return [Str::snake($method->getName()) => 'attribute'];
-                } else {
-                    return [];
                 }
+                if ($model->hasAttributeMutator($method->getName())) {
+                    return [Str::snake($method->getName()) => 'attribute'];
+                }
+                return [];
             })
             ->reject(fn ($cast, $name) => (new BaseCollection($columns))->contains('name', $name))
-            ->map(fn ($cast, $name) => [
+            ->map(fn ($cast, $name): array => [
                 'name' => $name,
                 'type' => null,
                 'increments' => false,
@@ -155,14 +154,13 @@ class ModelInspector
      * Get the relations from the given model.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Support\Collection
      */
-    protected function getRelations($model)
+    protected function getRelations($model): \Illuminate\Support\Collection
     {
         return (new BaseCollection(get_class_methods($model)))
-            ->map(fn ($method) => new ReflectionMethod($model, $method))
+            ->map(fn ($method): \ReflectionMethod => new ReflectionMethod($model, $method))
             ->reject(
-                fn (ReflectionMethod $method) => $method->isStatic()
+                fn (ReflectionMethod $method): bool => $method->isStatic()
                     || $method->isAbstract()
                     || $method->getDeclaringClass()->getName() === Model::class
                     || $method->getNumberOfParameters() > 0
@@ -182,9 +180,9 @@ class ModelInspector
                 }
 
                 return (new BaseCollection($this->relationMethods))
-                    ->contains(fn ($relationMethod) => str_contains($code, '$this->'.$relationMethod.'('));
+                    ->contains(fn ($relationMethod): bool => str_contains($code, '$this->'.$relationMethod.'('));
             })
-            ->map(function (ReflectionMethod $method) use ($model) {
+            ->map(function (ReflectionMethod $method) use ($model): ?array {
                 $relation = $method->invoke($model);
 
                 if (! $relation instanceof Relation) {
@@ -193,8 +191,8 @@ class ModelInspector
 
                 return [
                     'name' => $method->getName(),
-                    'type' => Str::afterLast(get_class($relation), '\\'),
-                    'related' => get_class($relation->getRelated()),
+                    'type' => Str::afterLast($relation::class, '\\'),
+                    'related' => $relation->getRelated()::class,
                 ];
             })
             ->filter()
@@ -218,12 +216,11 @@ class ModelInspector
      * Get the events that the model dispatches.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Support\Collection
      */
-    protected function getEvents($model)
+    protected function getEvents($model): \Illuminate\Support\Collection
     {
         return (new BaseCollection($model->dispatchesEvents()))
-            ->map(fn (string $class, string $event) => [
+            ->map(fn (string $class, string $event): array => [
                 'event' => $event,
                 'class' => $class,
             ])->values();
@@ -233,21 +230,18 @@ class ModelInspector
      * Get the observers watching this model.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Support\Collection
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    protected function getObservers($model)
+    protected function getObservers($model): \Illuminate\Support\Collection
     {
         $listeners = $this->app->make('events')->getRawListeners();
 
         // Get the Eloquent observers for this model...
-        $listeners = array_filter($listeners, function ($v, $key) use ($model) {
-            return Str::startsWith($key, 'eloquent.') && Str::endsWith($key, $model::class);
-        }, ARRAY_FILTER_USE_BOTH);
+        $listeners = array_filter($listeners, fn($v, $key) => Str::startsWith($key, 'eloquent.') && Str::endsWith($key, $model::class), ARRAY_FILTER_USE_BOTH);
 
         // Format listeners Eloquent verb => Observer methods...
-        $extractVerb = function ($key) {
+        $extractVerb = function ($key): string {
             preg_match('/eloquent.([a-zA-Z]+)\: /', $key, $matches);
 
             return $matches[1] ?? '?';
@@ -258,7 +252,7 @@ class ModelInspector
         foreach ($listeners as $key => $observerMethods) {
             $formatted[] = [
                 'event' => $extractVerb($key),
-                'observer' => array_map(fn ($obs) => is_string($obs) ? $obs : 'Closure', $observerMethods),
+                'observer' => array_map(fn ($obs): string => is_string($obs) ? $obs : 'Closure', $observerMethods),
             ];
         }
 
@@ -271,7 +265,7 @@ class ModelInspector
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return class-string<\Illuminate\Database\Eloquent\Collection>
      */
-    protected function getCollectedBy($model)
+    protected function getCollectedBy($model): string
     {
         return $model->newCollection()::class;
     }
@@ -284,7 +278,7 @@ class ModelInspector
      * @param  TModel  $model
      * @return class-string<\Illuminate\Database\Eloquent\Builder<TModel>>
      */
-    protected function getBuilder($model)
+    protected function getBuilder($model): string
     {
         return $model->newQuery()::class;
     }
@@ -303,9 +297,7 @@ class ModelInspector
     /**
      * Qualify the given model class base name.
      *
-     * @param  string  $model
      * @return class-string<\Illuminate\Database\Eloquent\Model>
-     *
      * @see \Illuminate\Console\GeneratorCommand
      */
     protected function qualifyModel(string $model)
@@ -353,14 +345,13 @@ class ModelInspector
      * Get the model casts, including any date casts.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Support\Collection
      */
-    protected function getCastsWithDates($model)
+    protected function getCastsWithDates($model): \Illuminate\Support\Collection
     {
         return (new BaseCollection($model->getDates()))
             ->filter()
             ->flip()
-            ->map(fn () => 'datetime')
+            ->map(fn (): string => 'datetime')
             ->merge($model->getCasts());
     }
 
@@ -391,7 +382,7 @@ class ModelInspector
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return mixed
      */
-    protected function getColumnDefault($column, $model)
+    protected function getColumnDefault(array $column, $model)
     {
         $attributeDefault = $model->getAttributes()[$column['name']] ?? null;
 
@@ -408,7 +399,7 @@ class ModelInspector
     protected function columnIsUnique($column, $indexes)
     {
         return (new BaseCollection($indexes))->contains(
-            fn ($index) => count($index['columns']) === 1 && $index['columns'][0] === $column && $index['unique']
+            fn ($index): bool => count($index['columns']) === 1 && $index['columns'][0] === $column && $index['unique']
         );
     }
 }

@@ -8,20 +8,17 @@ use Stringable;
 class HtmlString implements Htmlable, Stringable
 {
     /**
-     * The HTML string.
-     *
-     * @var string
-     */
-    protected $html;
-
-    /**
      * Create a new HTML string instance.
      *
      * @param  string  $html
      */
-    public function __construct($html = '')
+    public function __construct(
+        /**
+         * The HTML string.
+         */
+        protected $html = ''
+    )
     {
-        $this->html = $html;
     }
 
     /**
@@ -36,30 +33,24 @@ class HtmlString implements Htmlable, Stringable
 
     /**
      * Determine if the given HTML string is empty.
-     *
-     * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return ($this->html ?? '') === '';
     }
 
     /**
      * Determine if the given HTML string is not empty.
-     *
-     * @return bool
      */
-    public function isNotEmpty()
+    public function isNotEmpty(): bool
     {
         return ! $this->isEmpty();
     }
 
     /**
      * Get the HTML string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toHtml() ?? '';
     }

@@ -8,11 +8,8 @@ trait CompilesJs
 {
     /**
      * Compile the "@js" directive into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
      */
-    protected function compileJs(string $expression)
+    protected function compileJs(string $expression): string
     {
         return sprintf(
             "<?php echo \%s::from(%s)->toHtml() ?>",

@@ -75,7 +75,7 @@ class SimpleMessage
      *
      * @return $this
      */
-    public function success()
+    public function success(): static
     {
         $this->level = 'success';
 
@@ -87,7 +87,7 @@ class SimpleMessage
      *
      * @return $this
      */
-    public function error()
+    public function error(): static
     {
         $this->level = 'error';
 
@@ -100,7 +100,7 @@ class SimpleMessage
      * @param  string  $level
      * @return $this
      */
-    public function level($level)
+    public function level($level): static
     {
         $this->level = $level;
 
@@ -113,7 +113,7 @@ class SimpleMessage
      * @param  string  $subject
      * @return $this
      */
-    public function subject($subject)
+    public function subject($subject): static
     {
         $this->subject = $subject;
 
@@ -126,7 +126,7 @@ class SimpleMessage
      * @param  string  $greeting
      * @return $this
      */
-    public function greeting($greeting)
+    public function greeting($greeting): static
     {
         $this->greeting = $greeting;
 
@@ -139,7 +139,7 @@ class SimpleMessage
      * @param  string  $salutation
      * @return $this
      */
-    public function salutation($salutation)
+    public function salutation($salutation): static
     {
         $this->salutation = $salutation;
 
@@ -179,7 +179,7 @@ class SimpleMessage
      * @param  iterable  $lines
      * @return $this
      */
-    public function lines($lines)
+    public function lines($lines): static
     {
         foreach ($lines as $line) {
             $this->line($line);
@@ -210,7 +210,7 @@ class SimpleMessage
      * @param  mixed  $line
      * @return $this
      */
-    public function with($line)
+    public function with($line): static
     {
         if ($line instanceof Action) {
             $this->action($line->text, $line->url);
@@ -227,9 +227,8 @@ class SimpleMessage
      * Format the given line of text.
      *
      * @param  \Illuminate\Contracts\Support\Htmlable|string|array|null  $line
-     * @return \Illuminate\Contracts\Support\Htmlable|string
      */
-    protected function formatLine($line)
+    protected function formatLine($line): \Illuminate\Contracts\Support\Htmlable|string
     {
         if ($line instanceof Htmlable) {
             return $line;
@@ -249,7 +248,7 @@ class SimpleMessage
      * @param  string  $url
      * @return $this
      */
-    public function action($text, $url)
+    public function action($text, $url): static
     {
         $this->actionText = $text;
         $this->actionUrl = $url;
@@ -263,7 +262,7 @@ class SimpleMessage
      * @param  string  $mailer
      * @return $this
      */
-    public function mailer($mailer)
+    public function mailer($mailer): static
     {
         $this->mailer = $mailer;
 
@@ -272,10 +271,8 @@ class SimpleMessage
 
     /**
      * Get an array representation of the message.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'level' => $this->level,

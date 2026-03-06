@@ -33,7 +33,6 @@ class BatchRepositoryFake implements BatchRepository
     /**
      * Retrieve information about an existing batch.
      *
-     * @param  string  $batchId
      * @return \Illuminate\Bus\Batch|null
      */
     public function find(string $batchId)
@@ -44,7 +43,6 @@ class BatchRepositoryFake implements BatchRepository
     /**
      * Store a new pending batch.
      *
-     * @param  \Illuminate\Bus\PendingBatch  $batch
      * @return \Illuminate\Bus\Batch
      */
     public function store(PendingBatch $batch)
@@ -59,9 +57,7 @@ class BatchRepositoryFake implements BatchRepository
             0,
             [],
             $batch->options,
-            CarbonImmutable::now(),
-            null,
-            null
+            CarbonImmutable::now()
         );
 
         return $this->batches[$id];
@@ -69,47 +65,32 @@ class BatchRepositoryFake implements BatchRepository
 
     /**
      * Increment the total number of jobs within the batch.
-     *
-     * @param  string  $batchId
-     * @param  int  $amount
-     * @return void
      */
-    public function incrementTotalJobs(string $batchId, int $amount)
+    public function incrementTotalJobs(string $batchId, int $amount): void
     {
         //
     }
 
     /**
      * Decrement the total number of pending jobs for the batch.
-     *
-     * @param  string  $batchId
-     * @param  string  $jobId
-     * @return \Illuminate\Bus\UpdatedBatchJobCounts
      */
-    public function decrementPendingJobs(string $batchId, string $jobId)
+    public function decrementPendingJobs(string $batchId, string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
         return new UpdatedBatchJobCounts;
     }
 
     /**
      * Increment the total number of failed jobs for the batch.
-     *
-     * @param  string  $batchId
-     * @param  string  $jobId
-     * @return \Illuminate\Bus\UpdatedBatchJobCounts
      */
-    public function incrementFailedJobs(string $batchId, string $jobId)
+    public function incrementFailedJobs(string $batchId, string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
         return new UpdatedBatchJobCounts;
     }
 
     /**
      * Mark the batch that has the given ID as finished.
-     *
-     * @param  string  $batchId
-     * @return void
      */
-    public function markAsFinished(string $batchId)
+    public function markAsFinished(string $batchId): void
     {
         if (isset($this->batches[$batchId])) {
             $this->batches[$batchId]->finishedAt = now();
@@ -118,11 +99,8 @@ class BatchRepositoryFake implements BatchRepository
 
     /**
      * Cancel the batch that has the given ID.
-     *
-     * @param  string  $batchId
-     * @return void
      */
-    public function cancel(string $batchId)
+    public function cancel(string $batchId): void
     {
         if (isset($this->batches[$batchId])) {
             $this->batches[$batchId]->cancel();
@@ -131,11 +109,8 @@ class BatchRepositoryFake implements BatchRepository
 
     /**
      * Delete the batch that has the given ID.
-     *
-     * @param  string  $batchId
-     * @return void
      */
-    public function delete(string $batchId)
+    public function delete(string $batchId): void
     {
         unset($this->batches[$batchId]);
     }
@@ -143,7 +118,6 @@ class BatchRepositoryFake implements BatchRepository
     /**
      * Execute the given Closure within a storage specific transaction.
      *
-     * @param  \Closure  $callback
      * @return mixed
      */
     public function transaction(Closure $callback)
@@ -153,10 +127,8 @@ class BatchRepositoryFake implements BatchRepository
 
     /**
      * Rollback the last database transaction for the connection.
-     *
-     * @return void
      */
-    public function rollBack()
+    public function rollBack(): void
     {
         //
     }

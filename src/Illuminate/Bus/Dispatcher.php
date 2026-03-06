@@ -17,18 +17,9 @@ use RuntimeException;
 class Dispatcher implements QueueingDispatcher
 {
     /**
-     * The container implementation.
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $container;
-
-    /**
      * The pipeline instance for the bus.
-     *
-     * @var \Illuminate\Pipeline\Pipeline
      */
-    protected $pipeline;
+    protected \Illuminate\Pipeline\Pipeline $pipeline;
 
     /**
      * The pipes to send commands through before dispatching.
@@ -45,13 +36,6 @@ class Dispatcher implements QueueingDispatcher
     protected $handlers = [];
 
     /**
-     * The queue resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected $queueResolver;
-
-    /**
      * Indicates if dispatching after response is disabled.
      *
      * @var bool
@@ -61,11 +45,15 @@ class Dispatcher implements QueueingDispatcher
     /**
      * Create a new command dispatcher instance.
      */
-    public function __construct(Container $container, ?Closure $queueResolver = null)
+    public function __construct(/**
+     * The container implementation.
+     */
+    protected \Illuminate\Contracts\Container\Container $container, /**
+     * The queue resolver callback.
+     */
+    protected ?\Closure $queueResolver = null)
     {
-        $this->container = $container;
-        $this->queueResolver = $queueResolver;
-        $this->pipeline = new Pipeline($container);
+        $this->pipeline = new Pipeline($this->container);
     }
 
     /**
@@ -147,9 +135,8 @@ class Dispatcher implements QueueingDispatcher
      * Create a new batch of queueable jobs.
      *
      * @param  \Illuminate\Support\Collection|mixed  $jobs
-     * @return \Illuminate\Bus\PendingBatch
      */
-    public function batch($jobs)
+    public function batch($jobs): \Illuminate\Bus\PendingBatch
     {
         return new PendingBatch($this->container, Collection::wrap($jobs));
     }
@@ -158,9 +145,8 @@ class Dispatcher implements QueueingDispatcher
      * Create a new chain of queueable jobs.
      *
      * @param  \Illuminate\Support\Collection|array|null  $jobs
-     * @return \Illuminate\Foundation\Bus\PendingChain
      */
-    public function chain($jobs = null)
+    public function chain($jobs = null): \Illuminate\Foundation\Bus\PendingChain
     {
         $jobs = Collection::wrap($jobs);
         $jobs = ChainedBatch::prepareNestedBatches($jobs);
@@ -172,11 +158,10 @@ class Dispatcher implements QueueingDispatcher
      * Determine if the given command has a handler.
      *
      * @param  mixed  $command
-     * @return bool
      */
-    public function hasCommandHandler($command)
+    public function hasCommandHandler($command): bool
     {
-        return array_key_exists(get_class($command), $this->handlers);
+        return array_key_exists($command::class, $this->handlers);
     }
 
     /**
@@ -188,7 +173,7 @@ class Dispatcher implements QueueingDispatcher
     public function getCommandHandler($command)
     {
         if ($this->hasCommandHandler($command)) {
-            return $this->container->make($this->handlers[get_class($command)]);
+            return $this->container->make($this->handlers[$command::class]);
         }
 
         return false;
@@ -198,9 +183,8 @@ class Dispatcher implements QueueingDispatcher
      * Determine if the given command should be queued.
      *
      * @param  mixed  $command
-     * @return bool
      */
-    protected function commandShouldBeQueued($command)
+    protected function commandShouldBeQueued($command): bool
     {
         return $command instanceof ShouldQueue;
     }
@@ -251,9 +235,8 @@ class Dispatcher implements QueueingDispatcher
      *
      * @param  mixed  $command
      * @param  mixed  $handler
-     * @return void
      */
-    public function dispatchAfterResponse($command, $handler = null)
+    public function dispatchAfterResponse($command, $handler = null): void
     {
         if (! $this->allowsDispatchingAfterResponses) {
             $this->dispatchSync($command);
@@ -261,7 +244,7 @@ class Dispatcher implements QueueingDispatcher
             return;
         }
 
-        $this->container->terminating(function () use ($command, $handler) {
+        $this->container->terminating(function () use ($command, $handler): void {
             $this->dispatchSync($command, $handler);
         });
     }
@@ -271,7 +254,7 @@ class Dispatcher implements QueueingDispatcher
      *
      * @return $this
      */
-    public function pipeThrough(array $pipes)
+    public function pipeThrough(array $pipes): static
     {
         $this->pipes = $pipes;
 
@@ -283,7 +266,7 @@ class Dispatcher implements QueueingDispatcher
      *
      * @return $this
      */
-    public function map(array $map)
+    public function map(array $map): static
     {
         $this->handlers = array_merge($this->handlers, $map);
 
@@ -295,7 +278,7 @@ class Dispatcher implements QueueingDispatcher
      *
      * @return $this
      */
-    public function withDispatchingAfterResponses()
+    public function withDispatchingAfterResponses(): static
     {
         $this->allowsDispatchingAfterResponses = true;
 
@@ -307,7 +290,7 @@ class Dispatcher implements QueueingDispatcher
      *
      * @return $this
      */
-    public function withoutDispatchingAfterResponses()
+    public function withoutDispatchingAfterResponses(): static
     {
         $this->allowsDispatchingAfterResponses = false;
 

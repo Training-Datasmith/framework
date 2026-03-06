@@ -25,10 +25,8 @@ class ConfigShowCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $config = $this->argument('config');
 
@@ -47,9 +45,8 @@ class ConfigShowCommand extends Command
      * Render the configuration values.
      *
      * @param  string  $name
-     * @return void
      */
-    public function render($name)
+    public function render($name): void
     {
         $data = config($name);
 
@@ -74,9 +71,8 @@ class ConfigShowCommand extends Command
      *
      * @param  string  $title
      * @param  string|null  $subtitle
-     * @return void
      */
-    public function title($title, $subtitle = null)
+    public function title($title, $subtitle = null): void
     {
         $this->components->twoColumnDetail(
             "<fg=green;options=bold>{$title}</>",
@@ -90,10 +86,10 @@ class ConfigShowCommand extends Command
      * @param  string  $key
      * @return string
      */
-    protected function formatKey($key)
+    protected function formatKey($key): ?string
     {
         return preg_replace_callback(
-            '/(.*)\.(.*)$/', fn ($matches) => sprintf(
+            '/(.*)\.(.*)$/', fn ($matches): string => sprintf(
                 '<fg=gray>%s ⇁</> %s',
                 str_replace('.', ' ⇁ ', $matches[1]),
                 $matches[2]
@@ -107,14 +103,14 @@ class ConfigShowCommand extends Command
      * @param  mixed  $value
      * @return string
      */
-    protected function formatValue($value)
+    protected function formatValue($value): string|true
     {
         return match (true) {
             is_bool($value) => sprintf('<fg=#ef8414;options=bold>%s</>', $value ? 'true' : 'false'),
             is_null($value) => '<fg=#ef8414;options=bold>null</>',
             is_numeric($value) => "<fg=#ef8414;options=bold>{$value}</>",
             is_array($value) => '[]',
-            is_object($value) => get_class($value),
+            is_object($value) => $value::class,
             is_string($value) => $value,
             default => print_r($value, true),
         };

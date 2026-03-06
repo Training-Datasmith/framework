@@ -16,32 +16,24 @@ class ComponentSlot implements Htmlable, Stringable
     public $attributes;
 
     /**
-     * The slot contents.
-     *
-     * @var string
-     */
-    protected $contents;
-
-    /**
      * Create a new slot instance.
      *
      * @param  string  $contents
-     * @param  array  $attributes
      */
-    public function __construct($contents = '', $attributes = [])
+    public function __construct(/**
+     * The slot contents.
+     */
+    protected $contents = '', array $attributes = [])
     {
-        $this->contents = $contents;
-
         $this->withAttributes($attributes);
     }
 
     /**
      * Set the extra attributes that the slot should make available.
      *
-     * @param  array  $attributes
      * @return $this
      */
-    public function withAttributes(array $attributes)
+    public function withAttributes(array $attributes): static
     {
         $this->attributes = new ComponentAttributeBag($attributes);
 
@@ -60,31 +52,24 @@ class ComponentSlot implements Htmlable, Stringable
 
     /**
      * Determine if the slot is empty.
-     *
-     * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return $this->contents === '';
     }
 
     /**
      * Determine if the slot is not empty.
-     *
-     * @return bool
      */
-    public function isNotEmpty()
+    public function isNotEmpty(): bool
     {
         return ! $this->isEmpty();
     }
 
     /**
      * Determine if the slot has non-comment content.
-     *
-     * @param  callable|string|null  $callable
-     * @return bool
      */
-    public function hasActualContent(callable|string|null $callable = null)
+    public function hasActualContent(callable|string|null $callable = null): bool
     {
         if (is_string($callable) && ! function_exists($callable)) {
             throw new InvalidArgumentException('Callable does not exist.');
@@ -93,16 +78,14 @@ class ComponentSlot implements Htmlable, Stringable
         return filter_var(
             $this->contents,
             FILTER_CALLBACK,
-            ['options' => $callable ?? fn ($input) => trim(preg_replace("/<!--([\s\S]*?)-->/", '', $input))]
+            ['options' => $callable ?? fn ($input): string => trim((string) preg_replace("/<!--([\s\S]*?)-->/", '', (string) $input))]
         ) !== '';
     }
 
     /**
      * Get the slot's HTML string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toHtml();
     }

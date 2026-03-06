@@ -74,10 +74,8 @@ class ConfigMakeCommand extends GeneratorCommand
 
     /**
      * Prompt for missing input arguments using the returned questions.
-     *
-     * @return array
      */
-    protected function promptForMissingArgumentsUsing()
+    protected function promptForMissingArgumentsUsing(): array
     {
         return [
             'name' => 'What should the configuration file be named?',

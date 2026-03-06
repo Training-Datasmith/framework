@@ -5,13 +5,6 @@ namespace Illuminate\Http\Resources\Json;
 class AnonymousResourceCollection extends ResourceCollection
 {
     /**
-     * The name of the resource being collected.
-     *
-     * @var string
-     */
-    public $collects;
-
-    /**
      * Indicates if the collection keys should be preserved.
      *
      * @var bool
@@ -24,10 +17,11 @@ class AnonymousResourceCollection extends ResourceCollection
      * @param  mixed  $resource
      * @param  string  $collects
      */
-    public function __construct($resource, $collects)
+    public function __construct($resource, /**
+     * The name of the resource being collected.
+     */
+    public $collects)
     {
-        $this->collects = $collects;
-
         parent::__construct($resource);
     }
 

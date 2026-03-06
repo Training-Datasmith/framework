@@ -10,10 +10,8 @@ trait HasVersion4Uuids
 
     /**
      * Generate a new UUID (version 4) for the model.
-     *
-     * @return string
      */
-    public function newUniqueId()
+    public function newUniqueId(): string
     {
         return (string) Str::orderedUuid();
     }

@@ -14,27 +14,23 @@ class ViewServiceProvider extends ServiceProvider
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerFactory();
         $this->registerViewFinder();
         $this->registerBladeCompiler();
         $this->registerEngineResolver();
 
-        $this->app->terminating(static function () {
+        $this->app->terminating(static function (): void {
             Component::flushCache();
         });
     }
 
     /**
      * Register the view environment.
-     *
-     * @return void
      */
-    public function registerFactory()
+    public function registerFactory(): void
     {
         $this->app->singleton('view', function ($app) {
             // Next we need to grab the engine resolver instance that will be used by the
@@ -53,7 +49,7 @@ class ViewServiceProvider extends ServiceProvider
 
             $factory->share('app', $app);
 
-            $app->terminating(static function () {
+            $app->terminating(static function (): void {
                 Component::forgetFactory();
             });
 
@@ -67,54 +63,43 @@ class ViewServiceProvider extends ServiceProvider
      * @param  \Illuminate\View\Engines\EngineResolver  $resolver
      * @param  \Illuminate\View\ViewFinderInterface  $finder
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @return \Illuminate\View\Factory
      */
-    protected function createFactory($resolver, $finder, $events)
+    protected function createFactory($resolver, $finder, $events): \Illuminate\View\Factory
     {
         return new Factory($resolver, $finder, $events);
     }
 
     /**
      * Register the view finder implementation.
-     *
-     * @return void
      */
-    public function registerViewFinder()
+    public function registerViewFinder(): void
     {
-        $this->app->bind('view.finder', function ($app) {
-            return new FileViewFinder($app['files'], $app['config']['view.paths']);
-        });
+        $this->app->bind('view.finder', fn($app) => new FileViewFinder($app['files'], $app['config']['view.paths']));
     }
 
     /**
      * Register the Blade compiler implementation.
-     *
-     * @return void
      */
-    public function registerBladeCompiler()
+    public function registerBladeCompiler(): void
     {
-        $this->app->singleton('blade.compiler', function ($app) {
-            return tap(new BladeCompiler(
-                $app['files'],
-                $app['config']['view.compiled'],
-                $app['config']->get('view.relative_hash', false) ? $app->basePath() : '',
-                $app['config']->get('view.cache', true),
-                $app['config']->get('view.compiled_extension', 'php'),
-                $app['config']->get('view.check_cache_timestamps', true),
-            ), function ($blade) {
-                $blade->component('dynamic-component', DynamicComponent::class);
-            });
-        });
+        $this->app->singleton('blade.compiler', fn($app) => tap(new BladeCompiler(
+            $app['files'],
+            $app['config']['view.compiled'],
+            $app['config']->get('view.relative_hash', false) ? $app->basePath() : '',
+            $app['config']->get('view.cache', true),
+            $app['config']->get('view.compiled_extension', 'php'),
+            $app['config']->get('view.check_cache_timestamps', true),
+        ), function ($blade): void {
+            $blade->component('dynamic-component', DynamicComponent::class);
+        }));
     }
 
     /**
      * Register the engine resolver instance.
-     *
-     * @return void
      */
-    public function registerEngineResolver()
+    public function registerEngineResolver(): void
     {
-        $this->app->singleton('view.engine.resolver', function () {
+        $this->app->singleton('view.engine.resolver', function (): \Illuminate\View\Engines\EngineResolver {
             $resolver = new EngineResolver;
 
             // Next, we will register the various view engines with the resolver so that the
@@ -132,37 +117,30 @@ class ViewServiceProvider extends ServiceProvider
      * Register the file engine implementation.
      *
      * @param  \Illuminate\View\Engines\EngineResolver  $resolver
-     * @return void
      */
-    public function registerFileEngine($resolver)
+    public function registerFileEngine($resolver): void
     {
-        $resolver->register('file', function () {
-            return new FileEngine(Container::getInstance()->make('files'));
-        });
+        $resolver->register('file', fn() => new FileEngine(Container::getInstance()->make('files')));
     }
 
     /**
      * Register the PHP engine implementation.
      *
      * @param  \Illuminate\View\Engines\EngineResolver  $resolver
-     * @return void
      */
-    public function registerPhpEngine($resolver)
+    public function registerPhpEngine($resolver): void
     {
-        $resolver->register('php', function () {
-            return new PhpEngine(Container::getInstance()->make('files'));
-        });
+        $resolver->register('php', fn() => new PhpEngine(Container::getInstance()->make('files')));
     }
 
     /**
      * Register the Blade engine implementation.
      *
      * @param  \Illuminate\View\Engines\EngineResolver  $resolver
-     * @return void
      */
-    public function registerBladeEngine($resolver)
+    public function registerBladeEngine($resolver): void
     {
-        $resolver->register('blade', function () {
+        $resolver->register('blade', function (): \Illuminate\View\Engines\CompilerEngine {
             $app = Container::getInstance();
 
             $compiler = new CompilerEngine(
@@ -170,7 +148,7 @@ class ViewServiceProvider extends ServiceProvider
                 $app->make('files'),
             );
 
-            $app->terminating(static function () use ($compiler) {
+            $app->terminating(static function () use ($compiler): void {
                 $compiler->forgetCompiledOrNotExpired();
             });
 

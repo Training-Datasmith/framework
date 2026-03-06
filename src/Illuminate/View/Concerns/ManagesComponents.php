@@ -48,10 +48,8 @@ trait ManagesComponents
      * Start a component rendering process.
      *
      * @param  \Illuminate\Contracts\View\View|\Illuminate\Contracts\Support\Htmlable|\Closure|string  $view
-     * @param  array  $data
-     * @return void
      */
-    public function startComponent($view, array $data = [])
+    public function startComponent($view, array $data = []): void
     {
         if (ob_start()) {
             $this->componentStack[] = $view;
@@ -64,16 +62,10 @@ trait ManagesComponents
 
     /**
      * Get the first view that actually exists from the given list, and start a component.
-     *
-     * @param  array  $names
-     * @param  array  $data
-     * @return void
      */
-    public function startComponentFirst(array $names, array $data = [])
+    public function startComponentFirst(array $names, array $data = []): void
     {
-        $name = Arr::first($names, function ($item) {
-            return $this->exists($item);
-        });
+        $name = Arr::first($names, fn($item) => $this->exists($item));
 
         $this->startComponent($name, $data);
     }
@@ -94,14 +86,14 @@ trait ManagesComponents
 
         try {
             $view = value($view, $data);
-
             if ($view instanceof View) {
                 return $view->with($data)->render();
-            } elseif ($view instanceof Htmlable) {
-                return $view->toHtml();
-            } else {
-                return $this->make($view, $data)->render();
             }
+
+            if ($view instanceof Htmlable) {
+                return $view->toHtml();
+            }
+            return $this->make($view, $data)->render();
         } finally {
             $this->currentComponentData = $previousComponentData;
         }
@@ -109,10 +101,8 @@ trait ManagesComponents
 
     /**
      * Get the data for the given component.
-     *
-     * @return array
      */
-    protected function componentData()
+    protected function componentData(): array
     {
         $defaultSlot = new ComponentSlot(trim(ob_get_clean()));
 
@@ -164,9 +154,8 @@ trait ManagesComponents
      * @param  string  $name
      * @param  string|null  $content
      * @param  array  $attributes
-     * @return void
      */
-    public function slot($name, $content = null, $attributes = [])
+    public function slot($name, $content = null, $attributes = []): void
     {
         if (func_num_args() === 2 || $content !== null) {
             $this->slots[$this->currentComponent()][$name] = $content;
@@ -179,10 +168,8 @@ trait ManagesComponents
 
     /**
      * Save the slot content for rendering.
-     *
-     * @return void
      */
-    public function endSlot()
+    public function endSlot(): void
     {
         last($this->componentStack);
 
@@ -199,10 +186,8 @@ trait ManagesComponents
 
     /**
      * Get the index for the current component.
-     *
-     * @return int
      */
-    protected function currentComponent()
+    protected function currentComponent(): int
     {
         return count($this->componentStack) - 1;
     }

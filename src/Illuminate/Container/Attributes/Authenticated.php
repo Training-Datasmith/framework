@@ -19,11 +19,9 @@ class Authenticated implements ContextualAttribute
     /**
      * Resolve the currently authenticated user.
      *
-     * @param  self  $attribute
-     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public static function resolve(self $attribute, Container $container)
+    public static function resolve(self $attribute, Container $container): mixed
     {
         return call_user_func($container->make('auth')->userResolver(), $attribute->guard);
     }

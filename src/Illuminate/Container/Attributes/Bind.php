@@ -12,13 +12,6 @@ use function Illuminate\Support\enum_value;
 class Bind
 {
     /**
-     * The concrete class to bind to.
-     *
-     * @var class-string
-     */
-    public string $concrete;
-
-    /**
      * The environments the binding should apply for.
      *
      * @var non-empty-array<int, string>
@@ -34,7 +27,10 @@ class Bind
      * @throws \InvalidArgumentException
      */
     public function __construct(
-        string $concrete,
+        /**
+         * The concrete class to bind to.
+         */
+        public string $concrete,
         string|array|UnitEnum $environments = ['*'],
     ) {
         $environments = array_filter(is_array($environments) ? $environments : [$environments]);
@@ -42,8 +38,6 @@ class Bind
         if ($environments === []) {
             throw new InvalidArgumentException('The environment property must be set and cannot be empty.');
         }
-
-        $this->concrete = $concrete;
 
         $this->environments = array_map(
             fn ($environment) => enum_value($environment),

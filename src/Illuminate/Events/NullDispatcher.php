@@ -10,20 +10,15 @@ class NullDispatcher implements DispatcherContract
     use ForwardsCalls;
 
     /**
-     * The underlying event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
      * Create a new event dispatcher instance that does not fire.
-     *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
      */
-    public function __construct(DispatcherContract $dispatcher)
+    public function __construct(
+        /**
+         * The underlying event dispatcher instance.
+         */
+        protected \Illuminate\Contracts\Events\Dispatcher $dispatcher
+    )
     {
-        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -32,9 +27,8 @@ class NullDispatcher implements DispatcherContract
      * @param  string|object  $event
      * @param  mixed  $payload
      * @param  bool  $halt
-     * @return void
      */
-    public function dispatch($event, $payload = [], $halt = false)
+    public function dispatch($event, $payload = [], $halt = false): void
     {
         //
     }
@@ -44,9 +38,8 @@ class NullDispatcher implements DispatcherContract
      *
      * @param  string  $event
      * @param  array  $payload
-     * @return void
      */
-    public function push($event, $payload = [])
+    public function push($event, $payload = []): void
     {
         //
     }
@@ -56,9 +49,8 @@ class NullDispatcher implements DispatcherContract
      *
      * @param  string|object  $event
      * @param  mixed  $payload
-     * @return mixed
      */
-    public function until($event, $payload = [])
+    public function until($event, $payload = []): void
     {
         //
     }
@@ -68,9 +60,8 @@ class NullDispatcher implements DispatcherContract
      *
      * @param  \Closure|string|array  $events
      * @param  \Closure|string|array|null  $listener
-     * @return void
      */
-    public function listen($events, $listener = null)
+    public function listen($events, $listener = null): void
     {
         $this->dispatcher->listen($events, $listener);
     }
@@ -90,9 +81,8 @@ class NullDispatcher implements DispatcherContract
      * Register an event subscriber with the dispatcher.
      *
      * @param  object|string  $subscriber
-     * @return void
      */
-    public function subscribe($subscriber)
+    public function subscribe($subscriber): void
     {
         $this->dispatcher->subscribe($subscriber);
     }
@@ -101,9 +91,8 @@ class NullDispatcher implements DispatcherContract
      * Flush a set of pushed events.
      *
      * @param  string  $event
-     * @return void
      */
-    public function flush($event)
+    public function flush($event): void
     {
         $this->dispatcher->flush($event);
     }
@@ -112,19 +101,16 @@ class NullDispatcher implements DispatcherContract
      * Remove a set of listeners from the dispatcher.
      *
      * @param  string  $event
-     * @return void
      */
-    public function forget($event)
+    public function forget($event): void
     {
         $this->dispatcher->forget($event);
     }
 
     /**
      * Forget all of the queued listeners.
-     *
-     * @return void
      */
-    public function forgetPushed()
+    public function forgetPushed(): void
     {
         $this->dispatcher->forgetPushed();
     }
@@ -132,11 +118,10 @@ class NullDispatcher implements DispatcherContract
     /**
      * Dynamically pass method calls to the underlying dispatcher.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->forwardDecoratedCallTo($this->dispatcher, $method, $parameters);
     }

@@ -27,15 +27,13 @@ class ReloadCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->components->info('Reloading services.');
 
         $exceptions = Collection::wrap(explode(',', $this->option('except') ?? ''))
-            ->map(fn ($except) => trim($except))
+            ->map(fn ($except): string => trim($except))
             ->filter()
             ->unique()
             ->flip();
@@ -45,7 +43,7 @@ class ReloadCommand extends Command
             ->toArray();
 
         foreach ($tasks as $description => $command) {
-            $this->components->task($description, fn () => $this->callSilently($command) == 0);
+            $this->components->task($description, fn (): bool => $this->callSilently($command) == 0);
         }
 
         $this->newLine();
@@ -53,10 +51,8 @@ class ReloadCommand extends Command
 
     /**
      * Get the commands that should be reloaded.
-     *
-     * @return array
      */
-    public function getReloadTasks()
+    public function getReloadTasks(): array
     {
         return [
             'queue' => 'queue:restart',
@@ -67,10 +63,8 @@ class ReloadCommand extends Command
 
     /**
      * Get the console command arguments.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['except', 'e', InputOption::VALUE_OPTIONAL, 'The commands to skip'],

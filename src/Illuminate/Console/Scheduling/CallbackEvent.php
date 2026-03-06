@@ -19,13 +19,6 @@ class CallbackEvent extends Event
     protected $callback;
 
     /**
-     * The parameters to pass to the method.
-     *
-     * @var array
-     */
-    protected $parameters;
-
-    /**
      * The result of the callback's execution.
      *
      * @var mixed
@@ -42,14 +35,15 @@ class CallbackEvent extends Event
     /**
      * Create a new event instance.
      *
-     * @param  \Illuminate\Console\Scheduling\EventMutex  $mutex
      * @param  string|callable  $callback
-     * @param  array  $parameters
      * @param  \DateTimeZone|string|null  $timezone
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(EventMutex $mutex, $callback, array $parameters = [], $timezone = null)
+    public function __construct(EventMutex $mutex, $callback, /**
+     * The parameters to pass to the method.
+     */
+    protected array $parameters = [], $timezone = null)
     {
         if (! is_string($callback) && ! Reflector::isCallable($callback)) {
             throw new InvalidArgumentException(
@@ -59,16 +53,13 @@ class CallbackEvent extends Event
 
         $this->mutex = $mutex;
         $this->callback = $callback;
-        $this->parameters = $parameters;
         $this->timezone = $timezone;
     }
 
     /**
      * Run the callback event.
      *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return mixed
-     *
      * @throws \Throwable
      */
     public function run(Container $container)
@@ -84,10 +75,8 @@ class CallbackEvent extends Event
 
     /**
      * Determine if the event should skip because another process is overlapping.
-     *
-     * @return bool
      */
-    public function shouldSkipDueToOverlapping()
+    public function shouldSkipDueToOverlapping(): bool
     {
         return $this->description && parent::shouldSkipDueToOverlapping();
     }
@@ -95,11 +84,10 @@ class CallbackEvent extends Event
     /**
      * Indicate that the callback should run in the background.
      *
-     * @return void
      *
      * @throws \RuntimeException
      */
-    public function runInBackground()
+    public function runInBackground(): never
     {
         throw new RuntimeException('Scheduled closures can not be run in the background.');
     }
@@ -108,9 +96,8 @@ class CallbackEvent extends Event
      * Run the callback.
      *
      * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return int
      */
-    protected function execute($container)
+    protected function execute($container): int
     {
         try {
             $this->result = is_object($this->callback)
@@ -166,10 +153,8 @@ class CallbackEvent extends Event
 
     /**
      * Get the summary of the event for display.
-     *
-     * @return string
      */
-    public function getSummaryForDisplay()
+    public function getSummaryForDisplay(): string
     {
         if (is_string($this->description)) {
             return $this->description;
@@ -180,10 +165,8 @@ class CallbackEvent extends Event
 
     /**
      * Get the mutex name for the scheduled command.
-     *
-     * @return string
      */
-    public function mutexName()
+    public function mutexName(): string
     {
         return 'framework/schedule-'.sha1($this->description ?? '');
     }

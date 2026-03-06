@@ -12,13 +12,6 @@ class MemcachedStore extends TaggableStore implements LockProvider
     use InteractsWithTime;
 
     /**
-     * The Memcached instance.
-     *
-     * @var \Memcached
-     */
-    protected $memcached;
-
-    /**
      * A string that should be prepended to keys.
      *
      * @var string
@@ -27,10 +20,8 @@ class MemcachedStore extends TaggableStore implements LockProvider
 
     /**
      * Indicates whether we are using Memcached version >= 3.0.0.
-     *
-     * @var bool
      */
-    protected $onVersionThree;
+    protected bool $onVersionThree;
 
     /**
      * Create a new Memcached store.
@@ -38,10 +29,12 @@ class MemcachedStore extends TaggableStore implements LockProvider
      * @param  \Memcached  $memcached
      * @param  string  $prefix
      */
-    public function __construct($memcached, $prefix = '')
+    public function __construct(/**
+     * The Memcached instance.
+     */
+    protected $memcached, $prefix = '')
     {
         $this->setPrefix($prefix);
-        $this->memcached = $memcached;
 
         $this->onVersionThree = (new ReflectionMethod('Memcached', 'getMulti'))
             ->getNumberOfParameters() == 2;
@@ -66,15 +59,10 @@ class MemcachedStore extends TaggableStore implements LockProvider
      * Retrieve multiple items from the cache by key.
      *
      * Items not found in the cache will have a null value.
-     *
-     * @param  array  $keys
-     * @return array
      */
-    public function many(array $keys)
+    public function many(array $keys): array
     {
-        $prefixedKeys = array_map(function ($key) {
-            return $this->prefix.$key;
-        }, $keys);
+        $prefixedKeys = array_map(fn($key) => $this->prefix.$key, $keys);
 
         if ($this->onVersionThree) {
             $values = $this->memcached->getMulti($prefixedKeys, Memcached::GET_PRESERVE_ORDER);
@@ -97,9 +85,8 @@ class MemcachedStore extends TaggableStore implements LockProvider
      * @param  string  $key
      * @param  mixed  $value
      * @param  int  $seconds
-     * @return bool
      */
-    public function put($key, $value, $seconds)
+    public function put($key, $value, $seconds): bool
     {
         return $this->memcached->set(
             $this->prefix.$key, $value, $this->calculateExpiration($seconds)
@@ -109,11 +96,9 @@ class MemcachedStore extends TaggableStore implements LockProvider
     /**
      * Store multiple items in the cache for a given number of seconds.
      *
-     * @param  array  $values
      * @param  int  $seconds
-     * @return bool
      */
-    public function putMany(array $values, $seconds)
+    public function putMany(array $values, $seconds): bool
     {
         $prefixedValues = [];
 
@@ -129,12 +114,10 @@ class MemcachedStore extends TaggableStore implements LockProvider
     /**
      * Store an item in the cache if the key doesn't exist.
      *
-     * @param  string  $key
      * @param  mixed  $value
      * @param  int  $seconds
-     * @return bool
      */
-    public function add($key, $value, $seconds)
+    public function add(string $key, $value, $seconds): bool
     {
         return $this->memcached->add(
             $this->prefix.$key, $value, $this->calculateExpiration($seconds)
@@ -148,7 +131,7 @@ class MemcachedStore extends TaggableStore implements LockProvider
      * @param  mixed  $value
      * @return int|false
      */
-    public function increment($key, $value = 1)
+    public function increment($key, $value = 1): int|false
     {
         return $this->memcached->increment($this->prefix.$key, $value);
     }
@@ -160,7 +143,7 @@ class MemcachedStore extends TaggableStore implements LockProvider
      * @param  mixed  $value
      * @return int|false
      */
-    public function decrement($key, $value = 1)
+    public function decrement($key, $value = 1): int|false
     {
         return $this->memcached->decrement($this->prefix.$key, $value);
     }
@@ -185,7 +168,7 @@ class MemcachedStore extends TaggableStore implements LockProvider
      * @param  string|null  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function lock($name, $seconds = 0, $owner = null)
+    public function lock($name, $seconds = 0, $owner = null): \Illuminate\Cache\MemcachedLock
     {
         return new MemcachedLock($this->memcached, $this->prefix.$name, $seconds, $owner);
     }
@@ -206,19 +189,16 @@ class MemcachedStore extends TaggableStore implements LockProvider
      * Remove an item from the cache.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function forget($key)
+    public function forget($key): bool
     {
         return $this->memcached->delete($this->prefix.$key);
     }
 
     /**
      * Remove all items from the cache.
-     *
-     * @return bool
      */
-    public function flush()
+    public function flush(): bool
     {
         return $this->memcached->flush();
     }
@@ -269,9 +249,8 @@ class MemcachedStore extends TaggableStore implements LockProvider
      * Set the cache key prefix.
      *
      * @param  string  $prefix
-     * @return void
      */
-    public function setPrefix($prefix)
+    public function setPrefix($prefix): void
     {
         $this->prefix = $prefix;
     }

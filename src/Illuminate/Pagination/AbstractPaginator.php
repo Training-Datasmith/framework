@@ -169,7 +169,7 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
     public function getUrlRange($start, $end)
     {
         return Collection::range($start, $end)
-            ->mapWithKeys(fn ($page) => [$page => $this->url($page)])
+            ->mapWithKeys(fn ($page): array => [$page => $this->url($page)])
             ->all();
     }
 
@@ -195,7 +195,7 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
         }
 
         return $this->path()
-                        .(str_contains($this->path(), '?') ? '&' : '?')
+                        .(str_contains((string) $this->path(), '?') ? '&' : '?')
                         .Arr::query($parameters)
                         .$this->buildFragment();
     }
@@ -240,7 +240,6 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
     /**
      * Add an array of query string values.
      *
-     * @param  array  $keys
      * @return $this
      */
     protected function appendArray(array $keys)
@@ -384,7 +383,10 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
      */
     public function hasPages()
     {
-        return $this->currentPage() != 1 || $this->hasMorePages();
+        if ($this->currentPage() != 1) {
+            return true;
+        }
+        return (bool) $this->hasMorePages();
     }
 
     /**
@@ -504,11 +506,8 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
 
     /**
      * Set the current request path resolver callback.
-     *
-     * @param  \Closure  $resolver
-     * @return void
      */
-    public static function currentPathResolver(Closure $resolver)
+    public static function currentPathResolver(Closure $resolver): void
     {
         static::$currentPathResolver = $resolver;
     }
@@ -531,11 +530,8 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
 
     /**
      * Set the current page resolver callback.
-     *
-     * @param  \Closure  $resolver
-     * @return void
      */
-    public static function currentPageResolver(Closure $resolver)
+    public static function currentPageResolver(Closure $resolver): void
     {
         static::$currentPageResolver = $resolver;
     }
@@ -557,11 +553,8 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
 
     /**
      * Set with query string resolver callback.
-     *
-     * @param  \Closure  $resolver
-     * @return void
      */
-    public static function queryStringResolver(Closure $resolver)
+    public static function queryStringResolver(Closure $resolver): void
     {
         static::$queryStringResolver = $resolver;
     }
@@ -578,11 +571,8 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
 
     /**
      * Set the view factory resolver callback.
-     *
-     * @param  \Closure  $resolver
-     * @return void
      */
-    public static function viewFactoryResolver(Closure $resolver)
+    public static function viewFactoryResolver(Closure $resolver): void
     {
         static::$viewFactoryResolver = $resolver;
     }
@@ -591,9 +581,8 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
      * Set the default pagination view.
      *
      * @param  string  $view
-     * @return void
      */
-    public static function defaultView($view)
+    public static function defaultView($view): void
     {
         static::$defaultView = $view;
     }
@@ -602,19 +591,16 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
      * Set the default "simple" pagination view.
      *
      * @param  string  $view
-     * @return void
      */
-    public static function defaultSimpleView($view)
+    public static function defaultSimpleView($view): void
     {
         static::$defaultSimpleView = $view;
     }
 
     /**
      * Indicate that Tailwind styling should be used for generated links.
-     *
-     * @return void
      */
-    public static function useTailwind()
+    public static function useTailwind(): void
     {
         static::defaultView('pagination::tailwind');
         static::defaultSimpleView('pagination::simple-tailwind');
@@ -622,20 +608,16 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
 
     /**
      * Indicate that Bootstrap 4 styling should be used for generated links.
-     *
-     * @return void
      */
-    public static function useBootstrap()
+    public static function useBootstrap(): void
     {
         static::useBootstrapFour();
     }
 
     /**
      * Indicate that Bootstrap 3 styling should be used for generated links.
-     *
-     * @return void
      */
-    public static function useBootstrapThree()
+    public static function useBootstrapThree(): void
     {
         static::defaultView('pagination::default');
         static::defaultSimpleView('pagination::simple-default');
@@ -643,10 +625,8 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
 
     /**
      * Indicate that Bootstrap 4 styling should be used for generated links.
-     *
-     * @return void
      */
-    public static function useBootstrapFour()
+    public static function useBootstrapFour(): void
     {
         static::defaultView('pagination::bootstrap-4');
         static::defaultSimpleView('pagination::simple-bootstrap-4');
@@ -654,10 +634,8 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
 
     /**
      * Indicate that Bootstrap 5 styling should be used for generated links.
-     *
-     * @return void
      */
-    public static function useBootstrapFive()
+    public static function useBootstrapFive(): void
     {
         static::defaultView('pagination::bootstrap-5');
         static::defaultSimpleView('pagination::simple-bootstrap-5');
@@ -695,8 +673,6 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
 
     /**
      * Get the number of items for the current page.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -740,7 +716,6 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
      * Determine if the given item exists.
      *
      * @param  TKey  $key
-     * @return bool
      */
     public function offsetExists($key): bool
     {
@@ -763,7 +738,6 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
      *
      * @param  TKey|null  $key
      * @param  TValue  $value
-     * @return void
      */
     public function offsetSet($key, $value): void
     {
@@ -774,7 +748,6 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
      * Unset the item at the given key.
      *
      * @param  TKey  $key
-     * @return void
      */
     public function offsetUnset($key): void
     {
@@ -794,21 +767,18 @@ abstract class AbstractPaginator implements CanBeEscapedWhenCastToString, Htmlab
     /**
      * Make dynamic calls into the collection.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->forwardCallTo($this->getCollection(), $method, $parameters);
     }
 
     /**
      * Render the contents of the paginator when casting to a string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->escapeWhenCastingToString
             ? e((string) $this->render())

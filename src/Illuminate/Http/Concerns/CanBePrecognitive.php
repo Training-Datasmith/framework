@@ -30,12 +30,11 @@ trait CanBePrecognitive
      *
      * @param  string  $attribute
      * @param  array  $validateOnly
-     * @return bool
      */
-    protected function shouldValidatePrecognitiveAttribute($attribute, $validateOnly)
+    protected function shouldValidatePrecognitiveAttribute($attribute, $validateOnly): bool
     {
         foreach ($validateOnly as $pattern) {
-            $regex = '/^'.str_replace('\*', '[^.]+', preg_quote($pattern, '/')).'$/';
+            $regex = '/^'.str_replace('\*', '[^.]+', preg_quote((string) $pattern, '/')).'$/';
 
             if (preg_match($regex, $attribute)) {
                 return true;
@@ -47,10 +46,8 @@ trait CanBePrecognitive
 
     /**
      * Determine if the request is attempting to be precognitive.
-     *
-     * @return bool
      */
-    public function isAttemptingPrecognition()
+    public function isAttemptingPrecognition(): bool
     {
         return $this->header('Precognition') === 'true';
     }

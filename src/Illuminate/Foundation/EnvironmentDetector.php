@@ -9,7 +9,6 @@ class EnvironmentDetector
     /**
      * Detect the application's current environment.
      *
-     * @param  \Closure  $callback
      * @param  array|null  $consoleArgs
      * @return string
      */
@@ -25,7 +24,6 @@ class EnvironmentDetector
     /**
      * Set the application environment for a web request.
      *
-     * @param  \Closure  $callback
      * @return string
      */
     protected function detectWebEnvironment(Closure $callback)
@@ -36,8 +34,6 @@ class EnvironmentDetector
     /**
      * Set the application environment from command-line arguments.
      *
-     * @param  \Closure  $callback
-     * @param  array  $args
      * @return string
      */
     protected function detectConsoleEnvironment(Closure $callback, array $args)
@@ -55,7 +51,6 @@ class EnvironmentDetector
     /**
      * Get the environment argument from the console.
      *
-     * @param  array  $args
      * @return string|null
      */
     protected function getEnvironmentArgument(array $args)
@@ -65,8 +60,8 @@ class EnvironmentDetector
                 return $args[$i + 1] ?? null;
             }
 
-            if (str_starts_with($value, '--env=')) {
-                return head(array_slice(explode('=', $value), 1));
+            if (str_starts_with((string) $value, '--env=')) {
+                return head(array_slice(explode('=', (string) $value), 1));
             }
         }
     }

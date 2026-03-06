@@ -17,7 +17,6 @@ interface Mailable
     /**
      * Queue the given message.
      *
-     * @param  \Illuminate\Contracts\Queue\Factory  $queue
      * @return mixed
      */
     public function queue(Queue $queue);
@@ -26,7 +25,6 @@ interface Mailable
      * Deliver the queued message after (n) seconds.
      *
      * @param  \DateTimeInterface|\DateInterval|int  $delay
-     * @param  \Illuminate\Contracts\Queue\Factory  $queue
      * @return mixed
      */
     public function later($delay, Queue $queue);

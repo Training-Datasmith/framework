@@ -42,7 +42,6 @@ class MessageSent
     /**
      * Marshal the object from its serialized data.
      *
-     * @param  array  $data
      * @return void
      */
     public function __unserialize(array $data)
@@ -50,24 +49,22 @@ class MessageSent
         $this->sent = $data['sent'];
 
         $this->data = (($data['hasAttachments'] ?? false) === true)
-            ? unserialize(base64_decode($data['data']))
+            ? unserialize(base64_decode((string) $data['data']))
             : $data['data'];
     }
 
     /**
      * Dynamically get the original message.
      *
-     * @param  string  $key
-     * @return mixed
      *
      * @throws \Exception
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         if ($key === 'message') {
             return $this->sent->getOriginalMessage();
         }
 
-        throw new Exception('Unable to access undefined property on '.__CLASS__.': '.$key);
+        throw new Exception('Unable to access undefined property on '.self::class.': '.$key);
     }
 }

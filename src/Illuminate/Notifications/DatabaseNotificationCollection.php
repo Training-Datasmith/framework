@@ -14,20 +14,16 @@ class DatabaseNotificationCollection extends EloquentCollection
 {
     /**
      * Mark all notifications as read.
-     *
-     * @return void
      */
-    public function markAsRead()
+    public function markAsRead(): void
     {
         $this->each->markAsRead();
     }
 
     /**
      * Mark all notifications as unread.
-     *
-     * @return void
      */
-    public function markAsUnread()
+    public function markAsUnread(): void
     {
         $this->each->markAsUnread();
     }

@@ -33,8 +33,6 @@ class ValidationRuleParser
 
     /**
      * Create a new validation rule parser.
-     *
-     * @param  array  $data
      */
     public function __construct(array $data)
     {
@@ -68,7 +66,7 @@ class ValidationRuleParser
     protected function explodeRules($rules)
     {
         foreach ($rules as $key => $rule) {
-            if (str_contains($key, '*')) {
+            if (str_contains((string) $key, '*')) {
                 $rules = $this->explodeWildcardRules($rules, $key, [$rule]);
 
                 unset($rules[$key]);
@@ -85,9 +83,8 @@ class ValidationRuleParser
      *
      * @param  mixed  $rule
      * @param  string  $attribute
-     * @return array
      */
-    protected function explodeExplicitRule($rule, $attribute)
+    protected function explodeExplicitRule($rule, $attribute): array
     {
         if (is_string($rule)) {
             return explode('|', $rule);
@@ -162,7 +159,7 @@ class ValidationRuleParser
         $data = ValidationData::initializeAndGatherData($attribute, $this->data);
 
         foreach ($data as $key => $value) {
-            if (Str::startsWith($key, $attribute) || (bool) preg_match('/^'.$pattern.'\z/', $key)) {
+            if (Str::startsWith($key, $attribute) || (bool) preg_match('/^'.$pattern.'\z/', (string) $key)) {
                 foreach ((array) $rules as $rule) {
                     if ($rule instanceof CompilableRules) {
                         $context = Arr::get($this->data, Str::beforeLast($key, '.'));
@@ -199,7 +196,7 @@ class ValidationRuleParser
     public function mergeRules($results, $attribute, $rules = [])
     {
         if (is_array($attribute)) {
-            foreach ((array) $attribute as $innerAttribute => $innerRules) {
+            foreach ($attribute as $innerAttribute => $innerRules) {
                 $results = $this->mergeRulesForAttribute($results, $innerAttribute, $innerRules);
             }
 
@@ -214,12 +211,10 @@ class ValidationRuleParser
     /**
      * Merge additional rules into a given attribute.
      *
-     * @param  array  $results
      * @param  string  $attribute
      * @param  string|array  $rules
-     * @return array
      */
-    protected function mergeRulesForAttribute($results, $attribute, $rules)
+    protected function mergeRulesForAttribute(array $results, $attribute, $rules): array
     {
         $merge = head($this->explodeRules([$rules]));
 
@@ -255,22 +250,18 @@ class ValidationRuleParser
 
     /**
      * Parse an array based rule.
-     *
-     * @param  array  $rule
-     * @return array
      */
-    protected static function parseArrayRule(array $rule)
+    protected static function parseArrayRule(array $rule): array
     {
-        return [Str::studly(trim(Arr::get($rule, 0, ''))), array_slice($rule, 1)];
+        return [Str::studly(trim((string) Arr::get($rule, 0, ''))), array_slice($rule, 1)];
     }
 
     /**
      * Parse a string based rule.
      *
      * @param  string  $rule
-     * @return array
      */
-    protected static function parseStringRule($rule)
+    protected static function parseStringRule($rule): array
     {
         $parameters = [];
 
@@ -302,9 +293,8 @@ class ValidationRuleParser
      * Determine if the rule is a regular expression.
      *
      * @param  string  $rule
-     * @return bool
      */
-    protected static function ruleIsRegex($rule)
+    protected static function ruleIsRegex($rule): bool
     {
         return in_array(strtolower($rule), ['regex', 'not_regex', 'notregex'], true);
     }
@@ -328,12 +318,11 @@ class ValidationRuleParser
      * Expand the conditional rules in the given array of rules.
      *
      * @param  array  $rules
-     * @param  array  $data
      * @return array
      */
     public static function filterConditionalRules($rules, array $data = [])
     {
-        return (new Collection($rules))->mapWithKeys(function ($attributeRules, $attribute) use ($data) {
+        return (new Collection($rules))->mapWithKeys(function ($attributeRules, $attribute) use ($data): array {
             if (! is_array($attributeRules) &&
                 ! $attributeRules instanceof ConditionalRules) {
                 return [$attribute => $attributeRules];

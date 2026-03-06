@@ -24,7 +24,7 @@ trait TestDatabases
      *
      * @var null|string
      */
-    protected static $originalDatabaseName = null;
+    protected static $originalDatabaseName;
 
     /**
      * Boot a test database.
@@ -33,8 +33,8 @@ trait TestDatabases
      */
     protected function bootTestDatabase()
     {
-        ParallelTesting::setUpProcess(function () {
-            $this->whenNotUsingInMemoryDatabase(function ($database) {
+        ParallelTesting::setUpProcess(function (): void {
+            $this->whenNotUsingInMemoryDatabase(function ($database): void {
                 if (ParallelTesting::option('recreate_databases')) {
                     Schema::dropDatabaseIfExists(
                         $this->testDatabase($database)
@@ -43,8 +43,8 @@ trait TestDatabases
             });
         });
 
-        ParallelTesting::setUpTestCase(function ($testCase) {
-            $uses = array_flip(class_uses_recursive(get_class($testCase)));
+        ParallelTesting::setUpTestCase(function ($testCase): void {
+            $uses = array_flip(class_uses_recursive($testCase::class));
 
             $databaseTraits = [
                 Testing\DatabaseMigrations::class,
@@ -54,7 +54,7 @@ trait TestDatabases
             ];
 
             if (Arr::hasAny($uses, $databaseTraits) && ! ParallelTesting::option('without_databases')) {
-                $this->whenNotUsingInMemoryDatabase(function ($database) use ($uses) {
+                $this->whenNotUsingInMemoryDatabase(function ($database) use ($uses): void {
                     [$testDatabase, $created] = $this->ensureTestDatabaseExists($database);
 
                     $this->switchToDatabase($testDatabase);
@@ -74,8 +74,8 @@ trait TestDatabases
             }
         });
 
-        ParallelTesting::tearDownProcess(function () {
-            $this->whenNotUsingInMemoryDatabase(function ($database) {
+        ParallelTesting::tearDownProcess(function (): void {
+            $this->whenNotUsingInMemoryDatabase(function ($database): void {
                 if (ParallelTesting::option('drop_databases')) {
                     Schema::dropDatabaseIfExists(
                         $this->testDatabase($database)
@@ -89,18 +89,17 @@ trait TestDatabases
      * Ensure a test database exists and returns its name.
      *
      * @param  string  $database
-     * @return array
      */
-    protected function ensureTestDatabaseExists($database)
+    protected function ensureTestDatabaseExists($database): array
     {
         $testDatabase = $this->testDatabase($database);
 
         try {
-            $this->usingDatabase($testDatabase, function () {
+            $this->usingDatabase($testDatabase, function (): void {
                 Schema::hasTable('dummy');
             });
         } catch (QueryException) {
-            $this->usingDatabase($database, function () use ($testDatabase) {
+            $this->usingDatabase($database, function () use ($testDatabase): void {
                 Schema::dropDatabaseIfExists($testDatabase);
                 Schema::createDatabase($testDatabase);
             });
@@ -180,7 +179,7 @@ trait TestDatabases
         if ($url) {
             config()->set(
                 "database.connections.{$default}.url",
-                preg_replace('/^(.*)(\/[\w-]*)(\??.*)$/', "$1/{$database}$3", $url),
+                preg_replace('/^(.*)(\/[\w-]*)(\??.*)$/', "$1/{$database}$3", (string) $url),
             );
         } else {
             config()->set(
@@ -192,10 +191,8 @@ trait TestDatabases
 
     /**
      * Returns the test database name.
-     *
-     * @return string
      */
-    protected function testDatabase($database)
+    protected function testDatabase($database): string
     {
         if (! isset(self::$originalDatabaseName)) {
             self::$originalDatabaseName = $database;

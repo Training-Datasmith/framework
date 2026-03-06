@@ -7,20 +7,17 @@ use Illuminate\Support\Carbon;
 class Wormhole
 {
     /**
-     * The amount of time to travel.
-     *
-     * @var int
-     */
-    public $value;
-
-    /**
      * Create a new wormhole instance.
      *
      * @param  int  $value
      */
-    public function __construct($value)
+    public function __construct(
+        /**
+         * The amount of time to travel.
+         */
+        public $value
+    )
     {
-        $this->value = $value;
     }
 
     /**
@@ -298,7 +295,7 @@ class Wormhole
     protected function handleCallback($callback)
     {
         if ($callback) {
-            return tap($callback(), function () {
+            return tap($callback(), function (): void {
                 Carbon::setTestNow();
             });
         }

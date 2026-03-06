@@ -50,7 +50,7 @@ class Unique implements Stringable
      * @param  string|null  $idColumn
      * @return $this
      */
-    public function ignoreModel($model, $idColumn = null)
+    public function ignoreModel($model, $idColumn = null): static
     {
         $this->idColumn = $idColumn ?? $model->getKeyName();
         $this->ignore = $model->{$this->idColumn};
@@ -60,15 +60,13 @@ class Unique implements Stringable
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return rtrim(sprintf('unique:%s,%s,%s,%s,%s',
             $this->table,
             $this->column,
-            $this->ignore ? '"'.addslashes($this->ignore).'"' : 'NULL',
+            $this->ignore ? '"'.addslashes((string) $this->ignore).'"' : 'NULL',
             $this->idColumn,
             $this->formatWheres()
         ), ',');

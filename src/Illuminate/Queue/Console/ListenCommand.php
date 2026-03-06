@@ -45,8 +45,6 @@ class ListenCommand extends Command
 
     /**
      * Create a new queue listen command.
-     *
-     * @param  \Illuminate\Queue\Listener  $listener
      */
     public function __construct(Listener $listener)
     {
@@ -57,10 +55,8 @@ class ListenCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         // We need to get the right queue for the connection which is set in the queue
         // configuration file for the application. We will pull it based on the set
@@ -93,10 +89,8 @@ class ListenCommand extends Command
 
     /**
      * Get the listener options for the command.
-     *
-     * @return \Illuminate\Queue\ListenerOptions
      */
-    protected function gatherOptions()
+    protected function gatherOptions(): \Illuminate\Queue\ListenerOptions
     {
         $backoff = $this->hasOption('backoff')
             ? $this->option('backoff')
@@ -118,12 +112,11 @@ class ListenCommand extends Command
     /**
      * Set the options on the queue listener.
      *
-     * @param  \Illuminate\Queue\Listener  $listener
      * @return void
      */
     protected function setOutputHandler(Listener $listener)
     {
-        $listener->setOutputHandler(function ($type, $line) {
+        $listener->setOutputHandler(function ($type, string|iterable $line): void {
             $this->output->write($line);
         });
     }

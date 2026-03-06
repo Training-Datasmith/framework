@@ -78,10 +78,8 @@ class DownCommand extends Command
 
     /**
      * Get the payload to be placed in the "down" file.
-     *
-     * @return array
      */
-    protected function getDownFilePayload()
+    protected function getDownFilePayload(): array
     {
         return [
             'except' => $this->excludedPaths(),
@@ -117,7 +115,7 @@ class DownCommand extends Command
      *
      * @return string
      */
-    protected function redirectPath()
+    protected function redirectPath(): string|array|false|float|int|null
     {
         if ($this->option('redirect') && $this->option('redirect') !== '/') {
             return '/'.trim($this->option('redirect'), '/');

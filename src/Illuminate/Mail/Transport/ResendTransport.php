@@ -36,7 +36,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-class ResendTransport extends AbstractTransport
+class ResendTransport extends AbstractTransport implements \Stringable
 {
     /**
      * Create a new Resend transport instance.
@@ -129,9 +129,7 @@ class ResendTransport extends AbstractTransport
      */
     protected function getRecipients(Email $email, Envelope $envelope): array
     {
-        return array_filter($envelope->getRecipients(), function (Address $address) use ($email) {
-            return in_array($address, array_merge($email->getCc(), $email->getBcc()), true) === false;
-        });
+        return array_filter($envelope->getRecipients(), fn(Address $address) => in_array($address, array_merge($email->getCc(), $email->getBcc()), true) === false);
     }
 
     /**

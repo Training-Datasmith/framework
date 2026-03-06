@@ -17,7 +17,7 @@ class WhoopsExceptionRenderer implements ExceptionRenderer
      */
     public function render($throwable)
     {
-        return tap(new Whoops, function ($whoops) {
+        return tap(new Whoops, function ($whoops): void {
             $whoops->appendHandler($this->whoopsHandler());
 
             $whoops->writeToOutput(false);

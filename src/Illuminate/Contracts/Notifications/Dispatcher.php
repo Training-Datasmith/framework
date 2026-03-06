@@ -18,7 +18,6 @@ interface Dispatcher
      *
      * @param  \Illuminate\Support\Collection|mixed  $notifiables
      * @param  mixed  $notification
-     * @param  array|null  $channels
      * @return void
      */
     public function sendNow($notifiables, $notification, ?array $channels = null);

@@ -25,7 +25,7 @@ class JsonApiRequest extends Request
     {
         if (is_null($this->cachedSparseFields)) {
             $this->cachedSparseFields = (new Collection($this->array('fields')))
-                ->transform(fn ($fieldsets) => empty($fieldsets) ? [] : explode(',', $fieldsets))
+                ->transform(fn ($fieldsets): array => empty($fieldsets) ? [] : explode(',', $fieldsets))
                 ->all();
         }
 
@@ -41,7 +41,7 @@ class JsonApiRequest extends Request
             $included = (string) $this->string('include', '');
 
             $this->cachedSparseIncluded = (new Collection(empty($included) ? [] : explode(',', $included)))
-                ->transform(function ($item) {
+                ->transform(function ($item): array {
                     $with = null;
 
                     if (str_contains($item, '.')) {
@@ -51,7 +51,7 @@ class JsonApiRequest extends Request
                     }
 
                     return ['relation' => $relation, 'with' => $with];
-                })->mapToGroups(fn ($item) => [$item['relation'] => $item['with']])
+                })->mapToGroups(fn ($item): array => [$item['relation'] => $item['with']])
                 ->toArray();
         }
 
@@ -59,13 +59,11 @@ class JsonApiRequest extends Request
             return array_keys($this->cachedSparseIncluded);
         }
 
-        return transform($this->cachedSparseIncluded[$key] ?? null, function ($value) {
-            return Collection::wrap($value)
-                ->transform(function ($item) {
-                    $item = implode('.', Arr::take(explode('.', $item), JsonApiResource::$maxRelationshipDepth - 1));
+        return transform($this->cachedSparseIncluded[$key] ?? null, fn($value) => Collection::wrap($value)
+            ->transform(function ($item) {
+                $item = implode('.', Arr::take(explode('.', $item), JsonApiResource::$maxRelationshipDepth - 1));
 
-                    return ! empty($item) ? $item : null;
-                })->filter()->all();
-        }) ?? [];
+                return ! empty($item) ? $item : null;
+            })->filter()->all()) ?? [];
     }
 }

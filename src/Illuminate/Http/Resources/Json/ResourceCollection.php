@@ -58,7 +58,7 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
      *
      * @return $this
      */
-    public function preserveQuery()
+    public function preserveQuery(): static
     {
         $this->preserveAllQueryParameters = true;
 
@@ -68,10 +68,9 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
     /**
      * Specify the query string parameters that should be present on pagination links.
      *
-     * @param  array  $query
      * @return $this
      */
-    public function withQuery(array $query)
+    public function withQuery(array $query): static
     {
         $this->preserveAllQueryParameters = false;
 
@@ -82,8 +81,6 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
 
     /**
      * Return the count of items in the resource collection.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -93,7 +90,6 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
     /**
      * Transform the resource into a JSON array.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     #[\Override]
@@ -103,7 +99,7 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
             return $this->collection->map->resolve($request)->all();
         }
 
-        return $this->collection->map->toArray($request)->all();
+        return $this->collection->map->toArray()->all();
     }
 
     /**

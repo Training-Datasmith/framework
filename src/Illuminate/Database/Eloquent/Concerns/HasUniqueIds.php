@@ -23,10 +23,8 @@ trait HasUniqueIds
 
     /**
      * Generate unique keys for the model.
-     *
-     * @return void
      */
-    public function setUniqueIds()
+    public function setUniqueIds(): void
     {
         foreach ($this->uniqueIds() as $column) {
             if (empty($this->{$column})) {
@@ -40,17 +38,15 @@ trait HasUniqueIds
      *
      * @return string
      */
-    public function newUniqueId()
+    public function newUniqueId(): null
     {
         return null;
     }
 
     /**
      * Get the columns that should receive a unique identifier.
-     *
-     * @return array
      */
-    public function uniqueIds()
+    public function uniqueIds(): array
     {
         return [];
     }

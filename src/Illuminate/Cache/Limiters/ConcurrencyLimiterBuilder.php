@@ -9,20 +9,6 @@ class ConcurrencyLimiterBuilder
     use InteractsWithTime;
 
     /**
-     * The cache repository or Redis connection.
-     *
-     * @var \Illuminate\Cache\Repository
-     */
-    public $connection;
-
-    /**
-     * The name of the lock.
-     *
-     * @var string
-     */
-    public $name;
-
-    /**
      * The maximum number of entities that can hold the lock at the same time.
      *
      * @var int
@@ -56,10 +42,17 @@ class ConcurrencyLimiterBuilder
      * @param  mixed  $connection
      * @param  string  $name
      */
-    public function __construct($connection, $name)
+    public function __construct(
+        /**
+         * The cache repository or Redis connection.
+         */
+        public $connection,
+        /**
+         * The name of the lock.
+         */
+        public $name
+    )
     {
-        $this->name = $name;
-        $this->connection = $connection;
     }
 
     /**
@@ -68,7 +61,7 @@ class ConcurrencyLimiterBuilder
      * @param  int  $maxLocks
      * @return $this
      */
-    public function limit($maxLocks)
+    public function limit($maxLocks): static
     {
         $this->maxLocks = $maxLocks;
 
@@ -81,7 +74,7 @@ class ConcurrencyLimiterBuilder
      * @param  int  $releaseAfter
      * @return $this
      */
-    public function releaseAfter($releaseAfter)
+    public function releaseAfter($releaseAfter): static
     {
         $this->releaseAfter = $this->secondsUntil($releaseAfter);
 
@@ -94,7 +87,7 @@ class ConcurrencyLimiterBuilder
      * @param  int  $timeout
      * @return $this
      */
-    public function block($timeout)
+    public function block($timeout): static
     {
         $this->timeout = $timeout;
 
@@ -107,7 +100,7 @@ class ConcurrencyLimiterBuilder
      * @param  int  $sleep
      * @return $this
      */
-    public function sleep($sleep)
+    public function sleep($sleep): static
     {
         $this->sleep = $sleep;
 
@@ -117,8 +110,6 @@ class ConcurrencyLimiterBuilder
     /**
      * Execute the given callback if a lock is obtained, otherwise call the failure callback.
      *
-     * @param  callable  $callback
-     * @param  callable|null  $failure
      * @return mixed
      *
      * @throws \Illuminate\Cache\Limiters\LimiterTimeoutException
@@ -138,10 +129,8 @@ class ConcurrencyLimiterBuilder
 
     /**
      * Create the concurrency limiter instance.
-     *
-     * @return \Illuminate\Cache\Limiters\ConcurrencyLimiter
      */
-    protected function createLimiter()
+    protected function createLimiter(): \Illuminate\Cache\Limiters\ConcurrencyLimiter
     {
         return new ConcurrencyLimiter(
             $this->connection->getStore(),

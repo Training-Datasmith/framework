@@ -17,13 +17,6 @@ use Illuminate\View\Compilers\BladeCompiler;
 abstract class ServiceProvider
 {
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
      * All of the registered booting callbacks.
      *
      * @var array
@@ -84,49 +77,43 @@ abstract class ServiceProvider
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      */
-    public function __construct($app)
+    public function __construct(
+        /**
+         * The application instance.
+         */
+        protected $app
+    )
     {
-        $this->app = $app;
     }
 
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         //
     }
 
     /**
      * Register a booting callback to be run before the "boot" method is called.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function booting(Closure $callback)
+    public function booting(Closure $callback): void
     {
         $this->bootingCallbacks[] = $callback;
     }
 
     /**
      * Register a booted callback to be run after the "boot" method is called.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function booted(Closure $callback)
+    public function booted(Closure $callback): void
     {
         $this->bootedCallbacks[] = $callback;
     }
 
     /**
      * Call the registered booting callbacks.
-     *
-     * @return void
      */
-    public function callBootingCallbacks()
+    public function callBootingCallbacks(): void
     {
         $index = 0;
 
@@ -139,10 +126,8 @@ abstract class ServiceProvider
 
     /**
      * Call the registered booted callbacks.
-     *
-     * @return void
      */
-    public function callBootedCallbacks()
+    public function callBootedCallbacks(): void
     {
         $index = 0;
 
@@ -211,7 +196,7 @@ abstract class ServiceProvider
      */
     protected function loadViewsFrom($path, $namespace)
     {
-        $this->callAfterResolving('view', function ($view) use ($path, $namespace) {
+        $this->callAfterResolving('view', function ($view) use ($path, $namespace): void {
             if (isset($this->app->config['view']['paths']) &&
                 is_array($this->app->config['view']['paths'])) {
                 foreach ($this->app->config['view']['paths'] as $viewPath) {
@@ -229,12 +214,11 @@ abstract class ServiceProvider
      * Register the given view components with a custom prefix.
      *
      * @param  string  $prefix
-     * @param  array  $components
      * @return void
      */
     protected function loadViewComponentsAs($prefix, array $components)
     {
-        $this->callAfterResolving(BladeCompiler::class, function ($blade) use ($prefix, $components) {
+        $this->callAfterResolving(BladeCompiler::class, function ($blade) use ($prefix, $components): void {
             foreach ($components as $alias => $component) {
                 $blade->component($component, is_string($alias) ? $alias : null, $prefix);
             }
@@ -263,7 +247,7 @@ abstract class ServiceProvider
      */
     protected function loadJsonTranslationsFrom($path)
     {
-        $this->callAfterResolving('translator', function ($translator) use ($path) {
+        $this->callAfterResolving('translator', function ($translator) use ($path): void {
             $translator->addJsonPath($path);
         });
     }
@@ -276,7 +260,7 @@ abstract class ServiceProvider
      */
     protected function loadMigrationsFrom($paths)
     {
-        $this->callAfterResolving('migrator', function ($migrator) use ($paths) {
+        $this->callAfterResolving('migrator', function ($migrator) use ($paths): void {
             foreach ((array) $paths as $path) {
                 $migrator->path($path);
             }
@@ -293,7 +277,7 @@ abstract class ServiceProvider
      */
     protected function loadFactoriesFrom($paths)
     {
-        $this->callAfterResolving(ModelFactory::class, function ($factory) use ($paths) {
+        $this->callAfterResolving(ModelFactory::class, function ($factory) use ($paths): void {
             foreach ((array) $paths as $path) {
                 $factory->load($path);
             }
@@ -307,7 +291,7 @@ abstract class ServiceProvider
      * @param  callable  $callback
      * @return void
      */
-    protected function callAfterResolving($name, $callback)
+    protected function callAfterResolving($name, ?\Closure $callback)
     {
         $this->app->afterResolving($name, $callback);
 
@@ -319,7 +303,6 @@ abstract class ServiceProvider
     /**
      * Register migration paths to be published by the publish command.
      *
-     * @param  array  $paths
      * @param  mixed  $groups
      * @return void
      */
@@ -335,7 +318,6 @@ abstract class ServiceProvider
     /**
      * Register paths to be published by the publish command.
      *
-     * @param  array  $paths
      * @param  mixed  $groups
      * @return void
      */
@@ -394,9 +376,7 @@ abstract class ServiceProvider
             return $paths;
         }
 
-        return (new Collection(static::$publishes))->reduce(function ($paths, $p) {
-            return array_merge($paths, $p);
-        }, []);
+        return (new Collection(static::$publishes))->reduce(fn($paths, $p) => array_merge($paths, $p), []);
     }
 
     /**
@@ -410,11 +390,14 @@ abstract class ServiceProvider
     {
         if ($provider && $group) {
             return static::pathsForProviderAndGroup($provider, $group);
-        } elseif ($group && array_key_exists($group, static::$publishGroups)) {
+        }
+        if ($group && array_key_exists($group, static::$publishGroups)) {
             return static::$publishGroups[$group];
-        } elseif ($provider && array_key_exists($provider, static::$publishes)) {
+        }
+        if ($provider && array_key_exists($provider, static::$publishes)) {
             return static::$publishes[$provider];
-        } elseif ($group || $provider) {
+        }
+        if ($group || $provider) {
             return [];
         }
     }
@@ -469,13 +452,12 @@ abstract class ServiceProvider
      * Register the package's custom Artisan commands.
      *
      * @param  mixed  $commands
-     * @return void
      */
-    public function commands($commands)
+    public function commands($commands): void
     {
         $commands = is_array($commands) ? $commands : func_get_args();
 
-        Artisan::starting(function ($artisan) use ($commands) {
+        Artisan::starting(function ($artisan) use ($commands): void {
             $artisan->resolveCommands($commands);
         });
     }
@@ -483,9 +465,6 @@ abstract class ServiceProvider
     /**
      * Register commands that should run on "optimize" or "optimize:clear".
      *
-     * @param  string|null  $optimize
-     * @param  string|null  $clear
-     * @param  string|null  $key
      * @return void
      */
     protected function optimizes(?string $optimize = null, ?string $clear = null, ?string $key = null)
@@ -505,7 +484,6 @@ abstract class ServiceProvider
      * Register commands that should run on "reload".
      *
      * @param  string|null  $reload
-     * @param  string|null  $key
      * @return void
      */
     protected function reloads(string $reload, ?string $key = null)
@@ -517,13 +495,10 @@ abstract class ServiceProvider
 
     /**
      * Get a short descriptive key for the current service provider.
-     *
-     * @param  string|null  $key
-     * @return string
      */
     protected function getProviderKey(?string $key = null): string
     {
-        $key ??= (string) Str::of(get_class($this))
+        $key ??= (string) Str::of(static::class)
             ->classBasename()
             ->before('ServiceProvider')
             ->kebab()
@@ -531,7 +506,7 @@ abstract class ServiceProvider
             ->trim();
 
         if (empty($key)) {
-            $key = class_basename(get_class($this));
+            return class_basename(static::class);
         }
 
         return $key;
@@ -580,8 +555,6 @@ abstract class ServiceProvider
     /**
      * Add the given provider to the application's provider bootstrap file.
      *
-     * @param  string  $provider
-     * @param  string|null  $path
      * @return bool
      */
     public static function addProviderToBootstrapFile(string $provider, ?string $path = null)
@@ -601,7 +574,7 @@ abstract class ServiceProvider
             ->unique()
             ->sort()
             ->values()
-            ->map(fn ($p) => '    '.$p.'::class,')
+            ->map(fn ($p): string => '    '.$p.'::class,')
             ->implode(PHP_EOL);
 
         $content = '<?php
@@ -618,9 +591,6 @@ return [
     /**
      * Remove a provider from the application's provider bootstrap file.
      *
-     * @param  string|array  $providersToRemove
-     * @param  string|null  $path
-     * @param  bool  $strict
      * @return bool
      */
     public static function removeProviderFromBootstrapFile(string|array $providersToRemove, ?string $path = null, bool $strict = false)
@@ -643,10 +613,10 @@ return [
             ->values()
             ->when(
                 $strict,
-                static fn (Collection $providerCollection) => $providerCollection->reject(fn (string $p) => in_array($p, $providersToRemove, true)),
+                static fn (Collection $providerCollection) => $providerCollection->reject(fn (string $p): bool => in_array($p, $providersToRemove, true)),
                 static fn (Collection $providerCollection) => $providerCollection->reject(fn (string $p) => Str::contains($p, $providersToRemove))
             )
-            ->map(fn ($p) => '    '.$p.'::class,')
+            ->map(fn ($p): string => '    '.$p.'::class,')
             ->implode(PHP_EOL);
 
         $content = '<?php

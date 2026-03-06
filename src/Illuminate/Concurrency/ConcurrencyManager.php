@@ -25,10 +25,8 @@ class ConcurrencyManager extends MultipleInstanceManager
 
     /**
      * Create an instance of the process concurrency driver.
-     *
-     * @return \Illuminate\Concurrency\ProcessDriver
      */
-    public function createProcessDriver()
+    public function createProcessDriver(): \Illuminate\Concurrency\ProcessDriver
     {
         return new ProcessDriver($this->app->make(ProcessFactory::class));
     }
@@ -36,11 +34,10 @@ class ConcurrencyManager extends MultipleInstanceManager
     /**
      * Create an instance of the fork concurrency driver.
      *
-     * @return \Illuminate\Concurrency\ForkDriver
      *
      * @throws \RuntimeException
      */
-    public function createForkDriver()
+    public function createForkDriver(): \Illuminate\Concurrency\ForkDriver
     {
         if (! $this->app->runningInConsole()) {
             throw new RuntimeException('Due to PHP limitations, the fork driver may not be used within web requests.');
@@ -55,10 +52,8 @@ class ConcurrencyManager extends MultipleInstanceManager
 
     /**
      * Create an instance of the sync concurrency driver.
-     *
-     * @return \Illuminate\Concurrency\SyncDriver
      */
-    public function createSyncDriver()
+    public function createSyncDriver(): \Illuminate\Concurrency\SyncDriver
     {
         return new SyncDriver;
     }
@@ -79,9 +74,8 @@ class ConcurrencyManager extends MultipleInstanceManager
      * Set the default instance name.
      *
      * @param  string  $name
-     * @return void
      */
-    public function setDefaultInstance($name)
+    public function setDefaultInstance($name): void
     {
         $this->app['config']['concurrency.default'] = $name;
         $this->app['config']['concurrency.driver'] = $name;

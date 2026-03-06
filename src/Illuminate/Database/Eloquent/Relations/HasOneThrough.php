@@ -34,7 +34,7 @@ class HasOneThrough extends HasOneOrManyThrough implements SupportsPartialRelati
     }
 
     /** @inheritDoc */
-    public function initRelation(array $models, $relation)
+    public function initRelation(array $models, $relation): array
     {
         foreach ($models as $model) {
             $model->setRelation($relation, $this->getDefaultFor($model));
@@ -44,7 +44,7 @@ class HasOneThrough extends HasOneOrManyThrough implements SupportsPartialRelati
     }
 
     /** @inheritDoc */
-    public function match(array $models, EloquentCollection $results, $relation)
+    public function match(array $models, EloquentCollection $results, $relation): array
     {
         $dictionary = $this->buildDictionary($results);
 
@@ -77,7 +77,7 @@ class HasOneThrough extends HasOneOrManyThrough implements SupportsPartialRelati
     }
 
     /** @inheritDoc */
-    public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null)
+    public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null): void
     {
         $query->addSelect([$this->getQualifiedFirstKeyName()]);
 
@@ -88,13 +88,13 @@ class HasOneThrough extends HasOneOrManyThrough implements SupportsPartialRelati
     }
 
     /** @inheritDoc */
-    public function getOneOfManySubQuerySelectColumns()
+    public function getOneOfManySubQuerySelectColumns(): array
     {
         return [$this->getQualifiedFirstKeyName()];
     }
 
     /** @inheritDoc */
-    public function addOneOfManyJoinSubQueryConstraints(JoinClause $join)
+    public function addOneOfManyJoinSubQueryConstraints(JoinClause $join): void
     {
         $join->on($this->qualifySubSelectColumn($this->firstKey), '=', $this->getQualifiedFirstKeyName());
     }

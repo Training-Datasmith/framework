@@ -7,20 +7,6 @@ use Illuminate\Http\UploadedFile;
 class File extends UploadedFile
 {
     /**
-     * The name of the file.
-     *
-     * @var string
-     */
-    public $name;
-
-    /**
-     * The temporary file resource.
-     *
-     * @var resource
-     */
-    public $tempFile;
-
-    /**
      * The "size" to report.
      *
      * @var int
@@ -40,13 +26,16 @@ class File extends UploadedFile
      * @param  string  $name
      * @param  resource  $tempFile
      */
-    public function __construct($name, $tempFile)
+    public function __construct(/**
+     * The name of the file.
+     */
+    public $name, /**
+     * The temporary file resource.
+     */
+    public $tempFile)
     {
-        $this->name = $name;
-        $this->tempFile = $tempFile;
-
         parent::__construct(
-            $this->tempFilePath(), $name, $this->getMimeType(),
+            $this->tempFilePath(), $this->name, $this->getMimeType(),
             null, true
         );
     }
@@ -103,8 +92,6 @@ class File extends UploadedFile
 
     /**
      * Get the size of the file.
-     *
-     * @return int
      */
     public function getSize(): int
     {
@@ -126,8 +113,6 @@ class File extends UploadedFile
 
     /**
      * Get the MIME type of the file.
-     *
-     * @return string
      */
     public function getMimeType(): string
     {

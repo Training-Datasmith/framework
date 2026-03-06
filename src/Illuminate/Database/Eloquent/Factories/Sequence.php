@@ -40,8 +40,6 @@ class Sequence implements Countable
 
     /**
      * Get the current count of the sequence items.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -57,7 +55,7 @@ class Sequence implements Countable
      */
     public function __invoke($attributes = [], $parent = null)
     {
-        return tap(value($this->sequence[$this->index % $this->count], $this, $attributes, $parent), function () {
+        return tap(value($this->sequence[$this->index % $this->count], $this, $attributes, $parent), function (): void {
             $this->index = $this->index + 1;
         });
     }

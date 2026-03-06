@@ -21,13 +21,6 @@ class PendingBatch
     use Conditionable;
 
     /**
-     * The IoC container instance.
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $container;
-
-    /**
      * The batch name.
      *
      * @var string
@@ -57,15 +50,13 @@ class PendingBatch
 
     /**
      * Create a new pending batch instance.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
-     * @param  \Illuminate\Support\Collection  $jobs
      */
-    public function __construct(Container $container, Collection $jobs)
+    public function __construct(/**
+     * The IoC container instance.
+     */
+    protected \Illuminate\Contracts\Container\Container $container, Collection $jobs)
     {
-        $this->container = $container;
-
-        $this->jobs = $jobs->filter()->values()->each(function (object|array $job) {
+        $this->jobs = $jobs->filter()->values()->each(function (object|array $job): void {
             $this->ensureJobIsBatchable($job);
         });
     }
@@ -76,7 +67,7 @@ class PendingBatch
      * @param  iterable|object|array  $jobs
      * @return $this
      */
-    public function add($jobs)
+    public function add($jobs): static
     {
         $jobs = is_iterable($jobs) ? $jobs : Arr::wrap($jobs);
 
@@ -91,9 +82,6 @@ class PendingBatch
 
     /**
      * Ensure the given job is batchable.
-     *
-     * @param  object|array  $job
-     * @return void
      */
     protected function ensureJobIsBatchable(object|array $job): void
     {
@@ -115,10 +103,9 @@ class PendingBatch
     /**
      * Add a callback to be executed when the batch is stored.
      *
-     * @param  callable  $callback
      * @return $this
      */
-    public function before($callback)
+    public function before(\Closure|callable $callback): static
     {
         $this->registerCallback('before', $callback);
 
@@ -138,10 +125,9 @@ class PendingBatch
     /**
      * Add a callback to be executed after a job in the batch have executed successfully.
      *
-     * @param  callable  $callback
      * @return $this
      */
-    public function progress($callback)
+    public function progress(\Closure|callable $callback): static
     {
         $this->registerCallback('progress', $callback);
 
@@ -161,10 +147,9 @@ class PendingBatch
     /**
      * Add a callback to be executed after all jobs in the batch have executed successfully.
      *
-     * @param  callable  $callback
      * @return $this
      */
-    public function then($callback)
+    public function then(\Closure|callable $callback): static
     {
         $this->registerCallback('then', $callback);
 
@@ -184,10 +169,9 @@ class PendingBatch
     /**
      * Add a callback to be executed after the first failing job in the batch.
      *
-     * @param  callable  $callback
      * @return $this
      */
-    public function catch($callback)
+    public function catch(\Closure|callable $callback): static
     {
         $this->registerCallback('catch', $callback);
 
@@ -207,10 +191,9 @@ class PendingBatch
     /**
      * Add a callback to be executed after the batch has finished executing.
      *
-     * @param  callable  $callback
      * @return $this
      */
-    public function finally($callback)
+    public function finally(\Closure|callable $callback): static
     {
         $this->registerCallback('finally', $callback);
 
@@ -237,7 +220,7 @@ class PendingBatch
      * @param  bool|TParam|array<array-key, TParam>  $param
      * @return $this
      */
-    public function allowFailures($param = true)
+    public function allowFailures($param = true): static
     {
         if (! is_bool($param)) {
             $param = Arr::wrap($param);
@@ -256,10 +239,8 @@ class PendingBatch
 
     /**
      * Determine if the pending batch allows jobs to fail without cancelling the batch.
-     *
-     * @return bool
      */
-    public function allowsFailures()
+    public function allowsFailures(): bool
     {
         return Arr::get($this->options, 'allowFailures', false) === true;
     }
@@ -287,10 +268,9 @@ class PendingBatch
     /**
      * Set the name for the batch.
      *
-     * @param  string  $name
      * @return $this
      */
-    public function name(string $name)
+    public function name(string $name): static
     {
         $this->name = $name;
 
@@ -300,10 +280,9 @@ class PendingBatch
     /**
      * Specify the queue connection that the batched jobs should run on.
      *
-     * @param  \UnitEnum|string  $connection
      * @return $this
      */
-    public function onConnection(UnitEnum|string $connection)
+    public function onConnection(UnitEnum|string $connection): static
     {
         $this->options['connection'] = enum_value($connection);
 
@@ -326,7 +305,7 @@ class PendingBatch
      * @param  \UnitEnum|string|null  $queue
      * @return $this
      */
-    public function onQueue($queue)
+    public function onQueue($queue): static
     {
         $this->options['queue'] = enum_value($queue);
 
@@ -346,11 +325,10 @@ class PendingBatch
     /**
      * Add additional data into the batch's options array.
      *
-     * @param  string  $key
      * @param  mixed  $value
      * @return $this
      */
-    public function withOption(string $key, $value)
+    public function withOption(string $key, $value): static
     {
         $this->options[$key] = $value;
 
@@ -399,7 +377,7 @@ class PendingBatch
         $batch = $this->store($repository);
 
         if ($batch) {
-            $this->container->terminating(function () use ($batch) {
+            $this->container->terminating(function () use ($batch): void {
                 $this->dispatchExistingBatch($batch);
             });
         }

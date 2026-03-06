@@ -31,30 +31,20 @@ class SeedCommand extends Command
     protected $description = 'Seed the database with records';
 
     /**
-     * The connection resolver instance.
-     *
-     * @var \Illuminate\Database\ConnectionResolverInterface
-     */
-    protected $resolver;
-
-    /**
      * Create a new database seed command instance.
-     *
-     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
      */
-    public function __construct(Resolver $resolver)
+    public function __construct(/**
+     * The connection resolver instance.
+     */
+    protected \Illuminate\Database\ConnectionResolverInterface $resolver)
     {
         parent::__construct();
-
-        $this->resolver = $resolver;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         if ($this->isProhibited() ||
             ! $this->confirmToProceed()) {
@@ -67,7 +57,7 @@ class SeedCommand extends Command
 
         $this->resolver->setDefaultConnection($this->getDatabase());
 
-        Model::unguarded(function () {
+        Model::unguarded(function (): void {
             $this->getSeeder()->__invoke();
         });
 
@@ -115,10 +105,8 @@ class SeedCommand extends Command
 
     /**
      * Get the console command arguments.
-     *
-     * @return array
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['class', InputArgument::OPTIONAL, 'The class name of the root seeder', null],
@@ -127,10 +115,8 @@ class SeedCommand extends Command
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['class', null, InputOption::VALUE_OPTIONAL, 'The class name of the root seeder', 'Database\\Seeders\\DatabaseSeeder'],

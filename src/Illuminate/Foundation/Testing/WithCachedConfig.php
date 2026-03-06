@@ -36,6 +36,6 @@ trait WithCachedConfig
     {
         $app->instance('config_loaded_from_cache', true);
 
-        LoadConfiguration::alwaysUse(static fn () => CachedState::$cachedConfig);
+        LoadConfiguration::alwaysUse(static fn (): ?array => CachedState::$cachedConfig);
     }
 }

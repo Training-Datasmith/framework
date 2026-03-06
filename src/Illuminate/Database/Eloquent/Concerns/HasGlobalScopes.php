@@ -15,10 +15,8 @@ trait HasGlobalScopes
 {
     /**
      * Boot the has global scopes trait for a model.
-     *
-     * @return void
      */
-    public static function bootHasGlobalScopes()
+    public static function bootHasGlobalScopes(): void
     {
         static::addGlobalScopes(static::resolveGlobalScopeAttributes());
     }
@@ -38,7 +36,7 @@ trait HasGlobalScopes
             $attributes->push(...$trait->getAttributes(ScopedBy::class, ReflectionAttribute::IS_INSTANCEOF));
         }
 
-        return $attributes->map(fn ($attribute) => $attribute->getArguments())
+        return $attributes->map(fn ($attribute): array => $attribute->getArguments())
             ->flatten()
             ->all();
     }
@@ -48,19 +46,21 @@ trait HasGlobalScopes
      *
      * @param  \Illuminate\Database\Eloquent\Scope|(\Closure(\Illuminate\Database\Eloquent\Builder<static>): mixed)|string  $scope
      * @param  \Illuminate\Database\Eloquent\Scope|(\Closure(\Illuminate\Database\Eloquent\Builder<static>): mixed)|null  $implementation
-     * @return mixed
      *
      * @throws \InvalidArgumentException
      */
-    public static function addGlobalScope($scope, $implementation = null)
+    public static function addGlobalScope($scope, $implementation = null): \Closure|\Illuminate\Database\Eloquent\Scope
     {
         if (is_string($scope) && ($implementation instanceof Closure || $implementation instanceof Scope)) {
             return static::$globalScopes[static::class][$scope] = $implementation;
-        } elseif ($scope instanceof Closure) {
+        }
+        if ($scope instanceof Closure) {
             return static::$globalScopes[static::class][spl_object_hash($scope)] = $scope;
-        } elseif ($scope instanceof Scope) {
-            return static::$globalScopes[static::class][get_class($scope)] = $scope;
-        } elseif (is_string($scope) && class_exists($scope) && is_subclass_of($scope, Scope::class)) {
+        }
+        if ($scope instanceof Scope) {
+            return static::$globalScopes[static::class][$scope::class] = $scope;
+        }
+        if (is_string($scope) && class_exists($scope) && is_subclass_of($scope, Scope::class)) {
             return static::$globalScopes[static::class][$scope] = new $scope;
         }
 
@@ -69,11 +69,8 @@ trait HasGlobalScopes
 
     /**
      * Register multiple global scopes on the model.
-     *
-     * @param  array  $scopes
-     * @return void
      */
-    public static function addGlobalScopes(array $scopes)
+    public static function addGlobalScopes(array $scopes): void
     {
         foreach ($scopes as $key => $scope) {
             if (is_string($key)) {
@@ -88,9 +85,8 @@ trait HasGlobalScopes
      * Determine if a model has a global scope.
      *
      * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
-     * @return bool
      */
-    public static function hasGlobalScope($scope)
+    public static function hasGlobalScope($scope): bool
     {
         return ! is_null(static::getGlobalScope($scope));
     }
@@ -108,7 +104,7 @@ trait HasGlobalScopes
         }
 
         return Arr::get(
-            static::$globalScopes, static::class.'.'.get_class($scope)
+            static::$globalScopes, static::class.'.'.$scope::class
         );
     }
 
@@ -126,9 +122,8 @@ trait HasGlobalScopes
      * Set the current global scopes.
      *
      * @param  array  $scopes
-     * @return void
      */
-    public static function setAllGlobalScopes($scopes)
+    public static function setAllGlobalScopes($scopes): void
     {
         static::$globalScopes = $scopes;
     }

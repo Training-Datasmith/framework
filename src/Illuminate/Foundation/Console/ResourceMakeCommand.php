@@ -32,10 +32,8 @@ class ResourceMakeCommand extends GeneratorCommand
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         if ($this->collection()) {
             $this->type = 'Resource collection';
@@ -60,22 +58,21 @@ class ResourceMakeCommand extends GeneratorCommand
 
     /**
      * Determine if the command is generating a resource collection.
-     *
-     * @return bool
      */
-    protected function collection()
+    protected function collection(): bool
     {
-        return $this->option('collection') ||
-               str_ends_with($this->argument('name'), 'Collection');
+        if ($this->option('collection')) {
+            return true;
+        }
+        return str_ends_with($this->argument('name'), 'Collection');
     }
 
     /**
      * Resolve the fully-qualified path to the stub.
      *
-     * @param  string  $stub
      * @return string
      */
-    protected function resolveStubPath($stub)
+    protected function resolveStubPath(string $stub)
     {
         return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
@@ -86,19 +83,16 @@ class ResourceMakeCommand extends GeneratorCommand
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
-     * @return string
      */
-    protected function getDefaultNamespace($rootNamespace)
+    protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\Http\Resources';
     }
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the resource already exists'],

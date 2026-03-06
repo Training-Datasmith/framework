@@ -188,10 +188,9 @@ trait InteractsWithIO
      * Prompt the user for input but hide the answer from the console.
      *
      * @param  string  $question
-     * @param  bool  $fallback
      * @return mixed
      */
-    public function secret($question, $fallback = true)
+    public function secret($question, bool $fallback = true)
     {
         $question = new Question($question);
 
@@ -207,10 +206,9 @@ trait InteractsWithIO
      * @param  array<\Stringable|string|float|int|bool>  $choices
      * @param  string|int|null  $default
      * @param  ?positive-int  $attempts
-     * @param  bool  $multiple
      * @return string|array
      */
-    public function choice($question, array $choices, $default = null, $attempts = null, $multiple = false)
+    public function choice($question, array $choices, $default = null, ?int $attempts = null, bool $multiple = false)
     {
         $question = new ChoiceQuestion($question, $choices, $default);
 
@@ -224,11 +222,9 @@ trait InteractsWithIO
      *
      * @param  array  $headers
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $rows
-     * @param  \Symfony\Component\Console\Helper\TableStyle|string  $tableStyle
      * @param  array<int, \Symfony\Component\Console\Helper\TableStyle|string>  $columnStyles
-     * @return void
      */
-    public function table($headers, $rows, $tableStyle = 'default', array $columnStyles = [])
+    public function table($headers, $rows, \Symfony\Component\Console\Helper\TableStyle|string $tableStyle = 'default', array $columnStyles = []): void
     {
         $table = new Table($this->output);
 
@@ -285,9 +281,8 @@ trait InteractsWithIO
      *
      * @param  string  $string
      * @param  'v'|'vv'|'vvv'|'quiet'|'normal'|\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_*|null  $verbosity
-     * @return void
      */
-    public function info($string, $verbosity = null)
+    public function info($string, $verbosity = null): void
     {
         $this->line($string, 'info', $verbosity);
     }
@@ -298,9 +293,8 @@ trait InteractsWithIO
      * @param  string  $string
      * @param  'info'|'comment'|'question'|'error'|'warn'|'alert'|null  $style
      * @param  'v'|'vv'|'vvv'|'quiet'|'normal'|\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_*|null  $verbosity
-     * @return void
      */
-    public function line($string, $style = null, $verbosity = null)
+    public function line($string, $style = null, $verbosity = null): void
     {
         $styled = $style ? "<$style>$string</$style>" : $string;
 
@@ -312,9 +306,8 @@ trait InteractsWithIO
      *
      * @param  string  $string
      * @param  'v'|'vv'|'vvv'|'quiet'|'normal'|\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_*|null  $verbosity
-     * @return void
      */
-    public function comment($string, $verbosity = null)
+    public function comment($string, $verbosity = null): void
     {
         $this->line($string, 'comment', $verbosity);
     }
@@ -324,9 +317,8 @@ trait InteractsWithIO
      *
      * @param  string  $string
      * @param  'v'|'vv'|'vvv'|'quiet'|'normal'|\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_*|null  $verbosity
-     * @return void
      */
-    public function question($string, $verbosity = null)
+    public function question($string, $verbosity = null): void
     {
         $this->line($string, 'question', $verbosity);
     }
@@ -336,9 +328,8 @@ trait InteractsWithIO
      *
      * @param  string  $string
      * @param  'v'|'vv'|'vvv'|'quiet'|'normal'|\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_*|null  $verbosity
-     * @return void
      */
-    public function error($string, $verbosity = null)
+    public function error($string, $verbosity = null): void
     {
         $this->line($string, 'error', $verbosity);
     }
@@ -348,9 +339,8 @@ trait InteractsWithIO
      *
      * @param  string  $string
      * @param  'v'|'vv'|'vvv'|'quiet'|'normal'|\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_*|null  $verbosity
-     * @return void
      */
-    public function warn($string, $verbosity = null)
+    public function warn($string, $verbosity = null): void
     {
         if (! $this->output->getFormatter()->hasStyle('warning')) {
             $style = new OutputFormatterStyle('yellow');
@@ -364,11 +354,9 @@ trait InteractsWithIO
     /**
      * Write a string in an alert box.
      *
-     * @param  string  $string
      * @param  'v'|'vv'|'vvv'|'quiet'|'normal'|\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_*|null  $verbosity
-     * @return void
      */
-    public function alert($string, $verbosity = null)
+    public function alert(string $string, $verbosity = null): void
     {
         $length = Str::length(strip_tags($string)) + 12;
 
@@ -394,22 +382,16 @@ trait InteractsWithIO
 
     /**
      * Set the input interface implementation.
-     *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @return void
      */
-    public function setInput(InputInterface $input)
+    public function setInput(InputInterface $input): void
     {
         $this->input = $input;
     }
 
     /**
      * Set the output interface implementation.
-     *
-     * @param  \Illuminate\Console\OutputStyle  $output
-     * @return void
      */
-    public function setOutput(OutputStyle $output)
+    public function setOutput(OutputStyle $output): void
     {
         $this->output = $output;
     }

@@ -13,57 +13,42 @@ namespace Illuminate\Support;
 class HigherOrderCollectionProxy
 {
     /**
-     * The collection being operated on.
-     *
-     * @var \Illuminate\Support\Enumerable<TKey, TValue>
-     */
-    protected $collection;
-
-    /**
-     * The method being proxied.
-     *
-     * @var string
-     */
-    protected $method;
-
-    /**
      * Create a new proxy instance.
      *
      * @param  \Illuminate\Support\Enumerable<TKey, TValue>  $collection
      * @param  string  $method
      */
-    public function __construct(Enumerable $collection, $method)
+    public function __construct(
+        /**
+         * The collection being operated on.
+         */
+        protected \Illuminate\Support\Enumerable $collection,
+        /**
+         * The method being proxied.
+         */
+        protected $method
+    )
     {
-        $this->method = $method;
-        $this->collection = $collection;
     }
 
     /**
      * Proxy accessing an attribute onto the collection items.
-     *
-     * @param  string  $key
-     * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
-        return $this->collection->{$this->method}(function ($value) use ($key) {
-            return is_array($value) ? $value[$key] : $value->{$key};
-        });
+        return $this->collection->{$this->method}(fn($value) => is_array($value) ? $value[$key] : $value->{$key});
     }
 
     /**
      * Proxy a method call onto the collection items.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
-        return $this->collection->{$this->method}(function ($value) use ($method, $parameters) {
-            return is_string($value)
-                ? $value::{$method}(...$parameters)
-                : $value->{$method}(...$parameters);
-        });
+        return $this->collection->{$this->method}(fn($value) => is_string($value)
+            ? $value::{$method}(...$parameters)
+            : $value->{$method}(...$parameters));
     }
 }

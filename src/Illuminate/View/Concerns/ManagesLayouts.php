@@ -41,9 +41,8 @@ trait ManagesLayouts
      *
      * @param  string  $section
      * @param  string|null  $content
-     * @return void
      */
-    public function startSection($section, $content = null)
+    public function startSection($section, $content = null): void
     {
         if ($content === null) {
             if (ob_start()) {
@@ -59,9 +58,8 @@ trait ManagesLayouts
      *
      * @param  string  $section
      * @param  string  $content
-     * @return void
      */
-    public function inject($section, $content)
+    public function inject($section, $content): void
     {
         $this->startSection($section, $content);
     }
@@ -150,9 +148,8 @@ trait ManagesLayouts
      *
      * @param  string  $section
      * @param  string  $default
-     * @return string
      */
-    public function yieldContent($section, $default = '')
+    public function yieldContent($section, $default = ''): string
     {
         $sectionContent = $default instanceof View ? $default : e($default);
 
@@ -170,10 +167,9 @@ trait ManagesLayouts
     /**
      * Get the parent placeholder for the current request.
      *
-     * @param  string  $section
      * @return string
      */
-    public static function parentPlaceholder($section = '')
+    public static function parentPlaceholder(string $section = '')
     {
         if (! isset(static::$parentPlaceholder[$section])) {
             $salt = static::parentPlaceholderSalt();
@@ -202,9 +198,8 @@ trait ManagesLayouts
      * Check if section exists.
      *
      * @param  string  $name
-     * @return bool
      */
-    public function hasSection($name)
+    public function hasSection($name): bool
     {
         return array_key_exists($name, $this->sections);
     }
@@ -213,9 +208,8 @@ trait ManagesLayouts
      * Check if section does not exist.
      *
      * @param  string  $name
-     * @return bool
      */
-    public function sectionMissing($name)
+    public function sectionMissing($name): bool
     {
         return ! $this->hasSection($name);
     }
@@ -244,10 +238,8 @@ trait ManagesLayouts
 
     /**
      * Flush all of the sections.
-     *
-     * @return void
      */
-    public function flushSections()
+    public function flushSections(): void
     {
         $this->sections = [];
         $this->sectionStack = [];

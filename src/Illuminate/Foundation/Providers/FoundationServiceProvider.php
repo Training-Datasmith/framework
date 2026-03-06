@@ -60,10 +60,8 @@ class FoundationServiceProvider extends AggregateServiceProvider
 
     /**
      * Boot the service provider.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
@@ -80,10 +78,8 @@ class FoundationServiceProvider extends AggregateServiceProvider
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         parent::register();
 
@@ -100,22 +96,16 @@ class FoundationServiceProvider extends AggregateServiceProvider
 
     /**
      * Register the console schedule implementation.
-     *
-     * @return void
      */
-    public function registerConsoleSchedule()
+    public function registerConsoleSchedule(): void
     {
-        $this->app->singleton(Schedule::class, function ($app) {
-            return $app->make(ConsoleKernel::class)->resolveConsoleSchedule();
-        });
+        $this->app->singleton(Schedule::class, fn($app) => $app->make(ConsoleKernel::class)->resolveConsoleSchedule());
     }
 
     /**
      * Register a var dumper (with source) to debug variables.
-     *
-     * @return void
      */
-    public function registerDumper()
+    public function registerDumper(): void
     {
         AbstractCloner::$defaultCasters[ConnectionInterface::class] ??= [StubCaster::class, 'cutInternals'];
         AbstractCloner::$defaultCasters[Container::class] ??= [StubCaster::class, 'cutInternals'];
@@ -133,28 +123,24 @@ class FoundationServiceProvider extends AggregateServiceProvider
             'html' == $format => HtmlDumper::register($basePath, $compiledViewPath),
             'cli' == $format => CliDumper::register($basePath, $compiledViewPath),
             'server' == $format => null,
-            $format && 'tcp' == parse_url($format, PHP_URL_SCHEME) => null,
+            $format && 'tcp' == parse_url((string) $format, PHP_URL_SCHEME) => null,
             default => in_array(PHP_SAPI, ['cli', 'phpdbg']) ? CliDumper::register($basePath, $compiledViewPath) : HtmlDumper::register($basePath, $compiledViewPath),
         };
     }
 
     /**
      * Register the "validate" macro on the request.
-     *
-     * @return void
      */
-    public function registerRequestValidation()
+    public function registerRequestValidation(): void
     {
-        Request::macro('validate', function (array $rules, ...$params) {
-            return tap(validator($this->all(), $rules, ...$params), function ($validator) {
-                if ($this->isPrecognitive()) {
-                    $validator->after(Precognition::afterValidationHook($this))
-                        ->setRules(
-                            $this->filterPrecognitiveRules($validator->getRulesWithoutPlaceholders())
-                        );
-                }
-            })->validate();
-        });
+        Request::macro('validate', fn(array $rules, ...$params) => tap(validator($this->all(), $rules, ...$params), function ($validator): void {
+            if ($this->isPrecognitive()) {
+                $validator->after(Precognition::afterValidationHook($this))
+                    ->setRules(
+                        $this->filterPrecognitiveRules($validator->getRulesWithoutPlaceholders())
+                    );
+            }
+        })->validate());
 
         Request::macro('validateWithBag', function (string $errorBag, array $rules, ...$params) {
             try {
@@ -169,26 +155,16 @@ class FoundationServiceProvider extends AggregateServiceProvider
 
     /**
      * Register the "hasValidSignature" macro on the request.
-     *
-     * @return void
      */
-    public function registerRequestSignatureValidation()
+    public function registerRequestSignatureValidation(): void
     {
-        Request::macro('hasValidSignature', function ($absolute = true) {
-            return URL::hasValidSignature($this, $absolute);
-        });
+        Request::macro('hasValidSignature', fn($absolute = true) => URL::hasValidSignature($this, $absolute));
 
-        Request::macro('hasValidRelativeSignature', function () {
-            return URL::hasValidSignature($this, $absolute = false);
-        });
+        Request::macro('hasValidRelativeSignature', fn() => URL::hasValidSignature($this, $absolute = false));
 
-        Request::macro('hasValidSignatureWhileIgnoring', function ($ignoreQuery = [], $absolute = true) {
-            return URL::hasValidSignature($this, $absolute, $ignoreQuery);
-        });
+        Request::macro('hasValidSignatureWhileIgnoring', fn($ignoreQuery = [], $absolute = true) => URL::hasValidSignature($this, $absolute, $ignoreQuery));
 
-        Request::macro('hasValidRelativeSignatureWhileIgnoring', function ($ignoreQuery = []) {
-            return URL::hasValidSignature($this, $absolute = false, $ignoreQuery);
-        });
+        Request::macro('hasValidRelativeSignatureWhileIgnoring', fn($ignoreQuery = []) => URL::hasValidSignature($this, $absolute = false, $ignoreQuery));
     }
 
     /**
@@ -210,16 +186,16 @@ class FoundationServiceProvider extends AggregateServiceProvider
     {
         $this->app->scoped(DeferredCallbackCollection::class);
 
-        $this->app['events']->listen(function (CommandFinished $event) {
-            app(DeferredCallbackCollection::class)->invokeWhen(fn ($callback) => app()->runningInConsole() && ($event->exitCode === 0 || $callback->always));
+        $this->app['events']->listen(function (CommandFinished $event): void {
+            app(DeferredCallbackCollection::class)->invokeWhen(fn ($callback): bool => app()->runningInConsole() && ($event->exitCode === 0 || $callback->always));
         });
 
-        $this->app['events']->listen(function (JobAttempted $event) {
+        $this->app['events']->listen(function (JobAttempted $event): void {
             if (in_array($event->connectionName, ['sync', 'deferred'])) {
                 return;
             }
 
-            app(DeferredCallbackCollection::class)->invokeWhen(fn ($callback) => ($event->successful() || $callback->always));
+            app(DeferredCallbackCollection::class)->invokeWhen(fn ($callback): bool => ($event->successful() || $callback->always));
         });
     }
 
@@ -239,7 +215,7 @@ class FoundationServiceProvider extends AggregateServiceProvider
             new LoggedExceptionCollection
         );
 
-        $this->app->make('events')->listen(MessageLogged::class, function ($event) {
+        $this->app->make('events')->listen(MessageLogged::class, function ($event): void {
             if (isset($event->context['exception'])) {
                 $this->app->make(LoggedExceptionCollection::class)
                     ->push($event->context['exception']);
@@ -262,7 +238,7 @@ class FoundationServiceProvider extends AggregateServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/exceptions/renderer', 'laravel-exceptions-renderer');
 
-        $this->app->singleton(Renderer::class, function (Application $app) {
+        $this->app->singleton(Renderer::class, function (Application $app): \Illuminate\Foundation\Exceptions\Renderer\Renderer {
             $errorRenderer = new HtmlErrorRenderer(
                 $app['config']->get('app.debug'),
             );
@@ -281,10 +257,8 @@ class FoundationServiceProvider extends AggregateServiceProvider
 
     /**
      * Register the maintenance mode manager service.
-     *
-     * @return void
      */
-    public function registerMaintenanceModeManager()
+    public function registerMaintenanceModeManager(): void
     {
         $this->app->singleton(MaintenanceModeManager::class);
 

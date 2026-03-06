@@ -27,10 +27,8 @@ class EventFake implements Dispatcher, Fake
 
     /**
      * The event types that should be intercepted instead of dispatched.
-     *
-     * @var array
      */
-    protected $eventsToFake = [];
+    protected array $eventsToFake;
 
     /**
      * The event types that should be dispatched instead of intercepted.
@@ -49,7 +47,6 @@ class EventFake implements Dispatcher, Fake
     /**
      * Create a new event fake instance.
      *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
      * @param  array|string  $eventsToFake
      */
     public function __construct(Dispatcher $dispatcher, $eventsToFake = [])
@@ -65,7 +62,7 @@ class EventFake implements Dispatcher, Fake
      * @param  array|string  $eventsToDispatch
      * @return $this
      */
-    public function except($eventsToDispatch)
+    public function except($eventsToDispatch): static
     {
         $this->eventsToDispatch = array_merge(
             $this->eventsToDispatch,
@@ -78,11 +75,9 @@ class EventFake implements Dispatcher, Fake
     /**
      * Assert if an event has a listener attached to it.
      *
-     * @param  string  $expectedEvent
      * @param  string|array  $expectedListener
-     * @return void
      */
-    public function assertListening($expectedEvent, $expectedListener)
+    public function assertListening(string $expectedEvent, $expectedListener): void
     {
         foreach ($this->dispatcher->getListeners($expectedEvent) as $listenerClosure) {
             $actualListener = (new ReflectionFunction($listenerClosure))
@@ -151,9 +146,8 @@ class EventFake implements Dispatcher, Fake
      * Assert if an event was dispatched exactly once.
      *
      * @param  string  $event
-     * @return void
      */
-    public function assertDispatchedOnce($event)
+    public function assertDispatchedOnce($event): void
     {
         $this->assertDispatchedTimes($event, 1);
     }
@@ -163,9 +157,8 @@ class EventFake implements Dispatcher, Fake
      *
      * @param  string  $event
      * @param  int  $times
-     * @return void
      */
-    public function assertDispatchedTimes($event, $times = 1)
+    public function assertDispatchedTimes($event, $times = 1): void
     {
         $count = $this->dispatched($event)->count();
 
@@ -184,9 +177,8 @@ class EventFake implements Dispatcher, Fake
      *
      * @param  string|\Closure  $event
      * @param  callable|null  $callback
-     * @return void
      */
-    public function assertNotDispatched($event, $callback = null)
+    public function assertNotDispatched($event, $callback = null): void
     {
         if ($event instanceof Closure) {
             [$event, $callback] = [$this->firstClosureParameterType($event), $event];
@@ -200,15 +192,13 @@ class EventFake implements Dispatcher, Fake
 
     /**
      * Assert that no events were dispatched.
-     *
-     * @return void
      */
-    public function assertNothingDispatched()
+    public function assertNothingDispatched(): void
     {
         $count = count(Arr::flatten($this->events));
 
         $eventNames = (new Collection($this->events))
-            ->map(fn ($events, $eventName) => sprintf(
+            ->map(fn ($events, string $eventName): string => sprintf(
                 '%s dispatched %s %s',
                 $eventName,
                 count($events),
@@ -227,15 +217,14 @@ class EventFake implements Dispatcher, Fake
      *
      * @param  string  $event
      * @param  callable|null  $callback
-     * @return \Illuminate\Support\Collection
      */
-    public function dispatched($event, $callback = null)
+    public function dispatched($event, $callback = null): \Illuminate\Support\Collection
     {
         if (! $this->hasDispatched($event)) {
             return new Collection;
         }
 
-        $callback = $callback ?: fn () => true;
+        $callback = $callback ?: fn (): true => true;
 
         return (new Collection($this->events[$event]))->filter(
             fn ($arguments) => $callback(...$arguments)
@@ -246,9 +235,8 @@ class EventFake implements Dispatcher, Fake
      * Determine if the given event has been dispatched.
      *
      * @param  string  $event
-     * @return bool
      */
-    public function hasDispatched($event)
+    public function hasDispatched($event): bool
     {
         return isset($this->events[$event]) && ! empty($this->events[$event]);
     }
@@ -258,9 +246,8 @@ class EventFake implements Dispatcher, Fake
      *
      * @param  \Closure|string|array  $events
      * @param  mixed  $listener
-     * @return void
      */
-    public function listen($events, $listener = null)
+    public function listen($events, $listener = null): void
     {
         $this->dispatcher->listen($events, $listener);
     }
@@ -281,9 +268,8 @@ class EventFake implements Dispatcher, Fake
      *
      * @param  string  $event
      * @param  array  $payload
-     * @return void
      */
-    public function push($event, $payload = [])
+    public function push($event, $payload = []): void
     {
         //
     }
@@ -292,9 +278,8 @@ class EventFake implements Dispatcher, Fake
      * Register an event subscriber with the dispatcher.
      *
      * @param  object|string  $subscriber
-     * @return void
      */
-    public function subscribe($subscriber)
+    public function subscribe($subscriber): void
     {
         $this->dispatcher->subscribe($subscriber);
     }
@@ -303,9 +288,8 @@ class EventFake implements Dispatcher, Fake
      * Flush a set of pushed events.
      *
      * @param  string  $event
-     * @return void
      */
-    public function flush($event)
+    public function flush($event): void
     {
         //
     }
@@ -320,7 +304,7 @@ class EventFake implements Dispatcher, Fake
      */
     public function dispatch($event, $payload = [], $halt = false)
     {
-        $name = is_object($event) ? get_class($event) : (string) $event;
+        $name = is_object($event) ? $event::class : (string) $event;
 
         if ($this->shouldFakeEvent($name, $payload)) {
             $this->fakeEvent($event, $name, func_get_args());
@@ -347,11 +331,9 @@ class EventFake implements Dispatcher, Fake
         }
 
         return (new Collection($this->eventsToFake))
-            ->filter(function ($event) use ($eventName, $payload) {
-                return $event instanceof Closure
-                    ? $event($eventName, $payload)
-                    : $event === $eventName;
-            })
+            ->filter(fn($event) => $event instanceof Closure
+                ? $event($eventName, $payload)
+                : $event === $eventName)
             ->isNotEmpty();
     }
 
@@ -387,11 +369,9 @@ class EventFake implements Dispatcher, Fake
         }
 
         return (new Collection($this->eventsToDispatch))
-            ->filter(function ($event) use ($eventName, $payload) {
-                return $event instanceof Closure
-                    ? $event($eventName, $payload)
-                    : $event === $eventName;
-            })
+            ->filter(fn($event) => $event instanceof Closure
+                ? $event($eventName, $payload)
+                : $event === $eventName)
             ->isNotEmpty();
     }
 
@@ -399,19 +379,16 @@ class EventFake implements Dispatcher, Fake
      * Remove a set of listeners from the dispatcher.
      *
      * @param  string  $event
-     * @return void
      */
-    public function forget($event)
+    public function forget($event): void
     {
         //
     }
 
     /**
      * Forget all of the queued listeners.
-     *
-     * @return void
      */
-    public function forgetPushed()
+    public function forgetPushed(): void
     {
         //
     }
@@ -441,11 +418,10 @@ class EventFake implements Dispatcher, Fake
     /**
      * Handle dynamic method calls to the dispatcher.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->forwardCallTo($this->dispatcher, $method, $parameters);
     }

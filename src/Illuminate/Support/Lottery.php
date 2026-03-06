@@ -67,9 +67,8 @@ class Lottery
      *
      * @param  int|float  $chances
      * @param  int|null  $outOf
-     * @return static
      */
-    public static function odds($chances, $outOf = null)
+    public static function odds($chances, $outOf = null): static
     {
         return new static($chances, $outOf);
     }
@@ -80,7 +79,7 @@ class Lottery
      * @param  callable  $callback
      * @return $this
      */
-    public function winner($callback)
+    public function winner($callback): static
     {
         $this->winner = $callback;
 
@@ -93,7 +92,7 @@ class Lottery
      * @param  callable  $callback
      * @return $this
      */
-    public function loser($callback)
+    public function loser($callback): static
     {
         $this->loser = $callback;
 
@@ -141,8 +140,8 @@ class Lottery
     protected function runCallback(...$args)
     {
         return $this->wins()
-            ? ($this->winner ?? fn () => true)(...$args)
-            : ($this->loser ?? fn () => false)(...$args);
+            ? ($this->winner ?? fn (): true => true)(...$args)
+            : ($this->loser ?? fn (): false => false)(...$args);
     }
 
     /**
@@ -162,7 +161,7 @@ class Lottery
      */
     protected static function resultFactory()
     {
-        return static::$resultFactory ?? fn ($chances, $outOf) => $outOf === null
+        return static::$resultFactory ?? fn ($chances, $outOf): bool => $outOf === null
             ? random_int(0, PHP_INT_MAX) / PHP_INT_MAX <= $chances
             : random_int(1, $outOf) <= $chances;
     }
@@ -171,11 +170,10 @@ class Lottery
      * Force the lottery to always result in a win.
      *
      * @param  callable|null  $callback
-     * @return void
      */
-    public static function alwaysWin($callback = null)
+    public static function alwaysWin($callback = null): void
     {
-        self::setResultFactory(fn () => true);
+        self::setResultFactory(fn (): true => true);
 
         if ($callback === null) {
             return;
@@ -190,11 +188,10 @@ class Lottery
      * Force the lottery to always result in a lose.
      *
      * @param  callable|null  $callback
-     * @return void
      */
-    public static function alwaysLose($callback = null)
+    public static function alwaysLose($callback = null): void
     {
-        self::setResultFactory(fn () => false);
+        self::setResultFactory(fn (): false => false);
 
         if ($callback === null) {
             return;
@@ -210,9 +207,8 @@ class Lottery
      *
      * @param  array  $sequence
      * @param  callable|null  $whenMissing
-     * @return void
      */
-    public static function fix($sequence, $whenMissing = null)
+    public static function fix($sequence, $whenMissing = null): void
     {
         static::forceResultWithSequence($sequence, $whenMissing);
     }
@@ -222,9 +218,8 @@ class Lottery
      *
      * @param  array  $sequence
      * @param  callable|null  $whenMissing
-     * @return void
      */
-    public static function forceResultWithSequence($sequence, $whenMissing = null)
+    public static function forceResultWithSequence($sequence, $whenMissing = null): void
     {
         $next = 0;
 
@@ -253,20 +248,16 @@ class Lottery
 
     /**
      * Indicate that the lottery results should be determined normally.
-     *
-     * @return void
      */
-    public static function determineResultsNormally()
+    public static function determineResultsNormally(): void
     {
         static::determineResultNormally();
     }
 
     /**
      * Indicate that the lottery results should be determined normally.
-     *
-     * @return void
      */
-    public static function determineResultNormally()
+    public static function determineResultNormally(): void
     {
         static::$resultFactory = null;
     }
@@ -275,9 +266,8 @@ class Lottery
      * Set the factory that should be used to determine the lottery results.
      *
      * @param  callable  $factory
-     * @return void
      */
-    public static function setResultFactory($factory)
+    public static function setResultFactory($factory): void
     {
         self::$resultFactory = $factory;
     }

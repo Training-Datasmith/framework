@@ -11,9 +11,7 @@ class Argon2IdHasher extends ArgonHasher
      *
      * @param  string  $value
      * @param  string  $hashedValue
-     * @param  array  $options
      * @return bool
-     *
      * @throws \RuntimeException
      */
     public function check(#[\SensitiveParameter] $value, $hashedValue, array $options = [])
@@ -33,19 +31,16 @@ class Argon2IdHasher extends ArgonHasher
      * Verify the hashed value's algorithm.
      *
      * @param  string  $hashedValue
-     * @return bool
      */
-    protected function isUsingCorrectAlgorithm($hashedValue)
+    protected function isUsingCorrectAlgorithm($hashedValue): bool
     {
         return $this->info($hashedValue)['algoName'] === 'argon2id';
     }
 
     /**
      * Get the algorithm that should be used for hashing.
-     *
-     * @return int
      */
-    protected function algorithm()
+    protected function algorithm(): string
     {
         return PASSWORD_ARGON2ID;
     }

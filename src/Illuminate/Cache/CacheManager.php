@@ -19,13 +19,6 @@ use Mockery\LegacyMockInterface;
 class CacheManager implements FactoryContract
 {
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
      * The array of resolved cache stores.
      *
      * @var array
@@ -44,9 +37,13 @@ class CacheManager implements FactoryContract
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      */
-    public function __construct($app)
+    public function __construct(
+        /**
+         * The application instance.
+         */
+        protected $app
+    )
     {
-        $this->app = $app;
     }
 
     /**
@@ -57,7 +54,7 @@ class CacheManager implements FactoryContract
      */
     public function store($name = null)
     {
-        $name = $name ?? $this->getDefaultDriver();
+        $name ??= $this->getDefaultDriver();
 
         return $this->stores[$name] ??= $this->resolve($name);
     }
@@ -81,7 +78,7 @@ class CacheManager implements FactoryContract
      */
     public function memo($driver = null)
     {
-        $driver = $driver ?? $this->getDefaultDriver();
+        $driver ??= $this->getDefaultDriver();
 
         $bindingKey = "cache.__memoized:{$driver}";
 
@@ -122,9 +119,7 @@ class CacheManager implements FactoryContract
     /**
      * Build a cache repository with the given configuration.
      *
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
-     *
      * @throws \InvalidArgumentException
      */
     public function build(array $config)
@@ -135,7 +130,7 @@ class CacheManager implements FactoryContract
             return $this->callCustomCreator($config);
         }
 
-        $driverMethod = 'create'.ucfirst($config['driver']).'Driver';
+        $driverMethod = 'create'.ucfirst((string) $config['driver']).'Driver';
 
         if (method_exists($this, $driverMethod)) {
             return $this->{$driverMethod}($config);
@@ -147,7 +142,6 @@ class CacheManager implements FactoryContract
     /**
      * Call a custom driver creator.
      *
-     * @param  array  $config
      * @return mixed
      */
     protected function callCustomCreator(array $config)
@@ -158,7 +152,6 @@ class CacheManager implements FactoryContract
     /**
      * Create an instance of the APC cache driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
      */
     protected function createApcDriver(array $config)
@@ -171,7 +164,6 @@ class CacheManager implements FactoryContract
     /**
      * Create an instance of the array cache driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
      */
     protected function createArrayDriver(array $config)
@@ -185,7 +177,6 @@ class CacheManager implements FactoryContract
     /**
      * Create an instance of the database cache driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
      */
     protected function createDatabaseDriver(array $config)
@@ -213,7 +204,6 @@ class CacheManager implements FactoryContract
     /**
      * Create an instance of the DynamoDB cache driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
      */
     protected function createDynamodbDriver(array $config)
@@ -263,7 +253,6 @@ class CacheManager implements FactoryContract
     /**
      * Create an instance of the failover cache driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
      */
     protected function createFailoverDriver(array $config)
@@ -278,7 +267,6 @@ class CacheManager implements FactoryContract
     /**
      * Create an instance of the file cache driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
      */
     protected function createFileDriver(array $config)
@@ -298,7 +286,6 @@ class CacheManager implements FactoryContract
     /**
      * Create an instance of the Memcached cache driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
      */
     protected function createMemcachedDriver(array $config)
@@ -328,7 +315,6 @@ class CacheManager implements FactoryContract
     /**
      * Create an instance of the Redis cache driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
      */
     protected function createRedisDriver(array $config)
@@ -353,7 +339,6 @@ class CacheManager implements FactoryContract
     /**
      * Create an instance of the session cache driver.
      *
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
      */
     protected function createSessionDriver(array $config)
@@ -388,13 +373,11 @@ class CacheManager implements FactoryContract
     /**
      * Create a new cache repository with the given implementation.
      *
-     * @param  \Illuminate\Contracts\Cache\Store  $store
-     * @param  array  $config
      * @return \Illuminate\Cache\Repository
      */
     public function repository(Store $store, array $config = [])
     {
-        return tap(new Repository($store, Arr::only($config, ['store'])), function ($repository) use ($config) {
+        return tap(new Repository($store, Arr::only($config, ['store'])), function (\Illuminate\Cache\Repository $repository) use ($config): void {
             if ($config['events'] ?? true) {
                 $this->setEventDispatcher($repository);
             }
@@ -404,7 +387,6 @@ class CacheManager implements FactoryContract
     /**
      * Set the event dispatcher on the given repository instance.
      *
-     * @param  \Illuminate\Cache\Repository  $repository
      * @return void
      */
     protected function setEventDispatcher(Repository $repository)
@@ -420,10 +402,8 @@ class CacheManager implements FactoryContract
 
     /**
      * Re-set the event dispatcher on all resolved cache repositories.
-     *
-     * @return void
      */
-    public function refreshEventDispatcher()
+    public function refreshEventDispatcher(): void
     {
         array_map($this->setEventDispatcher(...), $this->stores);
     }
@@ -431,7 +411,6 @@ class CacheManager implements FactoryContract
     /**
      * Get the cache prefix.
      *
-     * @param  array  $config
      * @return string
      */
     protected function getPrefix(array $config)
@@ -442,7 +421,6 @@ class CacheManager implements FactoryContract
     /**
      * Get the classes that should be allowed during unserialization.
      *
-     * @param  array  $config
      * @return array|bool|null
      */
     protected function getSerializableClasses(array $config)
@@ -477,9 +455,8 @@ class CacheManager implements FactoryContract
      * Set the default cache driver name.
      *
      * @param  string  $name
-     * @return void
      */
-    public function setDefaultDriver($name)
+    public function setDefaultDriver($name): void
     {
         $this->app['config']['cache.default'] = $name;
     }
@@ -490,7 +467,7 @@ class CacheManager implements FactoryContract
      * @param  array|string|null  $name
      * @return $this
      */
-    public function forgetDriver($name = null)
+    public function forgetDriver($name = null): static
     {
         $name ??= $this->getDefaultDriver();
 
@@ -507,9 +484,8 @@ class CacheManager implements FactoryContract
      * Disconnect the given driver and remove from local cache.
      *
      * @param  string|null  $name
-     * @return void
      */
-    public function purge($name = null)
+    public function purge($name = null): void
     {
         $name ??= $this->getDefaultDriver();
 
@@ -520,13 +496,11 @@ class CacheManager implements FactoryContract
      * Register a custom driver creator Closure.
      *
      * @param  string  $driver
-     * @param  \Closure  $callback
      *
      * @param-closure-this  $this  $callback
-     *
      * @return $this
      */
-    public function extend($driver, Closure $callback)
+    public function extend($driver, Closure $callback): static
     {
         $this->customCreators[$driver] = $callback->bindTo($this, $this);
 
@@ -539,7 +513,7 @@ class CacheManager implements FactoryContract
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return $this
      */
-    public function setApplication($app)
+    public function setApplication($app): static
     {
         $this->app = $app;
 
@@ -549,11 +523,10 @@ class CacheManager implements FactoryContract
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->store()->$method(...$parameters);
     }

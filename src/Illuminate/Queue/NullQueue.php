@@ -10,9 +10,8 @@ class NullQueue extends Queue implements QueueContract
      * Get the size of the queue.
      *
      * @param  string|null  $queue
-     * @return int
      */
-    public function size($queue = null)
+    public function size($queue = null): int
     {
         return 0;
     }
@@ -21,9 +20,8 @@ class NullQueue extends Queue implements QueueContract
      * Get the number of pending jobs.
      *
      * @param  string|null  $queue
-     * @return int
      */
-    public function pendingSize($queue = null)
+    public function pendingSize($queue = null): int
     {
         return 0;
     }
@@ -32,9 +30,8 @@ class NullQueue extends Queue implements QueueContract
      * Get the number of delayed jobs.
      *
      * @param  string|null  $queue
-     * @return int
      */
-    public function delayedSize($queue = null)
+    public function delayedSize($queue = null): int
     {
         return 0;
     }
@@ -43,9 +40,8 @@ class NullQueue extends Queue implements QueueContract
      * Get the number of reserved jobs.
      *
      * @param  string|null  $queue
-     * @return int
      */
-    public function reservedSize($queue = null)
+    public function reservedSize($queue = null): int
     {
         return 0;
     }
@@ -56,7 +52,7 @@ class NullQueue extends Queue implements QueueContract
      * @param  string|null  $queue
      * @return int|null
      */
-    public function creationTimeOfOldestPendingJob($queue = null)
+    public function creationTimeOfOldestPendingJob($queue = null): null
     {
         return null;
     }
@@ -67,9 +63,8 @@ class NullQueue extends Queue implements QueueContract
      * @param  string  $job
      * @param  mixed  $data
      * @param  string|null  $queue
-     * @return mixed
      */
-    public function push($job, $data = '', $queue = null)
+    public function push($job, $data = '', $queue = null): void
     {
         //
     }
@@ -79,10 +74,8 @@ class NullQueue extends Queue implements QueueContract
      *
      * @param  string  $payload
      * @param  string|null  $queue
-     * @param  array  $options
-     * @return mixed
      */
-    public function pushRaw($payload, $queue = null, array $options = [])
+    public function pushRaw($payload, $queue = null, array $options = []): void
     {
         //
     }
@@ -94,9 +87,8 @@ class NullQueue extends Queue implements QueueContract
      * @param  string  $job
      * @param  mixed  $data
      * @param  string|null  $queue
-     * @return mixed
      */
-    public function later($delay, $job, $data = '', $queue = null)
+    public function later($delay, $job, $data = '', $queue = null): void
     {
         //
     }
@@ -105,9 +97,8 @@ class NullQueue extends Queue implements QueueContract
      * Pop the next job off of the queue.
      *
      * @param  string|null  $queue
-     * @return \Illuminate\Contracts\Queue\Job|null
      */
-    public function pop($queue = null)
+    public function pop($queue = null): void
     {
         //
     }

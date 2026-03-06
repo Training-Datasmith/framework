@@ -91,9 +91,8 @@ trait Dispatchable
      * Set the jobs that should run if this job is successful.
      *
      * @param  array  $chain
-     * @return \Illuminate\Foundation\Bus\PendingChain
      */
-    public static function withChain($chain)
+    public static function withChain($chain): \Illuminate\Foundation\Bus\PendingChain
     {
         return new PendingChain(static::class, $chain);
     }
@@ -102,9 +101,8 @@ trait Dispatchable
      * Create a new pending job dispatch instance.
      *
      * @param  mixed  $job
-     * @return \Illuminate\Foundation\Bus\PendingDispatch
      */
-    protected static function newPendingDispatch($job)
+    protected static function newPendingDispatch($job): \Illuminate\Foundation\Bus\PendingDispatch
     {
         return new PendingDispatch($job);
     }

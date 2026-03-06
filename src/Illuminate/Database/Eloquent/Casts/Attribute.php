@@ -34,9 +34,6 @@ class Attribute
 
     /**
      * Create a new attribute accessor / mutator.
-     *
-     * @param  callable|null  $get
-     * @param  callable|null  $set
      */
     public function __construct(?callable $get = null, ?callable $set = null)
     {
@@ -46,10 +43,6 @@ class Attribute
 
     /**
      * Create a new attribute accessor / mutator.
-     *
-     * @param  callable|null  $get
-     * @param  callable|null  $set
-     * @return static
      */
     public static function make(?callable $get = null, ?callable $set = null): static
     {
@@ -58,32 +51,24 @@ class Attribute
 
     /**
      * Create a new attribute accessor.
-     *
-     * @param  callable  $get
-     * @return static
      */
-    public static function get(callable $get)
+    public static function get(callable $get): static
     {
         return new static($get);
     }
 
     /**
      * Create a new attribute mutator.
-     *
-     * @param  callable  $set
-     * @return static
      */
-    public static function set(callable $set)
+    public static function set(callable $set): static
     {
         return new static(null, $set);
     }
 
     /**
      * Disable object caching for the attribute.
-     *
-     * @return static
      */
-    public function withoutObjectCaching()
+    public function withoutObjectCaching(): static
     {
         $this->withObjectCaching = false;
 
@@ -92,10 +77,8 @@ class Attribute
 
     /**
      * Enable caching for the attribute.
-     *
-     * @return static
      */
-    public function shouldCache()
+    public function shouldCache(): static
     {
         $this->withCaching = true;
 

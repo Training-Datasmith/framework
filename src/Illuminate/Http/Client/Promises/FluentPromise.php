@@ -14,8 +14,6 @@ class FluentPromise implements PromiseInterface
 
     /**
      * Create a new fluent promise instance.
-     *
-     * @param  \GuzzleHttp\Promise\PromiseInterface  $guzzlePromise
      */
     public function __construct(protected PromiseInterface $guzzlePromise)
     {
@@ -65,8 +63,6 @@ class FluentPromise implements PromiseInterface
 
     /**
      * Get the underlying Guzzle promise.
-     *
-     * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getGuzzlePromise(): PromiseInterface
     {
@@ -76,11 +72,10 @@ class FluentPromise implements PromiseInterface
     /**
      * Proxy requests to the underlying promise interface and update the local promise.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         $result = $this->forwardCallTo($this->guzzlePromise, $method, $parameters);
 

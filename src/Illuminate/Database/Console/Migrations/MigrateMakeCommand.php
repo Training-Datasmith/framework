@@ -31,46 +31,31 @@ class MigrateMakeCommand extends BaseCommand implements PromptsForMissingInput
     protected $description = 'Create a new migration file';
 
     /**
-     * The migration creator instance.
-     *
-     * @var \Illuminate\Database\Migrations\MigrationCreator
+     * Create a new migration install command instance.
      */
-    protected $creator;
-
-    /**
+    public function __construct(/**
+     * The migration creator instance.
+     */
+    protected \Illuminate\Database\Migrations\MigrationCreator $creator, /**
      * The Composer instance.
      *
-     * @var \Illuminate\Support\Composer
      *
      * @deprecated Will be removed in a future Laravel version.
      */
-    protected $composer;
-
-    /**
-     * Create a new migration install command instance.
-     *
-     * @param  \Illuminate\Database\Migrations\MigrationCreator  $creator
-     * @param  \Illuminate\Support\Composer  $composer
-     */
-    public function __construct(MigrationCreator $creator, Composer $composer)
+    protected \Illuminate\Support\Composer $composer)
     {
         parent::__construct();
-
-        $this->creator = $creator;
-        $this->composer = $composer;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         // It's possible for the developer to specify the tables to modify in this
         // schema operation. The developer may also specify if this table needs
         // to be freshly created so we can create the appropriate migrations.
-        $name = Str::snake(trim($this->input->getArgument('name')));
+        $name = Str::snake(trim((string) $this->input->getArgument('name')));
 
         $table = $this->input->getOption('table');
 
@@ -137,10 +122,8 @@ class MigrateMakeCommand extends BaseCommand implements PromptsForMissingInput
 
     /**
      * Prompt for missing input arguments using the returned questions.
-     *
-     * @return array
      */
-    protected function promptForMissingArgumentsUsing()
+    protected function promptForMissingArgumentsUsing(): array
     {
         return [
             'name' => ['What should the migration be named?', 'E.g. create_flights_table'],

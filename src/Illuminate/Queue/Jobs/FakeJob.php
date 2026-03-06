@@ -35,15 +35,13 @@ class FakeJob extends Job implements JobContract
      */
     public function getJobId()
     {
-        return once(fn () => (string) Str::uuid());
+        return once(fn (): string => (string) Str::uuid());
     }
 
     /**
      * Get the raw body of the job.
-     *
-     * @return string
      */
-    public function getRawBody()
+    public function getRawBody(): string
     {
         return '';
     }
@@ -52,9 +50,8 @@ class FakeJob extends Job implements JobContract
      * Release the job back into the queue after (n) seconds.
      *
      * @param  \DateTimeInterface|\DateInterval|int  $delay
-     * @return void
      */
-    public function release($delay = 0)
+    public function release($delay = 0): void
     {
         $this->released = true;
         $this->releaseDelay = $delay;
@@ -72,10 +69,8 @@ class FakeJob extends Job implements JobContract
 
     /**
      * Delete the job from the queue.
-     *
-     * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleted = true;
     }
@@ -84,9 +79,8 @@ class FakeJob extends Job implements JobContract
      * Delete the job, call the "failed" method, and raise the failed job event.
      *
      * @param  \Throwable|null  $exception
-     * @return void
      */
-    public function fail($exception = null)
+    public function fail($exception = null): void
     {
         $this->failed = true;
         $this->failedWith = $exception;

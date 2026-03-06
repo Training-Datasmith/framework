@@ -17,11 +17,10 @@ trait CompilesLoops
      * Compile the for-else statements into valid PHP.
      *
      * @param  string|null  $expression
-     * @return string
      *
      * @throws \Illuminate\Contracts\View\ViewCompilationException
      */
-    protected function compileForelse($expression)
+    protected function compileForelse($expression): string
     {
         $empty = '$__empty_'.++$this->forElseCounter;
 
@@ -46,9 +45,8 @@ trait CompilesLoops
      * Compile the for-else-empty and empty statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileEmpty($expression)
+    protected function compileEmpty($expression): string
     {
         if ($expression) {
             return "<?php if(empty{$expression}): ?>";
@@ -61,20 +59,16 @@ trait CompilesLoops
 
     /**
      * Compile the end-for-else statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndforelse()
+    protected function compileEndforelse(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the end-empty statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndEmpty()
+    protected function compileEndEmpty(): string
     {
         return '<?php endif; ?>';
     }
@@ -83,9 +77,8 @@ trait CompilesLoops
      * Compile the for statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileFor($expression)
+    protected function compileFor($expression): string
     {
         return "<?php for{$expression}: ?>";
     }
@@ -94,11 +87,10 @@ trait CompilesLoops
      * Compile the for-each statements into valid PHP.
      *
      * @param  string|null  $expression
-     * @return string
      *
      * @throws \Illuminate\Contracts\View\ViewCompilationException
      */
-    protected function compileForeach($expression)
+    protected function compileForeach($expression): string
     {
         preg_match('/\( *(.+) +as +(.*)\)$/is', $expression ?? '', $matches);
 
@@ -121,9 +113,8 @@ trait CompilesLoops
      * Compile the break statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileBreak($expression)
+    protected function compileBreak($expression): string
     {
         if ($expression) {
             preg_match('/\(\s*(-?\d+)\s*\)$/', $expression, $matches);
@@ -138,9 +129,8 @@ trait CompilesLoops
      * Compile the continue statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileContinue($expression)
+    protected function compileContinue($expression): string
     {
         if ($expression) {
             preg_match('/\(\s*(-?\d+)\s*\)$/', $expression, $matches);
@@ -153,20 +143,16 @@ trait CompilesLoops
 
     /**
      * Compile the end-for statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndfor()
+    protected function compileEndfor(): string
     {
         return '<?php endfor; ?>';
     }
 
     /**
      * Compile the end-for-each statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndforeach()
+    protected function compileEndforeach(): string
     {
         return '<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>';
     }
@@ -175,19 +161,16 @@ trait CompilesLoops
      * Compile the while statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileWhile($expression)
+    protected function compileWhile($expression): string
     {
         return "<?php while{$expression}: ?>";
     }
 
     /**
      * Compile the end-while statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndwhile()
+    protected function compileEndwhile(): string
     {
         return '<?php endwhile; ?>';
     }

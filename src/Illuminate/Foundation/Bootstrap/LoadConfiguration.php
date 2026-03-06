@@ -21,11 +21,8 @@ class LoadConfiguration
 
     /**
      * Bootstrap the given application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return void
      */
-    public function bootstrap(Application $app)
+    public function bootstrap(Application $app): void
     {
         $items = [];
 
@@ -70,8 +67,6 @@ class LoadConfiguration
     /**
      * Load the configuration items from all of the files.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Contracts\Config\Repository  $repository
      * @return void
      *
      * @throws \Exception
@@ -104,13 +99,10 @@ class LoadConfiguration
     /**
      * Load the given configuration file.
      *
-     * @param  \Illuminate\Contracts\Config\Repository  $repository
      * @param  string  $name
      * @param  string  $path
-     * @param  array  $base
-     * @return array
      */
-    protected function loadConfigurationFile(RepositoryContract $repository, $name, $path, array $base)
+    protected function loadConfigurationFile(RepositoryContract $repository, $name, $path, array $base): array
     {
         $config = (fn () => require $path)();
 
@@ -133,11 +125,8 @@ class LoadConfiguration
 
     /**
      * Get the options within the configuration file that should be merged again.
-     *
-     * @param  string  $name
-     * @return array
      */
-    protected function mergeableOptions($name)
+    protected function mergeableOptions(string $name): array
     {
         return [
             'auth' => ['guards', 'providers', 'passwords'],
@@ -153,11 +142,8 @@ class LoadConfiguration
 
     /**
      * Get all of the configuration files for the application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return array
      */
-    protected function getConfigurationFiles(Application $app)
+    protected function getConfigurationFiles(Application $app): array
     {
         $files = [];
 
@@ -181,7 +167,6 @@ class LoadConfiguration
     /**
      * Get the configuration file nesting path.
      *
-     * @param  \SplFileInfo  $file
      * @param  string  $configPath
      * @return string
      */
@@ -190,7 +175,7 @@ class LoadConfiguration
         $directory = $file->getPath();
 
         if ($nested = trim(str_replace($configPath, '', $directory), DIRECTORY_SEPARATOR)) {
-            $nested = str_replace(DIRECTORY_SEPARATOR, '.', $nested).'.';
+            return str_replace(DIRECTORY_SEPARATOR, '.', $nested).'.';
         }
 
         return $nested;
@@ -198,10 +183,8 @@ class LoadConfiguration
 
     /**
      * Get the base configuration files.
-     *
-     * @return array
      */
-    protected function getBaseConfiguration()
+    protected function getBaseConfiguration(): array
     {
         $config = [];
 
@@ -216,7 +199,6 @@ class LoadConfiguration
      * Set a callback to return the permanent, static configuration values.
      *
      * @param  (Closure(Application): array<array-key, mixed>)|null  $alwaysUseConfig
-     * @return void
      */
     public static function alwaysUse(?Closure $alwaysUseConfig): void
     {

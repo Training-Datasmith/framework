@@ -8,38 +8,29 @@ use Illuminate\Queue\RedisQueue;
 class RedisConnector implements ConnectorInterface
 {
     /**
-     * The Redis database instance.
-     *
-     * @var \Illuminate\Contracts\Redis\Factory
-     */
-    protected $redis;
-
-    /**
-     * The connection name.
-     *
-     * @var string
-     */
-    protected $connection;
-
-    /**
      * Create a new Redis queue connector instance.
      *
-     * @param  \Illuminate\Contracts\Redis\Factory  $redis
      * @param  string|null  $connection
      */
-    public function __construct(Redis $redis, $connection = null)
+    public function __construct(
+        /**
+         * The Redis database instance.
+         */
+        protected \Redis $redis,
+        /**
+         * The connection name.
+         */
+        protected $connection = null
+    )
     {
-        $this->redis = $redis;
-        $this->connection = $connection;
     }
 
     /**
      * Establish a queue connection.
      *
-     * @param  array  $config
      * @return \Illuminate\Contracts\Queue\Queue
      */
-    public function connect(array $config)
+    public function connect(array $config): \Illuminate\Queue\RedisQueue
     {
         return new RedisQueue(
             $this->redis, $config['queue'],

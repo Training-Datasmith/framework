@@ -51,7 +51,7 @@ class MySqlBuilder extends Builder
      *
      * @return string[]|null
      */
-    public function getCurrentSchemaListing()
+    public function getCurrentSchemaListing(): null
     {
         return [$this->connection->getDatabaseName()];
     }

@@ -11,10 +11,8 @@ class DoesntContain implements Stringable
 {
     /**
      * The values that should be contained in the attribute.
-     *
-     * @var array
      */
-    protected $values;
+    protected array $values;
 
     /**
      * Create a new doesntContain rule instance.
@@ -32,12 +30,10 @@ class DoesntContain implements Stringable
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        $values = array_map(function ($value) {
+        $values = array_map(function ($value): string {
             $value = enum_value($value);
 
             return '"'.str_replace('"', '""', $value).'"';

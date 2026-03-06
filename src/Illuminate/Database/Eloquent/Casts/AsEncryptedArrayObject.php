@@ -11,14 +11,13 @@ class AsEncryptedArrayObject implements Castable
     /**
      * Get the caster class to use when casting from / to this cast target.
      *
-     * @param  array  $arguments
      * @return \Illuminate\Contracts\Database\Eloquent\CastsAttributes<\Illuminate\Database\Eloquent\Casts\ArrayObject<array-key, mixed>, iterable>
      */
-    public static function castUsing(array $arguments)
+    public static function castUsing(array $arguments): \Illuminate\Contracts\Database\Eloquent\CastsAttributes
     {
         return new class implements CastsAttributes
         {
-            public function get($model, $key, $value, $attributes)
+            public function get($model, $key, $value, $attributes): ?\Illuminate\Database\Eloquent\Casts\ArrayObject
             {
                 if (isset($attributes[$key])) {
                     return new ArrayObject(Json::decode(Crypt::decryptString($attributes[$key])), ArrayObject::ARRAY_AS_PROPS);
@@ -27,7 +26,7 @@ class AsEncryptedArrayObject implements Castable
                 return null;
             }
 
-            public function set($model, $key, $value, $attributes)
+            public function set($model, $key, $value, $attributes): ?array
             {
                 if (! is_null($value)) {
                     return [$key => Crypt::encryptString(Json::encode($value))];

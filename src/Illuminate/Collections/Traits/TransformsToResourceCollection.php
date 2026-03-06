@@ -15,7 +15,6 @@ trait TransformsToResourceCollection
      * Create a new resource collection instance for the given resource.
      *
      * @param  class-string<\Illuminate\Http\Resources\Json\JsonResource>|null  $resourceClass
-     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      *
      * @throws \Throwable
      */
@@ -31,7 +30,6 @@ trait TransformsToResourceCollection
     /**
      * Guess the resource collection for the items.
      *
-     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      *
      * @throws \Throwable
      */
@@ -46,7 +44,7 @@ trait TransformsToResourceCollection
         throw_unless(is_object($model), LogicException::class, 'Resource collection guesser expects the collection to contain objects.');
 
         /** @var class-string<Model> $className */
-        $className = get_class($model);
+        $className = $model::class;
 
         throw_unless(method_exists($className, 'guessResourceName'), LogicException::class, sprintf('Expected class %s to implement guessResourceName method. Make sure the model uses the TransformsToResource trait.', $className));
 
@@ -67,7 +65,7 @@ trait TransformsToResourceCollection
         foreach ($resourceClasses as $resourceClass) {
             $resourceCollection = $resourceClass.'Collection';
 
-            if (is_string($resourceCollection) && class_exists($resourceCollection)) {
+            if (class_exists($resourceCollection)) {
                 return new $resourceCollection($this);
             }
         }

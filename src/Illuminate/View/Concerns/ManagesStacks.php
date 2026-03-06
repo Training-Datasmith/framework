@@ -32,9 +32,8 @@ trait ManagesStacks
      *
      * @param  string  $section
      * @param  string  $content
-     * @return void
      */
-    public function startPush($section, $content = '')
+    public function startPush($section, $content = ''): void
     {
         if ($content === '') {
             if (ob_start()) {
@@ -58,7 +57,7 @@ trait ManagesStacks
             throw new InvalidArgumentException('Cannot end a push stack without first starting one.');
         }
 
-        return tap(array_pop($this->pushStack), function ($last) {
+        return tap(array_pop($this->pushStack), function ($last): void {
             $this->extendPush($last, ob_get_clean());
         });
     }
@@ -67,10 +66,9 @@ trait ManagesStacks
      * Append content to a given push section.
      *
      * @param  string  $section
-     * @param  string  $content
      * @return void
      */
-    protected function extendPush($section, $content)
+    protected function extendPush($section, string $content)
     {
         if (! isset($this->pushes[$section])) {
             $this->pushes[$section] = [];
@@ -88,9 +86,8 @@ trait ManagesStacks
      *
      * @param  string  $section
      * @param  string  $content
-     * @return void
      */
-    public function startPrepend($section, $content = '')
+    public function startPrepend($section, $content = ''): void
     {
         if ($content === '') {
             if (ob_start()) {
@@ -114,7 +111,7 @@ trait ManagesStacks
             throw new InvalidArgumentException('Cannot end a prepend operation without first starting one.');
         }
 
-        return tap(array_pop($this->pushStack), function ($last) {
+        return tap(array_pop($this->pushStack), function ($last): void {
             $this->extendPrepend($last, ob_get_clean());
         });
     }
@@ -123,10 +120,9 @@ trait ManagesStacks
      * Prepend content to a given stack.
      *
      * @param  string  $section
-     * @param  string  $content
      * @return void
      */
-    protected function extendPrepend($section, $content)
+    protected function extendPrepend($section, string $content)
     {
         if (! isset($this->prepends[$section])) {
             $this->prepends[$section] = [];
@@ -155,11 +151,11 @@ trait ManagesStacks
         $output = '';
 
         if (isset($this->prepends[$section])) {
-            $output .= implode(array_reverse($this->prepends[$section]));
+            $output .= implode('', array_reverse($this->prepends[$section]));
         }
 
         if (isset($this->pushes[$section])) {
-            $output .= implode($this->pushes[$section]);
+            $output .= implode('', $this->pushes[$section]);
         }
 
         return $output;
@@ -175,10 +171,8 @@ trait ManagesStacks
 
     /**
      * Flush all of the stacks.
-     *
-     * @return void
      */
-    public function flushStacks()
+    public function flushStacks(): void
     {
         $this->pushes = [];
         $this->prepends = [];

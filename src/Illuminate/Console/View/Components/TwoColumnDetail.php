@@ -12,9 +12,8 @@ class TwoColumnDetail extends Component
      * @param  string  $first
      * @param  string|null  $second
      * @param  int  $verbosity
-     * @return void
      */
-    public function render($first, $second = null, $verbosity = OutputInterface::VERBOSITY_NORMAL)
+    public function render($first, $second = null, $verbosity = OutputInterface::VERBOSITY_NORMAL): void
     {
         $first = $this->mutate($first, [
             Mutators\EnsureDynamicContentIsHighlighted::class,

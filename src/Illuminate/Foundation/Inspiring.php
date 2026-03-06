@@ -61,10 +61,8 @@ class Inspiring
 
     /**
      * Get the collection of inspiring quotes.
-     *
-     * @return \Illuminate\Support\Collection
      */
-    public static function quotes()
+    public static function quotes(): \Illuminate\Support\Collection
     {
         return new Collection([
             'Act only according to that maxim whereby you can, at the same time, will that it should become a universal law. - Immanuel Kant',
@@ -115,9 +113,8 @@ class Inspiring
      * Formats the given quote for a pretty console output.
      *
      * @param  string  $quote
-     * @return string
      */
-    protected static function formatForConsole($quote)
+    protected static function formatForConsole($quote): string
     {
         [$text, $author] = (new Stringable($quote))->explode('-');
 

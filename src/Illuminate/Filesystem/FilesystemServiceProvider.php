@@ -11,20 +11,16 @@ class FilesystemServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the filesystem.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->serveFiles();
     }
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerNativeFilesystem();
         $this->registerFlysystem();
@@ -37,9 +33,7 @@ class FilesystemServiceProvider extends ServiceProvider
      */
     protected function registerNativeFilesystem()
     {
-        $this->app->singleton('files', function () {
-            return new Filesystem;
-        });
+        $this->app->singleton('files', fn() => new Filesystem);
     }
 
     /**
@@ -51,13 +45,9 @@ class FilesystemServiceProvider extends ServiceProvider
     {
         $this->registerManager();
 
-        $this->app->singleton('filesystem.disk', function ($app) {
-            return $app['filesystem']->disk($this->getDefaultDriver());
-        });
+        $this->app->singleton('filesystem.disk', fn($app) => $app['filesystem']->disk($this->getDefaultDriver()));
 
-        $this->app->singleton('filesystem.cloud', function ($app) {
-            return $app['filesystem']->disk($this->getCloudDriver());
-        });
+        $this->app->singleton('filesystem.cloud', fn($app) => $app['filesystem']->disk($this->getCloudDriver()));
     }
 
     /**
@@ -67,9 +57,7 @@ class FilesystemServiceProvider extends ServiceProvider
      */
     protected function registerManager()
     {
-        $this->app->singleton('filesystem', function ($app) {
-            return new FilesystemManager($app);
-        });
+        $this->app->singleton('filesystem', fn($app) => new FilesystemManager($app));
     }
 
     /**
@@ -88,39 +76,32 @@ class FilesystemServiceProvider extends ServiceProvider
                 continue;
             }
 
-            $this->app->booted(function ($app) use ($disk, $config) {
+            $this->app->booted(function ($app) use ($disk, $config): void {
                 $uri = isset($config['url'])
-                    ? rtrim(parse_url($config['url'])['path'], '/')
+                    ? rtrim(parse_url((string) $config['url'])['path'], '/')
                     : '/storage';
 
                 $isProduction = $app->isProduction();
 
-                Route::get($uri.'/{path}', function (Request $request, string $path) use ($disk, $config, $isProduction) {
-                    return (new ServeFile(
-                        $disk,
-                        $config,
-                        $isProduction
-                    ))($request, $path);
-                })->where('path', '.*')->name('storage.'.$disk);
+                Route::get($uri.'/{path}', fn(Request $request, string $path) => (new ServeFile(
+                    $disk,
+                    $config,
+                    $isProduction
+                ))($request, $path))->where('path', '.*')->name('storage.'.$disk);
 
-                Route::put($uri.'/{path}', function (Request $request, string $path) use ($disk, $config, $isProduction) {
-                    return (new ReceiveFile(
-                        $disk,
-                        $config,
-                        $isProduction
-                    ))($request, $path);
-                })->where('path', '.*')->name('storage.'.$disk.'.upload');
+                Route::put($uri.'/{path}', fn(Request $request, string $path) => (new ReceiveFile(
+                    $disk,
+                    $config,
+                    $isProduction
+                ))($request, $path))->where('path', '.*')->name('storage.'.$disk.'.upload');
             });
         }
     }
 
     /**
      * Determine if the disk is serveable.
-     *
-     * @param  array  $config
-     * @return bool
      */
-    protected function shouldServeFiles(array $config)
+    protected function shouldServeFiles(array $config): bool
     {
         return $config['driver'] === 'local' && ($config['serve'] ?? false);
     }

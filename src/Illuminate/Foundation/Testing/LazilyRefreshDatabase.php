@@ -10,14 +10,12 @@ trait LazilyRefreshDatabase
 
     /**
      * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
      */
-    public function refreshDatabase()
+    public function refreshDatabase(): void
     {
         $database = $this->app->make('db');
 
-        $callback = function () {
+        $callback = function (): void {
             if (RefreshDatabaseState::$lazilyRefreshed) {
                 return;
             }
@@ -40,7 +38,7 @@ trait LazilyRefreshDatabase
         $database->beforeStartingTransaction($callback);
         $database->beforeExecuting($callback);
 
-        $this->beforeApplicationDestroyed(function () {
+        $this->beforeApplicationDestroyed(function (): void {
             RefreshDatabaseState::$lazilyRefreshed = false;
         });
     }

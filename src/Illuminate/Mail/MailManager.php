@@ -35,13 +35,6 @@ use Symfony\Component\Mailer\Transport\Smtp\Stream\SocketStream;
 class MailManager implements FactoryContract
 {
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
      * The array of resolved mailers.
      *
      * @var array
@@ -60,9 +53,13 @@ class MailManager implements FactoryContract
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      */
-    public function __construct($app)
+    public function __construct(
+        /**
+         * The application instance.
+         */
+        protected $app
+    )
     {
-        $this->app = $app;
     }
 
     /**
@@ -103,12 +100,10 @@ class MailManager implements FactoryContract
     /**
      * Resolve the given mailer.
      *
-     * @param  string  $name
      * @return \Illuminate\Mail\Mailer
-     *
      * @throws \InvalidArgumentException
      */
-    protected function resolve($name)
+    protected function resolve(string $name)
     {
         $config = $this->getConfig($name);
 
@@ -133,11 +128,8 @@ class MailManager implements FactoryContract
 
     /**
      * Build a new mailer instance.
-     *
-     * @param  array  $config
-     * @return \Illuminate\Mail\Mailer
      */
-    public function build($config)
+    public function build(array $config): \Illuminate\Mail\Mailer
     {
         $mailer = new Mailer(
             $config['name'] ?? 'ondemand',
@@ -156,9 +148,7 @@ class MailManager implements FactoryContract
     /**
      * Create a new transport instance.
      *
-     * @param  array  $config
      * @return \Symfony\Component\Mailer\Transport\TransportInterface
-     *
      * @throws \InvalidArgumentException
      */
     public function createSymfonyTransport(array $config)
@@ -183,7 +173,6 @@ class MailManager implements FactoryContract
     /**
      * Create an instance of the Symfony SMTP Transport driver.
      *
-     * @param  array  $config
      * @return \Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport
      */
     protected function createSmtpTransport(array $config)
@@ -210,12 +199,8 @@ class MailManager implements FactoryContract
 
     /**
      * Configure the additional SMTP driver options.
-     *
-     * @param  \Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport  $transport
-     * @param  array  $config
-     * @return \Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport
      */
-    protected function configureSmtpTransport(EsmtpTransport $transport, array $config)
+    protected function configureSmtpTransport(EsmtpTransport $transport, array $config): EsmtpTransport
     {
         $stream = $transport->getStream();
 
@@ -235,7 +220,6 @@ class MailManager implements FactoryContract
     /**
      * Create an instance of the Symfony Sendmail Transport driver.
      *
-     * @param  array  $config
      * @return \Symfony\Component\Mailer\Transport\SendmailTransport
      */
     protected function createSendmailTransport(array $config)
@@ -247,11 +231,8 @@ class MailManager implements FactoryContract
 
     /**
      * Create an instance of the Symfony Amazon SES Transport driver.
-     *
-     * @param  array  $config
-     * @return \Illuminate\Mail\Transport\SesTransport
      */
-    protected function createSesTransport(array $config)
+    protected function createSesTransport(array $config): \Illuminate\Mail\Transport\SesTransport
     {
         $config = array_merge(
             $this->app['config']->get('services.ses', []),
@@ -269,11 +250,8 @@ class MailManager implements FactoryContract
 
     /**
      * Create an instance of the Symfony Amazon SES V2 Transport driver.
-     *
-     * @param  array  $config
-     * @return \Illuminate\Mail\Transport\SesV2Transport
      */
-    protected function createSesV2Transport(array $config)
+    protected function createSesV2Transport(array $config): \Illuminate\Mail\Transport\SesV2Transport
     {
         $config = array_merge(
             $this->app['config']->get('services.ses', []),
@@ -292,7 +270,6 @@ class MailManager implements FactoryContract
     /**
      * Add the SES credentials to the configuration array.
      *
-     * @param  array  $config
      * @return array
      */
     protected function addSesCredentials(array $config)
@@ -310,11 +287,8 @@ class MailManager implements FactoryContract
 
     /**
      * Create an instance of the Resend Transport driver.
-     *
-     * @param  array  $config
-     * @return \Illuminate\Mail\Transport\ResendTransport
      */
-    protected function createResendTransport(array $config)
+    protected function createResendTransport(array $config): \Illuminate\Mail\Transport\ResendTransport
     {
         return new ResendTransport(
             Resend::client($config['key'] ?? $this->app['config']->get('services.resend.key')),
@@ -334,7 +308,6 @@ class MailManager implements FactoryContract
     /**
      * Create an instance of the Symfony Mailgun Transport driver.
      *
-     * @param  array  $config
      * @return \Symfony\Component\Mailer\Transport\TransportInterface
      */
     protected function createMailgunTransport(array $config)
@@ -356,7 +329,6 @@ class MailManager implements FactoryContract
     /**
      * Create an instance of the Symfony Postmark Transport driver.
      *
-     * @param  array  $config
      * @return \Symfony\Component\Mailer\Bridge\Postmark\Transport\PostmarkApiTransport
      */
     protected function createPostmarkTransport(array $config)
@@ -383,7 +355,6 @@ class MailManager implements FactoryContract
     /**
      * Create an instance of the Symfony Failover Transport driver.
      *
-     * @param  array  $config
      * @return \Symfony\Component\Mailer\Transport\FailoverTransport
      */
     protected function createFailoverTransport(array $config)
@@ -394,7 +365,6 @@ class MailManager implements FactoryContract
     /**
      * Create an instance of the Symfony Roundrobin Transport driver.
      *
-     * @param  array  $config
      * @return \Symfony\Component\Mailer\Transport\RoundRobinTransport
      */
     protected function createRoundrobinTransport(array $config)
@@ -407,10 +377,8 @@ class MailManager implements FactoryContract
      *
      * @template TClass of \Symfony\Component\Mailer\Transport\RoundRobinTransport
      *
-     * @param  array  $config
      * @param  class-string<TClass>  $class
      * @return TClass
-     *
      * @throws \InvalidArgumentException
      */
     protected function createRoundrobinTransportOfClass(array $config, string $class)
@@ -437,11 +405,8 @@ class MailManager implements FactoryContract
 
     /**
      * Create an instance of the Log Transport driver.
-     *
-     * @param  array  $config
-     * @return \Illuminate\Mail\Transport\LogTransport
      */
-    protected function createLogTransport(array $config)
+    protected function createLogTransport(array $config): \Illuminate\Mail\Transport\LogTransport
     {
         $logger = $this->app->make(LoggerInterface::class);
 
@@ -456,10 +421,8 @@ class MailManager implements FactoryContract
 
     /**
      * Create an instance of the Array Transport Driver.
-     *
-     * @return \Illuminate\Mail\Transport\ArrayTransport
      */
-    protected function createArrayTransport()
+    protected function createArrayTransport(): \Illuminate\Mail\Transport\ArrayTransport
     {
         return new ArrayTransport;
     }
@@ -483,8 +446,6 @@ class MailManager implements FactoryContract
      * Set a global address on the mailer by type.
      *
      * @param  \Illuminate\Mail\Mailer  $mailer
-     * @param  array  $config
-     * @param  string  $type
      * @return void
      */
     protected function setGlobalAddress($mailer, array $config, string $type)
@@ -499,7 +460,6 @@ class MailManager implements FactoryContract
     /**
      * Get the mail connection configuration.
      *
-     * @param  string  $name
      * @return array
      */
     protected function getConfig(string $name)
@@ -536,11 +496,8 @@ class MailManager implements FactoryContract
 
     /**
      * Set the default mail driver name.
-     *
-     * @param  string  $name
-     * @return void
      */
-    public function setDefaultDriver(string $name)
+    public function setDefaultDriver(string $name): void
     {
         if ($this->app['config']['mail.driver']) {
             $this->app['config']['mail.driver'] = $name;
@@ -553,9 +510,8 @@ class MailManager implements FactoryContract
      * Disconnect the given mailer and remove from local cache.
      *
      * @param  string|null  $name
-     * @return void
      */
-    public function purge($name = null)
+    public function purge($name = null): void
     {
         $name = $name ?: $this->getDefaultDriver();
 
@@ -566,10 +522,9 @@ class MailManager implements FactoryContract
      * Register a custom transport creator Closure.
      *
      * @param  string  $driver
-     * @param  \Closure  $callback
      * @return $this
      */
-    public function extend($driver, Closure $callback)
+    public function extend($driver, Closure $callback): static
     {
         $this->customCreators[$driver] = $callback;
 
@@ -592,7 +547,7 @@ class MailManager implements FactoryContract
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return $this
      */
-    public function setApplication($app)
+    public function setApplication($app): static
     {
         $this->app = $app;
 
@@ -604,7 +559,7 @@ class MailManager implements FactoryContract
      *
      * @return $this
      */
-    public function forgetMailers()
+    public function forgetMailers(): static
     {
         $this->mailers = [];
 
@@ -614,11 +569,10 @@ class MailManager implements FactoryContract
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->mailer()->$method(...$parameters);
     }

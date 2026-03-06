@@ -51,8 +51,6 @@ class InvokableValidationRule implements Rule, ValidatorAwareRule
 
     /**
      * Create a new explicit Invokable validation rule.
-     *
-     * @param  \Illuminate\Contracts\Validation\ValidationRule|\Illuminate\Contracts\Validation\InvokableRule  $invokable
      */
     protected function __construct(ValidationRule|InvokableRule $invokable)
     {
@@ -63,9 +61,8 @@ class InvokableValidationRule implements Rule, ValidatorAwareRule
      * Create a new implicit or explicit Invokable validation rule.
      *
      * @param  \Illuminate\Contracts\Validation\ValidationRule|\Illuminate\Contracts\Validation\InvokableRule  $invokable
-     * @return \Illuminate\Validation\InvokableValidationRule
      */
-    public static function make($invokable)
+    public static function make($invokable): \Illuminate\Validation\InvokableValidationRule
     {
         if ($invokable->implicit ?? false) {
             return new class($invokable) extends InvokableValidationRule implements ImplicitRule {
@@ -80,9 +77,8 @@ class InvokableValidationRule implements Rule, ValidatorAwareRule
      *
      * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         $this->failed = false;
 
@@ -133,7 +129,7 @@ class InvokableValidationRule implements Rule, ValidatorAwareRule
      * @param  array  $data
      * @return $this
      */
-    public function setData($data)
+    public function setData($data): static
     {
         $this->data = $data;
 
@@ -146,7 +142,7 @@ class InvokableValidationRule implements Rule, ValidatorAwareRule
      * @param  \Illuminate\Validation\Validator  $validator
      * @return $this
      */
-    public function setValidator($validator)
+    public function setValidator($validator): static
     {
         $this->validator = $validator;
 

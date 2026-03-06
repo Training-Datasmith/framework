@@ -49,10 +49,8 @@ class ConnectionResolver implements ConnectionResolverInterface
      * Add a connection to the resolver.
      *
      * @param  string  $name
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
-     * @return void
      */
-    public function addConnection($name, ConnectionInterface $connection)
+    public function addConnection($name, ConnectionInterface $connection): void
     {
         $this->connections[$name] = $connection;
     }
@@ -61,9 +59,8 @@ class ConnectionResolver implements ConnectionResolverInterface
      * Check if a connection has been registered.
      *
      * @param  string  $name
-     * @return bool
      */
-    public function hasConnection($name)
+    public function hasConnection($name): bool
     {
         return isset($this->connections[$name]);
     }
@@ -82,9 +79,8 @@ class ConnectionResolver implements ConnectionResolverInterface
      * Set the default connection name.
      *
      * @param  string  $name
-     * @return void
      */
-    public function setDefaultConnection($name)
+    public function setDefaultConnection($name): void
     {
         $this->default = $name;
     }

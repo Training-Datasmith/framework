@@ -5,13 +5,6 @@ namespace Illuminate\Cache;
 class RedisLock extends Lock
 {
     /**
-     * The Redis factory implementation.
-     *
-     * @var \Illuminate\Redis\Connections\Connection
-     */
-    protected $redis;
-
-    /**
      * Create a new lock instance.
      *
      * @param  \Illuminate\Redis\Connections\Connection  $redis
@@ -19,19 +12,18 @@ class RedisLock extends Lock
      * @param  int  $seconds
      * @param  string|null  $owner
      */
-    public function __construct($redis, $name, $seconds, $owner = null)
+    public function __construct(/**
+     * The Redis factory implementation.
+     */
+    protected $redis, $name, $seconds, $owner = null)
     {
         parent::__construct($name, $seconds, $owner);
-
-        $this->redis = $redis;
     }
 
     /**
      * Attempt to acquire the lock.
-     *
-     * @return bool
      */
-    public function acquire()
+    public function acquire(): bool
     {
         if ($this->seconds > 0) {
             return $this->redis->set($this->name, $this->owner, 'EX', $this->seconds, 'NX') == true;
@@ -42,20 +34,16 @@ class RedisLock extends Lock
 
     /**
      * Release the lock.
-     *
-     * @return bool
      */
-    public function release()
+    public function release(): bool
     {
         return (bool) $this->redis->eval(LuaScripts::releaseLock(), 1, $this->name, $this->owner);
     }
 
     /**
      * Releases this lock in disregard of ownership.
-     *
-     * @return void
      */
-    public function forceRelease()
+    public function forceRelease(): void
     {
         $this->redis->del($this->name);
     }

@@ -7,37 +7,25 @@ use Illuminate\Contracts\Cache\Store;
 class TagSet
 {
     /**
-     * The cache store implementation.
-     *
-     * @var \Illuminate\Contracts\Cache\Store
-     */
-    protected $store;
-
-    /**
-     * The tag names.
-     *
-     * @var array
-     */
-    protected $names = [];
-
-    /**
      * Create a new TagSet instance.
-     *
-     * @param  \Illuminate\Contracts\Cache\Store  $store
-     * @param  array  $names
      */
-    public function __construct(Store $store, array $names = [])
+    public function __construct(
+        /**
+         * The cache store implementation.
+         */
+        protected \Illuminate\Contracts\Cache\Store $store,
+        /**
+         * The tag names.
+         */
+        protected array $names = []
+    )
     {
-        $this->store = $store;
-        $this->names = $names;
     }
 
     /**
      * Reset all tags in the set.
-     *
-     * @return void
      */
-    public function reset()
+    public function reset(): void
     {
         array_walk($this->names, $this->resetTag(...));
     }
@@ -48,7 +36,7 @@ class TagSet
      * @param  string  $name
      * @return string
      */
-    public function resetTag($name)
+    public function resetTag($name): string|array
     {
         $this->store->forever($this->tagKey($name), $id = str_replace('.', '', uniqid('', true)));
 
@@ -57,10 +45,8 @@ class TagSet
 
     /**
      * Flush all the tags in the set.
-     *
-     * @return void
      */
-    public function flush()
+    public function flush(): void
     {
         array_walk($this->names, $this->flushTag(...));
     }
@@ -70,27 +56,23 @@ class TagSet
      *
      * @param  string  $name
      */
-    public function flushTag($name)
+    public function flushTag($name): void
     {
         $this->store->forget($this->tagKey($name));
     }
 
     /**
      * Get a unique namespace that changes when any of the tags are flushed.
-     *
-     * @return string
      */
-    public function getNamespace()
+    public function getNamespace(): string
     {
         return implode('|', $this->tagIds());
     }
 
     /**
      * Get an array of tag identifiers for all of the tags in the set.
-     *
-     * @return array
      */
-    protected function tagIds()
+    protected function tagIds(): array
     {
         return array_map($this->tagId(...), $this->names);
     }
@@ -108,11 +90,8 @@ class TagSet
 
     /**
      * Get the tag identifier key for a given tag.
-     *
-     * @param  string  $name
-     * @return string
      */
-    public function tagKey($name)
+    public function tagKey(string $name): string
     {
         return 'tag:'.$name.':key';
     }

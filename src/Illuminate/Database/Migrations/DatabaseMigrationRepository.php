@@ -7,20 +7,6 @@ use Illuminate\Database\ConnectionResolverInterface as Resolver;
 class DatabaseMigrationRepository implements MigrationRepositoryInterface
 {
     /**
-     * The database connection resolver instance.
-     *
-     * @var \Illuminate\Database\ConnectionResolverInterface
-     */
-    protected $resolver;
-
-    /**
-     * The name of the migration table.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
      * The name of the database connection to use.
      *
      * @var string
@@ -30,13 +16,19 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Create a new database migration repository instance.
      *
-     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
      * @param  string  $table
      */
-    public function __construct(Resolver $resolver, $table)
+    public function __construct(
+        /**
+         * The database connection resolver instance.
+         */
+        protected \Illuminate\Database\ConnectionResolverInterface $resolver,
+        /**
+         * The name of the migration table.
+         */
+        protected $table
+    )
     {
-        $this->table = $table;
-        $this->resolver = $resolver;
     }
 
     /**
@@ -114,9 +106,8 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
      *
      * @param  string  $file
      * @param  int  $batch
-     * @return void
      */
-    public function log($file, $batch)
+    public function log($file, $batch): void
     {
         $record = ['migration' => $file, 'batch' => $batch];
 
@@ -127,9 +118,8 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
      * Remove a migration from the log.
      *
      * @param  object{id?: int, migration: string, batch?: int}  $migration
-     * @return void
      */
-    public function delete($migration)
+    public function delete($migration): void
     {
         $this->table()->where('migration', $migration->migration)->delete();
     }
@@ -139,7 +129,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
      *
      * @return int
      */
-    public function getNextBatchNumber()
+    public function getNextBatchNumber(): int|float
     {
         return $this->getLastBatchNumber() + 1;
     }
@@ -156,14 +146,12 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
 
     /**
      * Create the migration repository data store.
-     *
-     * @return void
      */
-    public function createRepository()
+    public function createRepository(): void
     {
         $schema = $this->getConnection()->getSchemaBuilder();
 
-        $schema->create($this->table, function ($table) {
+        $schema->create($this->table, function ($table): void {
             // The migrations table is responsible for keeping track of which of the
             // migrations have actually run for the application. We'll create the
             // table to hold the migration file's path as well as the batch ID.
@@ -187,10 +175,8 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
 
     /**
      * Delete the migration repository data store.
-     *
-     * @return void
      */
-    public function deleteRepository()
+    public function deleteRepository(): void
     {
         $schema = $this->getConnection()->getSchemaBuilder();
 
@@ -231,9 +217,8 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
      * Set the information source to gather data.
      *
      * @param  string  $name
-     * @return void
      */
-    public function setSource($name)
+    public function setSource($name): void
     {
         $this->connection = $name;
     }

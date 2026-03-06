@@ -22,7 +22,6 @@ trait ConfiguresPrompts
     /**
      * Configure the prompt fallbacks.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
      * @return void
      */
     protected function configurePrompts(InputInterface $input)
@@ -132,9 +131,8 @@ trait ConfiguresPrompts
 
                 if ($this->laravel->runningUnitTests()) {
                     throw new PromptValidationException;
-                } else {
-                    continue;
                 }
+                continue;
             }
 
             $error = is_callable($validate) ? $validate($result) : $this->validatePrompt($result, $validate);
@@ -144,9 +142,8 @@ trait ConfiguresPrompts
 
                 if ($this->laravel->runningUnitTests()) {
                     throw new PromptValidationException;
-                } else {
-                    continue;
                 }
+                continue;
             }
 
             return $result;
@@ -189,8 +186,6 @@ trait ConfiguresPrompts
      * @param  mixed  $field
      * @param  mixed  $value
      * @param  mixed  $rules
-     * @param  array  $messages
-     * @param  array  $attributes
      * @return \Illuminate\Validation\Validator
      */
     protected function getPromptValidatorInstance($field, $value, $rules, array $messages = [], array $attributes = [])
@@ -208,7 +203,7 @@ trait ConfiguresPrompts
      *
      * @return array<string, string>
      */
-    protected function validationMessages()
+    protected function validationMessages(): array
     {
         return [];
     }
@@ -218,7 +213,7 @@ trait ConfiguresPrompts
      *
      * @return array<string, string>
      */
-    protected function validationAttributes()
+    protected function validationAttributes(): array
     {
         return [];
     }
@@ -283,8 +278,8 @@ trait ConfiguresPrompts
 
         if ($required === false) {
             return array_is_list($options)
-                ? array_values(array_filter($answers, fn ($value) => $value !== 'None'))
-                : array_filter($answers, fn ($value) => $value !== '');
+                ? array_values(array_filter($answers, fn ($value): bool => $value !== 'None'))
+                : array_filter($answers, fn ($value): bool => $value !== '');
         }
 
         return $answers;

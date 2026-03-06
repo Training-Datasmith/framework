@@ -11,19 +11,16 @@ trait Prunable
 {
     /**
      * Prune all prunable models in the database.
-     *
-     * @param  int  $chunkSize
-     * @return int
      */
-    public function pruneAll(int $chunkSize = 1000)
+    public function pruneAll(int $chunkSize = 1000): int
     {
         $total = 0;
 
         $this->prunable()
-            ->when(static::isSoftDeletable(), function ($query) {
+            ->when(static::isSoftDeletable(), function ($query): void {
                 $query->withTrashed();
-            })->chunkById($chunkSize, function ($models) use (&$total) {
-                $models->each(function ($model) use (&$total) {
+            })->chunkById($chunkSize, function ($models) use (&$total): void {
+                $models->each(function ($model) use (&$total): void {
                     try {
                         $model->prune();
 
@@ -50,7 +47,7 @@ trait Prunable
      *
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
-    public function prunable()
+    public function prunable(): never
     {
         throw new LogicException('Please implement the prunable method on your model.');
     }

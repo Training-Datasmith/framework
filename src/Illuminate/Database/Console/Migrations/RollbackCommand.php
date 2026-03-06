@@ -29,37 +29,27 @@ class RollbackCommand extends BaseCommand
     protected $description = 'Rollback the last database migration';
 
     /**
-     * The migrator instance.
-     *
-     * @var \Illuminate\Database\Migrations\Migrator
-     */
-    protected $migrator;
-
-    /**
      * Create a new migration rollback command instance.
-     *
-     * @param  \Illuminate\Database\Migrations\Migrator  $migrator
      */
-    public function __construct(Migrator $migrator)
+    public function __construct(/**
+     * The migrator instance.
+     */
+    protected \Illuminate\Database\Migrations\Migrator $migrator)
     {
         parent::__construct();
-
-        $this->migrator = $migrator;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         if ($this->isProhibited() ||
             ! $this->confirmToProceed()) {
             return Command::FAILURE;
         }
 
-        $this->migrator->usingConnection($this->option('database'), function () {
+        $this->migrator->usingConnection($this->option('database'), function (): void {
             $this->migrator->setOutput($this->output)->rollback(
                 $this->getMigrationPaths(), [
                     'pretend' => $this->option('pretend'),
@@ -74,10 +64,8 @@ class RollbackCommand extends BaseCommand
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],

@@ -27,7 +27,7 @@ class MorphMany extends MorphOneOrMany
                 $this->foreignKey,
                 $this->localKey
             ),
-            function ($morphOne) {
+            function ($morphOne): void {
                 if ($inverse = $this->getInverseRelationship()) {
                     $morphOne->inverse($inverse);
                 }
@@ -44,7 +44,7 @@ class MorphMany extends MorphOneOrMany
     }
 
     /** @inheritDoc */
-    public function initRelation(array $models, $relation)
+    public function initRelation(array $models, $relation): array
     {
         foreach ($models as $model) {
             $model->setRelation($relation, $this->related->newCollection());

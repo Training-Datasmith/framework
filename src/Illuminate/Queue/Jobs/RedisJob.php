@@ -9,20 +9,6 @@ use Illuminate\Queue\RedisQueue;
 class RedisJob extends Job implements JobContract
 {
     /**
-     * The Redis queue instance.
-     *
-     * @var \Illuminate\Queue\RedisQueue
-     */
-    protected $redis;
-
-    /**
-     * The Redis raw job payload.
-     *
-     * @var string
-     */
-    protected $job;
-
-    /**
      * The decoded JSON version of "$job".
      *
      * @var array
@@ -30,31 +16,25 @@ class RedisJob extends Job implements JobContract
     protected $decoded;
 
     /**
-     * The Redis job payload inside the reserved queue.
-     *
-     * @var string
-     */
-    protected $reserved;
-
-    /**
      * Create a new job instance.
      *
-     * @param  \Illuminate\Container\Container  $container
-     * @param  \Illuminate\Queue\RedisQueue  $redis
      * @param  string  $job
      * @param  string  $reserved
      * @param  string  $connectionName
      * @param  string  $queue
      */
-    public function __construct(Container $container, RedisQueue $redis, $job, $reserved, $connectionName, $queue)
+    public function __construct(Container $container, /**
+     * The Redis queue instance.
+     */
+    protected \Illuminate\Queue\RedisQueue $redis, /**
+     * The Redis raw job payload.
+     */
+    protected $job, /**
+     * The Redis job payload inside the reserved queue.
+     */
+    protected $reserved, $connectionName, $queue)
     {
-        // The $job variable is the original job JSON as it existed in the ready queue while
-        // the $reserved variable is the raw JSON in the reserved queue. The exact format
-        // of the reserved job is required in order for us to properly delete its data.
-        $this->job = $job;
-        $this->redis = $redis;
         $this->queue = $queue;
-        $this->reserved = $reserved;
         $this->container = $container;
         $this->connectionName = $connectionName;
 
@@ -73,10 +53,8 @@ class RedisJob extends Job implements JobContract
 
     /**
      * Delete the job from the queue.
-     *
-     * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         parent::delete();
 
@@ -87,9 +65,8 @@ class RedisJob extends Job implements JobContract
      * Release the job back into the queue after (n) seconds.
      *
      * @param  int  $delay
-     * @return void
      */
-    public function release($delay = 0)
+    public function release($delay = 0): void
     {
         parent::release($delay);
 
@@ -101,7 +78,7 @@ class RedisJob extends Job implements JobContract
      *
      * @return int
      */
-    public function attempts()
+    public function attempts(): int|float
     {
         return ($this->decoded['attempts'] ?? null) + 1;
     }

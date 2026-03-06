@@ -35,8 +35,6 @@ class DynamicComponent extends Component
 
     /**
      * Create a new component instance.
-     *
-     * @param  \BackedEnum|string  $component
      */
     public function __construct(BackedEnum|string $component)
     {
@@ -59,7 +57,7 @@ class DynamicComponent extends Component
 </x-{{ component }}>
 EOF;
 
-        return function ($data) use ($template) {
+        return function (array $data) use ($template): string {
             $bindings = $this->bindings($class = $this->classForComponent());
 
             return str_replace(
@@ -86,44 +84,33 @@ EOF;
 
     /**
      * Compile the @props directive for the component.
-     *
-     * @param  array  $bindings
-     * @return string
      */
-    protected function compileProps(array $bindings)
+    protected function compileProps(array $bindings): string
     {
         if (empty($bindings)) {
             return '';
         }
 
-        return '@props('.'[\''.implode('\',\'', (new Collection($bindings))->map(function ($dataKey) {
-            return Str::camel($dataKey);
-        })->all()).'\']'.')';
+        return '@props('.'[\''.implode('\',\'', (new Collection($bindings))->map(fn($dataKey) => Str::camel($dataKey))->all()).'\']'.')';
     }
 
     /**
      * Compile the bindings for the component.
-     *
-     * @param  array  $bindings
-     * @return string
      */
-    protected function compileBindings(array $bindings)
+    protected function compileBindings(array $bindings): string
     {
         return (new Collection($bindings))
-            ->map(fn ($key) => ':'.$key.'="$'.Str::camel(str_replace([':', '.'], ' ', $key)).'"')
+            ->map(fn ($key): string => ':'.$key.'="$'.Str::camel(str_replace([':', '.'], ' ', $key)).'"')
             ->implode(' ');
     }
 
     /**
      * Compile the slots for the component.
-     *
-     * @param  array  $slots
-     * @return string
      */
-    protected function compileSlots(array $slots)
+    protected function compileSlots(array $slots): string
     {
         return (new Collection($slots))
-            ->map(fn ($slot, $name) => $name === '__default' ? null : '<x-slot name="'.$name.'" '.((string) $slot->attributes).'>{{ $'.$name.' }}</x-slot>')
+            ->map(fn ($slot, $name) => $name === '__default' ? null : '<x-slot name="'.$name.'" '.($slot->attributes).'>{{ $'.$name.' }}</x-slot>')
             ->filter()
             ->implode(PHP_EOL);
     }
@@ -135,21 +122,14 @@ EOF;
      */
     protected function classForComponent()
     {
-        if (isset(static::$componentClasses[$this->component])) {
-            return static::$componentClasses[$this->component];
-        }
-
-        return static::$componentClasses[$this->component] =
+        return static::$componentClasses[$this->component] ?? static::$componentClasses[$this->component] =
                     $this->compiler()->componentClass($this->component);
     }
 
     /**
      * Get the names of the variables that should be bound to the component.
-     *
-     * @param  string  $class
-     * @return array
      */
-    protected function bindings(string $class)
+    protected function bindings(string $class): array
     {
         [$data] = $this->compiler()->partitionDataAndAttributes($class, $this->attributes->getAttributes());
 

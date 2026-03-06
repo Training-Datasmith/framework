@@ -19,31 +19,20 @@ class DynamoDbFailedJobProvider implements FailedJobProviderInterface
     protected $dynamo;
 
     /**
-     * The application name.
-     *
-     * @var string
-     */
-    protected $applicationName;
-
-    /**
-     * The table name.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
      * Create a new DynamoDb failed job provider.
      *
-     * @param  \Aws\DynamoDb\DynamoDbClient  $dynamo
      * @param  string  $applicationName
      * @param  string  $table
      */
-    public function __construct(DynamoDbClient $dynamo, $applicationName, $table)
+    public function __construct(DynamoDbClient $dynamo, /**
+     * The application name.
+     */
+    protected $applicationName, /**
+     * The table name.
+     */
+    protected $table)
     {
-        $this->table = $table;
         $this->dynamo = $dynamo;
-        $this->applicationName = $applicationName;
     }
 
     /**
@@ -110,19 +99,17 @@ class DynamoDbFailedJobProvider implements FailedJobProviderInterface
         ]);
 
         return (new Collection($results['Items']))
-            ->sortByDesc(fn ($result) => (int) $result['failed_at']['N'])
-            ->map(function ($result) {
-                return (object) [
-                    'id' => $result['uuid']['S'],
-                    'connection' => $result['connection']['S'],
-                    'queue' => $result['queue']['S'],
-                    'payload' => $result['payload']['S'],
-                    'exception' => $result['exception']['S'],
-                    'failed_at' => Carbon::createFromTimestamp(
-                        (int) $result['failed_at']['N'], date_default_timezone_get()
-                    )->format(DateTimeInterface::ISO8601),
-                ];
-            })
+            ->sortByDesc(fn ($result): int => (int) $result['failed_at']['N'])
+            ->map(fn($result) => (object) [
+                'id' => $result['uuid']['S'],
+                'connection' => $result['connection']['S'],
+                'queue' => $result['queue']['S'],
+                'payload' => $result['payload']['S'],
+                'exception' => $result['exception']['S'],
+                'failed_at' => Carbon::createFromTimestamp(
+                    (int) $result['failed_at']['N'], date_default_timezone_get()
+                )->format(DateTimeInterface::ISO8601),
+            ])
             ->all();
     }
 
@@ -162,9 +149,8 @@ class DynamoDbFailedJobProvider implements FailedJobProviderInterface
      * Delete a single failed job from storage.
      *
      * @param  mixed  $id
-     * @return bool
      */
-    public function forget($id)
+    public function forget($id): bool
     {
         $this->dynamo->deleteItem([
             'TableName' => $this->table,
@@ -181,11 +167,10 @@ class DynamoDbFailedJobProvider implements FailedJobProviderInterface
      * Flush all of the failed jobs from storage.
      *
      * @param  int|null  $hours
-     * @return void
      *
      * @throws \Exception
      */
-    public function flush($hours = null)
+    public function flush($hours = null): never
     {
         throw new Exception("DynamoDb failed job storage may not be flushed. Please use DynamoDb's TTL features on your expires_at attribute.");
     }

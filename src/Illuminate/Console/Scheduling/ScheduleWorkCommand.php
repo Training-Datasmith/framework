@@ -34,7 +34,7 @@ class ScheduleWorkCommand extends Command
      *
      * @return never
      */
-    public function handle()
+    public function handle(): void
     {
         $this->components->info(
             'Running scheduled tasks.',

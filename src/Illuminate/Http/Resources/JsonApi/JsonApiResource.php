@@ -39,10 +39,8 @@ class JsonApiResource extends JsonResource
 
     /**
      * Set the JSON:API version for the request.
-     *
-     * @return void
      */
-    public static function configure(?string $version = null, array $ext = [], array $profile = [], array $meta = [])
+    public static function configure(?string $version = null, array $ext = [], array $profile = [], array $meta = []): void
     {
         static::$jsonApiInformation = array_filter([
             'version' => $version,
@@ -57,7 +55,7 @@ class JsonApiResource extends JsonResource
      *
      * @return string|null
      */
-    public function toId(Request $request)
+    public function toId(Request $request): null
     {
         return null;
     }
@@ -67,7 +65,7 @@ class JsonApiResource extends JsonResource
      *
      * @return string|null
      */
-    public function toType(Request $request)
+    public function toType(Request $request): null
     {
         return null;
     }
@@ -75,7 +73,6 @@ class JsonApiResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Arrayable|\JsonSerializable|array
      */
     #[\Override]
@@ -91,7 +88,6 @@ class JsonApiResource extends JsonResource
     /**
      * Get the resource's relationships.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Arrayable|array
      */
     public function toRelationships(Request $request)
@@ -105,20 +101,16 @@ class JsonApiResource extends JsonResource
 
     /**
      * Get the resource's links.
-     *
-     * @return array
      */
-    public function toLinks(Request $request)
+    public function toLinks(Request $request): array
     {
         return $this->jsonApiLinks;
     }
 
     /**
      * Get the resource's meta information.
-     *
-     * @return array
      */
-    public function toMeta(Request $request)
+    public function toMeta(Request $request): array
     {
         return $this->jsonApiMeta;
     }
@@ -127,10 +119,9 @@ class JsonApiResource extends JsonResource
      * Get any additional data that should be returned with the resource array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
     #[\Override]
-    public function with($request)
+    public function with($request): array
     {
         return array_filter([
             'included' => $this->resolveIncludedResourceObjects($request)
@@ -148,10 +139,9 @@ class JsonApiResource extends JsonResource
      * Resolve the resource to an array.
      *
      * @param  \Illuminate\Http\Request|null  $request
-     * @return array
      */
     #[\Override]
-    public function resolve($request = null)
+    public function resolve($request = null): array
     {
         return [
             'data' => $this->resolveResourceData($this->resolveJsonApiRequestFrom($request ?? $this->resolveRequestFromContainer())),
@@ -160,12 +150,9 @@ class JsonApiResource extends JsonResource
 
     /**
      * Resolve the resource data to an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
     #[\Override]
-    public function resolveResourceData(Request $request)
+    public function resolveResourceData(Request $request): array
     {
         return $this->resolveResourceObject($request);
     }
@@ -206,10 +193,9 @@ class JsonApiResource extends JsonResource
      * Create a new resource collection instance.
      *
      * @param  mixed  $resource
-     * @return \Illuminate\Http\Resources\JsonApi\AnonymousResourceCollection
      */
     #[\Override]
-    protected static function newCollection($resource)
+    protected static function newCollection($resource): \Illuminate\Http\Resources\JsonApi\AnonymousResourceCollection
     {
         return new AnonymousResourceCollection($resource, static::class);
     }
@@ -218,34 +204,29 @@ class JsonApiResource extends JsonResource
      * Set the string that should wrap the outer-most resource array.
      *
      * @param  string  $value
-     * @return never
      *
      * @throws \RuntimeException
      */
     #[\Override]
-    public static function wrap($value)
+    public static function wrap($value): never
     {
         throw new BadMethodCallException(sprintf('Using %s() method is not allowed.', __METHOD__));
     }
 
     /**
      * Disable wrapping of the outer-most resource array.
-     *
-     * @return never
      */
     #[\Override]
-    public static function withoutWrapping()
+    public static function withoutWrapping(): never
     {
         throw new BadMethodCallException(sprintf('Using %s() method is not allowed.', __METHOD__));
     }
 
     /**
      * Flush the resource's global state.
-     *
-     * @return void
      */
     #[\Override]
-    public static function flushState()
+    public static function flushState(): void
     {
         parent::flushState();
 

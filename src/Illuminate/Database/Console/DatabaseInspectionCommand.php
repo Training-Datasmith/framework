@@ -11,10 +11,8 @@ abstract class DatabaseInspectionCommand extends Command
     /**
      * Get a human-readable name for the given connection.
      *
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
      * @param  string  $database
      * @return string
-     *
      * @deprecated
      */
     protected function getConnectionName(ConnectionInterface $connection, $database)
@@ -25,9 +23,7 @@ abstract class DatabaseInspectionCommand extends Command
     /**
      * Get the number of open connections for a database.
      *
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
      * @return int|null
-     *
      * @deprecated
      */
     protected function getConnectionCount(ConnectionInterface $connection)

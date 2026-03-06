@@ -9,13 +9,6 @@ use Illuminate\Contracts\Pipeline\Hub as HubContract;
 class Hub implements HubContract
 {
     /**
-     * The container implementation.
-     *
-     * @var \Illuminate\Contracts\Container\Container|null
-     */
-    protected $container;
-
-    /**
      * All of the available pipelines.
      *
      * @var array
@@ -24,21 +17,20 @@ class Hub implements HubContract
 
     /**
      * Create a new Hub instance.
-     *
-     * @param  \Illuminate\Contracts\Container\Container|null  $container
      */
-    public function __construct(?Container $container = null)
+    public function __construct(
+        /**
+         * The container implementation.
+         */
+        protected ?\Illuminate\Contracts\Container\Container $container = null
+    )
     {
-        $this->container = $container;
     }
 
     /**
      * Define the default named pipeline.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function defaults(Closure $callback)
+    public function defaults(Closure $callback): void
     {
         $this->pipeline('default', $callback);
     }
@@ -47,10 +39,8 @@ class Hub implements HubContract
      * Define a new named pipeline.
      *
      * @param  string  $name
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function pipeline($name, Closure $callback)
+    public function pipeline($name, Closure $callback): void
     {
         $this->pipelines[$name] = $callback;
     }
@@ -60,9 +50,8 @@ class Hub implements HubContract
      *
      * @param  mixed  $object
      * @param  string|null  $pipeline
-     * @return mixed
      */
-    public function pipe($object, $pipeline = null)
+    public function pipe($object, $pipeline = null): mixed
     {
         $pipeline = $pipeline ?: 'default';
 
@@ -84,10 +73,9 @@ class Hub implements HubContract
     /**
      * Set the container instance used by the hub.
      *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return $this
      */
-    public function setContainer(Container $container)
+    public function setContainer(Container $container): static
     {
         $this->container = $container;
 

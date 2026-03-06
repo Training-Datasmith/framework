@@ -23,20 +23,6 @@ abstract class HasOneOrMany extends Relation
     use InteractsWithDictionary, SupportsInverseRelations;
 
     /**
-     * The foreign key of the parent model.
-     *
-     * @var string
-     */
-    protected $foreignKey;
-
-    /**
-     * The local key of the parent model.
-     *
-     * @var string
-     */
-    protected $localKey;
-
-    /**
      * Create a new has one or many relationship instance.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
@@ -44,23 +30,25 @@ abstract class HasOneOrMany extends Relation
      * @param  string  $foreignKey
      * @param  string  $localKey
      */
-    public function __construct(Builder $query, Model $parent, $foreignKey, $localKey)
+    public function __construct(Builder $query, Model $parent, /**
+     * The foreign key of the parent model.
+     */
+    protected $foreignKey, /**
+     * The local key of the parent model.
+     */
+    protected $localKey)
     {
-        $this->localKey = $localKey;
-        $this->foreignKey = $foreignKey;
-
         parent::__construct($query, $parent);
     }
 
     /**
      * Create and return an un-saved instance of the related model.
      *
-     * @param  array  $attributes
      * @return TRelatedModel
      */
     public function make(array $attributes = [])
     {
-        return tap($this->related->newInstance($attributes), function ($instance) {
+        return tap($this->related->newInstance($attributes), function (\Illuminate\Database\Eloquent\Model $instance): void {
             $this->setForeignAttributesForCreate($instance);
             $this->applyInverseRelationToModel($instance);
         });
@@ -85,10 +73,8 @@ abstract class HasOneOrMany extends Relation
 
     /**
      * Set the base constraints on the relation query.
-     *
-     * @return void
      */
-    public function addConstraints()
+    public function addConstraints(): void
     {
         if (static::$constraints) {
             $query = $this->getRelationQuery();
@@ -100,7 +86,7 @@ abstract class HasOneOrMany extends Relation
     }
 
     /** @inheritDoc */
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models): void
     {
         $whereIn = $this->whereInMethod($this->parent, $this->localKey);
 
@@ -175,7 +161,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the value of a relationship by one or many type.
      *
-     * @param  array  $dictionary
      * @param  string  $key
      * @param  string  $type
      * @return mixed
@@ -239,8 +224,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return TRelatedModel
      */
     public function firstOrNew(array $attributes = [], array $values = [])
@@ -257,14 +240,13 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first record matching the attributes. If the record is not found, create it.
      *
-     * @param  array  $attributes
      * @param  (\Closure(): array)|array  $values
      * @return TRelatedModel
      */
     public function firstOrCreate(array $attributes = [], Closure|array $values = [])
     {
         if (is_null($instance = (clone $this)->where($attributes)->first())) {
-            $instance = $this->createOrFirst($attributes, $values);
+            return $this->createOrFirst($attributes, $values);
         }
 
         return $instance;
@@ -273,7 +255,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
      *
-     * @param  array  $attributes
      * @param  (\Closure(): array)|array  $values
      * @return TRelatedModel
      */
@@ -289,13 +270,11 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return TRelatedModel
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
-        return tap($this->firstOrCreate($attributes, $values), function ($instance) use ($values) {
+        return tap($this->firstOrCreate($attributes, $values), function ($instance) use ($values): void {
             if (! $instance->wasRecentlyCreated) {
                 $instance->fill($values)->save();
             }
@@ -305,12 +284,10 @@ abstract class HasOneOrMany extends Relation
     /**
      * Insert new records or update the existing ones.
      *
-     * @param  array  $values
-     * @param  array|string  $uniqueBy
      * @param  array|null  $update
      * @return int
      */
-    public function upsert(array $values, $uniqueBy, $update = null)
+    public function upsert(array $values, array|string $uniqueBy, $update = null)
     {
         if (! empty($values) && ! is_array(array_first($values))) {
             $values = [$values];
@@ -344,9 +321,7 @@ abstract class HasOneOrMany extends Relation
      */
     public function saveQuietly(Model $model)
     {
-        return Model::withoutEvents(function () use ($model) {
-            return $this->save($model);
-        });
+        return Model::withoutEvents(fn() => $this->save($model));
     }
 
     /**
@@ -372,20 +347,17 @@ abstract class HasOneOrMany extends Relation
      */
     public function saveManyQuietly($models)
     {
-        return Model::withoutEvents(function () use ($models) {
-            return $this->saveMany($models);
-        });
+        return Model::withoutEvents(fn() => $this->saveMany($models));
     }
 
     /**
      * Create a new instance of the related model.
      *
-     * @param  array  $attributes
      * @return TRelatedModel
      */
     public function create(array $attributes = [])
     {
-        return tap($this->related->newInstance($attributes), function ($instance) {
+        return tap($this->related->newInstance($attributes), function (\Illuminate\Database\Eloquent\Model $instance): void {
             $this->setForeignAttributesForCreate($instance);
 
             $instance->save();
@@ -397,7 +369,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a new instance of the related model without raising any events to the parent model.
      *
-     * @param  array  $attributes
      * @return TRelatedModel
      */
     public function createQuietly(array $attributes = [])
@@ -408,7 +379,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a new instance of the related model. Allow mass-assignment.
      *
-     * @param  array  $attributes
      * @return TRelatedModel
      */
     public function forceCreate(array $attributes = [])
@@ -421,7 +391,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a new instance of the related model with mass assignment without raising model events.
      *
-     * @param  array  $attributes
      * @return TRelatedModel
      */
     public function forceCreateQuietly(array $attributes = [])
@@ -432,7 +401,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a Collection of new instances of the related model.
      *
-     * @param  iterable  $records
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function createMany(iterable $records)
@@ -449,7 +417,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a Collection of new instances of the related model without raising any events to the parent model.
      *
-     * @param  iterable  $records
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function createManyQuietly(iterable $records)
@@ -460,7 +427,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a Collection of new instances of the related model, allowing mass-assignment.
      *
-     * @param  iterable  $records
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function forceCreateMany(iterable $records)
@@ -477,7 +443,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a Collection of new instances of the related model, allowing mass-assignment and without raising any events to the parent model.
      *
-     * @param  iterable  $records
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function forceCreateManyQuietly(iterable $records)

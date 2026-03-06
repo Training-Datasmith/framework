@@ -24,30 +24,20 @@ class ForgetCommand extends Command
     protected $description = 'Remove an item from the cache';
 
     /**
-     * The cache manager instance.
-     *
-     * @var \Illuminate\Cache\CacheManager
-     */
-    protected $cache;
-
-    /**
      * Create a new cache clear command instance.
-     *
-     * @param  \Illuminate\Cache\CacheManager  $cache
      */
-    public function __construct(CacheManager $cache)
+    public function __construct(/**
+     * The cache manager instance.
+     */
+    protected \Illuminate\Cache\CacheManager $cache)
     {
         parent::__construct();
-
-        $this->cache = $cache;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->cache->store($this->argument('store'))->forget(
             $this->argument('key')

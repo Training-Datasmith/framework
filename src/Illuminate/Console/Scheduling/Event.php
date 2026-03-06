@@ -27,13 +27,6 @@ class Event
     use Macroable, ManagesAttributes, ManagesFrequencies, ReflectsClosures, Tappable;
 
     /**
-     * The command string.
-     *
-     * @var string|null
-     */
-    public $command;
-
-    /**
      * The location that output should be sent to.
      *
      * @var string
@@ -94,14 +87,15 @@ class Event
     /**
      * Create a new event instance.
      *
-     * @param  \Illuminate\Console\Scheduling\EventMutex  $mutex
      * @param  string  $command
      * @param  \DateTimeZone|string|null  $timezone
      */
-    public function __construct(EventMutex $mutex, $command, $timezone = null)
+    public function __construct(EventMutex $mutex, /**
+     * The command string.
+     */
+    public $command, $timezone = null)
     {
         $this->mutex = $mutex;
-        $this->command = $command;
         $this->timezone = $timezone;
 
         $this->output = $this->getDefaultOutput();
@@ -109,10 +103,8 @@ class Event
 
     /**
      * Get the default output depending on the OS.
-     *
-     * @return string
      */
-    public function getDefaultOutput()
+    public function getDefaultOutput(): string
     {
         return (DIRECTORY_SEPARATOR === '\\') ? 'NUL' : '/dev/null';
     }
@@ -120,12 +112,10 @@ class Event
     /**
      * Run the given event.
      *
-     * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return void
      *
      * @throws \Throwable
      */
-    public function run(Container $container)
+    public function run(Container $container): void
     {
         if ($this->shouldSkipDueToOverlapping()) {
             return;
@@ -140,30 +130,24 @@ class Event
 
     /**
      * Determine if the event should skip because another process is overlapping.
-     *
-     * @return bool
      */
-    public function shouldSkipDueToOverlapping()
+    public function shouldSkipDueToOverlapping(): bool
     {
         return $this->withoutOverlapping && ! $this->mutex->create($this);
     }
 
     /**
      * Determine if the event has been configured to repeat multiple times per minute.
-     *
-     * @return bool
      */
-    public function isRepeatable()
+    public function isRepeatable(): bool
     {
         return ! is_null($this->repeatSeconds);
     }
 
     /**
      * Determine if the event is ready to repeat.
-     *
-     * @return bool
      */
-    public function shouldRepeatNow()
+    public function shouldRepeatNow(): bool
     {
         return $this->isRepeatable()
             && $this->lastChecked?->diffInSeconds() >= $this->repeatSeconds;
@@ -194,9 +178,8 @@ class Event
      * Run the command process.
      *
      * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return int
      */
-    protected function execute($container)
+    protected function execute(array $container): int
     {
         $context = json_encode($container[Repository::class]->dehydrate());
 
@@ -204,19 +187,17 @@ class Event
             $this->buildCommand(), base_path(), ['__LARAVEL_CONTEXT' => $context], null, null
         )->run(
             laravel_cloud()
-                ? fn ($type, $line) => fwrite($type === 'out' ? STDOUT : STDERR, $line)
-                : fn () => true
+                ? fn ($type, $line): int|false => fwrite($type === 'out' ? STDOUT : STDERR, (string) $line)
+                : fn (): true => true
         );
     }
 
     /**
      * Mark the command process as finished and run callbacks/cleanup.
      *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      * @param  int  $exitCode
-     * @return void
      */
-    public function finish(Container $container, $exitCode)
+    public function finish(Container $container, $exitCode): void
     {
         $this->exitCode = (int) $exitCode;
 
@@ -229,11 +210,8 @@ class Event
 
     /**
      * Call all of the "before" callbacks for the event.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return void
      */
-    public function callBeforeCallbacks(Container $container)
+    public function callBeforeCallbacks(Container $container): void
     {
         foreach ($this->beforeCallbacks as $callback) {
             $container->call($callback);
@@ -242,11 +220,8 @@ class Event
 
     /**
      * Call all of the "after" callbacks for the event.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return void
      */
-    public function callAfterCallbacks(Container $container)
+    public function callAfterCallbacks(Container $container): void
     {
         foreach ($this->afterCallbacks as $callback) {
             $container->call($callback);
@@ -309,9 +284,8 @@ class Event
      * Determine if the event runs in the given environment.
      *
      * @param  string  $environment
-     * @return bool
      */
-    public function runsInEnvironment($environment)
+    public function runsInEnvironment($environment): bool
     {
         return empty($this->environments) || in_array($environment, $this->environments);
     }
@@ -320,9 +294,8 @@ class Event
      * Determine if the filters pass for the event.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return bool
      */
-    public function filtersPass($app)
+    public function filtersPass($app): bool
     {
         $this->lastChecked = Date::now();
 
@@ -346,7 +319,7 @@ class Event
      *
      * @return $this
      */
-    public function storeOutput()
+    public function storeOutput(): static
     {
         $this->ensureOutputIsBeingCaptured();
 
@@ -360,7 +333,7 @@ class Event
      * @param  bool  $append
      * @return $this
      */
-    public function sendOutputTo($location, $append = false)
+    public function sendOutputTo($location, $append = false): static
     {
         $this->output = $location;
 
@@ -395,7 +368,7 @@ class Event
 
         $addresses = Arr::wrap($addresses);
 
-        return $this->then(function (Mailer $mailer) use ($addresses, $onlyIfOutputExists) {
+        return $this->then(function (Mailer $mailer) use ($addresses, $onlyIfOutputExists): void {
             $this->emailOutput($mailer, $addresses, $onlyIfOutputExists);
         });
     }
@@ -425,7 +398,7 @@ class Event
 
         $addresses = Arr::wrap($addresses);
 
-        return $this->onFailure(function (Mailer $mailer) use ($addresses) {
+        return $this->onFailure(function (Mailer $mailer) use ($addresses): void {
             $this->emailOutput($mailer, $addresses, false);
         });
     }
@@ -445,7 +418,6 @@ class Event
     /**
      * E-mail the output of the event to the recipients.
      *
-     * @param  \Illuminate\Contracts\Mail\Mailer  $mailer
      * @param  array  $addresses
      * @param  bool  $onlyIfOutputExists
      * @return void
@@ -458,7 +430,7 @@ class Event
             return;
         }
 
-        $mailer->raw($text, function ($m) use ($addresses) {
+        $mailer->raw($text, function ($m) use ($addresses): void {
             $m->to($addresses)->subject($this->getEmailSubject());
         });
     }
@@ -577,7 +549,7 @@ class Event
      */
     protected function pingCallback($url)
     {
-        return function (Container $container) use ($url) {
+        return function (Container $container) use ($url): void {
             try {
                 $this->getHttpClient($container)->request('GET', $url);
             } catch (ClientExceptionInterface|TransferException $e) {
@@ -589,7 +561,6 @@ class Event
     /**
      * Get the Guzzle HTTP client to use to send pings.
      *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return \GuzzleHttp\ClientInterface
      */
     protected function getHttpClient(Container $container)
@@ -608,10 +579,9 @@ class Event
     /**
      * Register a callback to be called before the operation.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
-    public function before(Closure $callback)
+    public function before(Closure $callback): static
     {
         $this->beforeCallbacks[] = $callback;
 
@@ -621,7 +591,6 @@ class Event
     /**
      * Register a callback to be called after the operation.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function after(Closure $callback)
@@ -632,7 +601,6 @@ class Event
     /**
      * Register a callback to be called after the operation.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function then(Closure $callback)
@@ -651,7 +619,6 @@ class Event
     /**
      * Register a callback that uses the output after the job runs.
      *
-     * @param  \Closure  $callback
      * @param  bool  $onlyIfOutputExists
      * @return $this
      */
@@ -665,7 +632,6 @@ class Event
     /**
      * Register a callback to be called if the operation succeeds.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function onSuccess(Closure $callback)
@@ -676,7 +642,7 @@ class Event
             return $this->onSuccessWithOutput($callback);
         }
 
-        return $this->then(function (Container $container) use ($callback) {
+        return $this->then(function (Container $container) use ($callback): void {
             if ($this->exitCode === 0) {
                 $container->call($callback);
             }
@@ -686,7 +652,6 @@ class Event
     /**
      * Register a callback that uses the output if the operation succeeds.
      *
-     * @param  \Closure  $callback
      * @param  bool  $onlyIfOutputExists
      * @return $this
      */
@@ -700,7 +665,6 @@ class Event
     /**
      * Register a callback to be called if the operation fails.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function onFailure(Closure $callback)
@@ -711,7 +675,7 @@ class Event
             return $this->onFailureWithOutput($callback);
         }
 
-        return $this->then(function (Container $container) use ($callback) {
+        return $this->then(function (Container $container) use ($callback): void {
             if ($this->exitCode !== 0) {
                 $container->call($callback);
             }
@@ -721,7 +685,6 @@ class Event
     /**
      * Register a callback that uses the output if the operation fails.
      *
-     * @param  \Closure  $callback
      * @param  bool  $onlyIfOutputExists
      * @return $this
      */
@@ -735,7 +698,6 @@ class Event
     /**
      * Get a callback that provides output.
      *
-     * @param  \Closure  $callback
      * @param  bool  $onlyIfOutputExists
      * @return \Closure
      */
@@ -791,10 +753,9 @@ class Event
     /**
      * Set the event mutex implementation to be used.
      *
-     * @param  \Illuminate\Console\Scheduling\EventMutex  $mutex
      * @return $this
      */
-    public function preventOverlapsUsing(EventMutex $mutex)
+    public function preventOverlapsUsing(EventMutex $mutex): static
     {
         $this->mutex = $mutex;
 
@@ -815,18 +776,17 @@ class Event
         }
 
         return 'framework'.DIRECTORY_SEPARATOR.'schedule-'.
-            sha1($this->expression.$this->normalizeCommand($this->command ?? ''));
+            sha1($this->expression.static::normalizeCommand($this->command ?? ''));
     }
 
     /**
      * Set the mutex name or name resolver callback.
      *
-     * @param  \Closure|string  $mutexName
      * @return $this
      */
-    public function createMutexNameUsing(Closure|string $mutexName)
+    public function createMutexNameUsing(Closure|string $mutexName): static
     {
-        $this->mutexNameResolver = is_string($mutexName) ? fn () => $mutexName : $mutexName;
+        $this->mutexNameResolver = is_string($mutexName) ? fn (): string => $mutexName : $mutexName;
 
         return $this;
     }
@@ -847,9 +807,8 @@ class Event
      * Format the given command string with a normalized PHP binary path.
      *
      * @param  string  $command
-     * @return string
      */
-    public static function normalizeCommand($command)
+    public static function normalizeCommand($command): string
     {
         return str_replace([
             Application::phpBinary(),

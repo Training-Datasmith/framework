@@ -31,7 +31,7 @@ class VerifyEmail extends Notification
      * @param  mixed  $notifiable
      * @return array|string
      */
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['mail'];
     }
@@ -85,7 +85,7 @@ class VerifyEmail extends Notification
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             [
                 'id' => $notifiable->getKey(),
-                'hash' => sha1($notifiable->getEmailForVerification()),
+                'hash' => sha1((string) $notifiable->getEmailForVerification()),
             ]
         );
     }
@@ -94,9 +94,8 @@ class VerifyEmail extends Notification
      * Set a callback that should be used when creating the email verification URL.
      *
      * @param  \Closure  $callback
-     * @return void
      */
-    public static function createUrlUsing($callback)
+    public static function createUrlUsing($callback): void
     {
         static::$createUrlCallback = $callback;
     }
@@ -105,9 +104,8 @@ class VerifyEmail extends Notification
      * Set a callback that should be used when building the notification mail message.
      *
      * @param  \Closure(mixed, string): (\Illuminate\Notifications\Messages\MailMessage|\Illuminate\Contracts\Mail\Mailable)  $callback
-     * @return void
      */
-    public static function toMailUsing($callback)
+    public static function toMailUsing($callback): void
     {
         static::$toMailCallback = $callback;
     }

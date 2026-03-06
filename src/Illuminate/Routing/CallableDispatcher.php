@@ -11,26 +11,20 @@ class CallableDispatcher implements CallableDispatcherContract
     use ResolvesRouteDependencies;
 
     /**
-     * The container instance.
-     *
-     * @var \Illuminate\Container\Container
-     */
-    protected $container;
-
-    /**
      * Create a new callable dispatcher instance.
-     *
-     * @param  \Illuminate\Container\Container  $container
      */
-    public function __construct(Container $container)
+    public function __construct(
+        /**
+         * The container instance.
+         */
+        protected \Illuminate\Container\Container $container
+    )
     {
-        $this->container = $container;
     }
 
     /**
      * Dispatch a request to a given callable.
      *
-     * @param  \Illuminate\Routing\Route  $route
      * @param  callable  $callable
      * @return mixed
      */
@@ -42,7 +36,6 @@ class CallableDispatcher implements CallableDispatcherContract
     /**
      * Resolve the parameters for the callable.
      *
-     * @param  \Illuminate\Routing\Route  $route
      * @param  callable  $callable
      * @return array
      */

@@ -54,9 +54,7 @@ trait PacksPhpRedisValues
                     throw new RuntimeException("'lzf' extension required to call 'lzf_compress'.");
                 }
 
-                $processor = function ($value) {
-                    return \lzf_compress($this->client->_serialize($value));
-                };
+                $processor = (fn($value) => \lzf_compress($this->client->_serialize($value)));
             } elseif ($this->supportsZstd() && $this->zstdCompressed()) {
                 if (! function_exists('zstd_compress')) {
                     throw new RuntimeException("'zstd' extension required to call 'zstd_compress'.");
@@ -64,12 +62,10 @@ trait PacksPhpRedisValues
 
                 $compressionLevel = $this->client->getOption(Redis::OPT_COMPRESSION_LEVEL);
 
-                $processor = function ($value) use ($compressionLevel) {
-                    return \zstd_compress(
-                        $this->client->_serialize($value),
-                        $compressionLevel === 0 ? Redis::COMPRESSION_ZSTD_DEFAULT : $compressionLevel
-                    );
-                };
+                $processor = (fn($value) => \zstd_compress(
+                    $this->client->_serialize($value),
+                    $compressionLevel === 0 ? Redis::COMPRESSION_ZSTD_DEFAULT : $compressionLevel
+                ));
             } else {
                 throw new UnexpectedValueException(sprintf(
                     'Unsupported phpredis compression in use [%d].',
@@ -77,9 +73,7 @@ trait PacksPhpRedisValues
                 ));
             }
         } else {
-            $processor = function ($value) {
-                return $this->client->_serialize($value);
-            };
+            $processor = (fn($value) => $this->client->_serialize($value));
         }
 
         return array_map($processor, $values);
@@ -88,7 +82,6 @@ trait PacksPhpRedisValues
     /**
      * Execute the given callback without serialization or compression when applicable.
      *
-     * @param  callable  $callback
      * @return mixed
      */
     public function withoutSerializationOrCompression(callable $callback)
@@ -124,8 +117,6 @@ trait PacksPhpRedisValues
 
     /**
      * Determine if serialization is enabled.
-     *
-     * @return bool
      */
     public function serialized(): bool
     {
@@ -135,8 +126,6 @@ trait PacksPhpRedisValues
 
     /**
      * Determine if compression is enabled.
-     *
-     * @return bool
      */
     public function compressed(): bool
     {
@@ -146,8 +135,6 @@ trait PacksPhpRedisValues
 
     /**
      * Determine if LZF compression is enabled.
-     *
-     * @return bool
      */
     public function lzfCompressed(): bool
     {
@@ -157,8 +144,6 @@ trait PacksPhpRedisValues
 
     /**
      * Determine if ZSTD compression is enabled.
-     *
-     * @return bool
      */
     public function zstdCompressed(): bool
     {
@@ -168,8 +153,6 @@ trait PacksPhpRedisValues
 
     /**
      * Determine if LZ4 compression is enabled.
-     *
-     * @return bool
      */
     public function lz4Compressed(): bool
     {
@@ -179,8 +162,6 @@ trait PacksPhpRedisValues
 
     /**
      * Determine if the current PhpRedis extension version supports packing.
-     *
-     * @return bool
      */
     protected function supportsPacking(): bool
     {
@@ -193,8 +174,6 @@ trait PacksPhpRedisValues
 
     /**
      * Determine if the current PhpRedis extension version supports LZF compression.
-     *
-     * @return bool
      */
     protected function supportsLzf(): bool
     {
@@ -207,8 +186,6 @@ trait PacksPhpRedisValues
 
     /**
      * Determine if the current PhpRedis extension version supports Zstd compression.
-     *
-     * @return bool
      */
     protected function supportsZstd(): bool
     {
@@ -221,9 +198,6 @@ trait PacksPhpRedisValues
 
     /**
      * Determine if the PhpRedis extension version is at least the given version.
-     *
-     * @param  string  $version
-     * @return bool
      */
     protected function phpRedisVersionAtLeast(string $version): bool
     {

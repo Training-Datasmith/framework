@@ -54,9 +54,8 @@ class ModelMakeCommand extends GeneratorCommand
 
             if (! confirm('Do you want to generate additional components for the model?')) {
                 return false;
-            } else {
-                $this->afterPromptingForMissingArguments($this->input, $this->output);
             }
+            $this->afterPromptingForMissingArguments($this->input, $this->output);
         }
 
         if ($this->option('all')) {
@@ -214,10 +213,9 @@ class ModelMakeCommand extends GeneratorCommand
     /**
      * Resolve the fully-qualified path to the stub.
      *
-     * @param  string  $stub
      * @return string
      */
-    protected function resolveStubPath($stub)
+    protected function resolveStubPath(string $stub)
     {
         return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
@@ -239,11 +237,10 @@ class ModelMakeCommand extends GeneratorCommand
      * Build the class with the given name.
      *
      * @param  string  $name
-     * @return string
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function buildClass($name)
+    protected function buildClass($name): string
     {
         $replace = $this->buildFactoryReplacements();
 
@@ -257,7 +254,7 @@ class ModelMakeCommand extends GeneratorCommand
      *
      * @return array<string, string>
      */
-    protected function buildFactoryReplacements()
+    protected function buildFactoryReplacements(): array
     {
         $replacements = [];
 
@@ -284,10 +281,8 @@ class ModelMakeCommand extends GeneratorCommand
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['all', 'a', InputOption::VALUE_NONE, 'Generate a migration, seeder, factory, policy, resource controller, and form request classes for the model'],
@@ -308,8 +303,6 @@ class ModelMakeCommand extends GeneratorCommand
     /**
      * Interact further with the user if they were prompted for missing arguments.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
     protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)
@@ -325,6 +318,6 @@ class ModelMakeCommand extends GeneratorCommand
             'migration' => 'Migration',
             'policy' => 'Policy',
             'resource' => 'Resource Controller',
-        ])))->each(fn ($option) => $input->setOption($option, true));
+        ])))->each(fn (string $option) => $input->setOption($option, true));
     }
 }

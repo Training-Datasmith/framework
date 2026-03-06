@@ -8,11 +8,10 @@ trait CompilesUseStatements
      * Compile the use statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileUse($expression)
+    protected function compileUse($expression): string
     {
-        $expression = trim(preg_replace('/[()]/', '', $expression), " '\"");
+        $expression = trim((string) preg_replace('/[()]/', '', $expression), " '\"");
 
         // Isolate alias...
         if (str_contains($expression, '{')) {

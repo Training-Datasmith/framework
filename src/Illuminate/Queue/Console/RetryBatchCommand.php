@@ -27,10 +27,8 @@ class RetryBatchCommand extends Command implements Isolatable
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $batchesFound = count($ids = $this->getBatchJobIds()) > 0;
 
@@ -52,7 +50,7 @@ class RetryBatchCommand extends Command implements Isolatable
             foreach ($batch->failedJobIds as $failedJobId) {
                 $this->components->task(
                     $failedJobId,
-                    fn () => $this->callSilent('queue:retry', ['id' => $failedJobId]) == 0
+                    fn (): bool => $this->callSilent('queue:retry', ['id' => $failedJobId]) == 0
                 );
             }
 
@@ -72,10 +70,8 @@ class RetryBatchCommand extends Command implements Isolatable
 
     /**
      * Get the batch IDs to be retried.
-     *
-     * @return array
      */
-    protected function getBatchJobIds()
+    protected function getBatchJobIds(): array
     {
         $ids = (array) $this->argument('id');
 

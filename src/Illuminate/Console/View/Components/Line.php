@@ -38,12 +38,10 @@ class Line extends Component
     /**
      * Renders the component using the given arguments.
      *
-     * @param  string  $style
      * @param  string  $string
      * @param  int  $verbosity
-     * @return void
      */
-    public function render($style, $string, $verbosity = OutputInterface::VERBOSITY_NORMAL)
+    public function render(string $style, $string, $verbosity = OutputInterface::VERBOSITY_NORMAL): void
     {
         $string = $this->mutate($string, [
             Mutators\EnsureDynamicContentIsHighlighted::class,

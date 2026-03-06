@@ -16,25 +16,17 @@ class SqsJob extends Job implements JobContract
     protected $sqs;
 
     /**
-     * The Amazon SQS job instance.
-     *
-     * @var array
-     */
-    protected $job;
-
-    /**
      * Create a new job instance.
      *
-     * @param  \Illuminate\Container\Container  $container
-     * @param  \Aws\Sqs\SqsClient  $sqs
-     * @param  array  $job
      * @param  string  $connectionName
      * @param  string  $queue
      */
-    public function __construct(Container $container, SqsClient $sqs, array $job, $connectionName, $queue)
+    public function __construct(Container $container, SqsClient $sqs, /**
+     * The Amazon SQS job instance.
+     */
+    protected array $job, $connectionName, $queue)
     {
         $this->sqs = $sqs;
-        $this->job = $job;
         $this->queue = $queue;
         $this->container = $container;
         $this->connectionName = $connectionName;
@@ -44,9 +36,8 @@ class SqsJob extends Job implements JobContract
      * Release the job back into the queue after (n) seconds.
      *
      * @param  int  $delay
-     * @return void
      */
-    public function release($delay = 0)
+    public function release($delay = 0): void
     {
         parent::release($delay);
 
@@ -59,10 +50,8 @@ class SqsJob extends Job implements JobContract
 
     /**
      * Delete the job from the queue.
-     *
-     * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         parent::delete();
 
@@ -73,10 +62,8 @@ class SqsJob extends Job implements JobContract
 
     /**
      * Get the number of times the job has been attempted.
-     *
-     * @return int
      */
-    public function attempts()
+    public function attempts(): int
     {
         return (int) $this->job['Attributes']['ApproximateReceiveCount'];
     }

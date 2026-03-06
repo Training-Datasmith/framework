@@ -24,34 +24,6 @@ class BelongsTo extends Relation
         SupportsDefaultModels;
 
     /**
-     * The child model instance of the relation.
-     *
-     * @var TDeclaringModel
-     */
-    protected $child;
-
-    /**
-     * The foreign key of the parent model.
-     *
-     * @var string
-     */
-    protected $foreignKey;
-
-    /**
-     * The associated key on the parent model.
-     *
-     * @var string
-     */
-    protected $ownerKey;
-
-    /**
-     * The name of the relationship.
-     *
-     * @var string
-     */
-    protected $relationName;
-
-    /**
      * Create a new belongs to relationship instance.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
@@ -60,18 +32,21 @@ class BelongsTo extends Relation
      * @param  string  $ownerKey
      * @param  string  $relationName
      */
-    public function __construct(Builder $query, Model $child, $foreignKey, $ownerKey, $relationName)
+    public function __construct(Builder $query, /**
+     * The child model instance of the relation.
+     */
+    protected \Illuminate\Database\Eloquent\Model $child, /**
+     * The foreign key of the parent model.
+     */
+    protected $foreignKey, /**
+     * The associated key on the parent model.
+     */
+    protected $ownerKey, /**
+     * The name of the relationship.
+     */
+    protected $relationName)
     {
-        $this->ownerKey = $ownerKey;
-        $this->relationName = $relationName;
-        $this->foreignKey = $foreignKey;
-
-        // In the underlying base relationship class, this variable is referred to as
-        // the "parent" since most relationships are not inversed. But, since this
-        // one is we will create a "child" variable for much better readability.
-        $this->child = $child;
-
-        parent::__construct($query, $child);
+        parent::__construct($query, $this->child);
     }
 
     /** @inheritDoc */
@@ -86,10 +61,8 @@ class BelongsTo extends Relation
 
     /**
      * Set the base constraints on the relation query.
-     *
-     * @return void
      */
-    public function addConstraints()
+    public function addConstraints(): void
     {
         if (static::$constraints) {
             // For belongs to relationships, which are essentially the inverse of has one
@@ -102,7 +75,7 @@ class BelongsTo extends Relation
     }
 
     /** @inheritDoc */
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models): void
     {
         // We'll grab the primary key name of the related models since it could be set to
         // a non-standard name and not "id". We will then construct the constraint for
@@ -118,9 +91,8 @@ class BelongsTo extends Relation
      * Gather the keys from an array of related models.
      *
      * @param  array<int, TDeclaringModel>  $models
-     * @return array
      */
-    protected function getEagerModelKeys(array $models)
+    protected function getEagerModelKeys(array $models): array
     {
         $keys = [];
 
@@ -139,7 +111,7 @@ class BelongsTo extends Relation
     }
 
     /** @inheritDoc */
-    public function initRelation(array $models, $relation)
+    public function initRelation(array $models, $relation): array
     {
         foreach ($models as $model) {
             $model->setRelation($relation, $this->getDefaultFor($model));
@@ -149,7 +121,7 @@ class BelongsTo extends Relation
     }
 
     /** @inheritDoc */
-    public function match(array $models, EloquentCollection $results, $relation)
+    public function match(array $models, EloquentCollection $results, $relation): array
     {
         // First we will get to build a dictionary of the child models by their primary
         // key of the relationship, then we can easily match the children back onto
@@ -223,10 +195,8 @@ class BelongsTo extends Relation
 
     /**
      * Touch all of the related models for the relationship.
-     *
-     * @return void
      */
-    public function touch()
+    public function touch(): void
     {
         if (! is_null($this->getParentKey())) {
             parent::touch();
@@ -268,10 +238,8 @@ class BelongsTo extends Relation
 
     /**
      * Determine if the related model has an auto-incrementing ID.
-     *
-     * @return bool
      */
-    protected function relationHasIncrementingId()
+    protected function relationHasIncrementingId(): bool
     {
         return $this->related->getIncrementing() &&
             in_array($this->related->getKeyType(), ['int', 'integer']);

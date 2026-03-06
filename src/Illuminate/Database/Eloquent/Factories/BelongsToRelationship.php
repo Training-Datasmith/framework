@@ -8,20 +8,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class BelongsToRelationship
 {
     /**
-     * The related factory instance.
-     *
-     * @var \Illuminate\Database\Eloquent\Factories\Factory|\Illuminate\Database\Eloquent\Model
-     */
-    protected $factory;
-
-    /**
-     * The relationship name.
-     *
-     * @var string
-     */
-    protected $relationship;
-
-    /**
      * The cached, resolved parent instance ID.
      *
      * @var mixed
@@ -34,16 +20,22 @@ class BelongsToRelationship
      * @param  \Illuminate\Database\Eloquent\Factories\Factory|\Illuminate\Database\Eloquent\Model  $factory
      * @param  string  $relationship
      */
-    public function __construct($factory, $relationship)
+    public function __construct(
+        /**
+         * The related factory instance.
+         */
+        protected $factory,
+        /**
+         * The relationship name.
+         */
+        protected $relationship
+    )
     {
-        $this->factory = $factory;
-        $this->relationship = $relationship;
     }
 
     /**
      * Get the parent model attributes and resolvers for the given child model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
     public function attributesFor(Model $model)
@@ -85,7 +77,7 @@ class BelongsToRelationship
      * @param  \Illuminate\Support\Collection  $recycle
      * @return $this
      */
-    public function recycle($recycle)
+    public function recycle($recycle): static
     {
         if ($this->factory instanceof Factory) {
             $this->factory = $this->factory->recycle($recycle);

@@ -32,7 +32,7 @@ class PendingEventAttributes
      * @param  int  $expiresAt
      * @return $this
      */
-    public function withoutOverlapping($expiresAt = 1440)
+    public function withoutOverlapping($expiresAt = 1440): static
     {
         $this->withoutOverlapping = true;
 

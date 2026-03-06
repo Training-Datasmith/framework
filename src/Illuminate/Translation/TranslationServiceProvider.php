@@ -9,14 +9,12 @@ class TranslationServiceProvider extends ServiceProvider implements DeferrablePr
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerLoader();
 
-        $this->app->singleton('translator', function ($app) {
+        $this->app->singleton('translator', function (array $app): \Illuminate\Translation\Translator {
             $loader = $app['translation.loader'];
 
             // When registering the translator component, we'll need to set the default
@@ -39,17 +37,13 @@ class TranslationServiceProvider extends ServiceProvider implements DeferrablePr
      */
     protected function registerLoader()
     {
-        $this->app->singleton('translation.loader', function ($app) {
-            return new FileLoader($app['files'], [__DIR__.'/lang', $app['path.lang']]);
-        });
+        $this->app->singleton('translation.loader', fn($app) => new FileLoader($app['files'], [__DIR__.'/lang', $app['path.lang']]));
     }
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return ['translator', 'translation.loader'];
     }

@@ -9,10 +9,8 @@ class MailServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerIlluminateMailer();
         $this->registerMarkdownRenderer();
@@ -25,13 +23,9 @@ class MailServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerIlluminateMailer()
     {
-        $this->app->singleton('mail.manager', function ($app) {
-            return new MailManager($app);
-        });
+        $this->app->singleton('mail.manager', fn($app) => new MailManager($app));
 
-        $this->app->bind('mailer', function ($app) {
-            return $app->make('mail.manager')->mailer();
-        });
+        $this->app->bind('mailer', fn($app) => $app->make('mail.manager')->mailer());
     }
 
     /**
@@ -47,7 +41,7 @@ class MailServiceProvider extends ServiceProvider implements DeferrableProvider
             ], 'laravel-mail');
         }
 
-        $this->app->singleton(Markdown::class, function ($app) {
+        $this->app->singleton(Markdown::class, function ($app): \Illuminate\Mail\Markdown {
             $config = $app->make('config');
 
             return new Markdown($app->make('view'), [
@@ -59,10 +53,8 @@ class MailServiceProvider extends ServiceProvider implements DeferrableProvider
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return [
             'mail.manager',

@@ -9,18 +9,9 @@ use Symfony\Component\Process\Process;
 abstract class SchemaState
 {
     /**
-     * The connection instance.
-     *
-     * @var \Illuminate\Database\Connection
-     */
-    protected $connection;
-
-    /**
      * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
      */
-    protected $files;
+    protected \Illuminate\Filesystem\Filesystem $files;
 
     /**
      * The name of the application's migration table.
@@ -45,22 +36,17 @@ abstract class SchemaState
 
     /**
      * Create a new dumper instance.
-     *
-     * @param  \Illuminate\Database\Connection  $connection
-     * @param  \Illuminate\Filesystem\Filesystem|null  $files
-     * @param  callable|null  $processFactory
      */
-    public function __construct(Connection $connection, ?Filesystem $files = null, ?callable $processFactory = null)
+    public function __construct(/**
+     * The connection instance.
+     */
+    protected \Illuminate\Database\Connection $connection, ?Filesystem $files = null, ?callable $processFactory = null)
     {
-        $this->connection = $connection;
-
         $this->files = $files ?: new Filesystem;
 
-        $this->processFactory = $processFactory ?: function (...$arguments) {
-            return Process::fromShellCommandline(...$arguments)->setTimeout(null);
-        };
+        $this->processFactory = $processFactory ?: (fn(...$arguments) => Process::fromShellCommandline(...$arguments)->setTimeout(null));
 
-        $this->handleOutputUsing(function () {
+        $this->handleOutputUsing(function (): void {
             //
         });
     }
@@ -68,7 +54,6 @@ abstract class SchemaState
     /**
      * Dump the database's schema into a file.
      *
-     * @param  \Illuminate\Database\Connection  $connection
      * @param  string  $path
      * @return void
      */
@@ -95,8 +80,6 @@ abstract class SchemaState
 
     /**
      * Determine if the current connection has a migration table.
-     *
-     * @return bool
      */
     public function hasMigrationTable(): bool
     {
@@ -105,8 +88,6 @@ abstract class SchemaState
 
     /**
      * Get the name of the application's migration table.
-     *
-     * @return string
      */
     protected function getMigrationTable(): string
     {
@@ -116,7 +97,6 @@ abstract class SchemaState
     /**
      * Specify the name of the application's migration table.
      *
-     * @param  string  $table
      * @return $this
      */
     public function withMigrationTable(string $table)
@@ -129,7 +109,6 @@ abstract class SchemaState
     /**
      * Specify the callback that should be used to handle process output.
      *
-     * @param  callable  $output
      * @return $this
      */
     public function handleOutputUsing(callable $output)

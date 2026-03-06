@@ -95,7 +95,6 @@ class Storage extends Facade
      * Replace the given disk with a local testing disk.
      *
      * @param  \UnitEnum|string|null  $disk
-     * @param  array  $config
      * @return \Illuminate\Contracts\Filesystem\Filesystem
      */
     public static function fake($disk = null, array $config = [])
@@ -112,14 +111,10 @@ class Storage extends Facade
             self::buildDiskConfiguration($disk, $config, root: $root)
         ));
 
-        return tap($fake, function ($fake) {
-            $fake->buildTemporaryUrlsUsing(function ($path, $expiration) {
-                return URL::to($path.'?expiration='.$expiration->getTimestamp());
-            });
+        return tap($fake, function ($fake): void {
+            $fake->buildTemporaryUrlsUsing(fn($path, $expiration) => URL::to($path.'?expiration='.$expiration->getTimestamp()));
 
-            $fake->buildTemporaryUploadUrlsUsing(function ($path, $expiration) {
-                return ['url' => URL::to($path.'?expiration='.$expiration->getTimestamp()), 'headers' => []];
-            });
+            $fake->buildTemporaryUploadUrlsUsing(fn($path, $expiration) => ['url' => URL::to($path.'?expiration='.$expiration->getTimestamp()), 'headers' => []]);
         });
     }
 
@@ -127,7 +122,6 @@ class Storage extends Facade
      * Replace the given disk with a persistent local testing disk.
      *
      * @param  \UnitEnum|string|null  $disk
-     * @param  array  $config
      * @return \Illuminate\Contracts\Filesystem\Filesystem
      */
     public static function persistentFake($disk = null, array $config = [])
@@ -143,9 +137,6 @@ class Storage extends Facade
 
     /**
      * Get the root path of the given disk.
-     *
-     * @param  string  $disk
-     * @return string
      */
     protected static function getRootPath(string $disk): string
     {
@@ -154,11 +145,6 @@ class Storage extends Facade
 
     /**
      * Assemble the configuration of the given disk.
-     *
-     * @param  string  $disk
-     * @param  array  $config
-     * @param  string  $root
-     * @return array
      */
     protected static function buildDiskConfiguration(string $disk, array $config, string $root): array
     {
@@ -173,10 +159,8 @@ class Storage extends Facade
 
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'filesystem';
     }

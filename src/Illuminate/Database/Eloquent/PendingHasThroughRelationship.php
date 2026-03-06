@@ -16,30 +16,22 @@ use Illuminate\Support\Stringable;
 class PendingHasThroughRelationship
 {
     /**
-     * The root model that the relationship exists on.
-     *
-     * @var TDeclaringModel
-     */
-    protected $rootModel;
-
-    /**
-     * The local relationship.
-     *
-     * @var TLocalRelationship
-     */
-    protected $localRelationship;
-
-    /**
      * Create a pending has-many-through or has-one-through relationship.
      *
      * @param  TDeclaringModel  $rootModel
      * @param  TLocalRelationship  $localRelationship
      */
-    public function __construct($rootModel, $localRelationship)
+    public function __construct(
+        /**
+         * The root model that the relationship exists on.
+         */
+        protected $rootModel,
+        /**
+         * The local relationship.
+         */
+        protected $localRelationship
+    )
     {
-        $this->rootModel = $rootModel;
-
-        $this->localRelationship = $localRelationship;
     }
 
     /**
@@ -100,11 +92,10 @@ class PendingHasThroughRelationship
     /**
      * Handle dynamic method calls into the model.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (Str::startsWith($method, 'has')) {
             return $this->has((new Stringable($method))->after('has')->lcfirst()->toString());

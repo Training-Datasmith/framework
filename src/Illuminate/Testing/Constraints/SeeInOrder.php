@@ -8,13 +8,6 @@ use ReflectionClass;
 class SeeInOrder extends Constraint
 {
     /**
-     * The string under validation.
-     *
-     * @var string
-     */
-    protected $content;
-
-    /**
      * The last value that failed to pass validation.
      *
      * @var string
@@ -26,16 +19,19 @@ class SeeInOrder extends Constraint
      *
      * @param  string  $content
      */
-    public function __construct($content)
+    public function __construct(
+        /**
+         * The string under validation.
+         */
+        protected $content
+    )
     {
-        $this->content = $content;
     }
 
     /**
      * Determine if the rule passes validation.
      *
      * @param  array  $values
-     * @return bool
      */
     public function matches($values): bool
     {
@@ -48,7 +44,7 @@ class SeeInOrder extends Constraint
                 continue;
             }
 
-            $decodedValue = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+            $decodedValue = html_entity_decode((string) $value, ENT_QUOTES, 'UTF-8');
 
             $valuePosition = mb_strpos($decodedContent, $decodedValue, $position);
 
@@ -68,7 +64,6 @@ class SeeInOrder extends Constraint
      * Get the description of the failure.
      *
      * @param  array  $values
-     * @return string
      */
     public function failureDescription($values): string
     {
@@ -81,8 +76,6 @@ class SeeInOrder extends Constraint
 
     /**
      * Get a string representation of the object.
-     *
-     * @return string
      */
     public function toString(): string
     {

@@ -19,34 +19,6 @@ class Frame
     protected $exception;
 
     /**
-     * The application's class map.
-     *
-     * @var array<string, string>
-     */
-    protected $classMap;
-
-    /**
-     * The frame's raw data from the "flattened" exception.
-     *
-     * @var array{file: string, line: int, class?: string, type?: string, function?: string}
-     */
-    protected $frame;
-
-    /**
-     * The application's base path.
-     *
-     * @var string
-     */
-    protected $basePath;
-
-    /**
-     * The previous frame.
-     *
-     * @var \Illuminate\Foundation\Exceptions\Renderer\Frame|null
-     */
-    protected $previous;
-
-    /**
      * Whether this frame is the main (first non-vendor) frame.
      *
      * @var bool
@@ -56,19 +28,24 @@ class Frame
     /**
      * Create a new frame instance.
      *
-     * @param  \Symfony\Component\ErrorHandler\Exception\FlattenException  $exception
      * @param  array<string, string>  $classMap
      * @param  array{file: string, line: int, class?: string, type?: string, function?: string, args?: array}  $frame
-     * @param  string  $basePath
-     * @param  \Illuminate\Foundation\Exceptions\Renderer\Frame|null  $previous
      */
-    public function __construct(FlattenException $exception, array $classMap, array $frame, string $basePath, ?Frame $previous = null)
+    public function __construct(FlattenException $exception, /**
+     * The application's class map.
+     */
+    protected array $classMap, /**
+     * The frame's raw data from the "flattened" exception.
+     */
+    protected array $frame, /**
+     * The application's base path.
+     */
+    protected string $basePath, /**
+     * The previous frame.
+     */
+    protected ?\Illuminate\Foundation\Exceptions\Renderer\Frame $previous = null)
     {
         $this->exception = $exception;
-        $this->classMap = $classMap;
-        $this->frame = $frame;
-        $this->basePath = $basePath;
-        $this->previous = $previous;
     }
 
     /**
@@ -99,7 +76,7 @@ class Frame
      *
      * @return string|null
      */
-    public function class()
+    public function class(): string|int|null
     {
         if (! empty($this->frame['class'])) {
             return $this->frame['class'];
@@ -115,7 +92,7 @@ class Frame
      *
      * @return string
      */
-    public function file()
+    public function file(): string|array
     {
         return match (true) {
             ! isset($this->frame['file']) => '[internal function]',
@@ -165,10 +142,8 @@ class Frame
 
     /**
      * Get the frame's arguments.
-     *
-     * @return array
      */
-    public function args()
+    public function args(): array
     {
         if (! isset($this->frame['args']) || ! is_array($this->frame['args']) || count($this->frame['args']) === 0) {
             return [];
@@ -186,10 +161,8 @@ class Frame
 
     /**
      * Get the frame's code snippet.
-     *
-     * @return string
      */
-    public function snippet()
+    public function snippet(): string
     {
         if (! is_file($this->frame['file']) || ! is_readable($this->frame['file'])) {
             return '';
@@ -206,10 +179,8 @@ class Frame
 
     /**
      * Determine if the frame is from the vendor directory.
-     *
-     * @return bool
      */
-    public function isFromVendor()
+    public function isFromVendor(): bool
     {
         return ! str_starts_with($this->frame['file'], $this->basePath)
             || str_starts_with($this->frame['file'], join_paths($this->basePath, 'vendor'));
@@ -227,10 +198,8 @@ class Frame
 
     /**
      * Mark this frame as the main frame.
-     *
-     * @return void
      */
-    public function markAsMain()
+    public function markAsMain(): void
     {
         $this->isMain = true;
     }

@@ -86,7 +86,6 @@ interface Filesystem
      *
      * @param  string  $path
      * @param  resource  $resource
-     * @param  array  $options
      * @return bool
      */
     public function writeStream($path, $resource, array $options = []);

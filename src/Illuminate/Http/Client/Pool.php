@@ -11,10 +11,8 @@ class Pool
 {
     /**
      * The factory instance.
-     *
-     * @var \Illuminate\Http\Client\Factory
      */
-    protected $factory;
+    protected \Illuminate\Http\Client\Factory $factory;
 
     /**
      * The handler function for the Guzzle client.
@@ -32,8 +30,6 @@ class Pool
 
     /**
      * Create a new requests pool.
-     *
-     * @param  \Illuminate\Http\Client\Factory|null  $factory
      */
     public function __construct(?Factory $factory = null)
     {
@@ -54,7 +50,6 @@ class Pool
     /**
      * Add a request to the pool with a key.
      *
-     * @param  string  $key
      * @return \Illuminate\Http\Client\PendingRequest
      */
     public function as(string $key)
@@ -85,11 +80,10 @@ class Pool
     /**
      * Add a request to the pool with a numeric index and forward the method call to the request.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return \Illuminate\Http\Client\PendingRequest|\GuzzleHttp\Promise\Promise
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->newRequest()->{$method}(...$parameters);
     }

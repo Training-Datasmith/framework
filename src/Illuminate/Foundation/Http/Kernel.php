@@ -22,20 +22,6 @@ class Kernel implements KernelContract
     use InteractsWithTime;
 
     /**
-     * The application implementation.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
-     * The router instance.
-     *
-     * @var \Illuminate\Routing\Router
-     */
-    protected $router;
-
-    /**
      * The bootstrap classes for the application.
      *
      * @var string[]
@@ -116,15 +102,15 @@ class Kernel implements KernelContract
 
     /**
      * Create a new HTTP kernel instance.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Routing\Router  $router
      */
-    public function __construct(Application $app, Router $router)
+    public function __construct(/**
+     * The application implementation.
+     */
+    protected \Illuminate\Contracts\Foundation\Application $app, /**
+     * The router instance.
+     */
+    protected \Illuminate\Routing\Router $router)
     {
-        $this->app = $app;
-        $this->router = $router;
-
         $this->syncMiddlewareToRouter();
     }
 
@@ -177,10 +163,8 @@ class Kernel implements KernelContract
 
     /**
      * Bootstrap the application for HTTP requests.
-     *
-     * @return void
      */
-    public function bootstrap()
+    public function bootstrap(): void
     {
         if (! $this->app->hasBeenBootstrapped()) {
             $this->app->bootstrapWith($this->bootstrappers());
@@ -206,9 +190,8 @@ class Kernel implements KernelContract
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Http\Response  $response
-     * @return void
      */
-    public function terminate($request, $response)
+    public function terminate($request, $response): void
     {
         $this->app['events']->dispatch(new Terminating);
 
@@ -267,9 +250,8 @@ class Kernel implements KernelContract
      *
      * @param  \DateTimeInterface|\Carbon\CarbonInterval|float|int  $threshold
      * @param  callable  $handler
-     * @return void
      */
-    public function whenRequestLifecycleIsLongerThan($threshold, $handler)
+    public function whenRequestLifecycleIsLongerThan($threshold, $handler): void
     {
         $threshold = $threshold instanceof DateTimeInterface
             ? $this->secondsUntil($threshold) * 1000
@@ -314,9 +296,8 @@ class Kernel implements KernelContract
      * Parse a middleware string to get the name and parameters.
      *
      * @param  string  $middleware
-     * @return array
      */
-    protected function parseMiddleware($middleware)
+    protected function parseMiddleware($middleware): array
     {
         [$name, $parameters] = array_pad(explode(':', $middleware, 2), 2, []);
 
@@ -331,9 +312,8 @@ class Kernel implements KernelContract
      * Determine if the kernel has a given middleware.
      *
      * @param  string  $middleware
-     * @return bool
      */
-    public function hasMiddleware($middleware)
+    public function hasMiddleware($middleware): bool
     {
         return in_array($middleware, $this->middleware);
     }
@@ -344,7 +324,7 @@ class Kernel implements KernelContract
      * @param  string  $middleware
      * @return $this
      */
-    public function prependMiddleware($middleware)
+    public function prependMiddleware($middleware): static
     {
         if (array_search($middleware, $this->middleware) === false) {
             array_unshift($this->middleware, $middleware);
@@ -359,7 +339,7 @@ class Kernel implements KernelContract
      * @param  string  $middleware
      * @return $this
      */
-    public function pushMiddleware($middleware)
+    public function pushMiddleware($middleware): static
     {
         if (array_search($middleware, $this->middleware) === false) {
             $this->middleware[] = $middleware;
@@ -377,7 +357,7 @@ class Kernel implements KernelContract
      *
      * @throws \InvalidArgumentException
      */
-    public function prependMiddlewareToGroup($group, $middleware)
+    public function prependMiddlewareToGroup($group, $middleware): static
     {
         if (! isset($this->middlewareGroups[$group])) {
             throw new InvalidArgumentException("The [{$group}] middleware group has not been defined.");
@@ -401,7 +381,7 @@ class Kernel implements KernelContract
      *
      * @throws \InvalidArgumentException
      */
-    public function appendMiddlewareToGroup($group, $middleware)
+    public function appendMiddlewareToGroup($group, $middleware): static
     {
         if (! isset($this->middlewareGroups[$group])) {
             throw new InvalidArgumentException("The [{$group}] middleware group has not been defined.");
@@ -422,7 +402,7 @@ class Kernel implements KernelContract
      * @param  string  $middleware
      * @return $this
      */
-    public function prependToMiddlewarePriority($middleware)
+    public function prependToMiddlewarePriority($middleware): static
     {
         if (! in_array($middleware, $this->middlewarePriority)) {
             array_unshift($this->middlewarePriority, $middleware);
@@ -439,7 +419,7 @@ class Kernel implements KernelContract
      * @param  string  $middleware
      * @return $this
      */
-    public function appendToMiddlewarePriority($middleware)
+    public function appendToMiddlewarePriority($middleware): static
     {
         if (! in_array($middleware, $this->middlewarePriority)) {
             $this->middlewarePriority[] = $middleware;
@@ -482,7 +462,7 @@ class Kernel implements KernelContract
      * @param  bool  $after
      * @return $this
      */
-    protected function addToMiddlewarePriorityRelative($existing, $middleware, $after = true)
+    protected function addToMiddlewarePriorityRelative($existing, $middleware, $after = true): static
     {
         if (! in_array($middleware, $this->middlewarePriority)) {
             $index = $after ? 0 : count($this->middlewarePriority);
@@ -554,7 +534,6 @@ class Kernel implements KernelContract
     /**
      * Report the exception to the exception handler.
      *
-     * @param  \Throwable  $e
      * @return void
      */
     protected function reportException(Throwable $e)
@@ -566,7 +545,6 @@ class Kernel implements KernelContract
      * Render the exception to a response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
      * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function renderException($request, Throwable $e)
@@ -587,10 +565,9 @@ class Kernel implements KernelContract
     /**
      * Set the application's global middleware.
      *
-     * @param  array  $middleware
      * @return $this
      */
-    public function setGlobalMiddleware(array $middleware)
+    public function setGlobalMiddleware(array $middleware): static
     {
         $this->middleware = $middleware;
 
@@ -612,10 +589,9 @@ class Kernel implements KernelContract
     /**
      * Set the application's middleware groups.
      *
-     * @param  array  $groups
      * @return $this
      */
-    public function setMiddlewareGroups(array $groups)
+    public function setMiddlewareGroups(array $groups): static
     {
         $this->middlewareGroups = $groups;
 
@@ -638,10 +614,8 @@ class Kernel implements KernelContract
 
     /**
      * Get the application's route middleware aliases.
-     *
-     * @return array
      */
-    public function getMiddlewareAliases()
+    public function getMiddlewareAliases(): array
     {
         return array_merge($this->routeMiddleware, $this->middlewareAliases);
     }
@@ -649,10 +623,9 @@ class Kernel implements KernelContract
     /**
      * Set the application's route middleware aliases.
      *
-     * @param  array  $aliases
      * @return $this
      */
-    public function setMiddlewareAliases(array $aliases)
+    public function setMiddlewareAliases(array $aliases): static
     {
         $this->middlewareAliases = $aliases;
 
@@ -664,10 +637,9 @@ class Kernel implements KernelContract
     /**
      * Set the application's middleware priority.
      *
-     * @param  array  $priority
      * @return $this
      */
-    public function setMiddlewarePriority(array $priority)
+    public function setMiddlewarePriority(array $priority): static
     {
         $this->middlewarePriority = $priority;
 
@@ -689,10 +661,9 @@ class Kernel implements KernelContract
     /**
      * Set the Laravel application instance.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return $this
      */
-    public function setApplication(Application $app)
+    public function setApplication(Application $app): static
     {
         $this->app = $app;
 

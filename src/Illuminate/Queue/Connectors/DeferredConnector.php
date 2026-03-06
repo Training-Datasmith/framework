@@ -11,7 +11,7 @@ class DeferredConnector implements ConnectorInterface
      *
      * @return \Illuminate\Contracts\Queue\Queue
      */
-    public function connect(array $config)
+    public function connect(array $config): \Illuminate\Queue\DeferredQueue
     {
         return new DeferredQueue($config['after_commit'] ?? null);
     }

@@ -22,22 +22,16 @@ class SesTransport extends AbstractTransport implements Stringable
     protected $ses;
 
     /**
-     * The Amazon SES transmission options.
-     *
-     * @var array
-     */
-    protected $options = [];
-
-    /**
      * Create a new SES transport instance.
      *
-     * @param  \Aws\Ses\SesClient  $ses
      * @param  array  $options
      */
-    public function __construct(SesClient $ses, $options = [])
+    public function __construct(SesClient $ses, /**
+     * The Amazon SES transmission options.
+     */
+    protected $options = [])
     {
         $this->ses = $ses;
-        $this->options = $options;
 
         parent::__construct();
     }
@@ -96,14 +90,13 @@ class SesTransport extends AbstractTransport implements Stringable
     /**
      * Extract the SES list management options, if applicable.
      *
-     * @param  \Symfony\Component\Mailer\SentMessage  $message
      * @return array|null
      */
     protected function listManagementOptions(SentMessage $message)
     {
         if ($header = $message->getOriginalMessage()->getHeaders()->get('X-SES-LIST-MANAGEMENT-OPTIONS')) {
-            if (preg_match("/^(contactListName=)*(?<ContactListName>[^;]+)(;\s?topicName=(?<TopicName>.+))?$/ix", $header->getBodyAsString(), $listManagementOptions)) {
-                return array_filter($listManagementOptions, fn ($e) => in_array($e, ['ContactListName', 'TopicName']), ARRAY_FILTER_USE_KEY);
+            if (preg_match("/^(contactListName=)*(?<ContactListName>[^;]+)(;\s?topicName=(?<TopicName>.+))?$/ix", (string) $header->getBodyAsString(), $listManagementOptions)) {
+                return array_filter($listManagementOptions, fn ($e): bool => in_array($e, ['ContactListName', 'TopicName']), ARRAY_FILTER_USE_KEY);
             }
         }
     }
@@ -131,7 +124,6 @@ class SesTransport extends AbstractTransport implements Stringable
     /**
      * Set the transmission options being used by the transport.
      *
-     * @param  array  $options
      * @return array
      */
     public function setOptions(array $options)
@@ -141,8 +133,6 @@ class SesTransport extends AbstractTransport implements Stringable
 
     /**
      * Get the string representation of the transport.
-     *
-     * @return string
      */
     public function __toString(): string
     {

@@ -24,7 +24,7 @@ class ImageFile extends File
      * @param  \Illuminate\Validation\Rules\Dimensions  $dimensions
      * @return $this
      */
-    public function dimensions($dimensions)
+    public function dimensions($dimensions): static
     {
         $this->rules($dimensions);
 

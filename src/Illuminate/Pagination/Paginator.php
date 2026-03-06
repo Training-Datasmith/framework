@@ -59,9 +59,8 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
      * Get the current page for the request.
      *
      * @param  int  $currentPage
-     * @return int
      */
-    protected function setCurrentPage($currentPage)
+    protected function setCurrentPage($currentPage): int
     {
         $currentPage = $currentPage ?: static::resolveCurrentPage();
 
@@ -127,7 +126,7 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
      * @param  bool  $hasMore
      * @return $this
      */
-    public function hasMorePagesWhen($hasMore = true)
+    public function hasMorePagesWhen($hasMore = true): static
     {
         $this->hasMore = $hasMore;
 
@@ -146,10 +145,8 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
 
     /**
      * Get the instance as an array.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'current_page' => $this->currentPage(),
@@ -167,8 +164,6 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
 
     /**
      * Convert the object into something JSON serializable.
-     *
-     * @return array
      */
     public function jsonSerialize(): array
     {

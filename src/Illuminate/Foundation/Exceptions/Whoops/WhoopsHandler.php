@@ -15,7 +15,7 @@ class WhoopsHandler
      */
     public function forDebug()
     {
-        return tap(new PrettyPageHandler, function ($handler) {
+        return tap(new PrettyPageHandler, function ($handler): void {
             $handler->handleUnconditionally(true);
 
             $this->registerApplicationPaths($handler)
@@ -30,7 +30,7 @@ class WhoopsHandler
      * @param  \Whoops\Handler\PrettyPageHandler  $handler
      * @return $this
      */
-    protected function registerApplicationPaths($handler)
+    protected function registerApplicationPaths($handler): static
     {
         $handler->setApplicationPaths(
             array_flip($this->directoriesExceptVendor())
@@ -58,7 +58,7 @@ class WhoopsHandler
      * @param  \Whoops\Handler\PrettyPageHandler  $handler
      * @return $this
      */
-    protected function registerBlacklist($handler)
+    protected function registerBlacklist($handler): static
     {
         foreach (config('app.debug_blacklist', config('app.debug_hide', [])) as $key => $secrets) {
             foreach ($secrets as $secret) {
@@ -75,7 +75,7 @@ class WhoopsHandler
      * @param  \Whoops\Handler\PrettyPageHandler  $handler
      * @return $this
      */
-    protected function registerEditor($handler)
+    protected function registerEditor($handler): static
     {
         if (config('app.editor', false)) {
             $handler->setEditor(config('app.editor'));

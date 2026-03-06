@@ -18,9 +18,8 @@ class Util
      * From Arr::wrap() in Illuminate\Support.
      *
      * @param  mixed  $value
-     * @return array
      */
-    public static function arrayWrap($value)
+    public static function arrayWrap($value): array
     {
         if (is_null($value)) {
             return [];

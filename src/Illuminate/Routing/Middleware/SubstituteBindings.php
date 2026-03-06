@@ -9,27 +9,21 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class SubstituteBindings
 {
     /**
-     * The router instance.
-     *
-     * @var \Illuminate\Contracts\Routing\Registrar
-     */
-    protected $router;
-
-    /**
      * Create a new bindings substitutor.
-     *
-     * @param  \Illuminate\Contracts\Routing\Registrar  $router
      */
-    public function __construct(Registrar $router)
+    public function __construct(
+        /**
+         * The router instance.
+         */
+        protected \Illuminate\Contracts\Routing\Registrar $router
+    )
     {
-        $this->router = $router;
     }
 
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)

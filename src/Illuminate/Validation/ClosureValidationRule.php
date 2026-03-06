@@ -11,13 +11,6 @@ class ClosureValidationRule implements RuleContract, ValidatorAwareRule
     use CreatesPotentiallyTranslatedStrings;
 
     /**
-     * The callback that validates the attribute.
-     *
-     * @var \Closure
-     */
-    public $callback;
-
-    /**
      * Indicates if the validation callback failed.
      *
      * @var bool
@@ -43,9 +36,13 @@ class ClosureValidationRule implements RuleContract, ValidatorAwareRule
      *
      * @param  \Closure  $callback
      */
-    public function __construct($callback)
+    public function __construct(
+        /**
+         * The callback that validates the attribute.
+         */
+        public $callback
+    )
     {
-        $this->callback = $callback;
     }
 
     /**
@@ -53,9 +50,8 @@ class ClosureValidationRule implements RuleContract, ValidatorAwareRule
      *
      * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         $this->failed = false;
 
@@ -84,7 +80,7 @@ class ClosureValidationRule implements RuleContract, ValidatorAwareRule
      * @param  \Illuminate\Validation\Validator  $validator
      * @return $this
      */
-    public function setValidator($validator)
+    public function setValidator($validator): static
     {
         $this->validator = $validator;
 

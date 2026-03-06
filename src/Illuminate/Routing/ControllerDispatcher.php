@@ -11,26 +11,20 @@ class ControllerDispatcher implements ControllerDispatcherContract
     use FiltersControllerMiddleware, ResolvesRouteDependencies;
 
     /**
-     * The container instance.
-     *
-     * @var \Illuminate\Container\Container
-     */
-    protected $container;
-
-    /**
      * Create a new controller dispatcher instance.
-     *
-     * @param  \Illuminate\Container\Container  $container
      */
-    public function __construct(Container $container)
+    public function __construct(
+        /**
+         * The container instance.
+         */
+        protected \Illuminate\Container\Container $container
+    )
     {
-        $this->container = $container;
     }
 
     /**
      * Dispatch a request to a given controller and method.
      *
-     * @param  \Illuminate\Routing\Route  $route
      * @param  mixed  $controller
      * @param  string  $method
      * @return mixed
@@ -49,7 +43,6 @@ class ControllerDispatcher implements ControllerDispatcherContract
     /**
      * Resolve the parameters for the controller.
      *
-     * @param  \Illuminate\Routing\Route  $route
      * @param  mixed  $controller
      * @param  string  $method
      * @return array

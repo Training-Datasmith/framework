@@ -40,13 +40,6 @@ class RouteRegistrar
     }
 
     /**
-     * The router instance.
-     *
-     * @var \Illuminate\Routing\Router
-     */
-    protected $router;
-
-    /**
      * The attributes to pass on to the router.
      *
      * @var array
@@ -97,12 +90,14 @@ class RouteRegistrar
 
     /**
      * Create a new route registrar instance.
-     *
-     * @param  \Illuminate\Routing\Router  $router
      */
-    public function __construct(Router $router)
+    public function __construct(
+        /**
+         * The router instance.
+         */
+        protected \Illuminate\Routing\Router $router
+    )
     {
-        $this->router = $router;
     }
 
     /**
@@ -114,7 +109,7 @@ class RouteRegistrar
      *
      * @throws \InvalidArgumentException
      */
-    public function attribute($key, $value)
+    public function attribute($key, array $value): static
     {
         if (! in_array($key, $this->allowedAttributes)) {
             throw new InvalidArgumentException("Attribute [{$key}] does not exist.");
@@ -154,7 +149,6 @@ class RouteRegistrar
      *
      * @param  string  $name
      * @param  string  $controller
-     * @param  array  $options
      * @return \Illuminate\Routing\PendingResourceRegistration
      */
     public function resource($name, $controller, array $options = [])
@@ -167,7 +161,6 @@ class RouteRegistrar
      *
      * @param  string  $name
      * @param  string  $controller
-     * @param  array  $options
      * @return \Illuminate\Routing\PendingResourceRegistration
      */
     public function apiResource($name, $controller, array $options = [])
@@ -180,7 +173,6 @@ class RouteRegistrar
      *
      * @param  string  $name
      * @param  string  $controller
-     * @param  array  $options
      * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
     public function singleton($name, $controller, array $options = [])
@@ -193,7 +185,6 @@ class RouteRegistrar
      *
      * @param  string  $name
      * @param  string  $controller
-     * @param  array  $options
      * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
     public function apiSingleton($name, $controller, array $options = [])
@@ -207,7 +198,7 @@ class RouteRegistrar
      * @param  \Closure|array|string  $callback
      * @return $this
      */
-    public function group($callback)
+    public function group($callback): static
     {
         $this->router->group($this->attributes, $callback);
 
@@ -263,7 +254,7 @@ class RouteRegistrar
         if (is_array($action) &&
             array_is_list($action) &&
             Reflector::isCallable($action)) {
-            if (strncmp($action[0], '\\', 1)) {
+            if (strncmp((string) $action[0], '\\', 1)) {
                 $action[0] = '\\'.$action[0];
             }
             $action = [
@@ -278,13 +269,11 @@ class RouteRegistrar
     /**
      * Dynamically handle calls into the route registrar.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return \Illuminate\Routing\Route|$this
-     *
      * @throws \BadMethodCallException
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);
@@ -303,7 +292,7 @@ class RouteRegistrar
                 return $this->attribute($method, [$parameters]);
             }
 
-            return $this->attribute($method, array_key_exists(0, $parameters) ? $parameters[0] : true);
+            return $this->attribute($method, property_exists($parameters, 0) ? $parameters[0] : true);
         }
 
         throw new BadMethodCallException(sprintf(

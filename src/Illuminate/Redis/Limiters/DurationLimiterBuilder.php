@@ -10,20 +10,6 @@ class DurationLimiterBuilder
     use InteractsWithTime;
 
     /**
-     * The Redis connection.
-     *
-     * @var \Illuminate\Redis\Connections\Connection
-     */
-    public $connection;
-
-    /**
-     * The name of the lock.
-     *
-     * @var string
-     */
-    public $name;
-
-    /**
      * The maximum number of locks that can be obtained per time window.
      *
      * @var int
@@ -57,10 +43,17 @@ class DurationLimiterBuilder
      * @param  \Illuminate\Redis\Connections\Connection  $connection
      * @param  string  $name
      */
-    public function __construct($connection, $name)
+    public function __construct(
+        /**
+         * The Redis connection.
+         */
+        public $connection,
+        /**
+         * The name of the lock.
+         */
+        public $name
+    )
     {
-        $this->name = $name;
-        $this->connection = $connection;
     }
 
     /**
@@ -69,7 +62,7 @@ class DurationLimiterBuilder
      * @param  int  $maxLocks
      * @return $this
      */
-    public function allow($maxLocks)
+    public function allow($maxLocks): static
     {
         $this->maxLocks = $maxLocks;
 
@@ -82,7 +75,7 @@ class DurationLimiterBuilder
      * @param  \DateTimeInterface|\DateInterval|int  $decay
      * @return $this
      */
-    public function every($decay)
+    public function every($decay): static
     {
         $this->decay = $this->secondsUntil($decay);
 
@@ -95,7 +88,7 @@ class DurationLimiterBuilder
      * @param  int  $timeout
      * @return $this
      */
-    public function block($timeout)
+    public function block($timeout): static
     {
         $this->timeout = $timeout;
 
@@ -108,7 +101,7 @@ class DurationLimiterBuilder
      * @param  int  $sleep
      * @return $this
      */
-    public function sleep($sleep)
+    public function sleep($sleep): static
     {
         $this->sleep = $sleep;
 
@@ -118,8 +111,6 @@ class DurationLimiterBuilder
     /**
      * Execute the given callback if a lock is obtained, otherwise call the failure callback.
      *
-     * @param  callable  $callback
-     * @param  callable|null  $failure
      * @return mixed
      *
      * @throws \Illuminate\Contracts\Redis\LimiterTimeoutException

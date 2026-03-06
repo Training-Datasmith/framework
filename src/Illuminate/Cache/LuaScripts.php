@@ -10,10 +10,8 @@ class LuaScripts
      * KEYS[1] - The name of the key
      * ARGV[1] - The value of the key
      * ARGV[2] - The number of seconds the key should be valid
-     *
-     * @return string
      */
-    public static function add()
+    public static function add(): string
     {
         return <<<'LUA'
 return redis.call('exists',KEYS[1])<1 and redis.call('setex',KEYS[1],ARGV[2],ARGV[1])
@@ -25,10 +23,8 @@ LUA;
      *
      * KEYS[1] - The name of the lock
      * ARGV[1] - The owner key of the lock instance trying to release it
-     *
-     * @return string
      */
-    public static function releaseLock()
+    public static function releaseLock(): string
     {
         return <<<'LUA'
 if redis.call("get",KEYS[1]) == ARGV[1] then

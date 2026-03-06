@@ -13,29 +13,19 @@ class TaggedCache extends Repository
     }
 
     /**
-     * The tag set instance.
-     *
-     * @var \Illuminate\Cache\TagSet
-     */
-    protected $tags;
-
-    /**
      * Create a new tagged cache instance.
-     *
-     * @param  \Illuminate\Contracts\Cache\Store  $store
-     * @param  \Illuminate\Cache\TagSet  $tags
      */
-    public function __construct(Store $store, TagSet $tags)
+    public function __construct(Store $store, /**
+     * The tag set instance.
+     */
+    protected \Illuminate\Cache\TagSet $tags)
     {
         parent::__construct($store);
-
-        $this->tags = $tags;
     }
 
     /**
      * Store multiple items in the cache for a given number of seconds.
      *
-     * @param  array  $values
      * @param  int|null  $ttl
      * @return bool
      */
@@ -74,10 +64,8 @@ class TaggedCache extends Repository
 
     /**
      * Remove all items from the cache.
-     *
-     * @return bool
      */
-    public function flush()
+    public function flush(): bool
     {
         $this->event(new CacheFlushing($this->getName()));
 
@@ -98,11 +86,8 @@ class TaggedCache extends Repository
 
     /**
      * Get a fully-qualified key for a tagged item.
-     *
-     * @param  string  $key
-     * @return string
      */
-    public function taggedItemKey($key)
+    public function taggedItemKey(string $key): string
     {
         return sha1($this->tags->getNamespace()).':'.$key;
     }

@@ -9,26 +9,18 @@ class HashServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->app->singleton('hash', function ($app) {
-            return new HashManager($app);
-        });
+        $this->app->singleton('hash', fn($app) => new HashManager($app));
 
-        $this->app->singleton('hash.driver', function ($app) {
-            return $app['hash']->driver();
-        });
+        $this->app->singleton('hash.driver', fn($app) => $app['hash']->driver());
     }
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return ['hash', 'hash.driver'];
     }

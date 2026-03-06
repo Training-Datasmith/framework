@@ -26,11 +26,12 @@ class PaginatedResourceResponse extends ResourceResponse
             $this->calculateStatus(),
             [],
             $this->resource->jsonOptions()
-        ), function ($response) use ($request) {
+        ), function ($response) use ($request): void {
             $response->original = $this->resource->resource->map(function ($item) {
                 if (is_array($item)) {
                     return Arr::get($item, 'resource');
-                } elseif (is_object($item)) {
+                }
+                if (is_object($item)) {
                     return $item->resource ?? null;
                 }
 
@@ -66,11 +67,8 @@ class PaginatedResourceResponse extends ResourceResponse
 
     /**
      * Get the pagination links for the response.
-     *
-     * @param  array  $paginated
-     * @return array
      */
-    protected function paginationLinks($paginated)
+    protected function paginationLinks(array $paginated): array
     {
         return [
             'first' => $paginated['first_page_url'] ?? null,

@@ -11,11 +11,8 @@ class EnsureEmailIsVerified
 {
     /**
      * Specify the redirect route for the middleware.
-     *
-     * @param  string  $route
-     * @return string
      */
-    public static function redirectTo($route)
+    public static function redirectTo(string $route): string
     {
         return static::class.':'.$route;
     }
@@ -24,7 +21,6 @@ class EnsureEmailIsVerified
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @param  string|null  $redirectToRoute
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse|null
      */

@@ -15,8 +15,6 @@ class Once
 
     /**
      * Indicates if the once instance is enabled.
-     *
-     * @var bool
      */
     protected static bool $enabled = true;
 
@@ -35,7 +33,7 @@ class Once
      *
      * @return static
      */
-    public static function instance()
+    public static function instance(): self
     {
         return static::$instance ??= new static(new WeakMap);
     }
@@ -43,7 +41,6 @@ class Once
     /**
      * Get the value of the given onceable.
      *
-     * @param  Onceable  $onceable
      * @return mixed
      */
     public function value(Onceable $onceable)
@@ -69,30 +66,24 @@ class Once
 
     /**
      * Re-enable the once instance if it was disabled.
-     *
-     * @return void
      */
-    public static function enable()
+    public static function enable(): void
     {
         static::$enabled = true;
     }
 
     /**
      * Disable the once instance.
-     *
-     * @return void
      */
-    public static function disable()
+    public static function disable(): void
     {
         static::$enabled = false;
     }
 
     /**
      * Flush the once instance.
-     *
-     * @return void
      */
-    public static function flush()
+    public static function flush(): void
     {
         static::$instance = null;
     }

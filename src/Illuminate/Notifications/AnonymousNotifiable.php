@@ -23,7 +23,7 @@ class AnonymousNotifiable
      *
      * @throws \InvalidArgumentException
      */
-    public function route($channel, $route)
+    public function route($channel, $route): static
     {
         if ($channel === 'database') {
             throw new InvalidArgumentException('The database channel does not support on-demand notifications.');
@@ -38,9 +38,8 @@ class AnonymousNotifiable
      * Send the given notification.
      *
      * @param  mixed  $notification
-     * @return void
      */
-    public function notify($notification)
+    public function notify($notification): void
     {
         app(Dispatcher::class)->send($this, $notification);
     }
@@ -49,9 +48,8 @@ class AnonymousNotifiable
      * Send the given notification immediately.
      *
      * @param  mixed  $notification
-     * @return void
      */
-    public function notifyNow($notification)
+    public function notifyNow($notification): void
     {
         app(Dispatcher::class)->sendNow($this, $notification);
     }
@@ -69,10 +67,8 @@ class AnonymousNotifiable
 
     /**
      * Get the value of the notifiable's primary key.
-     *
-     * @return mixed
      */
-    public function getKey()
+    public function getKey(): void
     {
         //
     }

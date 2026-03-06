@@ -45,11 +45,10 @@ class Js implements Htmlable, Stringable
      * @param  mixed  $data
      * @param  int  $flags
      * @param  int  $depth
-     * @return static
      *
      * @throws \JsonException
      */
-    public static function from($data, $flags = 0, $depth = 512)
+    public static function from($data, $flags = 0, $depth = 512): static
     {
         return new static($data, $flags, $depth);
     }
@@ -149,10 +148,8 @@ class Js implements Htmlable, Stringable
 
     /**
      * Get the string representation of the data for use in HTML.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toHtml();
     }

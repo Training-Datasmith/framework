@@ -28,8 +28,6 @@ class Connector
      * Create a new PDO connection.
      *
      * @param  string  $dsn
-     * @param  array  $config
-     * @param  array  $options
      * @return \PDO
      *
      * @throws \Exception
@@ -58,9 +56,8 @@ class Connector
      * @param  string  $username
      * @param  string  $password
      * @param  array  $options
-     * @return \PDO
      */
-    protected function createPdoConnection($dsn, $username, #[\SensitiveParameter] $password, $options)
+    protected function createPdoConnection($dsn, $username, #[\SensitiveParameter] $password, $options): \PDO
     {
         return version_compare(PHP_VERSION, '8.4.0', '<')
             ? new PDO($dsn, $username, $password, $options)
@@ -70,13 +67,11 @@ class Connector
     /**
      * Handle an exception that occurred during connect execution.
      *
-     * @param  \Throwable  $e
      * @param  string  $dsn
      * @param  string  $username
      * @param  string  $password
      * @param  array  $options
      * @return \PDO
-     *
      * @throws \Throwable
      */
     protected function tryAgainIfCausedByLostConnection(Throwable $e, $dsn, $username, #[\SensitiveParameter] $password, $options)
@@ -91,7 +86,6 @@ class Connector
     /**
      * Get the PDO options based on the configuration.
      *
-     * @param  array  $config
      * @return array
      */
     public function getOptions(array $config)
@@ -113,11 +107,8 @@ class Connector
 
     /**
      * Set the default PDO connection options.
-     *
-     * @param  array  $options
-     * @return void
      */
-    public function setDefaultOptions(array $options)
+    public function setDefaultOptions(array $options): void
     {
         $this->options = $options;
     }

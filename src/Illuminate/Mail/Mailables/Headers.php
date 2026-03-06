@@ -34,9 +34,6 @@ class Headers
     /**
      * Create a new instance of headers for a message.
      *
-     * @param  string|null  $messageId
-     * @param  array  $references
-     * @param  array  $text
      *
      * @named-arguments-supported
      */
@@ -50,10 +47,9 @@ class Headers
     /**
      * Set the message ID.
      *
-     * @param  string  $messageId
      * @return $this
      */
-    public function messageId(string $messageId)
+    public function messageId(string $messageId): static
     {
         $this->messageId = $messageId;
 
@@ -63,10 +59,9 @@ class Headers
     /**
      * Set the message IDs referenced by this message.
      *
-     * @param  array  $references
      * @return $this
      */
-    public function references(array $references)
+    public function references(array $references): static
     {
         $this->references = array_merge($this->references, $references);
 
@@ -76,10 +71,9 @@ class Headers
     /**
      * Set the headers for this message.
      *
-     * @param  array  $text
      * @return $this
      */
-    public function text(array $text)
+    public function text(array $text): static
     {
         $this->text = array_merge($this->text, $text);
 
@@ -88,8 +82,6 @@ class Headers
 
     /**
      * Get the references header as a string.
-     *
-     * @return string
      */
     public function referencesString(): string
     {

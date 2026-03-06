@@ -9,27 +9,21 @@ use Throwable;
 class PhpEngine implements Engine
 {
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * Create a new file engine instance.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      */
-    public function __construct(Filesystem $files)
+    public function __construct(
+        /**
+         * The filesystem instance.
+         */
+        protected \Illuminate\Filesystem\Filesystem $files
+    )
     {
-        $this->files = $files;
     }
 
     /**
      * Get the evaluated contents of the view.
      *
      * @param  string  $path
-     * @param  array  $data
      * @return string
      */
     public function get($path, array $data = [])
@@ -41,10 +35,8 @@ class PhpEngine implements Engine
      * Get the evaluated contents of the view at the given path.
      *
      * @param  string  $path
-     * @param  array  $data
-     * @return string
      */
-    protected function evaluatePath($path, $data)
+    protected function evaluatePath($path, array $data): string
     {
         $obLevel = ob_get_level();
 
@@ -65,10 +57,8 @@ class PhpEngine implements Engine
     /**
      * Handle a view exception.
      *
-     * @param  \Throwable  $e
      * @param  int  $obLevel
      * @return void
-     *
      * @throws \Throwable
      */
     protected function handleViewException(Throwable $e, $obLevel)

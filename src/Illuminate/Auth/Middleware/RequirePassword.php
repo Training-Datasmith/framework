@@ -10,20 +10,6 @@ use Illuminate\Support\Facades\Date;
 class RequirePassword
 {
     /**
-     * The response factory instance.
-     *
-     * @var \Illuminate\Contracts\Routing\ResponseFactory
-     */
-    protected $responseFactory;
-
-    /**
-     * The URL generator instance.
-     *
-     * @var \Illuminate\Contracts\Routing\UrlGenerator
-     */
-    protected $urlGenerator;
-
-    /**
      * The password timeout.
      *
      * @var int
@@ -33,14 +19,16 @@ class RequirePassword
     /**
      * Create a new middleware instance.
      *
-     * @param  \Illuminate\Contracts\Routing\ResponseFactory  $responseFactory
-     * @param  \Illuminate\Contracts\Routing\UrlGenerator  $urlGenerator
      * @param  int|null  $passwordTimeout
      */
-    public function __construct(ResponseFactory $responseFactory, UrlGenerator $urlGenerator, $passwordTimeout = null)
+    public function __construct(/**
+     * The response factory instance.
+     */
+    protected \Illuminate\Contracts\Routing\ResponseFactory $responseFactory, /**
+     * The URL generator instance.
+     */
+    protected \Illuminate\Contracts\Routing\UrlGenerator $urlGenerator, $passwordTimeout = null)
     {
-        $this->responseFactory = $responseFactory;
-        $this->urlGenerator = $urlGenerator;
         $this->passwordTimeout = $passwordTimeout ?: 10800;
     }
 
@@ -49,11 +37,10 @@ class RequirePassword
      *
      * @param  string|null  $redirectToRoute
      * @param  string|int|null  $passwordTimeoutSeconds
-     * @return string
      *
      * @named-arguments-supported
      */
-    public static function using($redirectToRoute = null, $passwordTimeoutSeconds = null)
+    public static function using($redirectToRoute = null, $passwordTimeoutSeconds = null): string
     {
         return static::class.':'.implode(',', func_get_args());
     }
@@ -62,7 +49,6 @@ class RequirePassword
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @param  string|null  $redirectToRoute
      * @param  string|int|null  $passwordTimeoutSeconds
      * @return mixed
@@ -89,9 +75,8 @@ class RequirePassword
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int|null  $passwordTimeoutSeconds
-     * @return bool
      */
-    protected function shouldConfirmPassword($request, $passwordTimeoutSeconds = null)
+    protected function shouldConfirmPassword($request, $passwordTimeoutSeconds = null): bool
     {
         $confirmedAt = Date::now()->unix() - $request->session()->get('auth.password_confirmed_at', 0);
 

@@ -12,37 +12,8 @@ class DatabaseLock extends Lock
     use DetectsConcurrencyErrors;
 
     /**
-     * The database connection instance.
-     *
-     * @var \Illuminate\Database\Connection
-     */
-    protected $connection;
-
-    /**
-     * The database table name.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * The prune probability odds.
-     *
-     * @var array{int, int}|null
-     */
-    protected $lottery;
-
-    /**
-     * The default number of seconds that a lock should be held.
-     *
-     * @var int
-     */
-    protected $defaultTimeoutInSeconds;
-
-    /**
      * Create a new lock instance.
      *
-     * @param  \Illuminate\Database\Connection  $connection
      * @param  string  $table
      * @param  string  $name
      * @param  int  $seconds
@@ -50,14 +21,21 @@ class DatabaseLock extends Lock
      * @param  array{int, int}|null  $lottery
      * @param  int  $defaultTimeoutInSeconds
      */
-    public function __construct(Connection $connection, $table, $name, $seconds, $owner = null, $lottery = [2, 100], $defaultTimeoutInSeconds = 86400)
+    public function __construct(/**
+     * The database connection instance.
+     */
+    protected \Illuminate\Database\Connection $connection, /**
+     * The database table name.
+     */
+    protected $table, $name, $seconds, $owner = null, /**
+     * The prune probability odds.
+     */
+    protected $lottery = [2, 100], /**
+     * The default number of seconds that a lock should be held.
+     */
+    protected $defaultTimeoutInSeconds = 86400)
     {
         parent::__construct($name, $seconds, $owner);
-
-        $this->connection = $connection;
-        $this->table = $table;
-        $this->lottery = $lottery;
-        $this->defaultTimeoutInSeconds = $defaultTimeoutInSeconds;
     }
 
     /**
@@ -80,9 +58,7 @@ class DatabaseLock extends Lock
         } catch (QueryException) {
             $updated = $this->connection->table($this->table)
                 ->where('key', $this->name)
-                ->where(function ($query) {
-                    return $query->where('owner', $this->owner)->orWhere('expiration', '<=', $this->currentTime());
-                })->update([
+                ->where(fn($query) => $query->where('owner', $this->owner)->orWhere('expiration', '<=', $this->currentTime()))->update([
                     'owner' => $this->owner,
                     'expiration' => $this->expiresAt(),
                 ]);
@@ -102,7 +78,7 @@ class DatabaseLock extends Lock
      *
      * @return int
      */
-    protected function expiresAt()
+    protected function expiresAt(): float|int|array
     {
         $lockTimeout = $this->seconds > 0 ? $this->seconds : $this->defaultTimeoutInSeconds;
 
@@ -112,11 +88,10 @@ class DatabaseLock extends Lock
     /**
      * Release the lock.
      *
-     * @return bool
      *
      * @throws \Throwable
      */
-    public function release()
+    public function release(): bool
     {
         if ($this->isOwnedByCurrentProcess()) {
             try {
@@ -140,10 +115,8 @@ class DatabaseLock extends Lock
 
     /**
      * Releases this lock in disregard of ownership.
-     *
-     * @return void
      */
-    public function forceRelease()
+    public function forceRelease(): void
     {
         $this->connection->table($this->table)
             ->where('key', $this->name)
@@ -153,11 +126,10 @@ class DatabaseLock extends Lock
     /**
      * Deletes locks that are past expiration.
      *
-     * @return void
      *
      * @throws \Throwable
      */
-    public function pruneExpiredLocks()
+    public function pruneExpiredLocks(): void
     {
         try {
             $this->connection->table($this->table)

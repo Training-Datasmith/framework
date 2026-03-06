@@ -8,20 +8,6 @@ use Illuminate\Contracts\Container\ContextualBindingBuilder as ContextualBinding
 class ContextualBindingBuilder implements ContextualBindingBuilderContract
 {
     /**
-     * The underlying container instance.
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $container;
-
-    /**
-     * The concrete instance.
-     *
-     * @var string|array
-     */
-    protected $concrete;
-
-    /**
      * The abstract target.
      *
      * @var string
@@ -31,13 +17,19 @@ class ContextualBindingBuilder implements ContextualBindingBuilderContract
     /**
      * Create a new contextual binding builder.
      *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      * @param  string|array  $concrete
      */
-    public function __construct(Container $container, $concrete)
+    public function __construct(
+        /**
+         * The underlying container instance.
+         */
+        protected \Illuminate\Contracts\Container\Container $container,
+        /**
+         * The concrete instance.
+         */
+        protected $concrete
+    )
     {
-        $this->concrete = $concrete;
-        $this->container = $container;
     }
 
     /**
@@ -46,7 +38,7 @@ class ContextualBindingBuilder implements ContextualBindingBuilderContract
      * @param  string  $abstract
      * @return $this
      */
-    public function needs($abstract)
+    public function needs($abstract): static
     {
         $this->needs = $abstract;
 
@@ -59,7 +51,7 @@ class ContextualBindingBuilder implements ContextualBindingBuilderContract
      * @param  \Closure|string|array  $implementation
      * @return $this
      */
-    public function give($implementation)
+    public function give($implementation): static
     {
         foreach (Util::arrayWrap($this->concrete) as $concrete) {
             $this->container->addContextualBinding($concrete, $this->needs, $implementation);
@@ -76,7 +68,7 @@ class ContextualBindingBuilder implements ContextualBindingBuilderContract
      */
     public function giveTagged($tag)
     {
-        return $this->give(function ($container) use ($tag) {
+        return $this->give(function ($container) use ($tag): array {
             $taggedServices = $container->tagged($tag);
 
             return is_array($taggedServices) ? $taggedServices : iterator_to_array($taggedServices);

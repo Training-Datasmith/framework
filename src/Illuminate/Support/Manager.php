@@ -9,13 +9,6 @@ use InvalidArgumentException;
 abstract class Manager
 {
     /**
-     * The container instance.
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $container;
-
-    /**
      * The configuration repository instance.
      *
      * @var \Illuminate\Contracts\Config\Repository
@@ -38,13 +31,13 @@ abstract class Manager
 
     /**
      * Create a new manager instance.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      */
-    public function __construct(Container $container)
+    public function __construct(/**
+     * The container instance.
+     */
+    protected \Illuminate\Contracts\Container\Container $container)
     {
-        $this->container = $container;
-        $this->config = $container->make('config');
+        $this->config = $this->container->make('config');
     }
 
     /**
@@ -119,7 +112,6 @@ abstract class Manager
      * Register a custom driver creator Closure.
      *
      * @param  string  $driver
-     * @param  \Closure  $callback
      * @return $this
      */
     public function extend($driver, Closure $callback)
@@ -152,7 +144,6 @@ abstract class Manager
     /**
      * Set the container instance used by the manager.
      *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return $this
      */
     public function setContainer(Container $container)
@@ -177,11 +168,10 @@ abstract class Manager
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->driver()->$method(...$parameters);
     }

@@ -7,13 +7,6 @@ use Illuminate\Support\Carbon;
 class ArrayLock extends Lock
 {
     /**
-     * The parent array cache store.
-     *
-     * @var \Illuminate\Cache\ArrayStore
-     */
-    protected $store;
-
-    /**
      * Create a new lock instance.
      *
      * @param  \Illuminate\Cache\ArrayStore  $store
@@ -21,19 +14,18 @@ class ArrayLock extends Lock
      * @param  int  $seconds
      * @param  string|null  $owner
      */
-    public function __construct($store, $name, $seconds, $owner = null)
+    public function __construct(/**
+     * The parent array cache store.
+     */
+    protected $store, $name, $seconds, $owner = null)
     {
         parent::__construct($name, $seconds, $owner);
-
-        $this->store = $store;
     }
 
     /**
      * Attempt to acquire the lock.
-     *
-     * @return bool
      */
-    public function acquire()
+    public function acquire(): bool
     {
         $expiration = $this->store->locks[$this->name]['expiresAt'] ?? Carbon::now()->addSecond();
 
@@ -51,20 +43,16 @@ class ArrayLock extends Lock
 
     /**
      * Determine if the current lock exists.
-     *
-     * @return bool
      */
-    protected function exists()
+    protected function exists(): bool
     {
         return isset($this->store->locks[$this->name]);
     }
 
     /**
      * Release the lock.
-     *
-     * @return bool
      */
-    public function release()
+    public function release(): bool
     {
         if (! $this->exists()) {
             return false;
@@ -95,10 +83,8 @@ class ArrayLock extends Lock
 
     /**
      * Releases this lock regardless of ownership.
-     *
-     * @return void
      */
-    public function forceRelease()
+    public function forceRelease(): void
     {
         unset($this->store->locks[$this->name]);
     }

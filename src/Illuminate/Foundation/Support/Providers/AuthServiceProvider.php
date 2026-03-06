@@ -16,22 +16,18 @@ class AuthServiceProvider extends ServiceProvider
 
     /**
      * Register the application's policies.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->booting(function () {
+        $this->booting(function (): void {
             $this->registerPolicies();
         });
     }
 
     /**
      * Register the application's policies.
-     *
-     * @return void
      */
-    public function registerPolicies()
+    public function registerPolicies(): void
     {
         foreach ($this->policies() as $model => $policy) {
             Gate::policy($model, $policy);

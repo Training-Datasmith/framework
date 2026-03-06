@@ -10,12 +10,8 @@ class UrlGenerationException extends Exception
 {
     /**
      * Create a new exception for missing route parameters.
-     *
-     * @param  \Illuminate\Routing\Route  $route
-     * @param  array  $parameters
-     * @return static
      */
-    public static function forMissingParameters(Route $route, array $parameters = [])
+    public static function forMissingParameters(Route $route, array $parameters = []): static
     {
         $parameterLabel = Str::plural('parameter', count($parameters));
 

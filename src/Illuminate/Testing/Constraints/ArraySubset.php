@@ -16,19 +16,10 @@ class ArraySubset extends Constraint
     protected $subset;
 
     /**
-     * @var bool
-     */
-    protected $strict;
-
-    /**
      * Create a new array subset constraint instance.
-     *
-     * @param  iterable  $subset
-     * @param  bool  $strict
      */
-    public function __construct(iterable $subset, bool $strict = false)
+    public function __construct(iterable $subset, protected bool $strict = false)
     {
-        $this->strict = $strict;
         $this->subset = $subset;
     }
 
@@ -43,9 +34,6 @@ class ArraySubset extends Constraint
      * failure.
      *
      * @param  mixed  $other
-     * @param  string  $description
-     * @param  bool  $returnResult
-     * @return bool|null
      *
      * @throws \PHPUnit\Framework\ExpectationFailedException
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
@@ -86,7 +74,6 @@ class ArraySubset extends Constraint
     /**
      * Returns a string representation of the constraint.
      *
-     * @return string
      *
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
@@ -102,7 +89,6 @@ class ArraySubset extends Constraint
      * cases. This method should return the second part of that sentence.
      *
      * @param  mixed  $other
-     * @return string
      *
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
@@ -116,9 +102,6 @@ class ArraySubset extends Constraint
      *
      * The beginning of failure messages is "Failed asserting that" in most
      * cases. This method should return the second part of that sentence.
-     *
-     * @param  iterable  $other
-     * @return array
      */
     protected function toArray(iterable $other): array
     {
@@ -129,11 +112,6 @@ class ArraySubset extends Constraint
         if ($other instanceof ArrayObject) {
             return $other->getArrayCopy();
         }
-
-        if ($other instanceof Traversable) {
-            return iterator_to_array($other);
-        }
-
-        return (array) $other;
+        return iterator_to_array($other);
     }
 }

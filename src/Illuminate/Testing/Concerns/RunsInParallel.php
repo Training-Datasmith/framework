@@ -53,7 +53,6 @@ trait RunsInParallel
      * Creates a new test runner instance.
      *
      * @param  \ParaTest\Runners\PHPUnit\Options|\ParaTest\Options  $options
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      */
     public function __construct($options, OutputInterface $output)
     {
@@ -63,7 +62,7 @@ trait RunsInParallel
             $output = new ParallelConsoleOutput($output);
         }
 
-        $runnerResolver = static::$runnerResolver ?: function ($options, OutputInterface $output) {
+        $runnerResolver = static::$runnerResolver ?: function ($options, OutputInterface $output): \ParaTest\WrapperRunner\WrapperRunner|\ParaTest\Runners\PHPUnit\WrapperRunner {
             $wrapperRunnerClass = class_exists(\ParaTest\WrapperRunner\WrapperRunner::class)
                 ? \ParaTest\WrapperRunner\WrapperRunner::class
                 : \ParaTest\Runners\PHPUnit\WrapperRunner::class;
@@ -78,9 +77,8 @@ trait RunsInParallel
      * Set the application resolver callback.
      *
      * @param  \Closure|null  $resolver
-     * @return void
      */
-    public static function resolveApplicationUsing($resolver)
+    public static function resolveApplicationUsing($resolver): void
     {
         static::$applicationResolver = $resolver;
     }
@@ -89,17 +87,14 @@ trait RunsInParallel
      * Set the runner resolver callback.
      *
      * @param  \Closure|null  $resolver
-     * @return void
      */
-    public static function resolveRunnerUsing($resolver)
+    public static function resolveRunnerUsing($resolver): void
     {
         static::$runnerResolver = $resolver;
     }
 
     /**
      * Runs the test suite.
-     *
-     * @return int
      */
     public function execute(): int
     {
@@ -109,14 +104,14 @@ trait RunsInParallel
 
         (new PhpHandler())->handle($configuration->php());
 
-        $this->forEachProcess(function () {
+        $this->forEachProcess(function (): void {
             ParallelTesting::callSetUpProcessCallbacks();
         });
 
         try {
             $potentialExitCode = $this->runner->run();
         } finally {
-            $this->forEachProcess(function () {
+            $this->forEachProcess(function (): void {
                 ParallelTesting::callTearDownProcessCallbacks();
             });
         }
@@ -126,8 +121,6 @@ trait RunsInParallel
 
     /**
      * Returns the highest exit code encountered throughout the course of test execution.
-     *
-     * @return int
      */
     public function getExitCode(): int
     {
@@ -146,8 +139,8 @@ trait RunsInParallel
             ? $this->options->processes
             : $this->options->processes();
 
-        Collection::range(1, $processes)->each(function ($token) use ($callback) {
-            tap($this->createApplication(), function ($app) use ($callback, $token) {
+        Collection::range(1, $processes)->each(function ($token) use ($callback): void {
+            tap($this->createApplication(), function ($app) use ($callback, $token): void {
                 ParallelTesting::resolveTokenUsing(fn () => $token);
 
                 $callback($app);
@@ -170,13 +163,11 @@ trait RunsInParallel
                 {
                     use \Tests\CreatesApplication;
                 };
-
                 return $applicationCreator->createApplication();
-            } elseif (file_exists($path = (Application::inferBasePath().'/bootstrap/app.php'))) {
+            }
+            if (file_exists($path = (Application::inferBasePath().'/bootstrap/app.php'))) {
                 $app = require $path;
-
                 $app->make(Kernel::class)->bootstrap();
-
                 return $app;
             }
 

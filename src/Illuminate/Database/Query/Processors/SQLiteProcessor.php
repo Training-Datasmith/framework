@@ -5,20 +5,20 @@ namespace Illuminate\Database\Query\Processors;
 class SQLiteProcessor extends Processor
 {
     /** @inheritDoc */
-    public function processColumns($results, $sql = '')
+    public function processColumns($results, $sql = ''): array
     {
         $hasPrimaryKey = array_sum(array_column($results, 'primary')) === 1;
 
-        return array_map(function ($result) use ($hasPrimaryKey, $sql) {
+        return array_map(function (array $result) use ($hasPrimaryKey, $sql): array {
             $result = (object) $result;
 
-            $type = strtolower($result->type);
+            $type = strtolower((string) $result->type);
 
-            $safeName = preg_quote($result->name, '/');
+            $safeName = preg_quote((string) $result->name, '/');
 
             $collation = preg_match(
                 '/\b'.$safeName.'\b[^,(]+(?:\([^()]+\)[^,]*)?(?:(?:default|check|as)\s*(?:\(.*?\))?[^,]*)*collate\s+["\'`]?(\w+)/i',
-                $sql,
+                (string) $sql,
                 $matches
             ) === 1 ? strtolower($matches[1]) : null;
 
@@ -26,7 +26,7 @@ class SQLiteProcessor extends Processor
 
             $expression = $isGenerated && preg_match(
                 '/\b'.$safeName.'\b[^,]+\s+as\s+\(((?:[^()]+|\((?:[^()]+|\([^()]*\))*\))*)\)/i',
-                $sql,
+                (string) $sql,
                 $matches
             ) === 1 ? $matches[1] : null;
 
@@ -51,12 +51,13 @@ class SQLiteProcessor extends Processor
         }, $results);
     }
 
-    /** @inheritDoc */
-    public function processIndexes($results)
+    /** @inheritDoc
+     * @return mixed[] */
+    public function processIndexes($results): array
     {
         $primaryCount = 0;
 
-        $indexes = array_map(function ($result) use (&$primaryCount) {
+        $indexes = array_map(function (array $result) use (&$primaryCount): array {
             $result = (object) $result;
 
             if ($isPrimary = (bool) $result->primary) {
@@ -64,8 +65,8 @@ class SQLiteProcessor extends Processor
             }
 
             return [
-                'name' => strtolower($result->name),
-                'columns' => $result->columns ? explode(',', $result->columns) : [],
+                'name' => strtolower((string) $result->name),
+                'columns' => $result->columns ? explode(',', (string) $result->columns) : [],
                 'type' => null,
                 'unique' => (bool) $result->unique,
                 'primary' => $isPrimary,
@@ -73,26 +74,26 @@ class SQLiteProcessor extends Processor
         }, $results);
 
         if ($primaryCount > 1) {
-            $indexes = array_filter($indexes, fn ($index) => $index['name'] !== 'primary');
+            return array_filter($indexes, fn (array $index): bool => $index['name'] !== 'primary');
         }
 
         return $indexes;
     }
 
     /** @inheritDoc */
-    public function processForeignKeys($results)
+    public function processForeignKeys($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
                 'name' => null,
-                'columns' => explode(',', $result->columns),
+                'columns' => explode(',', (string) $result->columns),
                 'foreign_schema' => $result->foreign_schema,
                 'foreign_table' => $result->foreign_table,
-                'foreign_columns' => explode(',', $result->foreign_columns),
-                'on_update' => strtolower($result->on_update),
-                'on_delete' => strtolower($result->on_delete),
+                'foreign_columns' => explode(',', (string) $result->foreign_columns),
+                'on_update' => strtolower((string) $result->on_update),
+                'on_delete' => strtolower((string) $result->on_delete),
             ];
         }, $results);
     }

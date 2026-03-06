@@ -67,7 +67,6 @@ trait InteractsWithContainer
      * Mock an instance of an object in the container.
      *
      * @param  string  $abstract
-     * @param  \Closure|null  $mock
      * @return \Mockery\MockInterface
      */
     protected function mock($abstract, ?Closure $mock = null)
@@ -79,7 +78,6 @@ trait InteractsWithContainer
      * Mock a partial instance of an object in the container.
      *
      * @param  string  $abstract
-     * @param  \Closure|null  $mock
      * @return \Mockery\MockInterface
      */
     protected function partialMock($abstract, ?Closure $mock = null)
@@ -91,7 +89,6 @@ trait InteractsWithContainer
      * Spy an instance of an object in the container.
      *
      * @param  string  $abstract
-     * @param  \Closure|null  $mock
      * @return \Mockery\MockInterface
      */
     protected function spy($abstract, ?Closure $mock = null)
@@ -127,7 +124,7 @@ trait InteractsWithContainer
 
         $this->swap(Vite::class, new class extends Vite
         {
-            public function __invoke($entrypoints, $buildDirectory = null)
+            public function __invoke($entrypoints, $buildDirectory = null): \Illuminate\Support\HtmlString
             {
                 return new HtmlString('');
             }
@@ -137,62 +134,62 @@ trait InteractsWithContainer
                 return '';
             }
 
-            public function __toString()
+            public function __toString(): string
             {
                 return '';
             }
 
-            public function useIntegrityKey($key)
+            public function useIntegrityKey($key): self
             {
                 return $this;
             }
 
-            public function useBuildDirectory($path)
+            public function useBuildDirectory($path): self
             {
                 return $this;
             }
 
-            public function useHotFile($path)
+            public function useHotFile($path): self
             {
                 return $this;
             }
 
-            public function withEntryPoints($entryPoints)
+            public function withEntryPoints($entryPoints): self
             {
                 return $this;
             }
 
-            public function useScriptTagAttributes($attributes)
+            public function useScriptTagAttributes($attributes): self
             {
                 return $this;
             }
 
-            public function useStyleTagAttributes($attributes)
+            public function useStyleTagAttributes($attributes): self
             {
                 return $this;
             }
 
-            public function usePreloadTagAttributes($attributes)
+            public function usePreloadTagAttributes($attributes): self
             {
                 return $this;
             }
 
-            public function preloadedAssets()
+            public function preloadedAssets(): array
             {
                 return [];
             }
 
-            public function reactRefresh()
+            public function reactRefresh(): string
             {
                 return '';
             }
 
-            public function content($asset, $buildDirectory = null)
+            public function content($asset, $buildDirectory = null): string
             {
                 return '';
             }
 
-            public function asset($asset, $buildDirectory = null)
+            public function asset($asset, $buildDirectory = null): string
             {
                 return '';
             }
@@ -226,9 +223,7 @@ trait InteractsWithContainer
             $this->originalMix = app(Mix::class);
         }
 
-        $this->swap(Mix::class, function () {
-            return new HtmlString('');
-        });
+        $this->swap(Mix::class, fn() => new HtmlString(''));
 
         return $this;
     }

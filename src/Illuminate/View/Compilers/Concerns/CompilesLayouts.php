@@ -15,9 +15,8 @@ trait CompilesLayouts
      * Compile the extends statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileExtends($expression)
+    protected function compileExtends($expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -32,9 +31,8 @@ trait CompilesLayouts
      * Compile the extends-first statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileExtendsFirst($expression)
+    protected function compileExtendsFirst($expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -49,9 +47,8 @@ trait CompilesLayouts
      * Compile the section statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileSection($expression)
+    protected function compileSection($expression): string
     {
         $this->lastSection = trim($expression, "()'\" ");
 
@@ -60,10 +57,8 @@ trait CompilesLayouts
 
     /**
      * Replace the @parent directive to a placeholder.
-     *
-     * @return string
      */
-    protected function compileParent()
+    protected function compileParent(): string
     {
         $escapedLastSection = strtr($this->lastSection, ['\\' => '\\\\', "'" => "\\'"]);
 
@@ -74,59 +69,48 @@ trait CompilesLayouts
      * Compile the yield statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileYield($expression)
+    protected function compileYield($expression): string
     {
         return "<?php echo \$__env->yieldContent{$expression}; ?>";
     }
 
     /**
      * Compile the show statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileShow()
+    protected function compileShow(): string
     {
         return '<?php echo $__env->yieldSection(); ?>';
     }
 
     /**
      * Compile the append statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileAppend()
+    protected function compileAppend(): string
     {
         return '<?php $__env->appendSection(); ?>';
     }
 
     /**
      * Compile the overwrite statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileOverwrite()
+    protected function compileOverwrite(): string
     {
         return '<?php $__env->stopSection(true); ?>';
     }
 
     /**
      * Compile the stop statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileStop()
+    protected function compileStop(): string
     {
         return '<?php $__env->stopSection(); ?>';
     }
 
     /**
      * Compile the end-section statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndsection()
+    protected function compileEndsection(): string
     {
         return '<?php $__env->stopSection(); ?>';
     }

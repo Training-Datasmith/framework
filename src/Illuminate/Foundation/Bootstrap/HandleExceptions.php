@@ -34,11 +34,8 @@ class HandleExceptions
 
     /**
      * Bootstrap the given application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return void
      */
-    public function bootstrap(Application $app)
+    public function bootstrap(Application $app): void
     {
         static::$reservedMemory = str_repeat('x', 32768);
 
@@ -64,11 +61,10 @@ class HandleExceptions
      * @param  string  $message
      * @param  string  $file
      * @param  int  $line
-     * @return void
      *
      * @throws \ErrorException
      */
-    public function handleError($level, $message, $file = '', $line = 0)
+    public function handleError($level, $message, $file = '', $line = 0): void
     {
         if ($this->isDeprecation($level)) {
             $this->handleDeprecationError($message, $file, $line, $level);
@@ -84,9 +80,8 @@ class HandleExceptions
      * @param  string  $file
      * @param  int  $line
      * @param  int  $level
-     * @return void
      */
-    public function handleDeprecationError($message, $file, $line, $level = E_DEPRECATED)
+    public function handleDeprecationError($message, $file, $line, $level = E_DEPRECATED): void
     {
         if ($this->shouldIgnoreDeprecationErrors()) {
             return;
@@ -102,7 +97,7 @@ class HandleExceptions
 
         $options = static::$app['config']->get('logging.deprecations') ?? [];
 
-        with($logger->channel('deprecations'), function ($log) use ($message, $file, $line, $level, $options) {
+        with($logger->channel('deprecations'), function ($log) use ($message, $file, $line, $level, $options): void {
             if ($options['trace'] ?? false) {
                 $log->warning((string) new ErrorException($message, 0, $level, $file, $line));
             } else {
@@ -115,14 +110,16 @@ class HandleExceptions
 
     /**
      * Determine if deprecation errors should be ignored.
-     *
-     * @return bool
      */
-    protected function shouldIgnoreDeprecationErrors()
+    protected function shouldIgnoreDeprecationErrors(): bool
     {
-        return ! class_exists(LogManager::class)
-            || ! static::$app->hasBeenBootstrapped()
-            || (static::$app->runningUnitTests() && ! Env::get('LOG_DEPRECATIONS_WHILE_TESTING'));
+        if (! class_exists(LogManager::class)) {
+            return true;
+        }
+        if (! static::$app->hasBeenBootstrapped()) {
+            return true;
+        }
+        return static::$app->runningUnitTests() && ! Env::get('LOG_DEPRECATIONS_WHILE_TESTING');
     }
 
     /**
@@ -174,11 +171,8 @@ class HandleExceptions
      * Note: Most exceptions can be handled via the try / catch block in
      * the HTTP and Console kernels. But, fatal error exceptions must
      * be handled differently since they are not normal exceptions.
-     *
-     * @param  \Throwable  $e
-     * @return void
      */
-    public function handleException(Throwable $e)
+    public function handleException(Throwable $e): void
     {
         static::$reservedMemory = null;
 
@@ -202,7 +196,6 @@ class HandleExceptions
     /**
      * Render an exception to the console.
      *
-     * @param  \Throwable  $e
      * @return void
      */
     protected function renderForConsole(Throwable $e)
@@ -213,7 +206,6 @@ class HandleExceptions
     /**
      * Render an exception as an HTTP response and send it.
      *
-     * @param  \Throwable  $e
      * @return void
      */
     protected function renderHttpResponse(Throwable $e)
@@ -223,10 +215,8 @@ class HandleExceptions
 
     /**
      * Handle the PHP shutdown event.
-     *
-     * @return void
      */
-    public function handleShutdown()
+    public function handleShutdown(): void
     {
         static::$reservedMemory = null;
 
@@ -238,7 +228,6 @@ class HandleExceptions
     /**
      * Create a new fatal error instance from an error array.
      *
-     * @param  array  $error
      * @param  int|null  $traceOffset
      * @return \Symfony\Component\ErrorHandler\Error\FatalError
      */
@@ -263,9 +252,8 @@ class HandleExceptions
      * Determine if the error level is a deprecation.
      *
      * @param  int  $level
-     * @return bool
      */
-    protected function isDeprecation($level)
+    protected function isDeprecation($level): bool
     {
         return in_array($level, [E_DEPRECATED, E_USER_DEPRECATED]);
     }
@@ -274,9 +262,8 @@ class HandleExceptions
      * Determine if the error type is fatal.
      *
      * @param  int  $type
-     * @return bool
      */
-    protected function isFatal($type)
+    protected function isFatal($type): bool
     {
         return in_array($type, [E_COMPILE_ERROR, E_CORE_ERROR, E_ERROR, E_PARSE]);
     }
@@ -294,22 +281,18 @@ class HandleExceptions
     /**
      * Clear the local application instance from memory.
      *
-     * @return void
      *
      * @deprecated This method will be removed in a future Laravel version.
      */
-    public static function forgetApp()
+    public static function forgetApp(): void
     {
         static::$app = null;
     }
 
     /**
      * Flush the bootstrapper's global state.
-     *
-     * @param  \PHPUnit\Framework\TestCase|null  $testCase
-     * @return void
      */
-    public static function flushState(?TestCase $testCase = null)
+    public static function flushState(?TestCase $testCase = null): void
     {
         if (is_null(static::$app)) {
             return;
@@ -324,11 +307,8 @@ class HandleExceptions
 
     /**
      * Flush the bootstrapper's global handlers state.
-     *
-     * @param  \PHPUnit\Framework\TestCase|null  $testCase
-     * @return void
      */
-    public static function flushHandlersState(?TestCase $testCase = null)
+    public static function flushHandlersState(?TestCase $testCase = null): void
     {
         while (get_exception_handler() !== null) {
             restore_exception_handler();

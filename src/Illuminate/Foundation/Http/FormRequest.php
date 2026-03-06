@@ -110,7 +110,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Create the default validator instance.
      *
-     * @param  \Illuminate\Contracts\Validation\Factory  $factory
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function createDefaultValidator(ValidationFactory $factory)
@@ -156,9 +155,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Handle a failed validation attempt.
      *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return void
-     *
      * @throws \Illuminate\Validation\ValidationException
      */
     protected function failedValidation(Validator $validator)
@@ -178,12 +175,14 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected function getRedirectUrl()
     {
         $url = $this->redirector->getUrlGenerator();
-
         if ($this->redirect) {
             return $url->to($this->redirect);
-        } elseif ($this->redirectRoute) {
+        }
+        if ($this->redirectRoute) {
             return $url->route($this->redirectRoute);
-        } elseif ($this->redirectAction) {
+        }
+
+        if ($this->redirectAction) {
             return $url->action($this->redirectAction);
         }
 
@@ -223,7 +222,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get a validated input container for the validated input.
      *
-     * @param  array|null  $keys
      * @return \Illuminate\Support\ValidatedInput|array
      */
     public function safe(?array $keys = null)
@@ -268,7 +266,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Set the Validator instance.
      *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return $this
      */
     public function setValidator(Validator $validator)
@@ -281,7 +278,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Set the Redirector instance.
      *
-     * @param  \Illuminate\Routing\Redirector  $redirector
      * @return $this
      */
     public function setRedirector(Redirector $redirector)
@@ -294,7 +290,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Set the container implementation.
      *
-     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return $this
      */
     public function setContainer(Container $container)

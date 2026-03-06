@@ -45,9 +45,8 @@ trait InteractsWithData
      * Determine if the data contains a given key.
      *
      * @param  string|array  $key
-     * @return bool
      */
-    public function has($key)
+    public function has($key): bool
     {
         $keys = is_array($key) ? $key : func_get_args();
 
@@ -66,9 +65,8 @@ trait InteractsWithData
      * Determine if the instance contains any of the given keys.
      *
      * @param  string|array  $keys
-     * @return bool
      */
-    public function hasAny($keys)
+    public function hasAny($keys): bool
     {
         $keys = is_array($keys) ? $keys : func_get_args();
 
@@ -81,8 +79,6 @@ trait InteractsWithData
      * Apply the callback if the instance contains the given key.
      *
      * @param  string  $key
-     * @param  callable  $callback
-     * @param  callable|null  $default
      * @return $this|mixed
      */
     public function whenHas($key, callable $callback, ?callable $default = null)
@@ -102,9 +98,8 @@ trait InteractsWithData
      * Determine if the instance contains a non-empty value for the given key.
      *
      * @param  string|array  $key
-     * @return bool
      */
-    public function filled($key)
+    public function filled($key): bool
     {
         $keys = is_array($key) ? $key : func_get_args();
 
@@ -121,9 +116,8 @@ trait InteractsWithData
      * Determine if the instance contains an empty value for the given key.
      *
      * @param  string|array  $key
-     * @return bool
      */
-    public function isNotFilled($key)
+    public function isNotFilled($key): bool
     {
         $keys = is_array($key) ? $key : func_get_args();
 
@@ -140,9 +134,8 @@ trait InteractsWithData
      * Determine if the instance contains a non-empty value for any of the given keys.
      *
      * @param  string|array  $keys
-     * @return bool
      */
-    public function anyFilled($keys)
+    public function anyFilled($keys): bool
     {
         $keys = is_array($keys) ? $keys : func_get_args();
 
@@ -159,8 +152,6 @@ trait InteractsWithData
      * Apply the callback if the instance contains a non-empty value for the given key.
      *
      * @param  string  $key
-     * @param  callable  $callback
-     * @param  callable|null  $default
      * @return $this|mixed
      */
     public function whenFilled($key, callable $callback, ?callable $default = null)
@@ -180,9 +171,8 @@ trait InteractsWithData
      * Determine if the instance is missing a given key.
      *
      * @param  string|array  $key
-     * @return bool
      */
-    public function missing($key)
+    public function missing($key): bool
     {
         $keys = is_array($key) ? $key : func_get_args();
 
@@ -193,8 +183,6 @@ trait InteractsWithData
      * Apply the callback if the instance is missing the given key.
      *
      * @param  string  $key
-     * @param  callable  $callback
-     * @param  callable|null  $default
      * @return $this|mixed
      */
     public function whenMissing($key, callable $callback, ?callable $default = null)
@@ -214,9 +202,8 @@ trait InteractsWithData
      * Determine if the given key is an empty string for "filled".
      *
      * @param  string  $key
-     * @return bool
      */
-    protected function isEmptyString($key)
+    protected function isEmptyString($key): bool
     {
         $value = $this->data($key);
 
@@ -254,9 +241,8 @@ trait InteractsWithData
      *
      * @param  string|null  $key
      * @param  bool  $default
-     * @return bool
      */
-    public function boolean($key = null, $default = false)
+    public function boolean($key = null, $default = false): bool
     {
         return filter_var($this->data($key, $default), FILTER_VALIDATE_BOOLEAN);
     }
@@ -266,9 +252,8 @@ trait InteractsWithData
      *
      * @param  string  $key
      * @param  int  $default
-     * @return int
      */
-    public function integer($key, $default = 0)
+    public function integer($key, $default = 0): int
     {
         return (int) $this->data($key, $default);
     }
@@ -278,9 +263,8 @@ trait InteractsWithData
      *
      * @param  string  $key
      * @param  float  $default
-     * @return float
      */
-    public function float($key, $default = 0.0)
+    public function float($key, $default = 0.0): float
     {
         return (float) $this->data($key, $default);
     }
@@ -289,12 +273,10 @@ trait InteractsWithData
      * Retrieve data clamped between min and max values.
      *
      * @param  string  $key
-     * @param  int|float  $min
-     * @param  int|float  $max
      * @param  int|float  $default
      * @return float|int
      */
-    public function clamp($key, $min, $max, $default = 0)
+    public function clamp($key, int|float $min, int|float $max, $default = 0)
     {
         return Number::clamp($this->data($key, $default), $min, $max);
     }
@@ -369,9 +351,8 @@ trait InteractsWithData
      * Determine if the given enum class is backed.
      *
      * @param  class-string  $enumClass
-     * @return bool
      */
-    protected function isBackedEnum($enumClass)
+    protected function isBackedEnum($enumClass): bool
     {
         return is_a($enumClass, \BackedEnum::class, true);
     }
@@ -380,9 +361,8 @@ trait InteractsWithData
      * Retrieve data from the instance as an array.
      *
      * @param  array|string|null  $key
-     * @return array
      */
-    public function array($key = null)
+    public function array($key = null): array
     {
         return (array) (is_array($key) ? $this->only($key) : $this->data($key));
     }
@@ -391,9 +371,8 @@ trait InteractsWithData
      * Retrieve data from the instance as a collection.
      *
      * @param  array|string|null  $key
-     * @return \Illuminate\Support\Collection
      */
-    public function collect($key = null)
+    public function collect($key = null): \Illuminate\Support\Collection
     {
         return new Collection(is_array($key) ? $this->only($key) : $this->data($key));
     }
@@ -402,9 +381,8 @@ trait InteractsWithData
      * Get a subset containing the provided keys with values from the instance data.
      *
      * @param  mixed  $keys
-     * @return array
      */
-    public function only($keys)
+    public function only($keys): array
     {
         $results = [];
 

@@ -15,13 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
 class StartSession
 {
     /**
-     * The session manager.
-     *
-     * @var \Illuminate\Session\SessionManager
-     */
-    protected $manager;
-
-    /**
      * The callback that can resolve an instance of the cache factory.
      *
      * @var callable|null
@@ -30,13 +23,12 @@ class StartSession
 
     /**
      * Create a new session middleware.
-     *
-     * @param  \Illuminate\Session\SessionManager  $manager
-     * @param  callable|null  $cacheFactoryResolver
      */
-    public function __construct(SessionManager $manager, ?callable $cacheFactoryResolver = null)
+    public function __construct(/**
+     * The session manager.
+     */
+    protected \Illuminate\Session\SessionManager $manager, ?callable $cacheFactoryResolver = null)
     {
-        $this->manager = $manager;
         $this->cacheFactoryResolver = $cacheFactoryResolver;
     }
 
@@ -44,7 +36,6 @@ class StartSession
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -66,9 +57,7 @@ class StartSession
     /**
      * Handle the given request within session state.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Contracts\Session\Session  $session
-     * @param  \Closure  $next
      * @return mixed
      */
     protected function handleRequestWhileBlocking(Request $request, $session, Closure $next)
@@ -101,9 +90,7 @@ class StartSession
     /**
      * Handle the given request within session state.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Contracts\Session\Session  $session
-     * @param  \Closure  $next
      * @return mixed
      */
     protected function handleStatefulRequest(Request $request, $session, Closure $next)
@@ -134,13 +121,12 @@ class StartSession
     /**
      * Start the session for the given request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Contracts\Session\Session  $session
      * @return \Illuminate\Contracts\Session\Session
      */
     protected function startSession(Request $request, $session)
     {
-        return tap($session, function ($session) use ($request) {
+        return tap($session, function ($session) use ($request): void {
             $session->setRequestOnHandler($request);
 
             $session->start();
@@ -150,12 +136,11 @@ class StartSession
     /**
      * Get the session implementation from the manager.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Session\Session
      */
     public function getSession(Request $request)
     {
-        return tap($this->manager->driver(), function ($session) use ($request) {
+        return tap($this->manager->driver(), function ($session) use ($request): void {
             $session->setId($request->cookies->get($session->getName()));
         });
     }
@@ -163,7 +148,6 @@ class StartSession
     /**
      * Remove the garbage from the session if necessary.
      *
-     * @param  \Illuminate\Contracts\Session\Session  $session
      * @return void
      */
     protected function collectGarbage(Session $session)
@@ -180,11 +164,8 @@ class StartSession
 
     /**
      * Determine if the configuration odds hit the lottery.
-     *
-     * @param  array  $config
-     * @return bool
      */
-    protected function configHitsLottery(array $config)
+    protected function configHitsLottery(array $config): bool
     {
         return random_int(1, $config['lottery'][1]) <= $config['lottery'][0];
     }
@@ -192,7 +173,6 @@ class StartSession
     /**
      * Store the current URL for the request if necessary.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Contracts\Session\Session  $session
      * @return void
      */
@@ -214,8 +194,6 @@ class StartSession
     /**
      * Add the session cookie to the application response.
      *
-     * @param  \Symfony\Component\HttpFoundation\Response  $response
-     * @param  \Illuminate\Contracts\Session\Session  $session
      * @return void
      */
     protected function addCookieToResponse(Response $response, Session $session)
@@ -254,7 +232,7 @@ class StartSession
      *
      * @return int
      */
-    protected function getSessionLifetimeInSeconds()
+    protected function getSessionLifetimeInSeconds(): int|float
     {
         return ($this->manager->getSessionConfig()['lifetime'] ?? null) * 60;
     }
@@ -275,21 +253,16 @@ class StartSession
 
     /**
      * Determine if a session driver has been configured.
-     *
-     * @return bool
      */
-    protected function sessionConfigured()
+    protected function sessionConfigured(): bool
     {
         return ! is_null($this->manager->getSessionConfig()['driver'] ?? null);
     }
 
     /**
      * Determine if the configured session driver is persistent.
-     *
-     * @param  array|null  $config
-     * @return bool
      */
-    protected function sessionIsPersistent(?array $config = null)
+    protected function sessionIsPersistent(?array $config = null): bool
     {
         $config = $config ?: $this->manager->getSessionConfig();
 

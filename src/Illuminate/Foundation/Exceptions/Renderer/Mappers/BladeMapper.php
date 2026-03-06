@@ -46,35 +46,24 @@ use Throwable;
 class BladeMapper
 {
     /**
-     * The view factory instance.
-     *
-     * @var \Illuminate\Contracts\View\Factory
-     */
-    protected $factory;
-
-    /**
-     * The Blade compiler instance.
-     *
-     * @var \Illuminate\View\Compilers\BladeCompiler
-     */
-    protected $bladeCompiler;
-
-    /**
      * Create a new Blade mapper instance.
-     *
-     * @param  \Illuminate\Contracts\View\Factory  $factory
-     * @param  \Illuminate\View\Compilers\BladeCompiler  $bladeCompiler
      */
-    public function __construct(Factory $factory, BladeCompiler $bladeCompiler)
+    public function __construct(
+        /**
+         * The view factory instance.
+         */
+        protected \Illuminate\Contracts\View\Factory $factory,
+        /**
+         * The Blade compiler instance.
+         */
+        protected \Illuminate\View\Compilers\BladeCompiler $bladeCompiler
+    )
     {
-        $this->factory = $factory;
-        $this->bladeCompiler = $bladeCompiler;
     }
 
     /**
      * Map cached view paths to their original paths.
      *
-     * @param  \Symfony\Component\ErrorHandler\Exception\FlattenException  $exception
      * @return \Symfony\Component\ErrorHandler\Exception\FlattenException
      */
     public function map(FlattenException $exception)
@@ -88,7 +77,7 @@ class BladeMapper
         }
 
         $trace = (new Collection($exception->getTrace()))
-            ->map(function ($frame) {
+            ->map(function (array $frame): array {
                 if ($originalPath = $this->findCompiledView((string) Arr::get($frame, 'file', ''))) {
                     $frame['file'] = $originalPath;
                     $frame['line'] = $this->detectLineNumber($frame['file'], $frame['line']);
@@ -103,7 +92,6 @@ class BladeMapper
     /**
      * Find the compiled view file for the given compiled path.
      *
-     * @param  string  $compiledPath
      * @return string|null
      */
     protected function findCompiledView(string $compiledPath)
@@ -116,7 +104,7 @@ class BladeMapper
      *
      * @return array<string, string>
      */
-    protected function getKnownPaths()
+    protected function getKnownPaths(): array
     {
         $compilerEngineReflection = new ReflectionClass(
             $bladeCompilerEngine = $this->factory->getEngineResolver()->resolve('blade'),
@@ -148,9 +136,9 @@ class BladeMapper
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    protected function filterViewData(array $data)
+    protected function filterViewData(array $data): array
     {
-        return array_filter($data, function ($value, $key) {
+        return array_filter($data, function ($value, $key): bool {
             if ($key === 'app') {
                 return ! $value instanceof Application;
             }
@@ -162,8 +150,6 @@ class BladeMapper
     /**
      * Detect the line number in the original blade file.
      *
-     * @param  string  $filename
-     * @param  int  $compiledLineNumber
      * @return int
      */
     protected function detectLineNumber(string $filename, int $compiledLineNumber)
@@ -176,7 +162,6 @@ class BladeMapper
     /**
      * Compile the source map for the given blade file.
      *
-     * @param  string  $value
      * @return string
      */
     protected function compileSourcemap(string $value)
@@ -199,7 +184,6 @@ class BladeMapper
     /**
      * Add line numbers to echo statements.
      *
-     * @param  string  $value
      * @return string
      */
     protected function addEchoLineNumbers(string $value)
@@ -225,7 +209,6 @@ class BladeMapper
     /**
      * Add line numbers to blade statements.
      *
-     * @param  string  $value
      * @return string
      */
     protected function addStatementLineNumbers(string $value)
@@ -251,7 +234,6 @@ class BladeMapper
     /**
      * Add line numbers to blade components.
      *
-     * @param  string  $value
      * @return string
      */
     protected function addBladeComponentLineNumbers(string $value)
@@ -276,12 +258,8 @@ class BladeMapper
 
     /**
      * Insert a line number at the given position.
-     *
-     * @param  int  $position
-     * @param  string  $value
-     * @return string
      */
-    protected function insertLineNumberAtPosition(int $position, string $value)
+    protected function insertLineNumberAtPosition(int $position, string $value): string
     {
         $before = mb_substr($value, 0, $position);
 
@@ -292,11 +270,8 @@ class BladeMapper
 
     /**
      * Trim empty lines from the given value.
-     *
-     * @param  string  $value
-     * @return string
      */
-    protected function trimEmptyLines(string $value)
+    protected function trimEmptyLines(string $value): string
     {
         $value = preg_replace('/^\|---LINE:([0-9]+)---\|$/m', '', $value);
 
@@ -305,12 +280,8 @@ class BladeMapper
 
     /**
      * Find the closest line number mapping in the given source map.
-     *
-     * @param  string  $map
-     * @param  int  $compiledLineNumber
-     * @return int
      */
-    protected function findClosestLineNumberMapping(string $map, int $compiledLineNumber)
+    protected function findClosestLineNumberMapping(string $map, int $compiledLineNumber): int
     {
         $map = explode("\n", $map);
 

@@ -25,10 +25,8 @@ class EventCacheCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->callSilent('event:clear');
 
@@ -42,17 +40,15 @@ class EventCacheCommand extends Command
 
     /**
      * Get all of the events and listeners configured for the application.
-     *
-     * @return array
      */
-    protected function getEvents()
+    protected function getEvents(): array
     {
         $events = [];
 
         foreach ($this->laravel->getProviders(EventServiceProvider::class) as $provider) {
             $providerEvents = array_merge_recursive($provider->shouldDiscoverEvents() ? $provider->discoverEvents() : [], $provider->listens());
 
-            $events[get_class($provider)] = $providerEvents;
+            $events[$provider::class] = $providerEvents;
         }
 
         return $events;

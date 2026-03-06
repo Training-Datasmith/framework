@@ -15,9 +15,8 @@ trait CompilesJson
      * Compile the JSON statement into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileJson($expression)
+    protected function compileJson($expression): string
     {
         $parts = explode(',', $this->stripParentheses($expression));
 

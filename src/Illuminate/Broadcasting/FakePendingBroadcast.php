@@ -18,7 +18,7 @@ class FakePendingBroadcast extends PendingBroadcast
      * @param  string|null  $connection
      * @return $this
      */
-    public function via($connection = null)
+    public function via($connection = null): static
     {
         return $this;
     }
@@ -28,15 +28,13 @@ class FakePendingBroadcast extends PendingBroadcast
      *
      * @return $this
      */
-    public function toOthers()
+    public function toOthers(): static
     {
         return $this;
     }
 
     /**
      * Handle the object's destruction.
-     *
-     * @return void
      */
     public function __destruct()
     {

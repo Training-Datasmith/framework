@@ -8,15 +8,14 @@ class PaginationState
      * Bind the pagination state resolvers using the given application container as a base.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return void
      */
-    public static function resolveUsing($app)
+    public static function resolveUsing($app): void
     {
         Paginator::viewFactoryResolver(fn () => $app['view']);
 
         Paginator::currentPathResolver(fn () => $app['request']->url());
 
-        Paginator::currentPageResolver(function ($pageName = 'page') use ($app) {
+        Paginator::currentPageResolver(function ($pageName = 'page') use ($app): int {
             $page = $app['request']->input($pageName);
 
             if (filter_var($page, FILTER_VALIDATE_INT) !== false && (int) $page >= 1) {
@@ -28,8 +27,6 @@ class PaginationState
 
         Paginator::queryStringResolver(fn () => $app['request']->query());
 
-        CursorPaginator::currentCursorResolver(function ($cursorName = 'cursor') use ($app) {
-            return Cursor::fromEncoded($app['request']->input($cursorName));
-        });
+        CursorPaginator::currentCursorResolver(fn($cursorName = 'cursor') => Cursor::fromEncoded($app['request']->input($cursorName)));
     }
 }

@@ -78,11 +78,9 @@ trait ManagesTransactions
     /**
      * Handle an exception encountered when running a transacted statement.
      *
-     * @param  \Throwable  $e
      * @param  int  $currentAttempt
      * @param  int  $maxAttempts
      * @return void
-     *
      * @throws \Throwable
      */
     protected function handleTransactionException(Throwable $e, $currentAttempt, $maxAttempts)
@@ -117,11 +115,10 @@ trait ManagesTransactions
     /**
      * Start a new database transaction.
      *
-     * @return void
      *
      * @throws \Throwable
      */
-    public function beginTransaction()
+    public function beginTransaction(): void
     {
         foreach ($this->beforeStartingTransaction as $callback) {
             $callback($this);
@@ -177,9 +174,7 @@ trait ManagesTransactions
     /**
      * Handle an exception from a transaction beginning.
      *
-     * @param  \Throwable  $e
      * @return void
-     *
      * @throws \Throwable
      */
     protected function handleBeginTransactionException(Throwable $e)
@@ -196,11 +191,10 @@ trait ManagesTransactions
     /**
      * Commit the active database transaction.
      *
-     * @return void
      *
      * @throws \Throwable
      */
-    public function commit()
+    public function commit(): void
     {
         if ($this->transactionLevel() == 1) {
             $this->fireConnectionEvent('committing');
@@ -222,11 +216,9 @@ trait ManagesTransactions
     /**
      * Handle an exception encountered when committing a transaction.
      *
-     * @param  \Throwable  $e
      * @param  int  $currentAttempt
      * @param  int  $maxAttempts
      * @return void
-     *
      * @throws \Throwable
      */
     protected function handleCommitTransactionException(Throwable $e, $currentAttempt, $maxAttempts)
@@ -254,11 +246,10 @@ trait ManagesTransactions
      * Rollback the active database transaction.
      *
      * @param  int|null  $toLevel
-     * @return void
      *
      * @throws \Throwable
      */
-    public function rollBack($toLevel = null)
+    public function rollBack($toLevel = null): void
     {
         // We allow developers to rollback to a certain transaction level. We will verify
         // that this given transaction level is valid before attempting to rollback to
@@ -315,9 +306,7 @@ trait ManagesTransactions
     /**
      * Handle an exception from a rollback.
      *
-     * @param  \Throwable  $e
      * @return void
-     *
      * @throws \Throwable
      */
     protected function handleRollBackException(Throwable $e)

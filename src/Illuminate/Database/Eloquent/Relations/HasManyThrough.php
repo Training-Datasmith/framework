@@ -24,8 +24,8 @@ class HasManyThrough extends HasOneOrManyThrough
      */
     public function one()
     {
-        return HasOneThrough::noConstraints(fn () => new HasOneThrough(
-            tap($this->getQuery(), fn (Builder $query) => $query->getQuery()->joins = []),
+        return HasOneThrough::noConstraints(fn (): \Illuminate\Database\Eloquent\Relations\HasOneThrough => new HasOneThrough(
+            tap($this->getQuery(), fn (Builder $query): array => $query->getQuery()->joins = []),
             $this->farParent,
             $this->throughParent,
             $this->getFirstKeyName(),
@@ -36,7 +36,7 @@ class HasManyThrough extends HasOneOrManyThrough
     }
 
     /** @inheritDoc */
-    public function initRelation(array $models, $relation)
+    public function initRelation(array $models, $relation): array
     {
         foreach ($models as $model) {
             $model->setRelation($relation, $this->related->newCollection());
@@ -46,7 +46,7 @@ class HasManyThrough extends HasOneOrManyThrough
     }
 
     /** @inheritDoc */
-    public function match(array $models, EloquentCollection $results, $relation)
+    public function match(array $models, EloquentCollection $results, $relation): array
     {
         $dictionary = $this->buildDictionary($results);
 

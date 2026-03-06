@@ -15,25 +15,21 @@ class MariaDbConnection extends MySqlConnection
     /**
      * {@inheritdoc}
      */
-    public function getDriverTitle()
+    public function getDriverTitle(): string
     {
         return 'MariaDB';
     }
 
     /**
      * Determine if the connected database is a MariaDB database.
-     *
-     * @return bool
      */
-    public function isMaria()
+    public function isMaria(): bool
     {
         return true;
     }
 
     /**
      * Get the server version for the connection.
-     *
-     * @return string
      */
     public function getServerVersion(): string
     {
@@ -42,20 +38,16 @@ class MariaDbConnection extends MySqlConnection
 
     /**
      * Get the default query grammar instance.
-     *
-     * @return \Illuminate\Database\Query\Grammars\MariaDbGrammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): \Illuminate\Database\Query\Grammars\MariaDbGrammar
     {
         return new QueryGrammar($this);
     }
 
     /**
      * Get a schema builder instance for the connection.
-     *
-     * @return \Illuminate\Database\Schema\MariaDbBuilder
      */
-    public function getSchemaBuilder()
+    public function getSchemaBuilder(): \Illuminate\Database\Schema\MariaDbBuilder
     {
         if (is_null($this->schemaGrammar)) {
             $this->useDefaultSchemaGrammar();
@@ -66,32 +58,24 @@ class MariaDbConnection extends MySqlConnection
 
     /**
      * Get the default schema grammar instance.
-     *
-     * @return \Illuminate\Database\Schema\Grammars\MariaDbGrammar
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): \Illuminate\Database\Schema\Grammars\MariaDbGrammar
     {
         return new SchemaGrammar($this);
     }
 
     /**
      * Get the schema state for the connection.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem|null  $files
-     * @param  callable|null  $processFactory
-     * @return \Illuminate\Database\Schema\MariaDbSchemaState
      */
-    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null)
+    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null): \Illuminate\Database\Schema\MariaDbSchemaState
     {
         return new MariaDbSchemaState($this, $files, $processFactory);
     }
 
     /**
      * Get the default post processor instance.
-     *
-     * @return \Illuminate\Database\Query\Processors\MariaDbProcessor
      */
-    protected function getDefaultPostProcessor()
+    protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\MariaDbProcessor
     {
         return new MariaDbProcessor;
     }

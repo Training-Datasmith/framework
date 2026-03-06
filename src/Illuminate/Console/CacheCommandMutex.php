@@ -24,12 +24,10 @@ class CacheCommandMutex implements CommandMutex
      *
      * @var string|null
      */
-    public $store = null;
+    public $store;
 
     /**
      * Create a new command mutex.
-     *
-     * @param  \Illuminate\Contracts\Cache\Factory  $cache
      */
     public function __construct(Cache $cache)
     {
@@ -73,7 +71,7 @@ class CacheCommandMutex implements CommandMutex
         if ($this->shouldUseLocks($store->getStore())) {
             $lock = $store->getStore()->lock($this->commandMutexName($command));
 
-            return tap(! $lock->get(), function ($exists) use ($lock) {
+            return tap(! $lock->get(), function ($exists) use ($lock): void {
                 if ($exists) {
                     $lock->release();
                 }
@@ -104,9 +102,8 @@ class CacheCommandMutex implements CommandMutex
      * Get the isolatable command mutex name.
      *
      * @param  \Illuminate\Console\Command  $command
-     * @return string
      */
-    protected function commandMutexName($command)
+    protected function commandMutexName($command): string
     {
         $baseName = 'framework'.DIRECTORY_SEPARATOR.'command-'.$command->getName();
 
@@ -121,7 +118,7 @@ class CacheCommandMutex implements CommandMutex
      * @param  string|null  $store
      * @return $this
      */
-    public function useStore($store)
+    public function useStore($store): static
     {
         $this->store = $store;
 
@@ -132,9 +129,8 @@ class CacheCommandMutex implements CommandMutex
      * Determine if the given store should use locks for command mutexes.
      *
      * @param  \Illuminate\Contracts\Cache\Store  $store
-     * @return bool
      */
-    protected function shouldUseLocks($store)
+    protected function shouldUseLocks($store): bool
     {
         return $store instanceof LockProvider && ! $store instanceof DynamoDbStore;
     }

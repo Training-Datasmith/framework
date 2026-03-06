@@ -45,11 +45,8 @@ class NamespacedItemResolver
 
     /**
      * Parse an array of basic segments.
-     *
-     * @param  array  $segments
-     * @return array
      */
-    protected function parseBasicSegments(array $segments)
+    protected function parseBasicSegments(array $segments): array
     {
         // The first segment in a basic array will always be the group, so we can go
         // ahead and grab that segment. If there is only one total segment we are
@@ -70,9 +67,8 @@ class NamespacedItemResolver
      * Parse an array of namespaced segments.
      *
      * @param  string  $key
-     * @return array
      */
-    protected function parseNamespacedSegments($key)
+    protected function parseNamespacedSegments($key): array
     {
         [$namespace, $item] = explode('::', $key);
 
@@ -93,19 +89,16 @@ class NamespacedItemResolver
      *
      * @param  string  $key
      * @param  array  $parsed
-     * @return void
      */
-    public function setParsedKey($key, $parsed)
+    public function setParsedKey($key, $parsed): void
     {
         $this->parsed[$key] = $parsed;
     }
 
     /**
      * Flush the cache of parsed keys.
-     *
-     * @return void
      */
-    public function flushParsedKeys()
+    public function flushParsedKeys(): void
     {
         $this->parsed = [];
     }

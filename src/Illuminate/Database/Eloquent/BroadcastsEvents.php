@@ -8,30 +8,28 @@ trait BroadcastsEvents
 {
     /**
      * Boot the event broadcasting trait.
-     *
-     * @return void
      */
-    public static function bootBroadcastsEvents()
+    public static function bootBroadcastsEvents(): void
     {
-        static::created(function ($model) {
+        static::created(function ($model): void {
             $model->broadcastCreated();
         });
 
-        static::updated(function ($model) {
+        static::updated(function ($model): void {
             $model->broadcastUpdated();
         });
 
         if (method_exists(static::class, 'bootSoftDeletes')) {
-            static::softDeleted(function ($model) {
+            static::softDeleted(function ($model): void {
                 $model->broadcastTrashed();
             });
 
-            static::restored(function ($model) {
+            static::restored(function ($model): void {
                 $model->broadcastRestored();
             });
         }
 
-        static::deleted(function ($model) {
+        static::deleted(function ($model): void {
             $model->broadcastDeleted();
         });
     }
@@ -128,7 +126,7 @@ trait BroadcastsEvents
      */
     public function newBroadcastableModelEvent($event)
     {
-        return tap($this->newBroadcastableEvent($event), function ($event) {
+        return tap($this->newBroadcastableEvent($event), function ($event): void {
             $event->connection = property_exists($this, 'broadcastConnection')
                 ? $this->broadcastConnection
                 : $this->broadcastConnection();
@@ -145,11 +143,8 @@ trait BroadcastsEvents
 
     /**
      * Create a new broadcastable model event for the model.
-     *
-     * @param  string  $event
-     * @return \Illuminate\Database\Eloquent\BroadcastableModelEventOccurred
      */
-    protected function newBroadcastableEvent(string $event)
+    protected function newBroadcastableEvent(string $event): \Illuminate\Database\Eloquent\BroadcastableModelEventOccurred
     {
         return new BroadcastableModelEventOccurred($this, $event);
     }
@@ -160,37 +155,31 @@ trait BroadcastsEvents
      * @param  string  $event
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn($event)
+    public function broadcastOn($event): array
     {
         return [$this];
     }
 
     /**
      * Get the queue connection that should be used to broadcast model events.
-     *
-     * @return string|null
      */
-    public function broadcastConnection()
+    public function broadcastConnection(): void
     {
         //
     }
 
     /**
      * Get the queue that should be used to broadcast model events.
-     *
-     * @return string|null
      */
-    public function broadcastQueue()
+    public function broadcastQueue(): void
     {
         //
     }
 
     /**
      * Determine if the model event broadcast queued job should be dispatched after all transactions are committed.
-     *
-     * @return bool
      */
-    public function broadcastAfterCommit()
+    public function broadcastAfterCommit(): bool
     {
         return false;
     }

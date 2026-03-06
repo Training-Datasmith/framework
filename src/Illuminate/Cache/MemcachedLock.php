@@ -5,13 +5,6 @@ namespace Illuminate\Cache;
 class MemcachedLock extends Lock
 {
     /**
-     * The Memcached instance.
-     *
-     * @var \Memcached
-     */
-    protected $memcached;
-
-    /**
      * Create a new lock instance.
      *
      * @param  \Memcached  $memcached
@@ -19,19 +12,18 @@ class MemcachedLock extends Lock
      * @param  int  $seconds
      * @param  string|null  $owner
      */
-    public function __construct($memcached, $name, $seconds, $owner = null)
+    public function __construct(/**
+     * The Memcached instance.
+     */
+    protected $memcached, $name, $seconds, $owner = null)
     {
         parent::__construct($name, $seconds, $owner);
-
-        $this->memcached = $memcached;
     }
 
     /**
      * Attempt to acquire the lock.
-     *
-     * @return bool
      */
-    public function acquire()
+    public function acquire(): bool
     {
         return $this->memcached->add(
             $this->name, $this->owner, $this->seconds
@@ -54,20 +46,16 @@ class MemcachedLock extends Lock
 
     /**
      * Releases this lock in disregard of ownership.
-     *
-     * @return void
      */
-    public function forceRelease()
+    public function forceRelease(): void
     {
         $this->memcached->delete($this->name);
     }
 
     /**
      * Returns the owner value written into the driver for this lock.
-     *
-     * @return mixed
      */
-    protected function getCurrentOwner()
+    protected function getCurrentOwner(): mixed
     {
         return $this->memcached->get($this->name);
     }

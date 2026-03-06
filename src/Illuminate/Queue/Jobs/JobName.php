@@ -21,10 +21,9 @@ class JobName
      * Get the resolved name of the queued job class.
      *
      * @param  string  $name
-     * @param  array  $payload
      * @return string
      */
-    public static function resolve($name, $payload)
+    public static function resolve($name, array $payload)
     {
         if (! empty($payload['displayName'])) {
             return $payload['displayName'];
@@ -40,7 +39,7 @@ class JobName
      * @param  array<string, mixed>  $payload
      * @return string
      */
-    public static function resolveClassName($name, $payload)
+    public static function resolveClassName($name, array $payload)
     {
         if (is_string($payload['data']['commandName'] ?? null)) {
             return $payload['data']['commandName'];

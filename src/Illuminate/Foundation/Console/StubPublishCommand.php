@@ -28,10 +28,8 @@ class StubPublishCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         if (! is_dir($stubsPath = $this->laravel->basePath('stubs'))) {
             (new Filesystem)->makeDirectory($stubsPath);
@@ -97,7 +95,7 @@ class StubPublishCommand extends Command
         $this->laravel['events']->dispatch($event = new PublishingStubs($stubs));
 
         foreach ($event->stubs as $from => $to) {
-            $to = $stubsPath.DIRECTORY_SEPARATOR.ltrim($to, DIRECTORY_SEPARATOR);
+            $to = $stubsPath.DIRECTORY_SEPARATOR.ltrim((string) $to, DIRECTORY_SEPARATOR);
 
             if ((! $this->option('existing') && (! file_exists($to) || $this->option('force')))
                 || ($this->option('existing') && file_exists($to))) {

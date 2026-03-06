@@ -9,10 +9,8 @@ class MimeType
 {
     /**
      * The MIME types instance.
-     *
-     * @var \Symfony\Component\Mime\MimeTypes|null
      */
-    private static $mime;
+    private static ?\Symfony\Component\Mime\MimeTypes $mime = null;
 
     /**
      * Get the MIME types instance.

@@ -11,9 +11,8 @@ trait RoutesNotifications
      * Send the given notification.
      *
      * @param  mixed  $instance
-     * @return void
      */
-    public function notify($instance)
+    public function notify($instance): void
     {
         app(Dispatcher::class)->send($this, $instance);
     }
@@ -22,10 +21,8 @@ trait RoutesNotifications
      * Send the given notification immediately.
      *
      * @param  mixed  $instance
-     * @param  array|null  $channels
-     * @return void
      */
-    public function notifyNow($instance, ?array $channels = null)
+    public function notifyNow($instance, ?array $channels = null): void
     {
         app(Dispatcher::class)->sendNow($this, $instance, $channels);
     }

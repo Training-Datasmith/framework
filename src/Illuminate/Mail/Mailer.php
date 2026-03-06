@@ -26,32 +26,11 @@ class Mailer implements MailerContract, MailQueueContract
     use Macroable;
 
     /**
-     * The name that is configured for the mailer.
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The view factory instance.
-     *
-     * @var \Illuminate\Contracts\View\Factory
-     */
-    protected $views;
-
-    /**
      * The Symfony Transport instance.
      *
      * @var \Symfony\Component\Mailer\Transport\TransportInterface
      */
     protected $transport;
-
-    /**
-     * The event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher|null
-     */
-    protected $events;
 
     /**
      * The global from address and name.
@@ -90,17 +69,18 @@ class Mailer implements MailerContract, MailQueueContract
 
     /**
      * Create a new Mailer instance.
-     *
-     * @param  string  $name
-     * @param  \Illuminate\Contracts\View\Factory  $views
-     * @param  \Symfony\Component\Mailer\Transport\TransportInterface  $transport
-     * @param  \Illuminate\Contracts\Events\Dispatcher|null  $events
      */
-    public function __construct(string $name, Factory $views, TransportInterface $transport, ?Dispatcher $events = null)
+    public function __construct(/**
+     * The name that is configured for the mailer.
+     */
+    protected string $name, /**
+     * The view factory instance.
+     */
+    protected \Illuminate\Contracts\View\Factory $views, TransportInterface $transport, /**
+     * The event dispatcher instance.
+     */
+    protected ?\Illuminate\Contracts\Events\Dispatcher $events = null)
     {
-        $this->name = $name;
-        $this->views = $views;
-        $this->events = $events;
         $this->transport = $transport;
     }
 
@@ -109,9 +89,8 @@ class Mailer implements MailerContract, MailQueueContract
      *
      * @param  string  $address
      * @param  string|null  $name
-     * @return void
      */
-    public function alwaysFrom($address, $name = null)
+    public function alwaysFrom($address, $name = null): void
     {
         $this->from = compact('address', 'name');
     }
@@ -121,9 +100,8 @@ class Mailer implements MailerContract, MailQueueContract
      *
      * @param  string  $address
      * @param  string|null  $name
-     * @return void
      */
-    public function alwaysReplyTo($address, $name = null)
+    public function alwaysReplyTo($address, $name = null): void
     {
         $this->replyTo = compact('address', 'name');
     }
@@ -132,9 +110,8 @@ class Mailer implements MailerContract, MailQueueContract
      * Set the global return path address.
      *
      * @param  string  $address
-     * @return void
      */
-    public function alwaysReturnPath($address)
+    public function alwaysReturnPath($address): void
     {
         $this->returnPath = compact('address');
     }
@@ -144,9 +121,8 @@ class Mailer implements MailerContract, MailQueueContract
      *
      * @param  string  $address
      * @param  string|null  $name
-     * @return void
      */
-    public function alwaysTo($address, $name = null)
+    public function alwaysTo($address, $name = null): void
     {
         $this->to = compact('address', 'name');
     }
@@ -227,7 +203,6 @@ class Mailer implements MailerContract, MailQueueContract
      * Send a new message with only a plain part.
      *
      * @param  string  $view
-     * @param  array  $data
      * @param  mixed  $callback
      * @return \Illuminate\Mail\SentMessage|null
      */
@@ -240,7 +215,6 @@ class Mailer implements MailerContract, MailQueueContract
      * Render the given message as a view.
      *
      * @param  string|array  $view
-     * @param  array  $data
      * @return string
      */
     public function render($view, array $data = [])
@@ -261,11 +235,9 @@ class Mailer implements MailerContract, MailQueueContract
     /**
      * Replace the embedded image attachments with raw, inline image data for browser rendering.
      *
-     * @param  string  $renderedView
-     * @param  array  $attachments
      * @return string
      */
-    protected function replaceEmbeddedAttachments(string $renderedView, array $attachments)
+    protected function replaceEmbeddedAttachments(string $renderedView, array $attachments): string|array
     {
         if (preg_match_all('/<img.+?src=[\'"]cid:([^\'"]+)[\'"].*?>/is', $renderedView, $matches)) {
             foreach (array_unique($matches[1]) as $image) {
@@ -290,7 +262,6 @@ class Mailer implements MailerContract, MailQueueContract
      * Send a new message using a view.
      *
      * @param  \Illuminate\Contracts\Mail\Mailable|string|array  $view
-     * @param  array  $data
      * @param  \Closure|string|null  $callback
      * @return \Illuminate\Mail\SentMessage|null
      */
@@ -343,7 +314,6 @@ class Mailer implements MailerContract, MailQueueContract
     /**
      * Send the given mailable.
      *
-     * @param  \Illuminate\Contracts\Mail\Mailable  $mailable
      * @return \Illuminate\Mail\SentMessage|null
      */
     protected function sendMailable(MailableContract $mailable)
@@ -357,7 +327,6 @@ class Mailer implements MailerContract, MailQueueContract
      * Send a new message synchronously using a view.
      *
      * @param  \Illuminate\Contracts\Mail\Mailable|string|array  $mailable
-     * @param  array  $data
      * @param  \Closure|string|null  $callback
      * @return \Illuminate\Mail\SentMessage|null
      */
@@ -372,11 +341,10 @@ class Mailer implements MailerContract, MailQueueContract
      * Parse the given view name or array.
      *
      * @param  \Closure|array|string  $view
-     * @return array
      *
      * @throws \InvalidArgumentException
      */
-    protected function parseView($view)
+    protected function parseView($view): array
     {
         if (is_string($view) || $view instanceof Closure) {
             return [$view, null, null];
@@ -544,10 +512,8 @@ class Mailer implements MailerContract, MailQueueContract
 
     /**
      * Create a new message instance.
-     *
-     * @return \Illuminate\Mail\Message
      */
-    protected function createMessage()
+    protected function createMessage(): \Illuminate\Mail\Message
     {
         $message = new Message(new Email());
 
@@ -575,7 +541,6 @@ class Mailer implements MailerContract, MailQueueContract
     /**
      * Send a Symfony Email instance.
      *
-     * @param  \Symfony\Component\Mime\Email  $message
      * @return \Symfony\Component\Mailer\SentMessage|null
      */
     protected function sendSymfonyMessage(Email $message)
@@ -641,11 +606,8 @@ class Mailer implements MailerContract, MailQueueContract
 
     /**
      * Set the Symfony Transport instance.
-     *
-     * @param  \Symfony\Component\Mailer\Transport\TransportInterface  $transport
-     * @return void
      */
-    public function setSymfonyTransport(TransportInterface $transport)
+    public function setSymfonyTransport(TransportInterface $transport): void
     {
         $this->transport = $transport;
     }
@@ -653,10 +615,9 @@ class Mailer implements MailerContract, MailQueueContract
     /**
      * Set the queue manager instance.
      *
-     * @param  \Illuminate\Contracts\Queue\Factory  $queue
      * @return $this
      */
-    public function setQueue(QueueContract $queue)
+    public function setQueue(QueueContract $queue): static
     {
         $this->queue = $queue;
 

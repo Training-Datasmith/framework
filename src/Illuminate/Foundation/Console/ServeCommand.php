@@ -95,9 +95,9 @@ class ServeCommand extends Command
 
     /** {@inheritdoc} */
     #[\Override]
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        $this->phpServerWorkers = transform((int) env('PHP_CLI_SERVER_WORKERS', 1), function (int $workers) {
+        $this->phpServerWorkers = transform((int) env('PHP_CLI_SERVER_WORKERS', 1), function (int $workers): false|int {
             if ($workers < 2) {
                 return false;
             }
@@ -176,11 +176,10 @@ class ServeCommand extends Command
      * Start a new server process.
      *
      * @param  bool  $hasEnvironment
-     * @return \Symfony\Component\Process\Process
      */
-    protected function startProcess($hasEnvironment)
+    protected function startProcess($hasEnvironment): \Symfony\Component\Process\Process
     {
-        $process = new Process($this->serverCommand(), public_path(), (new Collection($_ENV))->mapWithKeys(function ($value, $key) use ($hasEnvironment) {
+        $process = new Process($this->serverCommand(), public_path(), (new Collection($_ENV))->mapWithKeys(function ($value, $key) use ($hasEnvironment): array {
             if ($this->option('no-reload') || ! $hasEnvironment) {
                 return [$key => $value];
             }
@@ -188,7 +187,7 @@ class ServeCommand extends Command
             return in_array($key, static::$passthroughVariables) ? [$key => $value] : [$key => false];
         })->merge(['PHP_CLI_SERVER_WORKERS' => $this->phpServerWorkers])->all());
 
-        $this->trap(fn () => [SIGTERM, SIGINT, SIGHUP, SIGUSR1, SIGUSR2, SIGQUIT], function ($signal) use ($process) {
+        $this->trap(fn (): array => [SIGTERM, SIGINT, SIGHUP, SIGUSR1, SIGUSR2, SIGQUIT], function (?int $signal) use ($process): void {
             if ($process->isRunning()) {
                 $process->stop(10, $signal);
             }
@@ -203,10 +202,8 @@ class ServeCommand extends Command
 
     /**
      * Get the full server command.
-     *
-     * @return array
      */
-    protected function serverCommand()
+    protected function serverCommand(): array
     {
         $server = file_exists(base_path('server.php'))
             ? base_path('server.php')
@@ -237,7 +234,7 @@ class ServeCommand extends Command
      *
      * @return string
      */
-    protected function port()
+    protected function port(): float|int|array
     {
         $port = $this->input->getOption('port');
 
@@ -252,19 +249,17 @@ class ServeCommand extends Command
 
     /**
      * Get the host and port from the host option string.
-     *
-     * @return array
      */
-    protected function getHostAndPort()
+    protected function getHostAndPort(): array
     {
-        if (preg_match('/(\[.*\]):?([0-9]+)?/', $this->input->getOption('host'), $matches) !== false) {
+        if (preg_match('/(\[.*\]):?([0-9]+)?/', (string) $this->input->getOption('host'), $matches) !== false) {
             return [
                 $matches[1] ?? $this->input->getOption('host'),
                 $matches[2] ?? null,
             ];
         }
 
-        $hostParts = explode(':', $this->input->getOption('host'));
+        $hostParts = explode(':', (string) $this->input->getOption('host'));
 
         return [
             $hostParts[0],
@@ -274,10 +269,8 @@ class ServeCommand extends Command
 
     /**
      * Check if the command has reached its maximum number of port tries.
-     *
-     * @return bool
      */
-    protected function canTryAnotherPort()
+    protected function canTryAnotherPort(): bool
     {
         return is_null($this->input->getOption('port')) &&
             ($this->input->getOption('tries') > $this->portOffset);
@@ -290,7 +283,7 @@ class ServeCommand extends Command
      */
     protected function handleProcessOutput()
     {
-        return function ($type, $buffer) {
+        return function ($type, string $buffer): void {
             $this->outputBuffer .= $buffer;
 
             $this->flushOutputBuffer();
@@ -309,9 +302,9 @@ class ServeCommand extends Command
         $this->outputBuffer = (string) $lines->pop();
 
         $lines
-            ->map(fn ($line) => trim($line))
+            ->map(fn ($line): string => trim((string) $line))
             ->filter()
-            ->each(function ($line) {
+            ->each(function ($line): void {
                 if ((new Stringable($line))->contains('Development Server (http')) {
                     if ($this->serverRunningHasBeenDisplayed === false) {
                         $this->serverRunningHasBeenDisplayed = true;
@@ -407,9 +400,8 @@ class ServeCommand extends Command
      * Get the request port from the given PHP server output.
      *
      * @param  string  $line
-     * @return int
      */
-    public static function getRequestPortFromLine($line)
+    public static function getRequestPortFromLine($line): int
     {
         preg_match('/(\[\w+\s\w+\s\d+\s[\d:]+\s\d{4}\]\s)?:(\d+)\s(?:(?:\w+$)|(?:\[.*))/', $line, $matches);
 
@@ -422,10 +414,8 @@ class ServeCommand extends Command
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['host', null, InputOption::VALUE_OPTIONAL, 'The host address to serve the application on', Env::get('SERVER_HOST', '127.0.0.1')],

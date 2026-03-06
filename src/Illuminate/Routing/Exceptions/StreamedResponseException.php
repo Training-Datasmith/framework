@@ -17,8 +17,6 @@ class StreamedResponseException extends RuntimeException
 
     /**
      * Create a new exception instance.
-     *
-     * @param  \Throwable  $originalException
      */
     public function __construct(Throwable $originalException)
     {
@@ -29,10 +27,8 @@ class StreamedResponseException extends RuntimeException
 
     /**
      * Render the exception.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function render()
+    public function render(): \Illuminate\Http\Response
     {
         return new Response('');
     }

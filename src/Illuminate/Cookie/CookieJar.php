@@ -106,9 +106,8 @@ class CookieJar implements JarContract
      *
      * @param  string  $key
      * @param  string|null  $path
-     * @return bool
      */
-    public function hasQueued($key, $path = null)
+    public function hasQueued($key, $path = null): bool
     {
         return ! is_null($this->queued($key, null, $path));
     }
@@ -136,9 +135,8 @@ class CookieJar implements JarContract
      * Queue a cookie to send with the next response.
      *
      * @param  mixed  ...$parameters
-     * @return void
      */
-    public function queue(...$parameters)
+    public function queue(...$parameters): void
     {
         if (isset($parameters[0]) && $parameters[0] instanceof Cookie) {
             $cookie = $parameters[0];
@@ -159,9 +157,8 @@ class CookieJar implements JarContract
      * @param  string  $name
      * @param  string|null  $path
      * @param  string|null  $domain
-     * @return void
      */
-    public function expire($name, $path = null, $domain = null)
+    public function expire($name, $path = null, $domain = null): void
     {
         $this->queue($this->forget($name, $path, $domain));
     }
@@ -171,9 +168,8 @@ class CookieJar implements JarContract
      *
      * @param  string  $name
      * @param  string|null  $path
-     * @return void
      */
-    public function unqueue($name, $path = null)
+    public function unqueue($name, $path = null): void
     {
         if ($path === null) {
             unset($this->queued[$name]);
@@ -195,9 +191,8 @@ class CookieJar implements JarContract
      * @param  string|null  $domain
      * @param  bool|null  $secure
      * @param  string|null  $sameSite
-     * @return array
      */
-    protected function getPathAndDomain($path, $domain, $secure = null, $sameSite = null)
+    protected function getPathAndDomain($path, $domain, $secure = null, $sameSite = null): array
     {
         return [$path ?: $this->path, $domain ?: $this->domain, is_bool($secure) ? $secure : $this->secure, $sameSite ?: $this->sameSite];
     }
@@ -211,7 +206,7 @@ class CookieJar implements JarContract
      * @param  string|null  $sameSite
      * @return $this
      */
-    public function setDefaultPathAndDomain($path, $domain, $secure = false, $sameSite = null)
+    public function setDefaultPathAndDomain($path, $domain, $secure = false, $sameSite = null): static
     {
         [$this->path, $this->domain, $this->secure, $this->sameSite] = [$path, $domain, $secure, $sameSite];
 
@@ -223,7 +218,7 @@ class CookieJar implements JarContract
      *
      * @return \Symfony\Component\HttpFoundation\Cookie[]
      */
-    public function getQueuedCookies()
+    public function getQueuedCookies(): array
     {
         return Arr::flatten($this->queued);
     }
@@ -233,7 +228,7 @@ class CookieJar implements JarContract
      *
      * @return $this
      */
-    public function flushQueuedCookies()
+    public function flushQueuedCookies(): static
     {
         $this->queued = [];
 

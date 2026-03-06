@@ -8,13 +8,13 @@ trait CompilesTranslations
      * Compile the lang statements into valid PHP.
      *
      * @param  string|null  $expression
-     * @return string
      */
-    protected function compileLang($expression)
+    protected function compileLang($expression): string
     {
         if (is_null($expression)) {
             return '<?php $__env->startTranslation(); ?>';
-        } elseif ($expression[1] === '[') {
+        }
+        if ($expression[1] === '[') {
             return "<?php \$__env->startTranslation{$expression}; ?>";
         }
 
@@ -23,10 +23,8 @@ trait CompilesTranslations
 
     /**
      * Compile the end-lang statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndlang()
+    protected function compileEndlang(): string
     {
         return '<?php echo $__env->renderTranslation(); ?>';
     }
@@ -35,9 +33,8 @@ trait CompilesTranslations
      * Compile the choice statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileChoice($expression)
+    protected function compileChoice($expression): string
     {
         return "<?php echo app('translator')->choice{$expression}; ?>";
     }

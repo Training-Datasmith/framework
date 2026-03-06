@@ -27,30 +27,20 @@ class RestartCommand extends Command
     protected $description = 'Restart queue worker daemons after their current job';
 
     /**
-     * The cache store implementation.
-     *
-     * @var \Illuminate\Contracts\Cache\Repository
-     */
-    protected $cache;
-
-    /**
      * Create a new queue restart command.
-     *
-     * @param  \Illuminate\Contracts\Cache\Repository  $cache
      */
-    public function __construct(Cache $cache)
+    public function __construct(/**
+     * The cache store implementation.
+     */
+    protected \Illuminate\Contracts\Cache\Repository $cache)
     {
         parent::__construct();
-
-        $this->cache = $cache;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->cache->forever('illuminate:queue:restart', $this->currentTime());
 

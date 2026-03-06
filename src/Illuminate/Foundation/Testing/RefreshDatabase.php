@@ -11,10 +11,8 @@ trait RefreshDatabase
 
     /**
      * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
      */
-    public function refreshDatabase()
+    public function refreshDatabase(): void
     {
         $this->beforeRefreshingDatabase();
 
@@ -29,10 +27,8 @@ trait RefreshDatabase
 
     /**
      * Determine if any of the connections transacting is using in-memory databases.
-     *
-     * @return bool
      */
-    protected function usingInMemoryDatabases()
+    protected function usingInMemoryDatabases(): bool
     {
         foreach ($this->connectionsToTransact() as $name) {
             if ($this->usingInMemoryDatabase($name)) {
@@ -45,10 +41,8 @@ trait RefreshDatabase
 
     /**
      * Determine if a given database connection is an in-memory database.
-     *
-     * @return bool
      */
-    protected function usingInMemoryDatabase(?string $name = null)
+    protected function usingInMemoryDatabase(?string $name = null): bool
     {
         if (is_null($name)) {
             $name = config('database.default');
@@ -121,10 +115,8 @@ trait RefreshDatabase
 
     /**
      * Begin a database transaction on the testing database.
-     *
-     * @return void
      */
-    public function beginDatabaseTransaction()
+    public function beginDatabaseTransaction(): void
     {
         $database = $this->app->make('db');
 
@@ -148,7 +140,7 @@ trait RefreshDatabase
             $connection->setEventDispatcher($dispatcher);
         }
 
-        $this->beforeApplicationDestroyed(function () use ($database) {
+        $this->beforeApplicationDestroyed(function () use ($database): void {
             foreach ($this->connectionsToTransact() as $name) {
                 $connection = $database->connection($name);
                 $dispatcher = $connection->getEventDispatcher();

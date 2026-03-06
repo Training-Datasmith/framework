@@ -7,13 +7,6 @@ use Stringable;
 class PotentiallyTranslatedString implements Stringable
 {
     /**
-     * The string that may be translated.
-     *
-     * @var string
-     */
-    protected $string;
-
-    /**
      * The translated string.
      *
      * @var string|null
@@ -21,33 +14,31 @@ class PotentiallyTranslatedString implements Stringable
     protected $translation;
 
     /**
-     * The validator that may perform the translation.
-     *
-     * @var \Illuminate\Contracts\Translation\Translator
-     */
-    protected $translator;
-
-    /**
      * Create a new potentially translated string.
      *
      * @param  string  $string
      * @param  \Illuminate\Contracts\Translation\Translator  $translator
      */
-    public function __construct($string, $translator)
+    public function __construct(
+        /**
+         * The string that may be translated.
+         */
+        protected $string,
+        /**
+         * The validator that may perform the translation.
+         */
+        protected $translator
+    )
     {
-        $this->string = $string;
-
-        $this->translator = $translator;
     }
 
     /**
      * Translate the string.
      *
-     * @param  array  $replace
      * @param  string|null  $locale
      * @return $this
      */
-    public function translate($replace = [], $locale = null)
+    public function translate(array $replace = [], $locale = null): static
     {
         $this->translation = $this->translator->get($this->string, $replace, $locale);
 
@@ -58,11 +49,10 @@ class PotentiallyTranslatedString implements Stringable
      * Translates the string based on a count.
      *
      * @param  \Countable|int|float|array  $number
-     * @param  array  $replace
      * @param  string|null  $locale
      * @return $this
      */
-    public function translateChoice($number, array $replace = [], $locale = null)
+    public function translateChoice($number, array $replace = [], $locale = null): static
     {
         $this->translation = $this->translator->choice($this->string, $number, $replace, $locale);
 
@@ -81,20 +71,16 @@ class PotentiallyTranslatedString implements Stringable
 
     /**
      * Get the potentially translated string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->translation ?? $this->string;
     }
 
     /**
      * Get the potentially translated string.
-     *
-     * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return (string) $this;
     }

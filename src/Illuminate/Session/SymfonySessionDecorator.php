@@ -11,20 +11,15 @@ use Symfony\Component\HttpFoundation\Session\Storage\MetadataBag;
 class SymfonySessionDecorator implements SessionInterface
 {
     /**
-     * The underlying Laravel session store.
-     *
-     * @var \Illuminate\Contracts\Session\Session
-     */
-    public readonly Session $store;
-
-    /**
      * Create a new session decorator.
-     *
-     * @param  \Illuminate\Contracts\Session\Session  $store
      */
-    public function __construct(Session $store)
+    public function __construct(
+        /**
+         * The underlying Laravel session store.
+         */
+        public readonly Session $store
+    )
     {
-        $this->store = $store;
     }
 
     /**

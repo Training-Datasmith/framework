@@ -11,13 +11,6 @@ use function Illuminate\Support\php_binary;
 class Listener
 {
     /**
-     * The command working path.
-     *
-     * @var string
-     */
-    protected $commandPath;
-
-    /**
      * The environment the workers should run under.
      *
      * @var string
@@ -50,27 +43,27 @@ class Listener
      *
      * @param  string  $commandPath
      */
-    public function __construct($commandPath)
+    public function __construct(
+        /**
+         * The command working path.
+         */
+        protected $commandPath
+    )
     {
-        $this->commandPath = $commandPath;
     }
 
     /**
      * Get the PHP binary.
-     *
-     * @return string
      */
-    protected function phpBinary()
+    protected function phpBinary(): string
     {
         return php_binary();
     }
 
     /**
      * Get the Artisan binary.
-     *
-     * @return string
      */
-    protected function artisanBinary()
+    protected function artisanBinary(): string
     {
         return artisan_binary();
     }
@@ -80,10 +73,8 @@ class Listener
      *
      * @param  string  $connection
      * @param  string  $queue
-     * @param  \Illuminate\Queue\ListenerOptions  $options
-     * @return void
      */
-    public function listen($connection, $queue, ListenerOptions $options)
+    public function listen($connection, $queue, ListenerOptions $options): void
     {
         $process = $this->makeProcess($connection, $queue, $options);
 
@@ -101,10 +92,8 @@ class Listener
      *
      * @param  string  $connection
      * @param  string  $queue
-     * @param  \Illuminate\Queue\ListenerOptions  $options
-     * @return \Symfony\Component\Process\Process
      */
-    public function makeProcess($connection, $queue, ListenerOptions $options)
+    public function makeProcess($connection, $queue, ListenerOptions $options): \Symfony\Component\Process\Process
     {
         $command = $this->createCommand(
             $connection,
@@ -132,10 +121,8 @@ class Listener
      * Add the environment option to the given command.
      *
      * @param  array  $command
-     * @param  \Illuminate\Queue\ListenerOptions  $options
-     * @return array
      */
-    protected function addEnvironment($command, ListenerOptions $options)
+    protected function addEnvironment($command, ListenerOptions $options): array
     {
         return array_merge($command, ["--env={$options->environment}"]);
     }
@@ -145,10 +132,8 @@ class Listener
      *
      * @param  string  $connection
      * @param  string  $queue
-     * @param  \Illuminate\Queue\ListenerOptions  $options
-     * @return array
      */
-    protected function createCommand($connection, $queue, ListenerOptions $options)
+    protected function createCommand($connection, $queue, ListenerOptions $options): array
     {
         return array_filter([
             $this->phpBinary(),
@@ -163,21 +148,17 @@ class Listener
             "--sleep={$options->sleep}",
             "--tries={$options->maxTries}",
             $options->force ? '--force' : null,
-        ], function ($value) {
-            return ! is_null($value);
-        });
+        ], fn(?string $value) => ! is_null($value));
     }
 
     /**
      * Run the given process.
      *
-     * @param  \Symfony\Component\Process\Process  $process
      * @param  int  $memory
-     * @return void
      */
-    public function runProcess(Process $process, $memory)
+    public function runProcess(Process $process, $memory): void
     {
-        $process->run(function ($type, $line) {
+        $process->run(function ($type, $line): void {
             $this->handleWorkerOutput($type, $line);
         });
 
@@ -207,30 +188,24 @@ class Listener
      * Determine if the memory limit has been exceeded.
      *
      * @param  int  $memoryLimit
-     * @return bool
      */
-    public function memoryExceeded($memoryLimit)
+    public function memoryExceeded($memoryLimit): bool
     {
         return (memory_get_usage(true) / 1024 / 1024) >= $memoryLimit;
     }
 
     /**
      * Stop listening and bail out of the script.
-     *
-     * @return never
      */
-    public function stop()
+    public function stop(): never
     {
         exit;
     }
 
     /**
      * Set the output handler callback.
-     *
-     * @param  \Closure  $outputHandler
-     * @return void
      */
-    public function setOutputHandler(Closure $outputHandler)
+    public function setOutputHandler(Closure $outputHandler): void
     {
         $this->outputHandler = $outputHandler;
     }

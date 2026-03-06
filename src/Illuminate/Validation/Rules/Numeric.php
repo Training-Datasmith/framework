@@ -17,10 +17,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must have a size between the given min and max (inclusive).
-     *
-     * @param  int|float  $min
-     * @param  int|float  $max
-     * @return $this
      */
     public function between(int|float $min, int|float $max): Numeric
     {
@@ -29,10 +25,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must contain the specified number of decimal places.
-     *
-     * @param  int  $min
-     * @param  int|null  $max
-     * @return $this
      */
     public function decimal(int $min, ?int $max = null): Numeric
     {
@@ -47,9 +39,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must have a different value than field.
-     *
-     * @param  string  $field
-     * @return $this
      */
     public function different(string $field): Numeric
     {
@@ -58,9 +47,6 @@ class Numeric implements Stringable
 
     /**
      * The integer under validation must have an exact number of digits.
-     *
-     * @param  int  $length
-     * @return $this
      */
     public function digits(int $length): Numeric
     {
@@ -69,10 +55,6 @@ class Numeric implements Stringable
 
     /**
      * The integer under validation must between the given min and max number of digits.
-     *
-     * @param  int  $min
-     * @param  int  $max
-     * @return $this
      */
     public function digitsBetween(int $min, int $max): Numeric
     {
@@ -81,9 +63,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must be greater than the given field or value.
-     *
-     * @param  string  $field
-     * @return $this
      */
     public function greaterThan(string $field): Numeric
     {
@@ -92,9 +71,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must be greater than or equal to the given field or value.
-     *
-     * @param  string  $field
-     * @return $this
      */
     public function greaterThanOrEqualTo(string $field): Numeric
     {
@@ -103,8 +79,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must be an integer.
-     *
-     * @return $this
      */
     public function integer(): Numeric
     {
@@ -113,9 +87,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must be less than the given field.
-     *
-     * @param  string  $field
-     * @return $this
      */
     public function lessThan(string $field): Numeric
     {
@@ -124,9 +95,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must be less than or equal to the given field.
-     *
-     * @param  string  $field
-     * @return $this
      */
     public function lessThanOrEqualTo(string $field): Numeric
     {
@@ -135,9 +103,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must be less than or equal to a maximum value.
-     *
-     * @param  int|float  $value
-     * @return $this
      */
     public function max(int|float $value): Numeric
     {
@@ -146,9 +111,6 @@ class Numeric implements Stringable
 
     /**
      * The integer under validation must have a maximum number of digits.
-     *
-     * @param  int  $value
-     * @return $this
      */
     public function maxDigits(int $value): Numeric
     {
@@ -157,9 +119,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must have a minimum value.
-     *
-     * @param  int|float  $value
-     * @return $this
      */
     public function min(int|float $value): Numeric
     {
@@ -168,9 +127,6 @@ class Numeric implements Stringable
 
     /**
      * The integer under validation must have a minimum number of digits.
-     *
-     * @param  int  $value
-     * @return $this
      */
     public function minDigits(int $value): Numeric
     {
@@ -179,9 +135,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must be a multiple of the given value.
-     *
-     * @param  int|float  $value
-     * @return $this
      */
     public function multipleOf(int|float $value): Numeric
     {
@@ -190,9 +143,6 @@ class Numeric implements Stringable
 
     /**
      * The given field must match the field under validation.
-     *
-     * @param  string  $field
-     * @return $this
      */
     public function same(string $field): Numeric
     {
@@ -201,9 +151,6 @@ class Numeric implements Stringable
 
     /**
      * The field under validation must match the given value.
-     *
-     * @param  int  $value
-     * @return $this
      */
     public function exactly(int $value): Numeric
     {

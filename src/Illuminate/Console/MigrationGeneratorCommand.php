@@ -9,22 +9,14 @@ use function Illuminate\Filesystem\join_paths;
 abstract class MigrationGeneratorCommand extends Command
 {
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * Create a new migration generator command instance.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      */
-    public function __construct(Filesystem $files)
+    public function __construct(/**
+     * The filesystem instance.
+     */
+    protected \Illuminate\Filesystem\Filesystem $files)
     {
         parent::__construct();
-
-        $this->files = $files;
     }
 
     /**
@@ -68,10 +60,9 @@ abstract class MigrationGeneratorCommand extends Command
     /**
      * Create a base migration file for the table.
      *
-     * @param  string  $table
      * @return string
      */
-    protected function createBaseMigration($table)
+    protected function createBaseMigration(string $table)
     {
         return $this->laravel['migration.creator']->create(
             'create_'.$table.'_table', $this->laravel->databasePath('/migrations')
@@ -97,10 +88,9 @@ abstract class MigrationGeneratorCommand extends Command
     /**
      * Determine whether a migration for the table already exists.
      *
-     * @param  string  $table
      * @return bool
      */
-    protected function migrationExists($table)
+    protected function migrationExists(string $table)
     {
         return count($this->files->glob(
             join_paths($this->laravel->databasePath('migrations'), '*_*_*_*_create_'.$table.'_table.php')

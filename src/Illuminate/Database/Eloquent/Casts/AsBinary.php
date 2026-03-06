@@ -13,9 +13,8 @@ class AsBinary implements Castable
      * Get the caster class to use when casting from / to this cast target.
      *
      * @param  array{string}  $arguments
-     * @return \Illuminate\Contracts\Database\Eloquent\CastsAttributes
      */
-    public static function castUsing(array $arguments)
+    public static function castUsing(array $arguments): \Illuminate\Contracts\Database\Eloquent\CastsAttributes
     {
         return new class($arguments) implements CastsAttributes
         {
@@ -35,12 +34,12 @@ class AsBinary implements Castable
                 }
             }
 
-            public function get($model, $key, $value, $attributes)
+            public function get($model, $key, $value, $attributes): ?string
             {
                 return BinaryCodec::decode($attributes[$key] ?? null, $this->format);
             }
 
-            public function set($model, $key, $value, $attributes)
+            public function set($model, $key, $value, $attributes): array
             {
                 return [$key => BinaryCodec::encode($value, $this->format)];
             }

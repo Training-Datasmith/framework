@@ -19,7 +19,7 @@ class EmailVerificationRequest extends FormRequest
             return false;
         }
 
-        if (! hash_equals(sha1($this->user()->getEmailForVerification()), (string) $this->route('hash'))) {
+        if (! hash_equals(sha1((string) $this->user()->getEmailForVerification()), (string) $this->route('hash'))) {
             return false;
         }
 
@@ -40,10 +40,8 @@ class EmailVerificationRequest extends FormRequest
 
     /**
      * Fulfill the email verification request.
-     *
-     * @return void
      */
-    public function fulfill()
+    public function fulfill(): void
     {
         if (! $this->user()->hasVerifiedEmail()) {
             $this->user()->markEmailAsVerified();
@@ -55,7 +53,6 @@ class EmailVerificationRequest extends FormRequest
     /**
      * Configure the validator instance.
      *
-     * @param  \Illuminate\Validation\Validator  $validator
      * @return \Illuminate\Validation\Validator
      */
     public function withValidator(Validator $validator)

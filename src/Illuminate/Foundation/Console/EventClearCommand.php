@@ -24,32 +24,23 @@ class EventClearCommand extends Command
     protected $description = 'Clear all cached events and listeners';
 
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * Create a new config clear command instance.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      */
-    public function __construct(Filesystem $files)
+    public function __construct(/**
+     * The filesystem instance.
+     */
+    protected \Illuminate\Filesystem\Filesystem $files)
     {
         parent::__construct();
-
-        $this->files = $files;
     }
 
     /**
      * Execute the console command.
      *
-     * @return void
      *
      * @throws \RuntimeException
      */
-    public function handle()
+    public function handle(): void
     {
         $this->files->delete($this->laravel->getCachedEventsPath());
 

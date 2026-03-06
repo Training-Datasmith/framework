@@ -23,20 +23,16 @@ trait SoftDeletes
 
     /**
      * Boot the soft deleting trait for a model.
-     *
-     * @return void
      */
-    public static function bootSoftDeletes()
+    public static function bootSoftDeletes(): void
     {
         static::addGlobalScope(new SoftDeletingScope);
     }
 
     /**
      * Initialize the soft deleting trait for an instance.
-     *
-     * @return void
      */
-    public function initializeSoftDeletes()
+    public function initializeSoftDeletes(): void
     {
         if (! isset($this->casts[$this->getDeletedAtColumn()])) {
             $this->casts[$this->getDeletedAtColumn()] = 'datetime';
@@ -56,7 +52,7 @@ trait SoftDeletes
 
         $this->forceDeleting = true;
 
-        return tap($this->delete(), function ($deleted) {
+        return tap($this->delete(), function ($deleted): void {
             $this->forceDeleting = false;
 
             if ($deleted) {
@@ -79,9 +75,8 @@ trait SoftDeletes
      * Destroy the models for the given IDs.
      *
      * @param  \Illuminate\Support\Collection|array|int|string  $ids
-     * @return int
      */
-    public static function forceDestroy($ids)
+    public static function forceDestroy($ids): int
     {
         if ($ids instanceof EloquentCollection) {
             $ids = $ids->modelKeys();
@@ -121,7 +116,7 @@ trait SoftDeletes
     protected function performDeleteOnModel()
     {
         if ($this->forceDeleting) {
-            return tap($this->setKeysForSaveQuery($this->newModelQuery())->forceDelete(), function () {
+            return tap($this->setKeysForSaveQuery($this->newModelQuery())->forceDelete(), function (): void {
                 $this->exists = false;
             });
         }
@@ -197,10 +192,8 @@ trait SoftDeletes
 
     /**
      * Determine if the model instance has been soft-deleted.
-     *
-     * @return bool
      */
-    public function trashed()
+    public function trashed(): bool
     {
         return ! is_null($this->{$this->getDeletedAtColumn()});
     }
@@ -209,9 +202,8 @@ trait SoftDeletes
      * Register a "softDeleted" model event callback with the dispatcher.
      *
      * @param  \Illuminate\Events\QueuedClosure|callable|class-string  $callback
-     * @return void
      */
-    public static function softDeleted($callback)
+    public static function softDeleted($callback): void
     {
         static::registerModelEvent('trashed', $callback);
     }
@@ -220,9 +212,8 @@ trait SoftDeletes
      * Register a "restoring" model event callback with the dispatcher.
      *
      * @param  \Illuminate\Events\QueuedClosure|callable|class-string  $callback
-     * @return void
      */
-    public static function restoring($callback)
+    public static function restoring($callback): void
     {
         static::registerModelEvent('restoring', $callback);
     }
@@ -231,9 +222,8 @@ trait SoftDeletes
      * Register a "restored" model event callback with the dispatcher.
      *
      * @param  \Illuminate\Events\QueuedClosure|callable|class-string  $callback
-     * @return void
      */
-    public static function restored($callback)
+    public static function restored($callback): void
     {
         static::registerModelEvent('restored', $callback);
     }
@@ -242,9 +232,8 @@ trait SoftDeletes
      * Register a "forceDeleting" model event callback with the dispatcher.
      *
      * @param  \Illuminate\Events\QueuedClosure|callable|class-string  $callback
-     * @return void
      */
-    public static function forceDeleting($callback)
+    public static function forceDeleting($callback): void
     {
         static::registerModelEvent('forceDeleting', $callback);
     }
@@ -253,9 +242,8 @@ trait SoftDeletes
      * Register a "forceDeleted" model event callback with the dispatcher.
      *
      * @param  \Illuminate\Events\QueuedClosure|callable|class-string  $callback
-     * @return void
      */
-    public static function forceDeleted($callback)
+    public static function forceDeleted($callback): void
     {
         static::registerModelEvent('forceDeleted', $callback);
     }

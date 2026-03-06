@@ -41,9 +41,8 @@ trait InteractsWithTime
      * Begin travelling to another time.
      *
      * @param  int  $value
-     * @return \Illuminate\Foundation\Testing\Wormhole
      */
-    public function travel($value)
+    public function travel($value): \Illuminate\Foundation\Testing\Wormhole
     {
         return new Wormhole($value);
     }
@@ -62,7 +61,7 @@ trait InteractsWithTime
         Carbon::setTestNow($date);
 
         if ($callback) {
-            return tap($callback($date), function () {
+            return tap($callback($date), function (): void {
                 Carbon::setTestNow();
             });
         }

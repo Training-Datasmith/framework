@@ -12,7 +12,7 @@ trait TestViews
      *
      * @var string|null
      */
-    protected static $originalCompiledViewPath = null;
+    protected static $originalCompiledViewPath;
 
     /**
      * Boot test views for parallel testing.
@@ -21,19 +21,19 @@ trait TestViews
      */
     protected function bootTestViews()
     {
-        ParallelTesting::setUpProcess(function () {
+        ParallelTesting::setUpProcess(function (): void {
             if ($path = $this->parallelSafeCompiledViewPath()) {
                 File::ensureDirectoryExists($path);
             }
         });
 
-        ParallelTesting::setUpTestCase(function () {
+        ParallelTesting::setUpTestCase(function (): void {
             if ($path = $this->parallelSafeCompiledViewPath()) {
                 $this->switchToCompiledViewPath($path);
             }
         });
 
-        ParallelTesting::tearDownProcess(function () {
+        ParallelTesting::tearDownProcess(function (): void {
             if ($path = $this->parallelSafeCompiledViewPath()) {
                 File::deleteDirectory($path);
             }
@@ -42,10 +42,8 @@ trait TestViews
 
     /**
      * Get the test compiled view path.
-     *
-     * @return string|null
      */
-    protected function parallelSafeCompiledViewPath()
+    protected function parallelSafeCompiledViewPath(): ?string
     {
         self::$originalCompiledViewPath ??= $this->app['config']->get('view.compiled', '');
 
@@ -71,7 +69,7 @@ trait TestViews
         if ($this->app->resolved('blade.compiler')) {
             $compiler = $this->app['blade.compiler'];
 
-            (function () use ($path) {
+            (function () use ($path): void {
                 $this->cachePath = $path;
             })->bindTo($compiler, $compiler)();
         }

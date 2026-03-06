@@ -21,20 +21,6 @@ class VerifyCsrfToken
         ExcludesPaths;
 
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
-     * The encrypter implementation.
-     *
-     * @var \Illuminate\Contracts\Encryption\Encrypter
-     */
-    protected $encrypter;
-
-    /**
      * The URIs that should be excluded.
      *
      * @var array<int, string>
@@ -57,23 +43,25 @@ class VerifyCsrfToken
 
     /**
      * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      */
-    public function __construct(Application $app, Encrypter $encrypter)
+    public function __construct(
+        /**
+         * The application instance.
+         */
+        protected \Illuminate\Contracts\Foundation\Application $app,
+        /**
+         * The encrypter implementation.
+         */
+        protected \Illuminate\Contracts\Encryption\Encrypter $encrypter
+    )
     {
-        $this->app = $app;
-        $this->encrypter = $encrypter;
     }
 
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
-     *
      * @throws \Illuminate\Session\TokenMismatchException
      */
     public function handle($request, Closure $next)
@@ -84,7 +72,7 @@ class VerifyCsrfToken
             $this->inExceptArray($request) ||
             $this->tokensMatch($request)
         ) {
-            return tap($next($request), function ($response) use ($request) {
+            return tap($next($request), function ($response) use ($request): void {
                 if ($this->shouldAddXsrfTokenCookie()) {
                     $this->addCookieToResponse($request, $response);
                 }
@@ -98,29 +86,24 @@ class VerifyCsrfToken
      * Determine if the HTTP request uses a ‘read’ verb.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return bool
      */
-    protected function isReading($request)
+    protected function isReading($request): bool
     {
         return in_array($request->method(), ['HEAD', 'GET', 'OPTIONS']);
     }
 
     /**
      * Determine if the application is running unit tests.
-     *
-     * @return bool
      */
-    protected function runningUnitTests()
+    protected function runningUnitTests(): bool
     {
         return $this->app->runningInConsole() && $this->app->runningUnitTests();
     }
 
     /**
      * Get the URIs that should be excluded.
-     *
-     * @return array
      */
-    public function getExcludedPaths()
+    public function getExcludedPaths(): array
     {
         return array_merge($this->except, static::$neverVerify);
     }
@@ -129,9 +112,8 @@ class VerifyCsrfToken
      * Determine if the session and input CSRF tokens match.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return bool
      */
-    protected function tokensMatch($request)
+    protected function tokensMatch($request): bool
     {
         $token = $this->getTokenFromRequest($request);
 
@@ -195,10 +177,9 @@ class VerifyCsrfToken
      * Create a new "XSRF-TOKEN" cookie that contains the CSRF token.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  array  $config
      * @return \Symfony\Component\HttpFoundation\Cookie
      */
-    protected function newCookie($request, $config)
+    protected function newCookie($request, array $config)
     {
         return new Cookie(
             'XSRF-TOKEN',
@@ -218,9 +199,8 @@ class VerifyCsrfToken
      * Indicate that the given URIs should be excluded from CSRF verification.
      *
      * @param  array|string  $uris
-     * @return void
      */
-    public static function except($uris)
+    public static function except($uris): void
     {
         static::$neverVerify = array_values(array_unique(
             array_merge(static::$neverVerify, Arr::wrap($uris))
@@ -239,10 +219,8 @@ class VerifyCsrfToken
 
     /**
      * Flush the state of the middleware.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$neverVerify = [];
     }

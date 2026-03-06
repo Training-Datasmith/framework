@@ -14,7 +14,7 @@ if (! function_exists('lazy')) {
      * @param  array<string, mixed>  $eager
      * @return TValue
      */
-    function lazy($class, $callback = 0, $options = 0, $eager = [])
+    function lazy($class, $callback = 0, $options = 0, $eager = []): object
     {
         static $closureReflector;
 
@@ -22,7 +22,7 @@ if (! function_exists('lazy')) {
         {
             use ReflectsClosures;
 
-            public function typeFromParameter($callback)
+            public function typeFromParameter(\Closure $callback)
             {
                 return $this->firstClosureParameterType($callback);
             }
@@ -34,7 +34,7 @@ if (! function_exists('lazy')) {
 
         $reflectionClass = new ReflectionClass($class);
 
-        $instance = $reflectionClass->newLazyGhost(function ($instance) use ($callback) {
+        $instance = $reflectionClass->newLazyGhost(function ($instance) use ($callback): void {
             $result = $callback($instance);
 
             if (is_array($result)) {
@@ -62,7 +62,7 @@ if (! function_exists('proxy')) {
      * @param  array<string, mixed>  $eager
      * @return TValue
      */
-    function proxy($class, $callback = 0, $options = 0, $eager = [])
+    function proxy($class, $callback = 0, $options = 0, $eager = []): object
     {
         static $closureReflector;
 
@@ -70,7 +70,7 @@ if (! function_exists('proxy')) {
         {
             use ReflectsClosures;
 
-            public function get($callback)
+            public function get(\Closure $callback)
             {
                 return $this->closureReturnTypes($callback)[0] ?? $this->firstClosureParameterType($callback);
             }
@@ -83,9 +83,7 @@ if (! function_exists('proxy')) {
         $reflectionClass = new ReflectionClass($class);
 
         $proxy = $reflectionClass->newLazyProxy(function () use ($callback, $eager, &$proxy) {
-            $instance = $callback($proxy, $eager);
-
-            return $instance;
+            return $callback($proxy, $eager);
         }, $options);
 
         foreach ($eager as $property => $value) {

@@ -9,15 +9,12 @@ class SetRequestForConsole
 {
     /**
      * Bootstrap the given application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return void
      */
-    public function bootstrap(Application $app)
+    public function bootstrap(Application $app): void
     {
         $uri = $app->make('config')->get('app.url', 'http://localhost');
 
-        $components = parse_url($uri);
+        $components = parse_url((string) $uri);
 
         $server = $_SERVER;
 

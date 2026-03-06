@@ -8,20 +8,6 @@ use Illuminate\Http\Request;
 class AuthenticationException extends Exception
 {
     /**
-     * All of the guards that were checked.
-     *
-     * @var array
-     */
-    protected $guards;
-
-    /**
-     * The path the user should be redirected to.
-     *
-     * @var string|null
-     */
-    protected $redirectTo;
-
-    /**
      * The callback that should be used to generate the authentication redirect path.
      *
      * @var callable
@@ -32,15 +18,17 @@ class AuthenticationException extends Exception
      * Create a new authentication exception.
      *
      * @param  string  $message
-     * @param  array  $guards
      * @param  string|null  $redirectTo
      */
-    public function __construct($message = 'Unauthenticated.', array $guards = [], $redirectTo = null)
+    public function __construct($message = 'Unauthenticated.', /**
+     * All of the guards that were checked.
+     */
+    protected array $guards = [], /**
+     * The path the user should be redirected to.
+     */
+    protected $redirectTo = null)
     {
         parent::__construct($message);
-
-        $this->guards = $guards;
-        $this->redirectTo = $redirectTo;
     }
 
     /**
@@ -56,7 +44,6 @@ class AuthenticationException extends Exception
     /**
      * Get the path the user should be redirected to.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return string|null
      */
     public function redirectTo(Request $request)
@@ -72,11 +59,8 @@ class AuthenticationException extends Exception
 
     /**
      * Specify the callback that should be used to generate the redirect path.
-     *
-     * @param  callable  $redirectToCallback
-     * @return void
      */
-    public static function redirectUsing(callable $redirectToCallback)
+    public static function redirectUsing(callable $redirectToCallback): void
     {
         static::$redirectToCallback = $redirectToCallback;
     }

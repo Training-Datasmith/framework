@@ -13,20 +13,15 @@ use Traversable;
 class InvokableComponentVariable implements DeferringDisplayableValue, IteratorAggregate, Stringable
 {
     /**
-     * The callable instance to resolve the variable value.
-     *
-     * @var \Closure
-     */
-    protected $callable;
-
-    /**
      * Create a new variable instance.
-     *
-     * @param  \Closure  $callable
      */
-    public function __construct(Closure $callable)
+    public function __construct(
+        /**
+         * The callable instance to resolve the variable value.
+         */
+        protected \Closure $callable
+    )
     {
-        $this->callable = $callable;
     }
 
     /**
@@ -53,11 +48,8 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
 
     /**
      * Dynamically proxy attribute access to the variable.
-     *
-     * @param  string  $key
-     * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         return $this->__invoke()->{$key};
     }
@@ -65,31 +57,26 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
     /**
      * Dynamically proxy method access to the variable.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->__invoke()->{$method}(...$parameters);
     }
 
     /**
      * Resolve the variable.
-     *
-     * @return mixed
      */
-    public function __invoke()
+    public function __invoke(): mixed
     {
         return call_user_func($this->callable);
     }
 
     /**
      * Resolve the variable as a string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->__invoke();
     }

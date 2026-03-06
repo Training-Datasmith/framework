@@ -27,13 +27,6 @@ class BatchFake extends Batch
     /**
      * Create a new batch instance.
      *
-     * @param  string  $id
-     * @param  string  $name
-     * @param  int  $totalJobs
-     * @param  int  $pendingJobs
-     * @param  int  $failedJobs
-     * @param  array  $failedJobIds
-     * @param  array  $options
      * @param  \Carbon\CarbonImmutable  $createdAt
      * @param  \Carbon\CarbonImmutable|null  $cancelledAt
      * @param  \Carbon\CarbonImmutable|null  $finishedAt
@@ -64,10 +57,8 @@ class BatchFake extends Batch
 
     /**
      * Get a fresh instance of the batch represented by this ID.
-     *
-     * @return self
      */
-    public function fresh()
+    public function fresh(): static
     {
         return $this;
     }
@@ -76,9 +67,8 @@ class BatchFake extends Batch
      * Add additional jobs to the batch.
      *
      * @param  \Illuminate\Support\Enumerable|object|array  $jobs
-     * @return self
      */
-    public function add($jobs)
+    public function add($jobs): static
     {
         $jobs = Collection::wrap($jobs);
 
@@ -93,22 +83,16 @@ class BatchFake extends Batch
 
     /**
      * Record that a job within the batch finished successfully, executing any callbacks if necessary.
-     *
-     * @param  string  $jobId
-     * @return void
      */
-    public function recordSuccessfulJob(string $jobId)
+    public function recordSuccessfulJob(string $jobId): void
     {
         //
     }
 
     /**
      * Decrement the pending jobs for the batch.
-     *
-     * @param  string  $jobId
-     * @return void
      */
-    public function decrementPendingJobs(string $jobId)
+    public function decrementPendingJobs(string $jobId): void
     {
         //
     }
@@ -116,42 +100,33 @@ class BatchFake extends Batch
     /**
      * Record that a job within the batch failed to finish successfully, executing any callbacks if necessary.
      *
-     * @param  string  $jobId
      * @param  \Throwable  $e
-     * @return void
      */
-    public function recordFailedJob(string $jobId, $e)
+    public function recordFailedJob(string $jobId, $e): void
     {
         //
     }
 
     /**
      * Increment the failed jobs for the batch.
-     *
-     * @param  string  $jobId
-     * @return \Illuminate\Bus\UpdatedBatchJobCounts
      */
-    public function incrementFailedJobs(string $jobId)
+    public function incrementFailedJobs(string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
         return new UpdatedBatchJobCounts;
     }
 
     /**
      * Cancel the batch.
-     *
-     * @return void
      */
-    public function cancel()
+    public function cancel(): void
     {
         $this->cancelledAt = Carbon::now();
     }
 
     /**
      * Delete the batch from storage.
-     *
-     * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleted = true;
     }

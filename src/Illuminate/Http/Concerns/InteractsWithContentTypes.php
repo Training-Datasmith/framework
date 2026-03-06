@@ -18,20 +18,19 @@ trait InteractsWithContentTypes
 
     /**
      * Determine if the current request probably expects a JSON response.
-     *
-     * @return bool
      */
-    public function expectsJson()
+    public function expectsJson(): bool
     {
-        return ($this->ajax() && ! $this->pjax() && $this->acceptsAnyContentType()) || $this->wantsJson();
+        if ($this->ajax() && ! $this->pjax() && $this->acceptsAnyContentType()) {
+            return true;
+        }
+        return (bool) $this->wantsJson();
     }
 
     /**
      * Determine if the current request is asking for JSON.
-     *
-     * @return bool
      */
-    public function wantsJson()
+    public function wantsJson(): bool
     {
         $acceptable = $this->getAcceptableContentTypes();
 
@@ -42,9 +41,8 @@ trait InteractsWithContentTypes
      * Determines whether the current requests accepts a given content type.
      *
      * @param  string|array  $contentTypes
-     * @return bool
      */
-    public function accepts($contentTypes)
+    public function accepts($contentTypes): bool
     {
         $accepts = $this->getAcceptableContentTypes();
 
@@ -55,8 +53,8 @@ trait InteractsWithContentTypes
         $types = (array) $contentTypes;
 
         foreach ($accepts as $accept) {
-            if ($accept && $pos = strpos($accept, ';')) {
-                $accept = trim(substr($accept, 0, $pos));
+            if ($accept && $pos = strpos((string) $accept, ';')) {
+                $accept = trim(substr((string) $accept, 0, $pos));
             }
 
             if ($accept === '*/*' || $accept === '*') {
@@ -64,9 +62,9 @@ trait InteractsWithContentTypes
             }
 
             foreach ($types as $type) {
-                $accept = strtolower($accept);
+                $accept = strtolower((string) $accept);
 
-                $type = strtolower($type);
+                $type = strtolower((string) $type);
 
                 if ($this->matchesType($accept, $type) || $accept === strtok($type, '/').'/*') {
                     return true;
@@ -90,8 +88,8 @@ trait InteractsWithContentTypes
         $contentTypes = (array) $contentTypes;
 
         foreach ($accepts as $accept) {
-            if ($accept && $pos = strpos($accept, ';')) {
-                $accept = trim(substr($accept, 0, $pos));
+            if ($accept && $pos = strpos((string) $accept, ';')) {
+                $accept = trim(substr((string) $accept, 0, $pos));
             }
 
             if (in_array($accept, ['*/*', '*'])) {
@@ -105,9 +103,9 @@ trait InteractsWithContentTypes
                     $type = $mimeType;
                 }
 
-                $accept = strtolower($accept);
+                $accept = strtolower((string) $accept);
 
-                $type = strtolower($type);
+                $type = strtolower((string) $type);
 
                 if ($this->matchesType($type, $accept) || $accept === strtok($type, '/').'/*') {
                     return $contentType;
@@ -118,10 +116,8 @@ trait InteractsWithContentTypes
 
     /**
      * Determine if the current request accepts any content type.
-     *
-     * @return bool
      */
-    public function acceptsAnyContentType()
+    public function acceptsAnyContentType(): bool
     {
         $acceptable = $this->getAcceptableContentTypes();
 

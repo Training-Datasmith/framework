@@ -42,7 +42,6 @@ abstract class Connection
      * Subscribe to a set of given channels for messages.
      *
      * @param  array|string  $channels
-     * @param  \Closure  $callback
      * @param  string  $method
      * @return void
      */
@@ -84,10 +83,8 @@ abstract class Connection
      * Subscribe to a set of given channels for messages.
      *
      * @param  array|string  $channels
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function subscribe($channels, Closure $callback)
+    public function subscribe($channels, Closure $callback): void
     {
         $this->createSubscription($channels, $callback, __FUNCTION__);
     }
@@ -96,10 +93,8 @@ abstract class Connection
      * Subscribe to a set of given channels with wildcards.
      *
      * @param  array|string  $channels
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function psubscribe($channels, Closure $callback)
+    public function psubscribe($channels, Closure $callback): void
     {
         $this->createSubscription($channels, $callback, __FUNCTION__);
     }
@@ -108,7 +103,6 @@ abstract class Connection
      * Run a command against the Redis database.
      *
      * @param  string  $method
-     * @param  array  $parameters
      * @return mixed
      */
     public function command($method, array $parameters = [])
@@ -137,7 +131,6 @@ abstract class Connection
     /**
      * Parse the command's parameters for event dispatching.
      *
-     * @param  array  $parameters
      * @return array
      */
     protected function parseParametersForEvent(array $parameters)
@@ -160,22 +153,16 @@ abstract class Connection
 
     /**
      * Register a Redis command listener with the connection.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function listen(Closure $callback)
+    public function listen(Closure $callback): void
     {
         $this->events?->listen(CommandExecuted::class, $callback);
     }
 
     /**
      * Register a Redis command failure listener with the connection.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function listenForFailures(Closure $callback)
+    public function listenForFailures(Closure $callback): void
     {
         $this->events?->listen(CommandFailed::class, $callback);
     }
@@ -215,21 +202,16 @@ abstract class Connection
 
     /**
      * Set the event dispatcher instance on the connection.
-     *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @return void
      */
-    public function setEventDispatcher(Dispatcher $events)
+    public function setEventDispatcher(Dispatcher $events): void
     {
         $this->events = $events;
     }
 
     /**
      * Unset the event dispatcher instance on the connection.
-     *
-     * @return void
      */
-    public function unsetEventDispatcher()
+    public function unsetEventDispatcher(): void
     {
         $this->events = null;
     }
@@ -237,11 +219,10 @@ abstract class Connection
     /**
      * Pass other method calls down to the underlying client.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);

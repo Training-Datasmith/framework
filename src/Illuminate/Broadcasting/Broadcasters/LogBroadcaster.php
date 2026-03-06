@@ -7,34 +7,21 @@ use Psr\Log\LoggerInterface;
 class LogBroadcaster extends Broadcaster
 {
     /**
-     * The logger implementation.
-     *
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * Create a new broadcaster instance.
-     *
-     * @param  \Psr\Log\LoggerInterface  $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(
+        /**
+         * The logger implementation.
+         */
+        protected \Psr\Log\LoggerInterface $logger
+    )
     {
-        $this->logger = $logger;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function auth($request)
-    {
-        //
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validAuthenticationResponse($request, $result)
+    public function auth($request): void
     {
         //
     }
@@ -42,7 +29,15 @@ class LogBroadcaster extends Broadcaster
     /**
      * {@inheritdoc}
      */
-    public function broadcast(array $channels, $event, array $payload = [])
+    public function validAuthenticationResponse($request, $result): void
+    {
+        //
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function broadcast(array $channels, $event, array $payload = []): void
     {
         $channels = implode(', ', $this->formatChannels($channels));
 

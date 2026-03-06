@@ -50,8 +50,6 @@ class SendQueuedMailable
 
     /**
      * Create a new job instance.
-     *
-     * @param  \Illuminate\Contracts\Mail\Mailable  $mailable
      */
     public function __construct(MailableContract $mailable)
     {
@@ -73,11 +71,8 @@ class SendQueuedMailable
 
     /**
      * Handle the queued job.
-     *
-     * @param  \Illuminate\Contracts\Mail\Factory  $factory
-     * @return void
      */
-    public function handle(MailFactory $factory)
+    public function handle(MailFactory $factory): void
     {
         $this->mailable->send($factory);
     }
@@ -114,9 +109,8 @@ class SendQueuedMailable
      * Call the failed method on the mailable instance.
      *
      * @param  \Throwable  $e
-     * @return void
      */
-    public function failed($e)
+    public function failed($e): void
     {
         if (method_exists($this->mailable, 'failed')) {
             $this->mailable->failed($e);
@@ -125,18 +119,14 @@ class SendQueuedMailable
 
     /**
      * Get the display name for the queued job.
-     *
-     * @return string
      */
-    public function displayName()
+    public function displayName(): string
     {
-        return get_class($this->mailable);
+        return $this->mailable::class;
     }
 
     /**
      * Prepare the instance for cloning.
-     *
-     * @return void
      */
     public function __clone()
     {

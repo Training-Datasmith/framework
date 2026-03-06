@@ -18,36 +18,25 @@ use Symfony\Component\Mailer\Header\TagHeader;
 class MailChannel
 {
     /**
-     * The mailer implementation.
-     *
-     * @var \Illuminate\Contracts\Mail\Factory
-     */
-    protected $mailer;
-
-    /**
-     * The markdown implementation.
-     *
-     * @var \Illuminate\Mail\Markdown
-     */
-    protected $markdown;
-
-    /**
      * Create a new mail channel instance.
-     *
-     * @param  \Illuminate\Contracts\Mail\Factory  $mailer
-     * @param  \Illuminate\Mail\Markdown  $markdown
      */
-    public function __construct(MailFactory $mailer, Markdown $markdown)
+    public function __construct(
+        /**
+         * The mailer implementation.
+         */
+        protected \Illuminate\Contracts\Mail\Factory $mailer,
+        /**
+         * The markdown implementation.
+         */
+        protected \Illuminate\Mail\Markdown $markdown
+    )
     {
-        $this->mailer = $mailer;
-        $this->markdown = $markdown;
     }
 
     /**
      * Send the given notification.
      *
      * @param  mixed  $notifiable
-     * @param  \Illuminate\Notifications\Notification  $notification
      * @return \Illuminate\Mail\SentMessage|null
      */
     public function send($notifiable, Notification $notification)
@@ -80,7 +69,7 @@ class MailChannel
      */
     protected function messageBuilder($notifiable, $notification, $message)
     {
-        return function ($mailMessage) use ($notifiable, $notification, $message) {
+        return function ($mailMessage) use ($notifiable, $notification, $message): void {
             $this->buildMessage($mailMessage, $notifiable, $notification, $message);
         };
     }
@@ -148,13 +137,12 @@ class MailChannel
      * Get additional meta-data to pass along with the view data.
      *
      * @param  \Illuminate\Notifications\Notification  $notification
-     * @return array
      */
-    protected function additionalMessageData($notification)
+    protected function additionalMessageData($notification): array
     {
         return [
             '__laravel_notification_id' => $notification->id,
-            '__laravel_notification' => get_class($notification),
+            '__laravel_notification' => $notification::class,
             '__laravel_notification_queued' => in_array(
                 ShouldQueue::class,
                 class_implements($notification)
@@ -215,16 +203,12 @@ class MailChannel
 
         $mailMessage->to($this->getRecipients($notifiable, $notification, $message));
 
-        if (! empty($message->cc)) {
-            foreach ($message->cc as $cc) {
-                $mailMessage->cc($cc[0], Arr::get($cc, 1));
-            }
+        foreach ($message->cc as $cc) {
+            $mailMessage->cc($cc[0], Arr::get($cc, 1));
         }
 
-        if (! empty($message->bcc)) {
-            foreach ($message->bcc as $bcc) {
-                $mailMessage->bcc($bcc[0], Arr::get($bcc, 1));
-            }
+        foreach ($message->bcc as $bcc) {
+            $mailMessage->bcc($bcc[0], Arr::get($bcc, 1));
         }
     }
 
@@ -241,10 +225,8 @@ class MailChannel
             $mailMessage->from($message->from[0], Arr::get($message->from, 1));
         }
 
-        if (! empty($message->replyTo)) {
-            foreach ($message->replyTo as $replyTo) {
-                $mailMessage->replyTo($replyTo[0], Arr::get($replyTo, 1));
-            }
+        foreach ($message->replyTo as $replyTo) {
+            $mailMessage->replyTo($replyTo[0], Arr::get($replyTo, 1));
         }
     }
 
@@ -263,11 +245,9 @@ class MailChannel
         }
 
         return (new Collection($recipients))
-            ->mapWithKeys(function ($recipient, $email) {
-                return is_numeric($email)
-                    ? [$email => (is_string($recipient) ? $recipient : $recipient->email)]
-                    : [$email => $recipient];
-            })
+            ->mapWithKeys(fn($recipient, $email) => is_numeric($email)
+                ? [$email => (is_string($recipient) ? $recipient : $recipient->email)]
+                : [$email => $recipient])
             ->all();
     }
 
@@ -296,7 +276,7 @@ class MailChannel
      * @param  \Illuminate\Notifications\Messages\MailMessage  $message
      * @return $this
      */
-    protected function runCallbacks($mailMessage, $message)
+    protected function runCallbacks($mailMessage, $message): static
     {
         foreach ($message->callbacks as $callback) {
             $callback($mailMessage->getSymfonyMessage());

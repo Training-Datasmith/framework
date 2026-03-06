@@ -36,10 +36,8 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
 
     /**
      * The minimum size of the password.
-     *
-     * @var int
      */
-    protected $min = 8;
+    protected int $min;
 
     /**
      * The maximum size of the password.
@@ -206,7 +204,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return $this
      */
-    public function setValidator($validator)
+    public function setValidator($validator): static
     {
         $this->validator = $validator;
 
@@ -219,7 +217,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      * @param  array  $data
      * @return $this
      */
-    public function setData($data)
+    public function setData($data): static
     {
         $this->data = $data;
 
@@ -232,7 +230,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      * @param  int  $size
      * @return $this
      */
-    public static function min($size)
+    public static function min($size): static
     {
         return new static($size);
     }
@@ -243,7 +241,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      * @param  int  $size
      * @return $this
      */
-    public function max($size)
+    public function max($size): static
     {
         $this->max = $size;
 
@@ -256,7 +254,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      * @param  int  $threshold
      * @return $this
      */
-    public function uncompromised($threshold = 0)
+    public function uncompromised($threshold = 0): static
     {
         $this->uncompromised = true;
 
@@ -270,7 +268,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      *
      * @return $this
      */
-    public function mixedCase()
+    public function mixedCase(): static
     {
         $this->mixedCase = true;
 
@@ -282,7 +280,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      *
      * @return $this
      */
-    public function letters()
+    public function letters(): static
     {
         $this->letters = true;
 
@@ -294,7 +292,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      *
      * @return $this
      */
-    public function numbers()
+    public function numbers(): static
     {
         $this->numbers = true;
 
@@ -306,7 +304,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      *
      * @return $this
      */
-    public function symbols()
+    public function symbols(): static
     {
         $this->symbols = true;
 
@@ -319,7 +317,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      * @param  \Closure|string|array  $rules
      * @return $this
      */
-    public function rules($rules)
+    public function rules($rules): static
     {
         $this->customRules = Arr::wrap($rules);
 
@@ -350,7 +348,7 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
             [$attribute => [...$this]],
             $this->validator->customMessages,
             $this->validator->customAttributes
-        )->after(function ($validator) use ($attribute, $value) {
+        )->after(function ($validator) use ($attribute, $value): void {
             if (! is_string($value)) {
                 return;
             }
@@ -402,9 +400,8 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
      * Adds the given failures, and return false.
      *
      * @param  array|string  $messages
-     * @return bool
      */
-    protected function fail($messages)
+    protected function fail($messages): bool
     {
         $this->messages = array_merge($this->messages, Arr::wrap($messages));
 
@@ -413,10 +410,8 @@ class Password implements DataAwareRule, ImplicitRule, IteratorAggregate, Rule, 
 
     /**
      * Get information about the current state of the password validation rules.
-     *
-     * @return array
      */
-    public function appliedRules()
+    public function appliedRules(): array
     {
         return [
             'min' => $this->min,

@@ -9,20 +9,17 @@ class DatabaseJobRecord
     use InteractsWithTime;
 
     /**
-     * The underlying job record.
-     *
-     * @var \stdClass
-     */
-    protected $record;
-
-    /**
      * Create a new job record instance.
      *
      * @param  \stdClass  $record
      */
-    public function __construct($record)
+    public function __construct(
+        /**
+         * The underlying job record.
+         */
+        protected $record
+    )
     {
-        $this->record = $record;
     }
 
     /**
@@ -30,7 +27,7 @@ class DatabaseJobRecord
      *
      * @return int
      */
-    public function increment()
+    public function increment(): int|float
     {
         $this->record->attempts++;
 
@@ -51,11 +48,8 @@ class DatabaseJobRecord
 
     /**
      * Dynamically access the underlying job information.
-     *
-     * @param  string  $key
-     * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         return $this->record->{$key};
     }

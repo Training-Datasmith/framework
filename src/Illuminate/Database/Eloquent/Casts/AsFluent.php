@@ -11,14 +11,13 @@ class AsFluent implements Castable
     /**
      * Get the caster class to use when casting from / to this cast target.
      *
-     * @param  array  $arguments
      * @return \Illuminate\Contracts\Database\Eloquent\CastsAttributes<\Illuminate\Support\Fluent, string>
      */
-    public static function castUsing(array $arguments)
+    public static function castUsing(array $arguments): \Illuminate\Contracts\Database\Eloquent\CastsAttributes
     {
         return new class implements CastsAttributes
         {
-            public function get($model, $key, $value, $attributes)
+            public function get($model, $key, $value, $attributes): ?\Illuminate\Support\Fluent
             {
                 return isset($value) ? new Fluent(Json::decode($value)) : null;
             }

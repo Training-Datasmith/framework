@@ -11,9 +11,8 @@ class ValidationData
      *
      * @param  string  $attribute
      * @param  array  $masterData
-     * @return array
      */
-    public static function initializeAndGatherData($attribute, $masterData)
+    public static function initializeAndGatherData($attribute, $masterData): array
     {
         $data = Arr::dot(static::initializeAttributeOnData($attribute, $masterData));
 
@@ -46,18 +45,16 @@ class ValidationData
      * Get all of the exact attribute values for a given wildcard attribute.
      *
      * @param  array  $masterData
-     * @param  array  $data
      * @param  string  $attribute
-     * @return array
      */
-    protected static function extractValuesForWildcards($masterData, $data, $attribute)
+    protected static function extractValuesForWildcards($masterData, array $data, $attribute): array
     {
         $keys = [];
 
         $pattern = str_replace('\*', '[^\.]+', preg_quote($attribute, '/'));
 
         foreach ($data as $key => $value) {
-            if ((bool) preg_match('/^'.$pattern.'/', $key, $matches)) {
+            if ((bool) preg_match('/^'.$pattern.'/', (string) $key, $matches)) {
                 $keys[] = $matches[0];
             }
         }
@@ -80,9 +77,8 @@ class ValidationData
      *
      * @param  string  $attribute
      * @param  array  $masterData
-     * @return array
      */
-    public static function extractDataFromPath($attribute, $masterData)
+    public static function extractDataFromPath($attribute, $masterData): array
     {
         $results = [];
 

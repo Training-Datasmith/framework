@@ -20,10 +20,8 @@ class RateLimited
 
     /**
      * The name of the rate limiter.
-     *
-     * @var string
      */
-    protected $limiterName;
+    protected string $limiterName;
 
     /**
      * The number of seconds before a job should be available again if the limit is exceeded.
@@ -73,13 +71,11 @@ class RateLimited
         return $this->handleJob(
             $job,
             $next,
-            Collection::wrap($limiterResponse)->map(function ($limit) {
-                return (object) [
-                    'key' => md5($this->limiterName.$limit->key),
-                    'maxAttempts' => $limit->maxAttempts,
-                    'decaySeconds' => $limit->decaySeconds,
-                ];
-            })->all()
+            Collection::wrap($limiterResponse)->map(fn($limit) => (object) [
+                'key' => md5($this->limiterName.$limit->key),
+                'maxAttempts' => $limit->maxAttempts,
+                'decaySeconds' => $limit->decaySeconds,
+            ])->all()
         );
     }
 
@@ -88,7 +84,6 @@ class RateLimited
      *
      * @param  mixed  $job
      * @param  callable  $next
-     * @param  array  $limits
      * @return mixed
      */
     protected function handleJob($job, $next, array $limits)
@@ -112,7 +107,7 @@ class RateLimited
      * @param  \DateTimeInterface|int  $releaseAfter
      * @return $this
      */
-    public function releaseAfter($releaseAfter)
+    public function releaseAfter($releaseAfter): static
     {
         $this->releaseAfter = $releaseAfter;
 
@@ -124,7 +119,7 @@ class RateLimited
      *
      * @return $this
      */
-    public function dontRelease()
+    public function dontRelease(): static
     {
         $this->shouldRelease = false;
 
@@ -137,7 +132,7 @@ class RateLimited
      * @param  string  $key
      * @return int
      */
-    protected function getTimeUntilNextRetry($key)
+    protected function getTimeUntilNextRetry($key): int|float
     {
         return $this->limiter->availableIn($key) + 3;
     }

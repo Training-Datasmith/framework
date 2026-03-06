@@ -15,7 +15,6 @@ trait ReflectsClosures
     /**
      * Get the class name of the first parameter of the given Closure.
      *
-     * @param  \Closure  $closure
      * @return string
      *
      * @throws \ReflectionException
@@ -39,7 +38,6 @@ trait ReflectsClosures
     /**
      * Get the class names of the first parameter of the given Closure, including union types.
      *
-     * @param  \Closure  $closure
      * @return array
      *
      * @throws \ReflectionException
@@ -50,7 +48,7 @@ trait ReflectsClosures
         $reflection = new ReflectionFunction($closure);
 
         $types = (new Collection($reflection->getParameters()))
-            ->mapWithKeys(function ($parameter) {
+            ->mapWithKeys(function ($parameter): array {
                 if ($parameter->isVariadic()) {
                     return [$parameter->getName() => null];
                 }
@@ -75,9 +73,7 @@ trait ReflectsClosures
     /**
      * Get the class names / types of the parameters of the given Closure.
      *
-     * @param  \Closure  $closure
      * @return array
-     *
      * @throws \ReflectionException
      */
     protected function closureParameterTypes(Closure $closure)
@@ -85,7 +81,7 @@ trait ReflectsClosures
         $reflection = new ReflectionFunction($closure);
 
         return (new Collection($reflection->getParameters()))
-            ->mapWithKeys(function ($parameter) {
+            ->mapWithKeys(function ($parameter): array {
                 if ($parameter->isVariadic()) {
                     return [$parameter->getName() => null];
                 }
@@ -98,9 +94,7 @@ trait ReflectsClosures
     /**
      * Get the class names / types of the return type of the given Closure.
      *
-     * @param  \Closure  $closure
      * @return list<class-string>
-     *
      * @throws \ReflectionException
      */
     protected function closureReturnTypes(Closure $closure)
@@ -118,7 +112,7 @@ trait ReflectsClosures
 
         return (new Collection($types))
             ->reject(fn ($type) => $type->isBuiltin())
-            ->reject(fn ($type) => in_array($type->getName(), ['static', 'self']))
+            ->reject(fn ($type): bool => in_array($type->getName(), ['static', 'self']))
             ->map(fn ($type) => $type->getName())
             ->values()
             ->all();

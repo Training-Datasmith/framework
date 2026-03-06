@@ -13,13 +13,6 @@ use function Termwind\renderUsing;
 abstract class Component
 {
     /**
-     * The output style implementation.
-     *
-     * @var \Illuminate\Console\OutputStyle
-     */
-    protected $output;
-
-    /**
      * The list of mutators to apply on the view data.
      *
      * @var array<int, callable(string): string>
@@ -31,9 +24,13 @@ abstract class Component
      *
      * @param  \Illuminate\Console\OutputStyle  $output
      */
-    public function __construct($output)
+    public function __construct(
+        /**
+         * The output style implementation.
+         */
+        protected $output
+    )
     {
-        $this->output = $output;
     }
 
     /**
@@ -66,7 +63,7 @@ abstract class Component
 
         include __DIR__."/../../resources/views/components/$view.php";
 
-        return tap(ob_get_contents(), function () {
+        return tap(ob_get_contents(), function (): void {
             ob_end_clean();
         });
     }

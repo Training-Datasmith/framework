@@ -12,29 +12,25 @@ class TextMessage
     use ForwardsCalls;
 
     /**
-     * The underlying message instance.
-     *
-     * @var \Illuminate\Mail\Message
-     */
-    protected $message;
-
-    /**
      * Create a new text message instance.
      *
      * @param  \Illuminate\Mail\Message  $message
      */
-    public function __construct($message)
+    public function __construct(
+        /**
+         * The underlying message instance.
+         */
+        protected $message
+    )
     {
-        $this->message = $message;
     }
 
     /**
      * Embed a file in the message and get the CID.
      *
      * @param  string|\Illuminate\Contracts\Mail\Attachable|\Illuminate\Mail\Attachment  $file
-     * @return string
      */
-    public function embed($file)
+    public function embed($file): string
     {
         return '';
     }
@@ -45,9 +41,8 @@ class TextMessage
      * @param  string|resource  $data
      * @param  string  $name
      * @param  string|null  $contentType
-     * @return string
      */
-    public function embedData($data, $name, $contentType = null)
+    public function embedData($data, $name, $contentType = null): string
     {
         return '';
     }
@@ -55,11 +50,10 @@ class TextMessage
     /**
      * Dynamically pass missing methods to the underlying message instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->forwardDecoratedCallTo($this->message, $method, $parameters);
     }

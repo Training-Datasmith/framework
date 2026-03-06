@@ -22,7 +22,7 @@ trait SerializesModels
         $reflectionClass = new ReflectionClass($this);
 
         [$class, $properties, $classLevelWithoutRelations] = [
-            get_class($this),
+            $this::class,
             $reflectionClass->getProperties(),
             ! empty($reflectionClass->getAttributes(WithoutRelations::class)),
         ];
@@ -67,14 +67,13 @@ trait SerializesModels
     /**
      * Restore the model after serialization.
      *
-     * @param  array  $values
      * @return void
      */
     public function __unserialize(array $values)
     {
         $properties = (new ReflectionClass($this))->getProperties();
 
-        $class = get_class($this);
+        $class = $this::class;
 
         foreach ($properties as $property) {
             if ($property->isStatic()) {
@@ -101,11 +100,8 @@ trait SerializesModels
 
     /**
      * Get the property value for the given property.
-     *
-     * @param  \ReflectionProperty  $property
-     * @return mixed
      */
-    protected function getPropertyValue(ReflectionProperty $property)
+    protected function getPropertyValue(ReflectionProperty $property): mixed
     {
         return $property->getValue($this);
     }

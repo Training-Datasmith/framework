@@ -173,10 +173,8 @@ class FailoverStore extends TaggableStore implements LockProvider
 
     /**
      * Remove all expired tag set entries.
-     *
-     * @return void
      */
-    public function flushStaleTags()
+    public function flushStaleTags(): void
     {
         foreach ($this->stores as $store) {
             if ($this->store($store)->getStore() instanceof RedisStore) {

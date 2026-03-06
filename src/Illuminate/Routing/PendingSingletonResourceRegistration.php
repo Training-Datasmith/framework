@@ -10,34 +10,6 @@ class PendingSingletonResourceRegistration
     use CreatesRegularExpressionRouteConstraints, Macroable;
 
     /**
-     * The resource registrar.
-     *
-     * @var \Illuminate\Routing\ResourceRegistrar
-     */
-    protected $registrar;
-
-    /**
-     * The resource name.
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The resource controller.
-     *
-     * @var string
-     */
-    protected $controller;
-
-    /**
-     * The resource options.
-     *
-     * @var array
-     */
-    protected $options = [];
-
-    /**
      * The resource's registration status.
      *
      * @var bool
@@ -47,26 +19,36 @@ class PendingSingletonResourceRegistration
     /**
      * Create a new pending singleton resource registration instance.
      *
-     * @param  \Illuminate\Routing\ResourceRegistrar  $registrar
      * @param  string  $name
      * @param  string  $controller
-     * @param  array  $options
      */
-    public function __construct(ResourceRegistrar $registrar, $name, $controller, array $options)
+    public function __construct(
+        /**
+         * The resource registrar.
+         */
+        protected \Illuminate\Routing\ResourceRegistrar $registrar,
+        /**
+         * The resource name.
+         */
+        protected $name,
+        /**
+         * The resource controller.
+         */
+        protected $controller,
+        /**
+         * The resource options.
+         */
+        protected array $options
+    )
     {
-        $this->name = $name;
-        $this->options = $options;
-        $this->registrar = $registrar;
-        $this->controller = $controller;
     }
 
     /**
      * Set the methods the controller should apply to.
      *
      * @param  mixed  $methods
-     * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
-    public function only($methods)
+    public function only($methods): static
     {
         $this->options['only'] = is_array($methods) ? $methods : func_get_args();
 
@@ -77,9 +59,8 @@ class PendingSingletonResourceRegistration
      * Set the methods the controller should exclude.
      *
      * @param  mixed  $methods
-     * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
-    public function except($methods)
+    public function except($methods): static
     {
         $this->options['except'] = is_array($methods) ? $methods : func_get_args();
 
@@ -91,7 +72,7 @@ class PendingSingletonResourceRegistration
      *
      * @return $this
      */
-    public function creatable()
+    public function creatable(): static
     {
         $this->options['creatable'] = true;
 
@@ -103,7 +84,7 @@ class PendingSingletonResourceRegistration
      *
      * @return $this
      */
-    public function destroyable()
+    public function destroyable(): static
     {
         $this->options['destroyable'] = true;
 
@@ -114,9 +95,8 @@ class PendingSingletonResourceRegistration
      * Set the route names for controller actions.
      *
      * @param  array|string  $names
-     * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
-    public function names($names)
+    public function names($names): static
     {
         $this->options['names'] = $names;
 
@@ -128,9 +108,8 @@ class PendingSingletonResourceRegistration
      *
      * @param  string  $method
      * @param  string  $name
-     * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
-    public function name($method, $name)
+    public function name($method, $name): static
     {
         $this->options['names'][$method] = $name;
 
@@ -141,9 +120,8 @@ class PendingSingletonResourceRegistration
      * Override the route parameter names.
      *
      * @param  array|string  $parameters
-     * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
-    public function parameters($parameters)
+    public function parameters($parameters): static
     {
         $this->options['parameters'] = $parameters;
 
@@ -155,9 +133,8 @@ class PendingSingletonResourceRegistration
      *
      * @param  string  $previous
      * @param  string  $new
-     * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
-    public function parameter($previous, $new)
+    public function parameter($previous, $new): static
     {
         $this->options['parameters'][$previous] = $new;
 
@@ -168,9 +145,8 @@ class PendingSingletonResourceRegistration
      * Add middleware to the resource routes.
      *
      * @param  mixed  $middleware
-     * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
-    public function middleware($middleware)
+    public function middleware($middleware): static
     {
         $middleware = Arr::wrap($middleware);
 
@@ -199,7 +175,7 @@ class PendingSingletonResourceRegistration
      * @param  array|string  $middleware
      * @return $this
      */
-    public function middlewareFor($methods, $middleware)
+    public function middlewareFor($methods, $middleware): static
     {
         $methods = Arr::wrap($methods);
         $middleware = Arr::wrap($middleware);
@@ -224,7 +200,7 @@ class PendingSingletonResourceRegistration
      * @param  array|string  $middleware
      * @return $this
      */
-    public function withoutMiddleware($middleware)
+    public function withoutMiddleware($middleware): static
     {
         $this->options['excluded_middleware'] = array_merge(
             (array) ($this->options['excluded_middleware'] ?? []), Arr::wrap($middleware)
@@ -240,7 +216,7 @@ class PendingSingletonResourceRegistration
      * @param  array|string  $middleware
      * @return $this
      */
-    public function withoutMiddlewareFor($methods, $middleware)
+    public function withoutMiddlewareFor($methods, $middleware): static
     {
         $methods = Arr::wrap($methods);
         $middleware = Arr::wrap($middleware);
@@ -256,9 +232,8 @@ class PendingSingletonResourceRegistration
      * Add "where" constraints to the resource routes.
      *
      * @param  mixed  $wheres
-     * @return \Illuminate\Routing\PendingSingletonResourceRegistration
      */
-    public function where($wheres)
+    public function where($wheres): static
     {
         $this->options['wheres'] = $wheres;
 
@@ -281,8 +256,6 @@ class PendingSingletonResourceRegistration
 
     /**
      * Handle the object's destruction.
-     *
-     * @return void
      */
     public function __destruct()
     {

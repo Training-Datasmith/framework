@@ -14,13 +14,6 @@ class PendingDispatch
     use InteractsWithUniqueJobs;
 
     /**
-     * The job.
-     *
-     * @var mixed
-     */
-    protected $job;
-
-    /**
      * Indicates if the job should be dispatched immediately after sending the response.
      *
      * @var bool
@@ -32,9 +25,13 @@ class PendingDispatch
      *
      * @param  mixed  $job
      */
-    public function __construct($job)
+    public function __construct(
+        /**
+         * The job.
+         */
+        protected $job
+    )
     {
-        $this->job = $job;
     }
 
     /**
@@ -43,7 +40,7 @@ class PendingDispatch
      * @param  \BackedEnum|string|null  $connection
      * @return $this
      */
-    public function onConnection($connection)
+    public function onConnection($connection): static
     {
         $this->job->onConnection($connection);
 
@@ -56,7 +53,7 @@ class PendingDispatch
      * @param  \BackedEnum|string|null  $queue
      * @return $this
      */
-    public function onQueue($queue)
+    public function onQueue($queue): static
     {
         $this->job->onQueue($queue);
 
@@ -71,7 +68,7 @@ class PendingDispatch
      * @param  \UnitEnum|string  $group
      * @return $this
      */
-    public function onGroup($group)
+    public function onGroup($group): static
     {
         $this->job->onGroup($group);
 
@@ -86,7 +83,7 @@ class PendingDispatch
      * @param  callable|null  $deduplicator
      * @return $this
      */
-    public function withDeduplicator($deduplicator)
+    public function withDeduplicator($deduplicator): static
     {
         $this->job->withDeduplicator($deduplicator);
 
@@ -99,7 +96,7 @@ class PendingDispatch
      * @param  \BackedEnum|string|null  $connection
      * @return $this
      */
-    public function allOnConnection($connection)
+    public function allOnConnection($connection): static
     {
         $this->job->allOnConnection($connection);
 
@@ -112,7 +109,7 @@ class PendingDispatch
      * @param  \BackedEnum|string|null  $queue
      * @return $this
      */
-    public function allOnQueue($queue)
+    public function allOnQueue($queue): static
     {
         $this->job->allOnQueue($queue);
 
@@ -125,7 +122,7 @@ class PendingDispatch
      * @param  \DateTimeInterface|\DateInterval|int|null  $delay
      * @return $this
      */
-    public function delay($delay)
+    public function delay($delay): static
     {
         $this->job->delay($delay);
 
@@ -137,7 +134,7 @@ class PendingDispatch
      *
      * @return $this
      */
-    public function withoutDelay()
+    public function withoutDelay(): static
     {
         $this->job->withoutDelay();
 
@@ -149,7 +146,7 @@ class PendingDispatch
      *
      * @return $this
      */
-    public function afterCommit()
+    public function afterCommit(): static
     {
         $this->job->afterCommit();
 
@@ -161,7 +158,7 @@ class PendingDispatch
      *
      * @return $this
      */
-    public function beforeCommit()
+    public function beforeCommit(): static
     {
         $this->job->beforeCommit();
 
@@ -174,7 +171,7 @@ class PendingDispatch
      * @param  array  $chain
      * @return $this
      */
-    public function chain($chain)
+    public function chain($chain): static
     {
         $this->job->chain($chain);
 
@@ -187,7 +184,7 @@ class PendingDispatch
      * @param  bool  $afterResponse
      * @return $this
      */
-    public function afterResponse($afterResponse = true)
+    public function afterResponse($afterResponse = true): static
     {
         $this->afterResponse = $afterResponse;
 
@@ -222,11 +219,10 @@ class PendingDispatch
     /**
      * Dynamically proxy methods to the underlying job.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return $this
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         $this->job->{$method}(...$parameters);
 
@@ -235,20 +231,19 @@ class PendingDispatch
 
     /**
      * Handle the object's destruction.
-     *
-     * @return void
      */
     public function __destruct()
     {
         $this->addUniqueJobInformationToContext($this->job);
-
         if (! $this->shouldDispatch()) {
             $this->removeUniqueJobInformationFromContext($this->job);
-
             return;
-        } elseif ($this->afterResponse) {
+        }
+
+        if ($this->afterResponse) {
             app(Dispatcher::class)->dispatchAfterResponse($this->job);
-        } else {
+        }
+        else {
             app(Dispatcher::class)->dispatch($this->job);
         }
 

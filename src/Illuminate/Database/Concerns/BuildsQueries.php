@@ -33,9 +33,8 @@ trait BuildsQueries
      *
      * @param  int  $count
      * @param  callable(\Illuminate\Support\Collection<int, TValue>, int): mixed  $callback
-     * @return bool
      */
-    public function chunk($count, callable $callback)
+    public function chunk($count, callable $callback): bool
     {
         $this->enforceOrderBy();
 
@@ -86,12 +85,12 @@ trait BuildsQueries
      * @param  int  $count
      * @return \Illuminate\Support\Collection<int, TReturn>
      */
-    public function chunkMap(callable $callback, $count = 1000)
+    public function chunkMap(callable $callback, $count = 1000): \Illuminate\Support\Collection
     {
         $collection = new Collection;
 
-        $this->chunk($count, function ($items) use ($collection, $callback) {
-            $items->each(function ($item) use ($collection, $callback) {
+        $this->chunk($count, function ($items) use ($collection, $callback): void {
+            $items->each(function ($item) use ($collection, $callback): void {
                 $collection->push($callback($item));
             });
         });
@@ -155,11 +154,10 @@ trait BuildsQueries
      * @param  string|null  $column
      * @param  string|null  $alias
      * @param  bool  $descending
-     * @return bool
      *
      * @throws \RuntimeException
      */
-    public function orderedChunkById($count, callable $callback, $column = null, $alias = null, $descending = false)
+    public function orderedChunkById($count, callable $callback, $column = null, $alias = null, $descending = false): bool
     {
         $column ??= $this->defaultKeyName();
         $alias ??= $column;
@@ -250,7 +248,7 @@ trait BuildsQueries
      *
      * @throws \InvalidArgumentException
      */
-    public function lazy($chunkSize = 1000)
+    public function lazy($chunkSize = 1000): \Illuminate\Support\LazyCollection
     {
         if ($chunkSize < 1) {
             throw new InvalidArgumentException('The chunk size should be at least 1');
@@ -312,11 +310,10 @@ trait BuildsQueries
      * @param  string|null  $column
      * @param  string|null  $alias
      * @param  bool  $descending
-     * @return \Illuminate\Support\LazyCollection
      *
      * @throws \InvalidArgumentException
      */
-    protected function orderedLazyById($chunkSize = 1000, $column = null, $alias = null, $descending = false)
+    protected function orderedLazyById($chunkSize = 1000, $column = null, $alias = null, $descending = false): \Illuminate\Support\LazyCollection
     {
         if ($chunkSize < 1) {
             throw new InvalidArgumentException('The chunk size should be at least 1');
@@ -433,7 +430,7 @@ trait BuildsQueries
             // Reset the union bindings so we can add the cursor where in the correct position...
             $this->setBindings([], 'union');
 
-            $addCursorConditions = function (self $builder, $previousColumn, $originalColumn, $i) use (&$addCursorConditions, $cursor, $orders) {
+            $addCursorConditions = function (self $builder, $previousColumn, $originalColumn, $i) use (&$addCursorConditions, $cursor, $orders): void {
                 $unionBuilders = $builder->getUnionBuilders();
 
                 if (! is_null($previousColumn)) {
@@ -445,7 +442,7 @@ trait BuildsQueries
                         $cursor->parameter($previousColumn)
                     );
 
-                    $unionBuilders->each(function ($unionBuilder) use ($previousColumn, $cursor) {
+                    $unionBuilders->each(function ($unionBuilder) use ($previousColumn, $cursor): void {
                         $unionBuilder->where(
                             $this->getOriginalColumnNameForCursorPagination($unionBuilder, $previousColumn),
                             '=',
@@ -456,7 +453,7 @@ trait BuildsQueries
                     });
                 }
 
-                $builder->where(function (self $secondBuilder) use ($addCursorConditions, $cursor, $orders, $i, $unionBuilders) {
+                $builder->where(function (self $secondBuilder) use ($addCursorConditions, $cursor, $orders, $i, $unionBuilders): void {
                     ['column' => $column, 'direction' => $direction] = $orders[$i];
 
                     $originalColumn = $this->getOriginalColumnNameForCursorPagination($this, $column);
@@ -468,16 +465,16 @@ trait BuildsQueries
                     );
 
                     if ($i < $orders->count() - 1) {
-                        $secondBuilder->orWhere(function (self $thirdBuilder) use ($addCursorConditions, $column, $originalColumn, $i) {
+                        $secondBuilder->orWhere(function (self $thirdBuilder) use ($addCursorConditions, $column, $originalColumn, $i): void {
                             $addCursorConditions($thirdBuilder, $column, $originalColumn, $i + 1);
                         });
                     }
 
-                    $unionBuilders->each(function ($unionBuilder) use ($column, $direction, $cursor, $i, $orders, $addCursorConditions) {
+                    $unionBuilders->each(function ($unionBuilder) use ($column, $direction, $cursor, $i, $orders, $addCursorConditions): void {
                         $unionWheres = $unionBuilder->getRawBindings()['where'];
 
                         $originalColumn = $this->getOriginalColumnNameForCursorPagination($unionBuilder, $column);
-                        $unionBuilder->where(function ($unionBuilder) use ($column, $direction, $cursor, $i, $orders, $addCursorConditions, $originalColumn, $unionWheres) {
+                        $unionBuilder->where(function ($unionBuilder) use ($column, $direction, $cursor, $i, $orders, $addCursorConditions, $originalColumn, $unionWheres): void {
                             $unionBuilder->where(
                                 $originalColumn,
                                 $direction === 'asc' ? '>' : '<',
@@ -485,7 +482,7 @@ trait BuildsQueries
                             );
 
                             if ($i < $orders->count() - 1) {
-                                $unionBuilder->orWhere(function (self $fourthBuilder) use ($addCursorConditions, $column, $originalColumn, $i) {
+                                $unionBuilder->orWhere(function (self $fourthBuilder) use ($addCursorConditions, $column, $originalColumn, $i): void {
                                     $addCursorConditions($fourthBuilder, $column, $originalColumn, $i + 1);
                                 });
                             }
@@ -513,10 +510,8 @@ trait BuildsQueries
      * Get the original column name of the given column, without any aliasing.
      *
      * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<*>  $builder
-     * @param  string  $parameter
-     * @return string
      */
-    protected function getOriginalColumnNameForCursorPagination($builder, string $parameter)
+    protected function getOriginalColumnNameForCursorPagination($builder, string $parameter): string
     {
         $columns = $builder instanceof Builder ? $builder->getQuery()->getColumns() : $builder->getColumns();
 

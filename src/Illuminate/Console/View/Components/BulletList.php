@@ -11,9 +11,8 @@ class BulletList extends Component
      *
      * @param  array<int, string>  $elements
      * @param  int  $verbosity
-     * @return void
      */
-    public function render($elements, $verbosity = OutputInterface::VERBOSITY_NORMAL)
+    public function render($elements, $verbosity = OutputInterface::VERBOSITY_NORMAL): void
     {
         $elements = $this->mutate($elements, [
             Mutators\EnsureDynamicContentIsHighlighted::class,

@@ -121,7 +121,6 @@ interface ConnectionInterface
     /**
      * Prepare the query bindings for execution.
      *
-     * @param  array  $bindings
      * @return array
      */
     public function prepareBindings(array $bindings);
@@ -129,10 +128,8 @@ interface ConnectionInterface
     /**
      * Execute a Closure within a transaction.
      *
-     * @param  \Closure  $callback
      * @param  int  $attempts
      * @return mixed
-     *
      * @throws \Throwable
      */
     public function transaction(Closure $callback, $attempts = 1);
@@ -168,7 +165,6 @@ interface ConnectionInterface
     /**
      * Execute the given callback in "dry run" mode.
      *
-     * @param  \Closure  $callback
      * @return array
      */
     public function pretend(Closure $callback);

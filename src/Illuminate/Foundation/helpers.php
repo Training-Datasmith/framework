@@ -56,11 +56,12 @@ if (! function_exists('abort')) {
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
-    function abort($code, $message = '', array $headers = [])
+    function abort($code, $message = '', array $headers = []): void
     {
         if ($code instanceof Response) {
             throw new HttpResponseException($code);
-        } elseif ($code instanceof Responsable) {
+        }
+        if ($code instanceof Responsable) {
             throw new HttpResponseException($code->toResponse(request()));
         }
 
@@ -243,9 +244,8 @@ if (! function_exists('broadcast_if')) {
     {
         if ($boolean) {
             return app(BroadcastFactory::class)->event(value($event));
-        } else {
-            return new FakePendingBroadcast;
         }
+        return new FakePendingBroadcast;
     }
 }
 
@@ -260,9 +260,8 @@ if (! function_exists('broadcast_unless')) {
     {
         if (! $boolean) {
             return app(BroadcastFactory::class)->event(value($event));
-        } else {
-            return new FakePendingBroadcast;
         }
+        return new FakePendingBroadcast;
     }
 }
 
@@ -588,10 +587,8 @@ if (! function_exists('logs')) {
 if (! function_exists('method_field')) {
     /**
      * Generate a form field to spoof the HTTP verb used by forms.
-     *
-     * @param  string  $method
      */
-    function method_field($method): HtmlString
+    function method_field(string $method): HtmlString
     {
         return new HtmlString('<input type="hidden" name="_method" value="'.$method.'">');
     }
@@ -662,11 +659,11 @@ if (! function_exists('precognitive')) {
      */
     function precognitive($callable = null)
     {
-        $callable ??= function () {
+        $callable ??= function (): void {
             //
         };
 
-        $payload = $callable(function ($default, $precognition = null) {
+        $payload = $callable(function ($default, $precognition = null): void {
             $response = request()->isPrecognitive()
                 ? ($precognition ?? $default)
                 : $default;
@@ -891,7 +888,7 @@ if (! function_exists('secure_url')) {
      * @param  mixed  $parameters
      * @return string
      */
-    function secure_url($path, $parameters = [])
+    function secure_url($path, $parameters = []): \Illuminate\Contracts\Routing\UrlGenerator|string
     {
         return url($path, $parameters, true);
     }

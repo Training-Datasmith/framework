@@ -27,39 +27,23 @@ class ClearCommand extends Command
     protected $description = 'Flush the application cache';
 
     /**
-     * The cache manager instance.
-     *
-     * @var \Illuminate\Cache\CacheManager
-     */
-    protected $cache;
-
-    /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * Create a new cache clear command instance.
-     *
-     * @param  \Illuminate\Cache\CacheManager  $cache
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      */
-    public function __construct(CacheManager $cache, Filesystem $files)
+    public function __construct(/**
+     * The cache manager instance.
+     */
+    protected \Illuminate\Cache\CacheManager $cache, /**
+     * The filesystem instance.
+     */
+    protected \Illuminate\Filesystem\Filesystem $files)
     {
         parent::__construct();
-
-        $this->cache = $cache;
-        $this->files = $files;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $this->laravel['events']->dispatch(
             'cache:clearing', [$this->argument('store'), $this->tags()]
@@ -86,10 +70,8 @@ class ClearCommand extends Command
 
     /**
      * Flush the real-time facades stored in the cache directory.
-     *
-     * @return void
      */
-    public function flushFacades()
+    public function flushFacades(): void
     {
         if (! $this->files->exists($storagePath = storage_path('framework/cache'))) {
             return;
@@ -116,20 +98,16 @@ class ClearCommand extends Command
 
     /**
      * Get the tags passed to the command.
-     *
-     * @return array
      */
-    protected function tags()
+    protected function tags(): array
     {
         return array_filter(explode(',', $this->option('tags') ?? ''));
     }
 
     /**
      * Get the console command arguments.
-     *
-     * @return array
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['store', InputArgument::OPTIONAL, 'The name of the store you would like to clear'],
@@ -138,10 +116,8 @@ class ClearCommand extends Command
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['tags', null, InputOption::VALUE_OPTIONAL, 'The cache tags you would like to clear', null],

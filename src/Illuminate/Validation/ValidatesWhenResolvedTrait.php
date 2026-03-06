@@ -11,10 +11,8 @@ trait ValidatesWhenResolvedTrait
 {
     /**
      * Validate the class instance.
-     *
-     * @return void
      */
-    public function validateResolved()
+    public function validateResolved(): void
     {
         $this->prepareForValidation();
 
@@ -68,12 +66,10 @@ trait ValidatesWhenResolvedTrait
     /**
      * Handle a failed validation attempt.
      *
-     * @param  \Illuminate\Validation\Validator  $validator
-     * @return void
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator): never
     {
         $exception = $validator->getException();
 
@@ -97,11 +93,10 @@ trait ValidatesWhenResolvedTrait
     /**
      * Handle a failed authorization attempt.
      *
-     * @return void
      *
      * @throws \Illuminate\Validation\UnauthorizedException
      */
-    protected function failedAuthorization()
+    protected function failedAuthorization(): never
     {
         throw new UnauthorizedException;
     }

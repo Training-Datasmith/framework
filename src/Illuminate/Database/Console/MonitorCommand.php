@@ -28,39 +28,23 @@ class MonitorCommand extends DatabaseInspectionCommand
     protected $description = 'Monitor the number of connections on the specified database';
 
     /**
-     * The connection resolver instance.
-     *
-     * @var \Illuminate\Database\ConnectionResolverInterface
-     */
-    protected $connection;
-
-    /**
-     * The events dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
-    /**
      * Create a new command instance.
-     *
-     * @param  \Illuminate\Database\ConnectionResolverInterface  $connection
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      */
-    public function __construct(ConnectionResolverInterface $connection, Dispatcher $events)
+    public function __construct(/**
+     * The connection resolver instance.
+     */
+    protected \Illuminate\Database\ConnectionResolverInterface $connection, /**
+     * The events dispatcher instance.
+     */
+    protected \Illuminate\Contracts\Events\Dispatcher $events)
     {
         parent::__construct();
-
-        $this->connection = $connection;
-        $this->events = $events;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $databases = $this->parseDatabases($this->option('databases'));
 
@@ -75,11 +59,10 @@ class MonitorCommand extends DatabaseInspectionCommand
      * Parse the database into an array of the connections.
      *
      * @param  string  $databases
-     * @return \Illuminate\Support\Collection
      */
-    protected function parseDatabases($databases)
+    protected function parseDatabases($databases): \Illuminate\Support\Collection
     {
-        return (new Collection(explode(',', $databases)))->map(function ($database) {
+        return (new Collection(explode(',', $databases)))->map(function ($database): array {
             if (! $database) {
                 $database = $this->laravel['config']['database.default'];
             }
@@ -108,7 +91,7 @@ class MonitorCommand extends DatabaseInspectionCommand
 
         $this->components->twoColumnDetail('<fg=gray>Database name</>', '<fg=gray>Connections</>');
 
-        $databases->each(function ($database) {
+        $databases->each(function (array $database): void {
             $status = '['.$database['connections'].'] '.$database['status'];
 
             $this->components->twoColumnDetail($database['database'], $status);
@@ -125,7 +108,7 @@ class MonitorCommand extends DatabaseInspectionCommand
      */
     protected function dispatchEvents($databases)
     {
-        $databases->each(function ($database) {
+        $databases->each(function (array $database): void {
             if ($database['status'] === '<fg=green;options=bold>OK</>') {
                 return;
             }

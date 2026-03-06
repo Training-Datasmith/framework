@@ -28,32 +28,23 @@ class ConfigCacheCommand extends Command
     protected $description = 'Create a cache file for faster configuration loading';
 
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * Create a new config cache command instance.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      */
-    public function __construct(Filesystem $files)
+    public function __construct(/**
+     * The filesystem instance.
+     */
+    protected \Illuminate\Filesystem\Filesystem $files)
     {
         parent::__construct();
-
-        $this->files = $files;
     }
 
     /**
      * Execute the console command.
      *
-     * @return void
      *
      * @throws \LogicException
      */
-    public function handle()
+    public function handle(): void
     {
         $this->callSilent('config:clear');
 

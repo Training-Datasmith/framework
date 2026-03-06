@@ -37,11 +37,8 @@ class RouteCollection extends AbstractRouteCollection
 
     /**
      * Add a Route instance to the collection.
-     *
-     * @param  \Illuminate\Routing\Route  $route
-     * @return \Illuminate\Routing\Route
      */
-    public function add(Route $route)
+    public function add(Route $route): Route
     {
         $this->addToCollections($route);
 
@@ -96,22 +93,20 @@ class RouteCollection extends AbstractRouteCollection
     /**
      * Add a route to the controller action dictionary.
      *
-     * @param  array  $action
      * @param  \Illuminate\Routing\Route  $route
      * @return void
      */
-    protected function addToActionList($action, $route)
+    protected function addToActionList(array $action, $route)
     {
-        $this->actionList[trim($action['controller'], '\\')] = $route;
+        $this->actionList[trim((string) $action['controller'], '\\')] = $route;
     }
 
     /**
      * Determine if the given controller is in the action lookup table.
      *
      * @param  string  $controller
-     * @return bool
      */
-    protected function inActionLookup($controller)
+    protected function inActionLookup($controller): bool
     {
         return array_key_exists($controller, $this->actionList);
     }
@@ -120,9 +115,8 @@ class RouteCollection extends AbstractRouteCollection
      * Determine if the given name is in the name lookup table.
      *
      * @param  string  $name
-     * @return bool
      */
-    protected function inNameLookup($name)
+    protected function inNameLookup($name): bool
     {
         return array_key_exists($name, $this->nameList);
     }
@@ -131,10 +125,8 @@ class RouteCollection extends AbstractRouteCollection
      * Refresh the name look-up table.
      *
      * This is done in case any names are fluently defined or if routes are overwritten.
-     *
-     * @return void
      */
-    public function refreshNameLookups()
+    public function refreshNameLookups(): void
     {
         $this->nameList = [];
 
@@ -149,10 +141,8 @@ class RouteCollection extends AbstractRouteCollection
      * Refresh the action look-up table.
      *
      * This is done in case any actions are overwritten with new controllers.
-     *
-     * @return void
      */
-    public function refreshActionLookups()
+    public function refreshActionLookups(): void
     {
         $this->actionList = [];
 
@@ -166,7 +156,6 @@ class RouteCollection extends AbstractRouteCollection
     /**
      * Find the first route matching a given request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Routing\Route
      *
      * @throws \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException
@@ -199,9 +188,8 @@ class RouteCollection extends AbstractRouteCollection
      * Determine if the route collection contains a given named route.
      *
      * @param  string  $name
-     * @return bool
      */
-    public function hasNamedRoute($name)
+    public function hasNamedRoute($name): bool
     {
         return ! is_null($this->getByName($name));
     }
@@ -233,7 +221,7 @@ class RouteCollection extends AbstractRouteCollection
      *
      * @return \Illuminate\Routing\Route[]
      */
-    public function getRoutes()
+    public function getRoutes(): array
     {
         return array_values($this->allRoutes);
     }
@@ -274,12 +262,8 @@ class RouteCollection extends AbstractRouteCollection
 
     /**
      * Convert the collection to a CompiledRouteCollection instance.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @param  \Illuminate\Container\Container  $container
-     * @return \Illuminate\Routing\CompiledRouteCollection
      */
-    public function toCompiledRouteCollection(Router $router, Container $container)
+    public function toCompiledRouteCollection(Router $router, Container $container): \Illuminate\Routing\CompiledRouteCollection
     {
         ['compiled' => $compiled, 'attributes' => $attributes] = $this->compile();
 

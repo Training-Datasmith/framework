@@ -15,11 +15,8 @@ class ComposerScripts
 {
     /**
      * Handle the post-install Composer event.
-     *
-     * @param  \Composer\Script\Event  $event
-     * @return void
      */
-    public static function postInstall(Event $event)
+    public static function postInstall(Event $event): void
     {
         require_once $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
 
@@ -28,11 +25,8 @@ class ComposerScripts
 
     /**
      * Handle the post-update Composer event.
-     *
-     * @param  \Composer\Script\Event  $event
-     * @return void
      */
-    public static function postUpdate(Event $event)
+    public static function postUpdate(Event $event): void
     {
         require_once $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
 
@@ -41,11 +35,8 @@ class ComposerScripts
 
     /**
      * Handle the post-autoload-dump Composer event.
-     *
-     * @param  \Composer\Script\Event  $event
-     * @return void
      */
-    public static function postAutoloadDump(Event $event)
+    public static function postAutoloadDump(Event $event): void
     {
         require_once $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
 
@@ -54,11 +45,8 @@ class ComposerScripts
 
     /**
      * Handle the pre-package-uninstall Composer event.
-     *
-     * @param  \Composer\Installer\PackageEvent  $event
-     * @return void
      */
-    public static function prePackageUninstall(PackageEvent $event)
+    public static function prePackageUninstall(PackageEvent $event): void
     {
         // Package uninstall events are only applicable when uninstalling packages in dev environments...
         if (! $event->isDevMode()) {

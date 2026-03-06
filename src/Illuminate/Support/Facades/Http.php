@@ -109,10 +109,8 @@ class Http extends Facade
 {
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return Factory::class;
     }
@@ -125,7 +123,7 @@ class Http extends Facade
      */
     public static function fake($callback = null)
     {
-        return tap(static::getFacadeRoot(), function ($fake) use ($callback) {
+        return tap(static::getFacadeRoot(), function ($fake) use ($callback): void {
             static::swap($fake->fake($callback));
         });
     }
@@ -133,12 +131,11 @@ class Http extends Facade
     /**
      * Register a response sequence for the given URL pattern.
      *
-     * @param  string  $urlPattern
      * @return \Illuminate\Http\Client\ResponseSequence
      */
     public static function fakeSequence(string $urlPattern = '*')
     {
-        $fake = tap(static::getFacadeRoot(), function ($fake) {
+        $fake = tap(static::getFacadeRoot(), function ($fake): void {
             static::swap($fake);
         });
 
@@ -153,7 +150,7 @@ class Http extends Facade
      */
     public static function preventStrayRequests($prevent = true)
     {
-        return tap(static::getFacadeRoot(), function ($fake) use ($prevent) {
+        return tap(static::getFacadeRoot(), function ($fake) use ($prevent): void {
             static::swap($fake->preventStrayRequests($prevent));
         });
     }
@@ -167,7 +164,7 @@ class Http extends Facade
      */
     public static function stubUrl($url, $callback)
     {
-        return tap(static::getFacadeRoot(), function ($fake) use ($url, $callback) {
+        return tap(static::getFacadeRoot(), function ($fake) use ($url, $callback): void {
             static::swap($fake->stubUrl($url, $callback));
         });
     }

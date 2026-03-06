@@ -17,26 +17,21 @@ class ArraySessionHandler implements SessionHandlerInterface
     protected $storage = [];
 
     /**
-     * The number of minutes the session should be valid.
-     *
-     * @var int
-     */
-    protected $minutes;
-
-    /**
      * Create a new array driven handler instance.
      *
      * @param  int  $minutes
      */
-    public function __construct($minutes)
+    public function __construct(
+        /**
+         * The number of minutes the session should be valid.
+         */
+        protected $minutes
+    )
     {
-        $this->minutes = $minutes;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function open($savePath, $sessionName): bool
     {
@@ -45,8 +40,6 @@ class ArraySessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function close(): bool
     {
@@ -77,8 +70,6 @@ class ArraySessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function write($sessionId, $data): bool
     {
@@ -92,8 +83,6 @@ class ArraySessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function destroy($sessionId): bool
     {
@@ -106,8 +95,6 @@ class ArraySessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
     public function gc($lifetime): int
     {
@@ -131,7 +118,7 @@ class ArraySessionHandler implements SessionHandlerInterface
      * @param  int  $seconds
      * @return int
      */
-    protected function calculateExpiration($seconds)
+    protected function calculateExpiration($seconds): int|float
     {
         return $this->currentTime() - $seconds;
     }

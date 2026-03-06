@@ -13,11 +13,8 @@ class LoadEnvironmentVariables
 {
     /**
      * Bootstrap the given application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return void
      */
-    public function bootstrap(Application $app)
+    public function bootstrap(Application $app): void
     {
         if ($app->configurationIsCached()) {
             return;
@@ -61,10 +58,8 @@ class LoadEnvironmentVariables
      * Load a custom environment file.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  string  $file
-     * @return bool
      */
-    protected function setEnvironmentFilePath($app, $file)
+    protected function setEnvironmentFilePath($app, string $file): bool
     {
         if (is_file($app->environmentPath().'/'.$file)) {
             $app->loadEnvironmentFrom($file);
@@ -94,9 +89,8 @@ class LoadEnvironmentVariables
      * Write the error information to the screen and exit.
      *
      * @param  \Dotenv\Exception\InvalidFileException  $e
-     * @return never
      */
-    protected function writeErrorAndDie(InvalidFileException $e)
+    protected function writeErrorAndDie(InvalidFileException $e): never
     {
         $output = (new ConsoleOutput)->getErrorOutput();
 

@@ -19,32 +19,11 @@ use function Illuminate\Support\enum_value;
 class RedisManager implements Factory
 {
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
-     * The name of the default driver.
-     *
-     * @var string
-     */
-    protected $driver;
-
-    /**
      * The registered custom driver creators.
      *
      * @var array
      */
     protected $customCreators = [];
-
-    /**
-     * The Redis server configurations.
-     *
-     * @var array
-     */
-    protected $config;
 
     /**
      * The Redis connections.
@@ -65,13 +44,22 @@ class RedisManager implements Factory
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @param  string  $driver
-     * @param  array  $config
      */
-    public function __construct($app, $driver, array $config)
+    public function __construct(
+        /**
+         * The application instance.
+         */
+        protected $app,
+        /**
+         * The name of the default driver.
+         */
+        protected $driver,
+        /**
+         * The Redis server configurations.
+         */
+        protected array $config
+    )
     {
-        $this->app = $app;
-        $this->driver = $driver;
-        $this->config = $config;
     }
 
     /**
@@ -84,11 +72,7 @@ class RedisManager implements Factory
     {
         $name = enum_value($name) ?: 'default';
 
-        if (isset($this->connections[$name])) {
-            return $this->connections[$name];
-        }
-
-        return $this->connections[$name] = $this->configure(
+        return $this->connections[$name] ?? $this->connections[$name] = $this->configure(
             $this->resolve($name), $name
         );
     }
@@ -130,9 +114,7 @@ class RedisManager implements Factory
     protected function resolveCluster($name)
     {
         return $this->connector()->connectToCluster(
-            array_map(function ($config) {
-                return $this->parseConnectionConfiguration($config);
-            }, $this->config['clusters'][$name]),
+            array_map(fn($config) => $this->parseConnectionConfiguration($config), $this->config['clusters'][$name]),
             $this->config['clusters']['options'] ?? [],
             $this->config['options'] ?? []
         );
@@ -141,11 +123,9 @@ class RedisManager implements Factory
     /**
      * Configure the given connection to prepare it for commands.
      *
-     * @param  \Illuminate\Redis\Connections\Connection  $connection
      * @param  string  $name
-     * @return \Illuminate\Redis\Connections\Connection
      */
-    protected function configure(Connection $connection, $name)
+    protected function configure(Connection $connection, $name): Connection
     {
         $connection->setName($name);
 
@@ -180,9 +160,8 @@ class RedisManager implements Factory
      * Parse the Redis connection configuration.
      *
      * @param  mixed  $config
-     * @return array
      */
-    protected function parseConnectionConfiguration($config)
+    protected function parseConnectionConfiguration($config): array
     {
         $parsed = (new ConfigurationUrlParser)->parseConfiguration($config);
 
@@ -192,9 +171,7 @@ class RedisManager implements Factory
             $parsed['scheme'] = $driver;
         }
 
-        return array_filter($parsed, function ($key) {
-            return $key !== 'driver';
-        }, ARRAY_FILTER_USE_KEY);
+        return array_filter($parsed, fn($key) => $key !== 'driver', ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -209,20 +186,16 @@ class RedisManager implements Factory
 
     /**
      * Enable the firing of Redis command events.
-     *
-     * @return void
      */
-    public function enableEvents()
+    public function enableEvents(): void
     {
         $this->events = true;
     }
 
     /**
      * Disable the firing of Redis command events.
-     *
-     * @return void
      */
-    public function disableEvents()
+    public function disableEvents(): void
     {
         $this->events = false;
     }
@@ -231,9 +204,8 @@ class RedisManager implements Factory
      * Set the default driver.
      *
      * @param  string  $driver
-     * @return void
      */
-    public function setDriver($driver)
+    public function setDriver($driver): void
     {
         $this->driver = $driver;
     }
@@ -242,9 +214,8 @@ class RedisManager implements Factory
      * Disconnect the given connection and remove from local cache.
      *
      * @param  string|null  $name
-     * @return void
      */
-    public function purge($name = null)
+    public function purge($name = null): void
     {
         $name = $name ?: 'default';
 
@@ -255,13 +226,11 @@ class RedisManager implements Factory
      * Register a custom driver creator Closure.
      *
      * @param  string  $driver
-     * @param  \Closure  $callback
      *
      * @param-closure-this  $this  $callback
-     *
      * @return $this
      */
-    public function extend($driver, Closure $callback)
+    public function extend($driver, Closure $callback): static
     {
         $this->customCreators[$driver] = $callback->bindTo($this, $this);
 
@@ -271,11 +240,10 @@ class RedisManager implements Factory
     /**
      * Pass methods onto the default Redis connection.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->connection()->{$method}(...$parameters);
     }

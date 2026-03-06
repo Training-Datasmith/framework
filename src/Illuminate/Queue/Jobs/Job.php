@@ -90,10 +90,8 @@ abstract class Job
 
     /**
      * Fire the job.
-     *
-     * @return void
      */
-    public function fire()
+    public function fire(): void
     {
         $payload = $this->payload();
 
@@ -104,10 +102,8 @@ abstract class Job
 
     /**
      * Delete the job from the queue.
-     *
-     * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleted = true;
     }
@@ -126,9 +122,8 @@ abstract class Job
      * Release the job back into the queue after (n) seconds.
      *
      * @param  int  $delay
-     * @return void
      */
-    public function release($delay = 0)
+    public function release($delay = 0): void
     {
         $this->released = true;
     }
@@ -150,7 +145,10 @@ abstract class Job
      */
     public function isDeletedOrReleased()
     {
-        return $this->isDeleted() || $this->isReleased();
+        if ($this->isDeleted()) {
+            return true;
+        }
+        return $this->isReleased();
     }
 
     /**
@@ -165,10 +163,8 @@ abstract class Job
 
     /**
      * Mark the job as "failed".
-     *
-     * @return void
      */
-    public function markAsFailed()
+    public function markAsFailed(): void
     {
         $this->failed = true;
     }
@@ -177,9 +173,8 @@ abstract class Job
      * Delete the job, call the "failed" method, and raise the failed job event.
      *
      * @param  \Throwable|null  $e
-     * @return void
      */
-    public function fail($e = null)
+    public function fail($e = null): void
     {
         $this->markAsFailed();
 
@@ -199,7 +194,7 @@ abstract class Job
 
             try {
                 $batchRepository->rollBack();
-            } catch (Throwable $e) {
+            } catch (Throwable) {
                 // ...
             }
         }

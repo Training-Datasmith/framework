@@ -37,30 +37,20 @@ class EnvironmentDecryptCommand extends Command
     protected $description = 'Decrypt an environment file';
 
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * Create a new command instance.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      */
-    public function __construct(Filesystem $files)
+    public function __construct(/**
+     * The filesystem instance.
+     */
+    protected \Illuminate\Filesystem\Filesystem $files)
     {
         parent::__construct();
-
-        $this->files = $files;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $key = $this->option('key') ?: Env::get('LARAVEL_ENV_ENCRYPTION_KEY');
 
@@ -117,9 +107,6 @@ class EnvironmentDecryptCommand extends Command
 
     /**
      * Determine if the content is in readable format where each variable still has its own plain-text key.
-     *
-     * @param  string  $contents
-     * @return bool
      */
     protected function isReadableFormat(string $contents): bool
     {
@@ -128,10 +115,6 @@ class EnvironmentDecryptCommand extends Command
 
     /**
      * Decrypt the environment file from readable format.
-     *
-     * @param  string  $contents
-     * @param  \Illuminate\Encryption\Encrypter  $encrypter
-     * @return string
      */
     protected function decryptReadableFormat(string $contents, Encrypter $encrypter): string
     {
@@ -156,13 +139,12 @@ class EnvironmentDecryptCommand extends Command
     /**
      * Parse the encryption key.
      *
-     * @param  string  $key
      * @return string
      */
-    protected function parseKey(string $key)
+    protected function parseKey(string $key): string|false
     {
         if (Str::startsWith($key, $prefix = 'base64:')) {
-            $key = base64_decode(Str::after($key, $prefix));
+            return base64_decode(Str::after($key, $prefix));
         }
 
         return $key;
@@ -170,10 +152,8 @@ class EnvironmentDecryptCommand extends Command
 
     /**
      * Get the output file path that should be used for the command.
-     *
-     * @return string
      */
-    protected function outputFilePath()
+    protected function outputFilePath(): string
     {
         $path = Str::finish($this->option('path') ?: $this->laravel->environmentPath(), DIRECTORY_SEPARATOR);
 

@@ -11,27 +11,21 @@ use RuntimeException;
 class BroadcastChannel
 {
     /**
-     * The event dispatcher.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
-    /**
      * Create a new broadcast channel.
-     *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      */
-    public function __construct(Dispatcher $events)
+    public function __construct(
+        /**
+         * The event dispatcher.
+         */
+        protected \Illuminate\Contracts\Events\Dispatcher $events
+    )
     {
-        $this->events = $events;
     }
 
     /**
      * Send the given notification.
      *
      * @param  mixed  $notifiable
-     * @param  \Illuminate\Notifications\Notification  $notification
      * @return array|null
      */
     public function send($notifiable, Notification $notification)
@@ -54,9 +48,7 @@ class BroadcastChannel
      * Get the data for the notification.
      *
      * @param  mixed  $notifiable
-     * @param  \Illuminate\Notifications\Notification  $notification
      * @return mixed
-     *
      * @throws \RuntimeException
      */
     protected function getData($notifiable, Notification $notification)

@@ -33,10 +33,8 @@ class LocalFilesystemAdapter extends FilesystemAdapter
 
     /**
      * Determine if temporary URLs can be generated.
-     *
-     * @return bool
      */
-    public function providesTemporaryUrls()
+    public function providesTemporaryUrls(): bool
     {
         return $this->temporaryUrlCallback || (
             $this->shouldServeSignedUrls && $this->urlGeneratorResolver instanceof Closure
@@ -45,10 +43,8 @@ class LocalFilesystemAdapter extends FilesystemAdapter
 
     /**
      * Determine if temporary upload URLs can be generated.
-     *
-     * @return bool
      */
-    public function providesTemporaryUploadUrls()
+    public function providesTemporaryUploadUrls(): bool
     {
         return $this->temporaryUploadUrlCallback || (
             $this->shouldServeSignedUrls && $this->urlGeneratorResolver instanceof Closure
@@ -60,7 +56,6 @@ class LocalFilesystemAdapter extends FilesystemAdapter
      *
      * @param  string  $path
      * @param  \DateTimeInterface  $expiration
-     * @param  array  $options
      * @return string
      */
     public function temporaryUrl($path, $expiration, array $options = [])
@@ -90,7 +85,6 @@ class LocalFilesystemAdapter extends FilesystemAdapter
      *
      * @param  string  $path
      * @param  \DateTimeInterface  $expiration
-     * @param  array  $options
      * @return array
      */
     public function temporaryUploadUrl($path, $expiration, array $options = [])
@@ -121,10 +115,9 @@ class LocalFilesystemAdapter extends FilesystemAdapter
     /**
      * Specify the name of the disk the adapter is managing.
      *
-     * @param  string  $disk
      * @return $this
      */
-    public function diskName(string $disk)
+    public function diskName(string $disk): static
     {
         $this->disk = $disk;
 
@@ -134,11 +127,9 @@ class LocalFilesystemAdapter extends FilesystemAdapter
     /**
      * Indicate that signed URLs should serve the corresponding files.
      *
-     * @param  bool  $serve
-     * @param  \Closure|null  $urlGeneratorResolver
      * @return $this
      */
-    public function shouldServeSignedUrls(bool $serve = true, ?Closure $urlGeneratorResolver = null)
+    public function shouldServeSignedUrls(bool $serve = true, ?Closure $urlGeneratorResolver = null): static
     {
         $this->shouldServeSignedUrls = $serve;
         $this->urlGeneratorResolver = $urlGeneratorResolver;

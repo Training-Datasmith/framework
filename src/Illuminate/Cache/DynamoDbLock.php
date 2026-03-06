@@ -5,25 +5,18 @@ namespace Illuminate\Cache;
 class DynamoDbLock extends Lock
 {
     /**
-     * The DynamoDB client instance.
-     *
-     * @var \Illuminate\Cache\DynamoDbStore
-     */
-    protected $dynamo;
-
-    /**
      * Create a new lock instance.
      *
-     * @param  \Illuminate\Cache\DynamoDbStore  $dynamo
      * @param  string  $name
      * @param  int  $seconds
      * @param  string|null  $owner
      */
-    public function __construct(DynamoDbStore $dynamo, $name, $seconds, $owner = null)
+    public function __construct(/**
+     * The DynamoDB client instance.
+     */
+    protected \Illuminate\Cache\DynamoDbStore $dynamo, $name, $seconds, $owner = null)
     {
         parent::__construct($name, $seconds, $owner);
-
-        $this->dynamo = $dynamo;
     }
 
     /**
@@ -56,10 +49,8 @@ class DynamoDbLock extends Lock
 
     /**
      * Release this lock in disregard of ownership.
-     *
-     * @return void
      */
-    public function forceRelease()
+    public function forceRelease(): void
     {
         $this->dynamo->forget($this->name);
     }

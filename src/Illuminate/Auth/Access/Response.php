@@ -8,27 +8,6 @@ use Stringable;
 class Response implements Arrayable, Stringable
 {
     /**
-     * Indicates whether the response was allowed.
-     *
-     * @var bool
-     */
-    protected $allowed;
-
-    /**
-     * The response message.
-     *
-     * @var string|null
-     */
-    protected $message;
-
-    /**
-     * The response code.
-     *
-     * @var mixed
-     */
-    protected $code;
-
-    /**
      * The HTTP response status code.
      *
      * @var int|null
@@ -42,11 +21,21 @@ class Response implements Arrayable, Stringable
      * @param  string|null  $message
      * @param  mixed  $code
      */
-    public function __construct($allowed, $message = '', $code = null)
+    public function __construct(
+        /**
+         * Indicates whether the response was allowed.
+         */
+        protected $allowed,
+        /**
+         * The response message.
+         */
+        protected $message = '',
+        /**
+         * The response code.
+         */
+        protected $code = null
+    )
     {
-        $this->code = $code;
-        $this->allowed = $allowed;
-        $this->message = $message;
     }
 
     /**
@@ -54,9 +43,8 @@ class Response implements Arrayable, Stringable
      *
      * @param  string|null  $message
      * @param  mixed  $code
-     * @return \Illuminate\Auth\Access\Response
      */
-    public static function allow($message = null, $code = null)
+    public static function allow($message = null, $code = null): static
     {
         return new static(true, $message, $code);
     }
@@ -66,9 +54,8 @@ class Response implements Arrayable, Stringable
      *
      * @param  string|null  $message
      * @param  mixed  $code
-     * @return \Illuminate\Auth\Access\Response
      */
-    public static function deny($message = null, $code = null)
+    public static function deny($message = null, $code = null): static
     {
         return new static(false, $message, $code);
     }
@@ -110,10 +97,8 @@ class Response implements Arrayable, Stringable
 
     /**
      * Determine if the response was denied.
-     *
-     * @return bool
      */
-    public function denied()
+    public function denied(): bool
     {
         return ! $this->allowed();
     }
@@ -141,11 +126,10 @@ class Response implements Arrayable, Stringable
     /**
      * Throw authorization exception if response was denied.
      *
-     * @return \Illuminate\Auth\Access\Response
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function authorize()
+    public function authorize(): static
     {
         if ($this->denied()) {
             throw (new AuthorizationException($this->message(), $this->code()))
@@ -162,7 +146,7 @@ class Response implements Arrayable, Stringable
      * @param  null|int  $status
      * @return $this
      */
-    public function withStatus($status)
+    public function withStatus($status): static
     {
         $this->status = $status;
 
@@ -191,10 +175,8 @@ class Response implements Arrayable, Stringable
 
     /**
      * Convert the response to an array.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'allowed' => $this->allowed(),
@@ -205,10 +187,8 @@ class Response implements Arrayable, Stringable
 
     /**
      * Get the string representation of the message.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->message();
     }

@@ -22,7 +22,6 @@ class SqlServerConnector extends Connector implements ConnectorInterface
     /**
      * Establish a database connection.
      *
-     * @param  array  $config
      * @return \PDO
      */
     public function connect(array $config)
@@ -42,7 +41,6 @@ class SqlServerConnector extends Connector implements ConnectorInterface
      * https://learn.microsoft.com/en-us/sql/t-sql/statements/set-transaction-isolation-level-transact-sql
      *
      * @param  \PDO  $connection
-     * @param  array  $config
      * @return void
      */
     protected function configureIsolationLevel($connection, array $config)
@@ -59,7 +57,6 @@ class SqlServerConnector extends Connector implements ConnectorInterface
     /**
      * Create a DSN string from a configuration.
      *
-     * @param  array  $config
      * @return string
      */
     protected function getDsn(array $config)
@@ -73,18 +70,14 @@ class SqlServerConnector extends Connector implements ConnectorInterface
 
         if (in_array('sqlsrv', $this->getAvailableDrivers())) {
             return $this->getSqlSrvDsn($config);
-        } else {
-            return $this->getDblibDsn($config);
         }
+        return $this->getDblibDsn($config);
     }
 
     /**
      * Determine if the database configuration prefers ODBC.
-     *
-     * @param  array  $config
-     * @return bool
      */
-    protected function prefersOdbc(array $config)
+    protected function prefersOdbc(array $config): bool
     {
         return in_array('odbc', $this->getAvailableDrivers()) &&
                ($config['odbc'] ?? null) === true;
@@ -93,7 +86,6 @@ class SqlServerConnector extends Connector implements ConnectorInterface
     /**
      * Get the DSN string for a DbLib connection.
      *
-     * @param  array  $config
      * @return string
      */
     protected function getDblibDsn(array $config)
@@ -106,11 +98,8 @@ class SqlServerConnector extends Connector implements ConnectorInterface
 
     /**
      * Get the DSN string for an ODBC connection.
-     *
-     * @param  array  $config
-     * @return string
      */
-    protected function getOdbcDsn(array $config)
+    protected function getOdbcDsn(array $config): string
     {
         return isset($config['odbc_datasource_name'])
             ? 'odbc:'.$config['odbc_datasource_name']
@@ -120,7 +109,6 @@ class SqlServerConnector extends Connector implements ConnectorInterface
     /**
      * Get the DSN string for a SqlSrv connection.
      *
-     * @param  array  $config
      * @return string
      */
     protected function getSqlSrvDsn(array $config)
@@ -194,26 +182,18 @@ class SqlServerConnector extends Connector implements ConnectorInterface
 
     /**
      * Build a connection string from the given arguments.
-     *
-     * @param  string  $driver
-     * @param  array  $arguments
-     * @return string
      */
-    protected function buildConnectString($driver, array $arguments)
+    protected function buildConnectString(string $driver, array $arguments): string
     {
-        return $driver.':'.implode(';', array_map(function ($key) use ($arguments) {
-            return sprintf('%s=%s', $key, $arguments[$key]);
-        }, array_keys($arguments)));
+        return $driver.':'.implode(';', array_map(fn(int|string $key) => sprintf('%s=%s', $key, $arguments[$key]), array_keys($arguments)));
     }
 
     /**
      * Build a host string from the given configuration.
      *
-     * @param  array  $config
-     * @param  string  $separator
      * @return string
      */
-    protected function buildHostString(array $config, $separator)
+    protected function buildHostString(array $config, string $separator)
     {
         if (empty($config['port'])) {
             return $config['host'];
@@ -224,10 +204,8 @@ class SqlServerConnector extends Connector implements ConnectorInterface
 
     /**
      * Get the available PDO drivers.
-     *
-     * @return array
      */
-    protected function getAvailableDrivers()
+    protected function getAvailableDrivers(): array
     {
         return PDO::getAvailableDrivers();
     }

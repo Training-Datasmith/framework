@@ -14,27 +14,6 @@ class CallQueuedListener implements ShouldQueue
     use InteractsWithQueue, Queueable;
 
     /**
-     * The listener class name.
-     *
-     * @var class-string
-     */
-    public $class;
-
-    /**
-     * The listener method.
-     *
-     * @var string
-     */
-    public $method;
-
-    /**
-     * The data to be passed to the listener.
-     *
-     * @var array
-     */
-    public $data;
-
-    /**
      * The number of times the job may be attempted.
      *
      * @var int
@@ -110,20 +89,27 @@ class CallQueuedListener implements ShouldQueue
      * @param  string  $method
      * @param  array  $data
      */
-    public function __construct($class, $method, $data)
+    public function __construct(
+        /**
+         * The listener class name.
+         */
+        public $class,
+        /**
+         * The listener method.
+         */
+        public $method,
+        /**
+         * The data to be passed to the listener.
+         */
+        public $data
+    )
     {
-        $this->data = $data;
-        $this->class = $class;
-        $this->method = $method;
     }
 
     /**
      * Handle the queued job.
-     *
-     * @param  \Illuminate\Container\Container  $container
-     * @return void
      */
-    public function handle(Container $container)
+    public function handle(Container $container): void
     {
         $this->prepareData();
 
@@ -185,7 +171,6 @@ class CallQueuedListener implements ShouldQueue
     /**
      * Set the job instance of the given class if necessary.
      *
-     * @param  \Illuminate\Contracts\Queue\Job  $job
      * @param  object  $instance
      * @return object
      */
@@ -204,9 +189,8 @@ class CallQueuedListener implements ShouldQueue
      * The event instance and the exception will be passed.
      *
      * @param  \Throwable  $e
-     * @return void
      */
-    public function failed($e)
+    public function failed($e): void
     {
         $this->prepareData();
 
@@ -243,13 +227,9 @@ class CallQueuedListener implements ShouldQueue
 
     /**
      * Prepare the instance for cloning.
-     *
-     * @return void
      */
     public function __clone()
     {
-        $this->data = array_map(function ($data) {
-            return is_object($data) ? clone $data : $data;
-        }, $this->data);
+        $this->data = array_map(fn($data) => is_object($data) ? clone $data : $data, $this->data);
     }
 }

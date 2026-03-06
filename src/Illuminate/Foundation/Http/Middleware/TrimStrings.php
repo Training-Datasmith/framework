@@ -37,7 +37,6 @@ class TrimStrings extends TransformsRequest
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -85,9 +84,8 @@ class TrimStrings extends TransformsRequest
      * Indicate that the given attributes should never be trimmed.
      *
      * @param  array|string  $attributes
-     * @return void
      */
-    public static function except($attributes)
+    public static function except($attributes): void
     {
         static::$neverTrim = array_values(array_unique(
             array_merge(static::$neverTrim, Arr::wrap($attributes))
@@ -96,21 +94,16 @@ class TrimStrings extends TransformsRequest
 
     /**
      * Register a callback that instructs the middleware to be skipped.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
-    public static function skipWhen(Closure $callback)
+    public static function skipWhen(Closure $callback): void
     {
         static::$skipCallbacks[] = $callback;
     }
 
     /**
      * Flush the middleware's global state.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$neverTrim = [];
 

@@ -9,7 +9,6 @@ class Processor
     /**
      * Process the results of a "select" query.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $results
      * @return array
      */
@@ -21,7 +20,6 @@ class Processor
     /**
      * Process an  "insert get ID" query.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  string  $sql
      * @param  array  $values
      * @param  string|null  $sequence
@@ -42,9 +40,9 @@ class Processor
      * @param  list<array<string, mixed>>  $results
      * @return list<array{name: string, path: string|null, default: bool}>
      */
-    public function processSchemas($results)
+    public function processSchemas($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
@@ -61,9 +59,9 @@ class Processor
      * @param  list<array<string, mixed>>  $results
      * @return list<array{name: string, schema: string|null, schema_qualified_name: string, size: int|null, comment: string|null, collation: string|null, engine: string|null}>
      */
-    public function processTables($results)
+    public function processTables($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [
@@ -84,9 +82,9 @@ class Processor
      * @param  list<array<string, mixed>>  $results
      * @return list<array{name: string, schema: string, schema_qualified_name: string, definition: string}>
      */
-    public function processViews($results)
+    public function processViews($results): array
     {
-        return array_map(function ($result) {
+        return array_map(function (array $result): array {
             $result = (object) $result;
 
             return [

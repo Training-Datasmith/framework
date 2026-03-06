@@ -15,10 +15,9 @@ class AnonymousResourceCollection extends \Illuminate\Http\Resources\Json\Anonym
      * Get any additional data that should be returned with the resource array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
     #[\Override]
-    public function with($request)
+    public function with($request): array
     {
         return array_filter([
             'included' => $this->collection
@@ -37,7 +36,6 @@ class AnonymousResourceCollection extends \Illuminate\Http\Resources\Json\Anonym
     /**
      * Transform the resource into a JSON array.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     #[\Override]
@@ -50,10 +48,6 @@ class AnonymousResourceCollection extends \Illuminate\Http\Resources\Json\Anonym
 
     /**
      * Customize the outgoing response for the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Http\JsonResponse  $response
-     * @return void
      */
     #[\Override]
     public function withResponse(Request $request, JsonResponse $response): void

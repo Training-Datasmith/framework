@@ -12,30 +12,24 @@ class HashManager extends Manager implements Hasher
 {
     /**
      * Create an instance of the Bcrypt hash Driver.
-     *
-     * @return \Illuminate\Hashing\BcryptHasher
      */
-    public function createBcryptDriver()
+    public function createBcryptDriver(): \Illuminate\Hashing\BcryptHasher
     {
         return new BcryptHasher($this->config->get('hashing.bcrypt') ?? []);
     }
 
     /**
      * Create an instance of the Argon2i hash Driver.
-     *
-     * @return \Illuminate\Hashing\ArgonHasher
      */
-    public function createArgonDriver()
+    public function createArgonDriver(): \Illuminate\Hashing\ArgonHasher
     {
         return new ArgonHasher($this->config->get('hashing.argon') ?? []);
     }
 
     /**
      * Create an instance of the Argon2id hash Driver.
-     *
-     * @return \Illuminate\Hashing\Argon2IdHasher
      */
-    public function createArgon2idDriver()
+    public function createArgon2idDriver(): \Illuminate\Hashing\Argon2IdHasher
     {
         return new Argon2IdHasher($this->config->get('hashing.argon') ?? []);
     }
@@ -55,7 +49,6 @@ class HashManager extends Manager implements Hasher
      * Hash the given value.
      *
      * @param  string  $value
-     * @param  array  $options
      * @return string
      */
     public function make(#[\SensitiveParameter] $value, array $options = [])
@@ -68,7 +61,6 @@ class HashManager extends Manager implements Hasher
      *
      * @param  string  $value
      * @param  string  $hashedValue
-     * @param  array  $options
      * @return bool
      */
     public function check(#[\SensitiveParameter] $value, $hashedValue, array $options = [])
@@ -80,7 +72,6 @@ class HashManager extends Manager implements Hasher
      * Check if the given hash has been hashed using the given options.
      *
      * @param  string  $hashedValue
-     * @param  array  $options
      * @return bool
      */
     public function needsRehash($hashedValue, array $options = [])
@@ -92,9 +83,8 @@ class HashManager extends Manager implements Hasher
      * Determine if a given string is already hashed.
      *
      * @param  string  $value
-     * @return bool
      */
-    public function isHashed(#[\SensitiveParameter] $value)
+    public function isHashed(#[\SensitiveParameter] $value): bool
     {
         return $this->driver()->info($value)['algo'] !== null;
     }

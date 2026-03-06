@@ -10,38 +10,27 @@ use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
 class Relationship
 {
     /**
-     * The related factory instance.
-     *
-     * @var \Illuminate\Database\Eloquent\Factories\Factory
-     */
-    protected $factory;
-
-    /**
-     * The relationship name.
-     *
-     * @var string
-     */
-    protected $relationship;
-
-    /**
      * Create a new child relationship instance.
      *
-     * @param  \Illuminate\Database\Eloquent\Factories\Factory  $factory
      * @param  string  $relationship
      */
-    public function __construct(Factory $factory, $relationship)
+    public function __construct(
+        /**
+         * The related factory instance.
+         */
+        protected \Illuminate\Database\Eloquent\Factories\Factory $factory,
+        /**
+         * The relationship name.
+         */
+        protected $relationship
+    )
     {
-        $this->factory = $factory;
-        $this->relationship = $relationship;
     }
 
     /**
      * Create the child relationship for the given parent model.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @return void
      */
-    public function createFor(Model $parent)
+    public function createFor(Model $parent): void
     {
         $relationship = $parent->{$this->relationship}();
 
@@ -67,7 +56,7 @@ class Relationship
      * @param  \Illuminate\Support\Collection  $recycle
      * @return $this
      */
-    public function recycle($recycle)
+    public function recycle($recycle): static
     {
         $this->factory = $this->factory->recycle($recycle);
 

@@ -22,18 +22,11 @@ use function Laravel\Prompts\select;
 class VendorPublishCommand extends Command
 {
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * The provider to publish.
      *
      * @var string|null
      */
-    protected $provider = null;
+    protected $provider;
 
     /**
      * The tags to publish.
@@ -77,22 +70,19 @@ class VendorPublishCommand extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      */
-    public function __construct(Filesystem $files)
+    public function __construct(/**
+     * The filesystem instance.
+     */
+    protected \Illuminate\Filesystem\Filesystem $files)
     {
         parent::__construct();
-
-        $this->files = $files;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->publishedAt = now();
 
@@ -141,9 +131,9 @@ class VendorPublishCommand extends Command
             : search(
                 label: "Which provider or tag's files would you like to publish?",
                 placeholder: 'Search...',
-                options: fn ($search) => array_values(array_filter(
+                options: fn ($search): array => array_values(array_filter(
                     $choices,
-                    fn ($choice) => str_contains(strtolower($choice), strtolower($search))
+                    fn ($choice): bool => str_contains(strtolower((string) $choice), strtolower((string) $search))
                 )),
                 scroll: 15,
             );
@@ -157,10 +147,8 @@ class VendorPublishCommand extends Command
 
     /**
      * The choices available via the prompt.
-     *
-     * @return array
      */
-    protected function publishableChoices()
+    protected function publishableChoices(): array
     {
         return array_merge(
             ['All providers and tags'],
@@ -189,10 +177,9 @@ class VendorPublishCommand extends Command
     /**
      * Publishes the assets for a tag.
      *
-     * @param  string  $tag
      * @return void
      */
-    protected function publishTag($tag)
+    protected function publishTag(string $tag)
     {
         $pathsToPublish = $this->pathsToPublish($tag);
 
@@ -240,7 +227,8 @@ class VendorPublishCommand extends Command
     {
         if ($this->files->isFile($from)) {
             return $this->publishFile($from, $to);
-        } elseif ($this->files->isDirectory($from)) {
+        }
+        if ($this->files->isDirectory($from)) {
             return $this->publishDirectory($from, $to);
         }
 
@@ -375,10 +363,9 @@ class VendorPublishCommand extends Command
      *
      * @param  string  $from
      * @param  string  $to
-     * @param  string  $type
      * @return void
      */
-    protected function status($from, $to, $type)
+    protected function status($from, $to, string $type)
     {
         $from = str_replace(base_path().'/', '', realpath($from));
 
@@ -394,10 +381,8 @@ class VendorPublishCommand extends Command
 
     /**
      * Instruct the command to not update the dates on migrations when publishing.
-     *
-     * @return void
      */
-    public static function dontUpdateMigrationDates()
+    public static function dontUpdateMigrationDates(): void
     {
         static::$updateMigrationDates = false;
     }

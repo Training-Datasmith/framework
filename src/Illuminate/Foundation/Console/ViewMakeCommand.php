@@ -41,11 +41,10 @@ class ViewMakeCommand extends GeneratorCommand
      * Build the class with the given name.
      *
      * @param  string  $name
-     * @return string
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function buildClass($name)
+    protected function buildClass($name): string
     {
         $contents = parent::buildClass($name);
 
@@ -71,16 +70,12 @@ class ViewMakeCommand extends GeneratorCommand
 
     /**
      * Get the desired view name from the input.
-     *
-     * @return string
      */
-    protected function getNameInput()
+    protected function getNameInput(): string
     {
         $name = trim($this->argument('name'));
 
-        $name = str_replace(['\\', '.'], '/', $name);
-
-        return $name;
+        return str_replace(['\\', '.'], '/', $name);
     }
 
     /**
@@ -98,10 +93,9 @@ class ViewMakeCommand extends GeneratorCommand
     /**
      * Resolve the fully-qualified path to the stub.
      *
-     * @param  string  $stub
      * @return string
      */
-    protected function resolveStubPath($stub)
+    protected function resolveStubPath(string $stub)
     {
         return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
@@ -110,10 +104,8 @@ class ViewMakeCommand extends GeneratorCommand
 
     /**
      * Get the destination test case path.
-     *
-     * @return string
      */
-    protected function getTestPath()
+    protected function getTestPath(): string
     {
         return base_path(
             Str::of($this->testClassFullyQualifiedName())
@@ -177,10 +169,8 @@ class ViewMakeCommand extends GeneratorCommand
 
     /**
      * Get the class fully-qualified name for the test.
-     *
-     * @return string
      */
-    protected function testClassFullyQualifiedName()
+    protected function testClassFullyQualifiedName(): string
     {
         $name = Str::of(Str::lower($this->getNameInput()))->replace('.'.$this->option('extension'), '');
 
@@ -236,18 +226,17 @@ class ViewMakeCommand extends GeneratorCommand
         if ($this->option('phpunit')) {
             return false;
         }
-
-        return $this->option('pest') ||
-            (function_exists('\Pest\\version') &&
-             file_exists(base_path('tests').'/Pest.php'));
+        if ($this->option('pest')) {
+            return true;
+        }
+        return function_exists('\Pest\\version') &&
+         file_exists(base_path('tests').'/Pest.php');
     }
 
     /**
      * Get the console command arguments.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['extension', null, InputOption::VALUE_OPTIONAL, 'The extension of the generated view', 'blade.php'],

@@ -9,9 +9,8 @@ trait CreatesPotentiallyTranslatedStrings
      *
      * @param  string  $attribute
      * @param  string|null  $message
-     * @return \Illuminate\Translation\PotentiallyTranslatedString
      */
-    protected function pendingPotentiallyTranslatedString($attribute, $message)
+    protected function pendingPotentiallyTranslatedString($attribute, $message): \Illuminate\Translation\PotentiallyTranslatedString
     {
         $destructor = $message === null
             ? fn ($message) => $this->messages[] = $message
@@ -20,30 +19,22 @@ trait CreatesPotentiallyTranslatedStrings
         return new class($message ?? $attribute, $this->validator->getTranslator(), $destructor) extends PotentiallyTranslatedString
         {
             /**
-             * The callback to call when the object destructs.
-             *
-             * @var \Closure
-             */
-            protected $destructor;
-
-            /**
              * Create a new pending potentially translated string.
              *
              * @param  string  $message
              * @param  \Illuminate\Contracts\Translation\Translator  $translator
              * @param  \Closure  $destructor
              */
-            public function __construct($message, $translator, $destructor)
+            public function __construct($message, $translator, /**
+             * The callback to call when the object destructs.
+             */
+            protected $destructor)
             {
                 parent::__construct($message, $translator);
-
-                $this->destructor = $destructor;
             }
 
             /**
              * Handle the object's destruction.
-             *
-             * @return void
              */
             public function __destruct()
             {

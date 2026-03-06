@@ -11,9 +11,8 @@ class Info extends Component
      *
      * @param  string  $string
      * @param  int  $verbosity
-     * @return void
      */
-    public function render($string, $verbosity = OutputInterface::VERBOSITY_NORMAL)
+    public function render($string, $verbosity = OutputInterface::VERBOSITY_NORMAL): void
     {
         (new Line($this->output))->render('info', $string, $verbosity);
     }

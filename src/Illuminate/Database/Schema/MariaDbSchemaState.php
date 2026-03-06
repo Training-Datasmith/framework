@@ -8,9 +8,8 @@ class MariaDbSchemaState extends MySqlSchemaState
      * Load the given schema file into the database.
      *
      * @param  string  $path
-     * @return void
      */
-    public function load($path)
+    public function load($path): void
     {
         $versionInfo = $this->detectClientVersion();
 
@@ -25,10 +24,8 @@ class MariaDbSchemaState extends MySqlSchemaState
 
     /**
      * Get the base dump command arguments for MariaDB as a string.
-     *
-     * @return string
      */
-    protected function baseDumpCommand()
+    protected function baseDumpCommand(): string
     {
         $versionInfo = $this->detectClientVersion();
 

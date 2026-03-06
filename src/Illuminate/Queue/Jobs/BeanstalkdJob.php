@@ -10,34 +10,23 @@ use Pheanstalk\Pheanstalk;
 class BeanstalkdJob extends Job implements JobContract
 {
     /**
-     * The Pheanstalk instance.
-     *
-     * @var \Pheanstalk\Contract\PheanstalkManagerInterface&\Pheanstalk\Contract\PheanstalkPublisherInterface&\Pheanstalk\Contract\PheanstalkSubscriberInterface
-     */
-    protected $pheanstalk;
-
-    /**
-     * The Pheanstalk job instance.
-     *
-     * @var \Pheanstalk\Job
-     */
-    protected $job;
-
-    /**
      * Create a new job instance.
      *
-     * @param  \Illuminate\Container\Container  $container
      * @param  \Pheanstalk\Contract\PheanstalkManagerInterface&\Pheanstalk\Contract\PheanstalkPublisherInterface&\Pheanstalk\Contract\PheanstalkSubscriberInterface  $pheanstalk
      * @param  \Pheanstalk\Contract\JobIdInterface  $job
      * @param  string  $connectionName
      * @param  string  $queue
      */
-    public function __construct(Container $container, $pheanstalk, JobIdInterface $job, $connectionName, $queue)
+    public function __construct(Container $container, /**
+     * The Pheanstalk instance.
+     */
+    protected $pheanstalk, /**
+     * The Pheanstalk job instance.
+     */
+    protected \Pheanstalk\Contract\JobIdInterface $job, $connectionName, $queue)
     {
-        $this->job = $job;
         $this->queue = $queue;
         $this->container = $container;
-        $this->pheanstalk = $pheanstalk;
         $this->connectionName = $connectionName;
     }
 
@@ -45,9 +34,8 @@ class BeanstalkdJob extends Job implements JobContract
      * Release the job back into the queue after (n) seconds.
      *
      * @param  int  $delay
-     * @return void
      */
-    public function release($delay = 0)
+    public function release($delay = 0): void
     {
         parent::release($delay);
 
@@ -58,10 +46,8 @@ class BeanstalkdJob extends Job implements JobContract
 
     /**
      * Bury the job in the queue.
-     *
-     * @return void
      */
-    public function bury()
+    public function bury(): void
     {
         parent::release();
 
@@ -70,10 +56,8 @@ class BeanstalkdJob extends Job implements JobContract
 
     /**
      * Delete the job from the queue.
-     *
-     * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         parent::delete();
 
@@ -82,10 +66,8 @@ class BeanstalkdJob extends Job implements JobContract
 
     /**
      * Get the number of times the job has been attempted.
-     *
-     * @return int
      */
-    public function attempts()
+    public function attempts(): int
     {
         $stats = $this->pheanstalk->statsJob($this->job);
 

@@ -14,13 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 class EncryptCookies
 {
     /**
-     * The encrypter instance.
-     *
-     * @var \Illuminate\Contracts\Encryption\Encrypter
-     */
-    protected $encrypter;
-
-    /**
      * The names of the cookies that should not be encrypted.
      *
      * @var array<int, string>
@@ -43,21 +36,22 @@ class EncryptCookies
 
     /**
      * Create a new CookieGuard instance.
-     *
-     * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      */
-    public function __construct(EncrypterContract $encrypter)
+    public function __construct(
+        /**
+         * The encrypter instance.
+         */
+        protected \Illuminate\Contracts\Encryption\Encrypter $encrypter
+    )
     {
-        $this->encrypter = $encrypter;
     }
 
     /**
      * Disable encryption for the given cookie name(s).
      *
      * @param  string|array  $name
-     * @return void
      */
-    public function disableFor($name)
+    public function disableFor($name): void
     {
         $this->except = array_merge($this->except, (array) $name);
     }
@@ -66,21 +60,17 @@ class EncryptCookies
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle($request, Closure $next)
+    public function handle(\Symfony\Component\HttpFoundation\Request $request, Closure $next)
     {
         return $this->encrypt($next($this->decrypt($request)));
     }
 
     /**
      * Decrypt the cookies on the request.
-     *
-     * @param  \Symfony\Component\HttpFoundation\Request  $request
-     * @return \Symfony\Component\HttpFoundation\Request
      */
-    protected function decrypt(Request $request)
+    protected function decrypt(Request $request): Request
     {
         foreach ($request->cookies as $key => $cookie) {
             if ($this->isDisabled($key)) {
@@ -102,10 +92,8 @@ class EncryptCookies
     /**
      * Validate and remove the cookie value prefix from the value.
      *
-     * @param  string  $key
      * @param  array<string, string>|string  $value
      * @return array|string|null
-     *
      * @phpstan-return ($value is array ? array<string|null> : string|null)
      */
     protected function validateValue(string $key, $value)
@@ -117,12 +105,8 @@ class EncryptCookies
 
     /**
      * Validate and remove the cookie value prefix from all values of an array.
-     *
-     * @param  string  $key
-     * @param  array  $value
-     * @return array
      */
-    protected function validateArray(string $key, array $value)
+    protected function validateArray(string $key, array $value): array
     {
         $validated = [];
 
@@ -149,11 +133,8 @@ class EncryptCookies
 
     /**
      * Decrypt an array based cookie.
-     *
-     * @param  array  $cookie
-     * @return array
      */
-    protected function decryptArray(array $cookie)
+    protected function decryptArray(array $cookie): array
     {
         $decrypted = [];
 
@@ -172,11 +153,8 @@ class EncryptCookies
 
     /**
      * Encrypt the cookies on an outgoing response.
-     *
-     * @param  \Symfony\Component\HttpFoundation\Response  $response
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function encrypt(Response $response)
+    protected function encrypt(Response $response): Response
     {
         foreach ($response->headers->getCookies() as $cookie) {
             if ($this->isDisabled($cookie->getName())) {
@@ -198,7 +176,6 @@ class EncryptCookies
     /**
      * Duplicate a cookie with a new value.
      *
-     * @param  \Symfony\Component\HttpFoundation\Cookie  $cookie
      * @param  mixed  $value
      * @return \Symfony\Component\HttpFoundation\Cookie
      */
@@ -211,9 +188,8 @@ class EncryptCookies
      * Determine whether encryption has been disabled for the given cookie.
      *
      * @param  string  $name
-     * @return bool
      */
-    public function isDisabled($name)
+    public function isDisabled($name): bool
     {
         return in_array($name, array_merge($this->except, static::$neverEncrypt));
     }
@@ -222,9 +198,8 @@ class EncryptCookies
      * Indicate that the given cookies should never be encrypted.
      *
      * @param  array|string  $cookies
-     * @return void
      */
-    public static function except($cookies)
+    public static function except($cookies): void
     {
         static::$neverEncrypt = array_values(array_unique(
             array_merge(static::$neverEncrypt, Arr::wrap($cookies))
@@ -244,10 +219,8 @@ class EncryptCookies
 
     /**
      * Flush the middleware's global state.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$neverEncrypt = [];
 

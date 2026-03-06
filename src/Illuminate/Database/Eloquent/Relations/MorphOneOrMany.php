@@ -16,13 +16,6 @@ use Illuminate\Support\Str;
 abstract class MorphOneOrMany extends HasOneOrMany
 {
     /**
-     * The foreign key type for the relationship.
-     *
-     * @var string
-     */
-    protected $morphType;
-
-    /**
      * The class name of the parent model.
      *
      * @var class-string<TRelatedModel>
@@ -34,14 +27,15 @@ abstract class MorphOneOrMany extends HasOneOrMany
      *
      * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
      * @param  TDeclaringModel  $parent
-     * @param  string  $type
+     * @param string $morphType
      * @param  string  $id
      * @param  string  $localKey
      */
-    public function __construct(Builder $query, Model $parent, $type, $id, $localKey)
+    public function __construct(Builder $query, Model $parent, /**
+     * The foreign key type for the relationship.
+     */
+    protected $morphType, $id, $localKey)
     {
-        $this->morphType = $type;
-
         $this->morphClass = $parent->getMorphClass();
 
         parent::__construct($query, $parent, $id, $localKey);
@@ -49,10 +43,8 @@ abstract class MorphOneOrMany extends HasOneOrMany
 
     /**
      * Set the base constraints on the relation query.
-     *
-     * @return void
      */
-    public function addConstraints()
+    public function addConstraints(): void
     {
         if (static::$constraints) {
             $this->getRelationQuery()->where($this->morphType, $this->morphClass);
@@ -62,7 +54,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
     }
 
     /** @inheritDoc */
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models): void
     {
         parent::addEagerConstraints($models);
 
@@ -72,7 +64,6 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Create a new instance of the related model. Allow mass-assignment.
      *
-     * @param  array  $attributes
      * @return TRelatedModel
      */
     public function forceCreate(array $attributes = [])
@@ -109,7 +100,6 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Insert new records or update the existing ones.
      *
-     * @param  array  $values
      * @param  array|string  $uniqueBy
      * @param  array|null  $update
      * @return int

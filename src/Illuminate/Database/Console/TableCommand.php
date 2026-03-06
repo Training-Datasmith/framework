@@ -33,10 +33,8 @@ class TableCommand extends DatabaseInspectionCommand
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle(ConnectionResolverInterface $connections)
+    public function handle(ConnectionResolverInterface $connections): int
     {
         $connection = $connections->connection($this->input->getOption('database'));
         $tables = (new Collection($connection->getSchemaBuilder()->getTables()))
@@ -47,7 +45,7 @@ class TableCommand extends DatabaseInspectionCommand
         $tableName = $this->argument('table') ?: search(
             'Which table would you like to inspect?',
             fn (string $query) => $tableNames
-                ->filter(fn ($table) => str_contains(strtolower($table), strtolower($query)))
+                ->filter(fn ($table): bool => str_contains(strtolower((string) $table), strtolower($query)))
                 ->values()
                 ->all()
         );
@@ -56,7 +54,7 @@ class TableCommand extends DatabaseInspectionCommand
             Arr::wrap($connection->getSchemaBuilder()->getCurrentSchemaListing()
                 ?? $connection->getSchemaBuilder()->getCurrentSchemaName()),
             fn (Collection $collection, array $currentSchemas) => $collection->sortBy(
-                function (array $table) use ($currentSchemas) {
+                function (array $table) use ($currentSchemas): int|string {
                     $index = array_search($table['schema'], $currentSchemas);
 
                     return $index === false ? PHP_INT_MAX : $index;
@@ -70,7 +68,7 @@ class TableCommand extends DatabaseInspectionCommand
             return 1;
         }
 
-        [$columns, $indexes, $foreignKeys] = $connection->withoutTablePrefix(function ($connection) use ($table) {
+        [$columns, $indexes, $foreignKeys] = $connection->withoutTablePrefix(function ($connection) use ($table): array {
             $schema = $connection->getSchemaBuilder();
             $tableName = $table['schema_qualified_name'];
 
@@ -104,14 +102,10 @@ class TableCommand extends DatabaseInspectionCommand
 
     /**
      * Get the information regarding the table's columns.
-     *
-     * @param  \Illuminate\Database\Schema\Builder  $schema
-     * @param  string  $table
-     * @return \Illuminate\Support\Collection
      */
-    protected function columns(Builder $schema, string $table)
+    protected function columns(Builder $schema, string $table): \Illuminate\Support\Collection
     {
-        return (new Collection($schema->getColumns($table)))->map(fn ($column) => [
+        return (new Collection($schema->getColumns($table)))->map(fn ($column): array => [
             'column' => $column['name'],
             'attributes' => $this->getAttributesForColumn($column),
             'default' => $column['default'],
@@ -121,11 +115,8 @@ class TableCommand extends DatabaseInspectionCommand
 
     /**
      * Get the attributes for a table column.
-     *
-     * @param  array  $column
-     * @return \Illuminate\Support\Collection
      */
-    protected function getAttributesForColumn($column)
+    protected function getAttributesForColumn(array $column): \Illuminate\Support\Collection
     {
         return (new Collection([
             $column['type_name'],
@@ -138,14 +129,10 @@ class TableCommand extends DatabaseInspectionCommand
 
     /**
      * Get the information regarding the table's indexes.
-     *
-     * @param  \Illuminate\Database\Schema\Builder  $schema
-     * @param  string  $table
-     * @return \Illuminate\Support\Collection
      */
-    protected function indexes(Builder $schema, string $table)
+    protected function indexes(Builder $schema, string $table): \Illuminate\Support\Collection
     {
-        return (new Collection($schema->getIndexes($table)))->map(fn ($index) => [
+        return (new Collection($schema->getIndexes($table)))->map(fn ($index): array => [
             'name' => $index['name'],
             'columns' => new Collection($index['columns']),
             'attributes' => $this->getAttributesForIndex($index),
@@ -154,11 +141,8 @@ class TableCommand extends DatabaseInspectionCommand
 
     /**
      * Get the attributes for a table index.
-     *
-     * @param  array  $index
-     * @return \Illuminate\Support\Collection
      */
-    protected function getAttributesForIndex($index)
+    protected function getAttributesForIndex(array $index): \Illuminate\Support\Collection
     {
         return (new Collection([
             $index['type'],
@@ -170,14 +154,10 @@ class TableCommand extends DatabaseInspectionCommand
 
     /**
      * Get the information regarding the table's foreign keys.
-     *
-     * @param  \Illuminate\Database\Schema\Builder  $schema
-     * @param  string  $table
-     * @return \Illuminate\Support\Collection
      */
-    protected function foreignKeys(Builder $schema, string $table)
+    protected function foreignKeys(Builder $schema, string $table): \Illuminate\Support\Collection
     {
-        return (new Collection($schema->getForeignKeys($table)))->map(fn ($foreignKey) => [
+        return (new Collection($schema->getForeignKeys($table)))->map(fn ($foreignKey): array => [
             'name' => $foreignKey['name'],
             'columns' => new Collection($foreignKey['columns']),
             'foreign_schema' => $foreignKey['foreign_schema'],
@@ -191,7 +171,6 @@ class TableCommand extends DatabaseInspectionCommand
     /**
      * Render the table information.
      *
-     * @param  array  $data
      * @return void
      */
     protected function display(array $data)
@@ -202,7 +181,6 @@ class TableCommand extends DatabaseInspectionCommand
     /**
      * Render the table information as JSON.
      *
-     * @param  array  $data
      * @return void
      */
     protected function displayJson(array $data)
@@ -213,7 +191,6 @@ class TableCommand extends DatabaseInspectionCommand
     /**
      * Render the table information formatted for the CLI.
      *
-     * @param  array  $data
      * @return void
      */
     protected function displayForCli(array $data)
@@ -244,7 +221,7 @@ class TableCommand extends DatabaseInspectionCommand
         if ($columns->isNotEmpty()) {
             $this->components->twoColumnDetail('<fg=green;options=bold>Column</>', 'Type');
 
-            $columns->each(function ($column) {
+            $columns->each(function (array $column): void {
                 $this->components->twoColumnDetail(
                     $column['column'].' <fg=gray>'.$column['attributes']->implode(', ').'</>',
                     (! is_null($column['default']) ? '<fg=gray>'.$column['default'].'</> ' : '').$column['type']
@@ -257,7 +234,7 @@ class TableCommand extends DatabaseInspectionCommand
         if ($indexes->isNotEmpty()) {
             $this->components->twoColumnDetail('<fg=green;options=bold>Index</>');
 
-            $indexes->each(function ($index) {
+            $indexes->each(function (array $index): void {
                 $this->components->twoColumnDetail(
                     $index['name'].' <fg=gray>'.$index['columns']->implode(', ').'</>',
                     $index['attributes']->implode(', ')
@@ -270,7 +247,7 @@ class TableCommand extends DatabaseInspectionCommand
         if ($foreignKeys->isNotEmpty()) {
             $this->components->twoColumnDetail('<fg=green;options=bold>Foreign Key</>', 'On Update / On Delete');
 
-            $foreignKeys->each(function ($foreignKey) {
+            $foreignKeys->each(function (array $foreignKey): void {
                 $this->components->twoColumnDetail(
                     $foreignKey['name'].' <fg=gray;options=bold>'.$foreignKey['columns']->implode(', ').' references '.$foreignKey['foreign_columns']->implode(', ').' on '.$foreignKey['foreign_table'].'</>',
                     $foreignKey['on_update'].' / '.$foreignKey['on_delete'],

@@ -20,7 +20,7 @@ class FileFactory
             return $this->createWithContent($name, $kilobytes);
         }
 
-        return tap(new File($name, tmpfile()), function ($file) use ($kilobytes, $mimeType) {
+        return tap(new File($name, tmpfile()), function ($file) use ($kilobytes, $mimeType): void {
             $file->sizeToReport = $kilobytes * 1024;
             $file->mimeTypeToReport = $mimeType;
         });
@@ -39,7 +39,7 @@ class FileFactory
 
         fwrite($tmpfile, $content);
 
-        return tap(new File($name, $tmpfile), function ($file) use ($tmpfile) {
+        return tap(new File($name, $tmpfile), function ($file) use ($tmpfile): void {
             $file->sizeToReport = fstat($tmpfile)['size'];
         });
     }
@@ -50,11 +50,10 @@ class FileFactory
      * @param  string  $name
      * @param  int  $width
      * @param  int  $height
-     * @return \Illuminate\Http\Testing\File
      *
      * @throws \LogicException
      */
-    public function image($name, $width = 10, $height = 10)
+    public function image($name, $width = 10, $height = 10): \Illuminate\Http\Testing\File
     {
         return new File($name, $this->generateImage(
             $width, $height, pathinfo($name, PATHINFO_EXTENSION)
@@ -77,7 +76,7 @@ class FileFactory
             throw new LogicException('GD extension is not installed.');
         }
 
-        return tap(tmpfile(), function ($temp) use ($width, $height, $extension) {
+        return tap(tmpfile(), function ($temp) use ($width, $height, $extension): void {
             ob_start();
 
             $extension = in_array($extension, ['jpeg', 'png', 'gif', 'webp', 'wbmp', 'bmp'])

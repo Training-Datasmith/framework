@@ -11,20 +11,6 @@ use Illuminate\Support\Collection;
 class RouteUrlGenerator
 {
     /**
-     * The URL generator instance.
-     *
-     * @var \Illuminate\Routing\UrlGenerator
-     */
-    protected $url;
-
-    /**
-     * The request instance.
-     *
-     * @var \Illuminate\Http\Request
-     */
-    protected $request;
-
-    /**
      * The named parameter defaults.
      *
      * @var array
@@ -59,10 +45,17 @@ class RouteUrlGenerator
      * @param  \Illuminate\Routing\UrlGenerator  $url
      * @param  \Illuminate\Http\Request  $request
      */
-    public function __construct($url, $request)
+    public function __construct(
+        /**
+         * The URL generator instance.
+         */
+        protected $url,
+        /**
+         * The request instance.
+         */
+        protected $request
+    )
     {
-        $this->url = $url;
-        $this->request = $request;
     }
 
     /**
@@ -71,11 +64,10 @@ class RouteUrlGenerator
      * @param  \Illuminate\Routing\Route  $route
      * @param  array  $parameters
      * @param  bool  $absolute
-     * @return string
      *
      * @throws \Illuminate\Routing\Exceptions\UrlGenerationException
      */
-    public function to($route, $parameters = [], $absolute = false)
+    public function to($route, $parameters = [], $absolute = false): string
     {
         $parameters = $this->formatParameters($route, $parameters);
 
@@ -90,23 +82,23 @@ class RouteUrlGenerator
             $route
         ), $parameters);
 
-        if (preg_match_all('/{(.*?)}/', $uri, $matchedMissingParameters)) {
+        if (preg_match_all('/{(.*?)}/', (string) $uri, $matchedMissingParameters)) {
             throw UrlGenerationException::forMissingParameters($route, $matchedMissingParameters[1]);
         }
 
         // Once we have ensured that there are no missing parameters in the URI we will encode
         // the URI and prepare it for returning to the developer. If the URI is supposed to
         // be absolute, we will return it as-is. Otherwise we will remove the URL's root.
-        $uri = strtr(rawurlencode($uri), $this->dontEncode);
+        $uri = strtr(rawurlencode((string) $uri), $this->dontEncode);
 
         if (! $absolute) {
             $uri = preg_replace('#^(//|[^/?])+#', '', $uri);
 
             if ($base = $this->request->getBaseUrl()) {
-                $uri = preg_replace('#^'.$base.'#i', '', $uri);
+                $uri = preg_replace('#^'.$base.'#i', '', (string) $uri);
             }
 
-            return '/'.ltrim($uri, '/');
+            return '/'.ltrim((string) $uri, '/');
         }
 
         return $uri;
@@ -148,7 +140,8 @@ class RouteUrlGenerator
     {
         if ($route->httpOnly()) {
             return 'http://';
-        } elseif ($route->httpsOnly()) {
+        }
+        if ($route->httpsOnly()) {
             return 'https://';
         }
 
@@ -157,11 +150,8 @@ class RouteUrlGenerator
 
     /**
      * Add the port to the domain if necessary.
-     *
-     * @param  string  $domain
-     * @return string
      */
-    protected function addPortToDomain($domain)
+    protected function addPortToDomain(string $domain): string
     {
         $secure = $this->request->isSecure();
 
@@ -175,7 +165,6 @@ class RouteUrlGenerator
     /**
      * Format the array of route parameters.
      *
-     * @param  \Illuminate\Routing\Route  $route
      * @param  mixed  $parameters
      * @return array
      */
@@ -197,14 +186,12 @@ class RouteUrlGenerator
                 unset($parameters[$name]);
 
                 continue;
-            } else {
-                $bindingField = $route->bindingFieldFor($name);
-                $defaultParameterKey = $bindingField ? "$name:$bindingField" : $name;
-
-                if (! isset($this->defaultParameters[$defaultParameterKey]) && ! isset($optionalParameters[$name])) {
-                    // No named parameter or default value for a required parameter, try to match to positional parameter below...
-                    array_push($requiredRouteParametersWithoutDefaultsOrNamedParameters, $name);
-                }
+            }
+            $bindingField = $route->bindingFieldFor($name);
+            $defaultParameterKey = $bindingField ? "$name:$bindingField" : $name;
+            if (! isset($this->defaultParameters[$defaultParameterKey]) && ! isset($optionalParameters[$name])) {
+                // No named parameter or default value for a required parameter, try to match to positional parameter below...
+                array_push($requiredRouteParametersWithoutDefaultsOrNamedParameters, $name);
             }
 
             $namedParameters[$name] = '';
@@ -231,7 +218,7 @@ class RouteUrlGenerator
         }
 
         $offset = 0;
-        $emptyParameters = array_filter($namedParameters, static fn ($val) => $val === '');
+        $emptyParameters = array_filter($namedParameters, static fn ($val): bool => $val === '');
 
         if (count($requiredRouteParametersWithoutDefaultsOrNamedParameters) !== 0 &&
             count($parameters) !== count($emptyParameters)) {
@@ -271,10 +258,11 @@ class RouteUrlGenerator
         // Starting from the offset, match any passed parameters from left to right...
         for ($i = $offset; $i < count($namedParameters); $i++) {
             $key = array_keys($namedParameters)[$i];
-
             if ($namedParameters[$key] !== '') {
                 continue;
-            } elseif (! empty($parameters)) {
+            }
+
+            if (! empty($parameters)) {
                 $namedParameters[$key] = array_shift($parameters);
             }
         }
@@ -292,13 +280,11 @@ class RouteUrlGenerator
         // Any remaining values in $parameters are unnamed query string parameters...
         $parameters = array_merge($namedParameters, $namedQueryParameters, $parameters);
 
-        $parameters = Collection::wrap($parameters)->map(function ($value, $key) use ($route) {
-            return $value instanceof UrlRoutable && $route->bindingFieldFor($key)
-                    ? $value->{$route->bindingFieldFor($key)}
-                    : $value;
-        })->all();
+        $parameters = Collection::wrap($parameters)->map(fn($value, $key) => $value instanceof UrlRoutable && $route->bindingFieldFor($key)
+                ? $value->{$route->bindingFieldFor($key)}
+                : $value)->all();
 
-        array_walk_recursive($parameters, function (&$item) {
+        array_walk_recursive($parameters, function (&$item): void {
             if ($item instanceof BackedEnum) {
                 $item = $item->value;
             }
@@ -312,10 +298,9 @@ class RouteUrlGenerator
      *
      * @param  \Illuminate\Routing\Route  $route
      * @param  string  $domain
-     * @param  array  $parameters
      * @return string
      */
-    protected function replaceRootParameters($route, $domain, &$parameters)
+    protected function replaceRootParameters($route, $domain, array &$parameters)
     {
         $scheme = $this->getRouteScheme($route);
 
@@ -328,14 +313,12 @@ class RouteUrlGenerator
      * Replace all of the wildcard parameters for a route path.
      *
      * @param  string  $path
-     * @param  array  $parameters
-     * @return string
      */
-    protected function replaceRouteParameters($path, array &$parameters)
+    protected function replaceRouteParameters($path, array &$parameters): string
     {
         $path = $this->replaceNamedParameters($path, $parameters);
 
-        $path = preg_replace_callback('/\{.*?\}/', function ($match) use (&$parameters) {
+        $path = preg_replace_callback('/\{.*?\}/', function (array $match) use (&$parameters) {
             // Reset only the numeric keys...
             $parameters = array_merge($parameters);
 
@@ -344,7 +327,7 @@ class RouteUrlGenerator
                 : Arr::pull($parameters, 0);
         }, $path);
 
-        return trim(preg_replace('/\{.*?\?\}/', '', $path), '/');
+        return trim((string) preg_replace('/\{.*?\?\}/', '', (string) $path), '/');
     }
 
     /**
@@ -354,14 +337,16 @@ class RouteUrlGenerator
      * @param  array  $parameters
      * @return string
      */
-    protected function replaceNamedParameters($path, &$parameters)
+    protected function replaceNamedParameters($path, &$parameters): ?string
     {
-        return preg_replace_callback('/\{(.*?)(\?)?\}/', function ($m) use (&$parameters) {
+        return preg_replace_callback('/\{(.*?)(\?)?\}/', function (array $m) use (&$parameters) {
             if (isset($parameters[$m[1]]) && $parameters[$m[1]] !== '') {
                 return Arr::pull($parameters, $m[1]);
-            } elseif (isset($this->defaultParameters[$m[1]])) {
+            }
+            if (isset($this->defaultParameters[$m[1]])) {
                 return $this->defaultParameters[$m[1]];
-            } elseif (isset($parameters[$m[1]])) {
+            }
+            if (isset($parameters[$m[1]])) {
                 Arr::pull($parameters, $m[1]);
             }
 
@@ -373,10 +358,8 @@ class RouteUrlGenerator
      * Add a query string to the URI.
      *
      * @param  string  $uri
-     * @param  array  $parameters
-     * @return mixed
      */
-    protected function addQueryString($uri, array $parameters)
+    protected function addQueryString($uri, array $parameters): string
     {
         // If the URI has a fragment we will move it to the end of this URI since it will
         // need to come after any query string that may be added to the URL else it is
@@ -392,11 +375,8 @@ class RouteUrlGenerator
 
     /**
      * Get the query string for a given route.
-     *
-     * @param  array  $parameters
-     * @return string
      */
-    protected function getRouteQueryString(array $parameters)
+    protected function getRouteQueryString(array $parameters): string
     {
         // First we will get all of the string parameters that are remaining after we
         // have replaced the route wildcards. We'll then build a query string from
@@ -425,33 +405,24 @@ class RouteUrlGenerator
 
     /**
      * Get the string parameters from a given list.
-     *
-     * @param  array  $parameters
-     * @return array
      */
-    protected function getStringParameters(array $parameters)
+    protected function getStringParameters(array $parameters): array
     {
-        return array_filter($parameters, 'is_string', ARRAY_FILTER_USE_KEY);
+        return array_filter($parameters, is_string(...), ARRAY_FILTER_USE_KEY);
     }
 
     /**
      * Get the numeric parameters from a given list.
-     *
-     * @param  array  $parameters
-     * @return array
      */
-    protected function getNumericParameters(array $parameters)
+    protected function getNumericParameters(array $parameters): array
     {
-        return array_filter($parameters, 'is_numeric', ARRAY_FILTER_USE_KEY);
+        return array_filter($parameters, is_numeric(...), ARRAY_FILTER_USE_KEY);
     }
 
     /**
      * Set the default named parameters used by the URL generator.
-     *
-     * @param  array  $defaults
-     * @return void
      */
-    public function defaults(array $defaults)
+    public function defaults(array $defaults): void
     {
         $this->defaultParameters = array_merge(
             $this->defaultParameters, $defaults

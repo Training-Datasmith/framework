@@ -9,20 +9,6 @@ use Illuminate\Support\Facades\Gate;
 class Can implements Rule, ValidatorAwareRule
 {
     /**
-     * The ability to check.
-     *
-     * @var string
-     */
-    protected $ability;
-
-    /**
-     * The arguments to pass to the authorization check.
-     *
-     * @var array
-     */
-    protected $arguments;
-
-    /**
      * The current validator instance.
      *
      * @var \Illuminate\Validation\Validator
@@ -33,12 +19,18 @@ class Can implements Rule, ValidatorAwareRule
      * Constructor.
      *
      * @param  string  $ability
-     * @param  array  $arguments
      */
-    public function __construct($ability, array $arguments = [])
+    public function __construct(
+        /**
+         * The ability to check.
+         */
+        protected $ability,
+        /**
+         * The arguments to pass to the authorization check.
+         */
+        protected array $arguments = []
+    )
     {
-        $this->ability = $ability;
-        $this->arguments = $arguments;
     }
 
     /**
@@ -77,7 +69,7 @@ class Can implements Rule, ValidatorAwareRule
      * @param  \Illuminate\Validation\Validator  $validator
      * @return $this
      */
-    public function setValidator($validator)
+    public function setValidator($validator): static
     {
         $this->validator = $validator;
 

@@ -43,11 +43,8 @@ trait CompilesComponents
 
     /**
      * Get a new component hash for a component name.
-     *
-     * @param  string  $component
-     * @return string
      */
-    public static function newComponentHash(string $component)
+    public static function newComponentHash(string $component): string
     {
         static::$componentHashStack[] = $hash = hash('xxh128', $component);
 
@@ -56,14 +53,8 @@ trait CompilesComponents
 
     /**
      * Compile a class component opening.
-     *
-     * @param  string  $component
-     * @param  string  $alias
-     * @param  string  $data
-     * @param  string  $hash
-     * @return string
      */
-    public static function compileClassComponentOpening(string $component, string $alias, string $data, string $hash)
+    public static function compileClassComponentOpening(string $component, string $alias, string $data, string $hash): string
     {
         return implode("\n", [
             '<?php if (isset($component)) { $__componentOriginal'.$hash.' = $component; } ?>',
@@ -77,20 +68,16 @@ trait CompilesComponents
 
     /**
      * Compile the end-component statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndComponent()
+    protected function compileEndComponent(): string
     {
         return '<?php echo $__env->renderComponent(); ?>';
     }
 
     /**
      * Compile the end-component statements into valid PHP.
-     *
-     * @return string
      */
-    public function compileEndComponentClass()
+    public function compileEndComponentClass(): string
     {
         $hash = array_pop(static::$componentHashStack);
 
@@ -111,19 +98,16 @@ trait CompilesComponents
      * Compile the slot statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileSlot($expression)
+    protected function compileSlot($expression): string
     {
         return "<?php \$__env->slot{$expression}; ?>";
     }
 
     /**
      * Compile the end-slot statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndSlot()
+    protected function compileEndSlot(): string
     {
         return '<?php $__env->endSlot(); ?>';
     }
@@ -132,9 +116,8 @@ trait CompilesComponents
      * Compile the component-first statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileComponentFirst($expression)
+    protected function compileComponentFirst($expression): string
     {
         return "<?php \$__env->startComponentFirst{$expression}; ?>";
     }
@@ -153,9 +136,8 @@ trait CompilesComponents
      * Compile the prop statement into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileProps($expression)
+    protected function compileProps($expression): string
     {
         return "<?php \$attributes ??= new \\Illuminate\\View\\ComponentAttributeBag;
 
@@ -192,9 +174,8 @@ unset(\$__defined_vars, \$__key, \$__value); ?>";
      * Compile the aware statement into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileAware($expression)
+    protected function compileAware($expression): string
     {
         return "<?php foreach ({$expression} as \$__key => \$__value) {
     \$__consumeVariable = is_string(\$__key) ? \$__key : \$__value;

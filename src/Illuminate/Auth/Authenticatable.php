@@ -84,9 +84,8 @@ trait Authenticatable
      * Set the token value for the "remember me" session.
      *
      * @param  string  $value
-     * @return void
      */
-    public function setRememberToken($value)
+    public function setRememberToken($value): void
     {
         if (! empty($this->getRememberTokenName())) {
             $this->{$this->getRememberTokenName()} = $value;

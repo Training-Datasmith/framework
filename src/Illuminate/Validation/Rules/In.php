@@ -18,10 +18,8 @@ class In implements Stringable
 
     /**
      * The accepted values.
-     *
-     * @var array
      */
-    protected $values;
+    protected array $values;
 
     /**
      * Create a new in rule instance.
@@ -40,13 +38,12 @@ class In implements Stringable
     /**
      * Convert the rule to a validation string.
      *
-     * @return string
      *
      * @see \Illuminate\Validation\ValidationRuleParser::parseParameters
      */
-    public function __toString()
+    public function __toString(): string
     {
-        $values = array_map(function ($value) {
+        $values = array_map(function ($value): string {
             $value = enum_value($value);
 
             return '"'.str_replace('"', '""', $value).'"';

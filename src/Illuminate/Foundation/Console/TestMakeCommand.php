@@ -52,10 +52,9 @@ class TestMakeCommand extends GeneratorCommand
     /**
      * Resolve the fully-qualified path to the stub.
      *
-     * @param  string  $stub
      * @return string
      */
-    protected function resolveStubPath($stub)
+    protected function resolveStubPath(string $stub)
     {
         return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
@@ -66,9 +65,8 @@ class TestMakeCommand extends GeneratorCommand
      * Get the destination class path.
      *
      * @param  string  $name
-     * @return string
      */
-    protected function getPath($name)
+    protected function getPath($name): string
     {
         $name = Str::replaceFirst($this->rootNamespace(), '', $name);
 
@@ -79,33 +77,27 @@ class TestMakeCommand extends GeneratorCommand
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
-     * @return string
      */
-    protected function getDefaultNamespace($rootNamespace)
+    protected function getDefaultNamespace($rootNamespace): string
     {
         if ($this->option('unit')) {
             return $rootNamespace.'\Unit';
-        } else {
-            return $rootNamespace.'\Feature';
         }
+        return $rootNamespace.'\Feature';
     }
 
     /**
      * Get the root namespace for the class.
-     *
-     * @return string
      */
-    protected function rootNamespace()
+    protected function rootNamespace(): string
     {
         return 'Tests';
     }
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['force', 'f', InputOption::VALUE_NONE, 'Create the test even if the test already exists'],
@@ -118,8 +110,6 @@ class TestMakeCommand extends GeneratorCommand
     /**
      * Interact further with the user if they were prompted for missing arguments.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
     protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)
@@ -149,9 +139,10 @@ class TestMakeCommand extends GeneratorCommand
         if ($this->option('phpunit')) {
             return false;
         }
-
-        return $this->option('pest') ||
-            (function_exists('\Pest\\version') &&
-             file_exists(base_path('tests').'/Pest.php'));
+        if ($this->option('pest')) {
+            return true;
+        }
+        return function_exists('\Pest\\version') &&
+         file_exists(base_path('tests').'/Pest.php');
     }
 }

@@ -7,7 +7,6 @@ interface QueueingDispatcher extends Dispatcher
     /**
      * Attempt to find the batch with the given ID.
      *
-     * @param  string  $batchId
      * @return \Illuminate\Bus\Batch|null
      */
     public function findBatch(string $batchId);

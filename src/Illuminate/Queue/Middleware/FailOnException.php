@@ -36,7 +36,7 @@ class FailOnException
      */
     protected function failForExceptions(array $exceptions)
     {
-        return static function (Throwable $throwable) use ($exceptions) {
+        return static function (Throwable $throwable) use ($exceptions): bool {
             foreach ($exceptions as $exception) {
                 if ($throwable instanceof $exception) {
                     return true;
@@ -51,9 +51,7 @@ class FailOnException
      * Mark the job as failed if an exception is thrown that passes a truth-test callback.
      *
      * @param  mixed  $job
-     * @param  callable  $next
      * @return mixed
-     *
      * @throws \Throwable
      */
     public function handle($job, callable $next)

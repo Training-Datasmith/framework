@@ -9,20 +9,17 @@ use Illuminate\Support\Collection;
 class ResourceResponse implements Responsable
 {
     /**
-     * The underlying resource.
-     *
-     * @var mixed
-     */
-    public $resource;
-
-    /**
      * Create a new resource response.
      *
      * @param  mixed  $resource
      */
-    public function __construct($resource)
+    public function __construct(
+        /**
+         * The underlying resource.
+         */
+        public $resource
+    )
     {
-        $this->resource = $resource;
     }
 
     /**
@@ -42,7 +39,7 @@ class ResourceResponse implements Responsable
             $this->calculateStatus(),
             [],
             $this->resource->jsonOptions()
-        ), function ($response) use ($request) {
+        ), function ($response) use ($request): void {
             $response->original = $this->resource->resource;
 
             $this->resource->withResponse($request, $response);
@@ -55,9 +52,8 @@ class ResourceResponse implements Responsable
      * @param  \Illuminate\Support\Collection|array  $data
      * @param  array  $with
      * @param  array  $additional
-     * @return array
      */
-    protected function wrap($data, $with = [], $additional = [])
+    protected function wrap($data, $with = [], $additional = []): array
     {
         if ($data instanceof Collection) {
             $data = $data->all();
@@ -76,9 +72,8 @@ class ResourceResponse implements Responsable
      * Determine if we have a default wrapper and the given data is unwrapped.
      *
      * @param  array  $data
-     * @return bool
      */
-    protected function haveDefaultWrapperAndDataIsUnwrapped($data)
+    protected function haveDefaultWrapperAndDataIsUnwrapped($data): bool
     {
         if ($this->resource instanceof JsonResource && $this->resource::$forceWrapping) {
             return $this->wrapper() !== null;
@@ -93,9 +88,8 @@ class ResourceResponse implements Responsable
      * @param  array  $data
      * @param  array  $with
      * @param  array  $additional
-     * @return bool
      */
-    protected function haveAdditionalInformationAndDataIsUnwrapped($data, $with, $additional)
+    protected function haveAdditionalInformationAndDataIsUnwrapped($data, $with, $additional): bool
     {
         return (! empty($with) || ! empty($additional)) &&
                (! $this->wrapper() ||
@@ -109,15 +103,13 @@ class ResourceResponse implements Responsable
      */
     protected function wrapper()
     {
-        return get_class($this->resource)::$wrap;
+        return $this->resource::class::$wrap;
     }
 
     /**
      * Calculate the appropriate status code for the response.
-     *
-     * @return int
      */
-    protected function calculateStatus()
+    protected function calculateStatus(): int
     {
         return $this->resource->resource instanceof Model &&
                $this->resource->resource->wasRecentlyCreated ? 201 : 200;

@@ -18,9 +18,8 @@ trait ManagesLoops
      * Add new loop to the stack.
      *
      * @param  \Countable|array  $data
-     * @return void
      */
-    public function addLoop($data)
+    public function addLoop($data): void
     {
         $length = is_countable($data) && ! $data instanceof LazyCollection
             ? count($data)
@@ -44,10 +43,8 @@ trait ManagesLoops
 
     /**
      * Increment the top loop's indices.
-     *
-     * @return void
      */
-    public function incrementLoopIndices()
+    public function incrementLoopIndices(): void
     {
         $loop = $this->loopsStack[$index = count($this->loopsStack) - 1];
 
@@ -64,10 +61,8 @@ trait ManagesLoops
 
     /**
      * Pop a loop from the top of the loop stack.
-     *
-     * @return void
      */
-    public function popLoop()
+    public function popLoop(): void
     {
         array_pop($this->loopsStack);
     }

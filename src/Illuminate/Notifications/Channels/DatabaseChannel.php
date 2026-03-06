@@ -11,7 +11,6 @@ class DatabaseChannel
      * Send the given notification.
      *
      * @param  mixed  $notifiable
-     * @param  \Illuminate\Notifications\Notification  $notification
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function send($notifiable, Notification $notification)
@@ -25,16 +24,14 @@ class DatabaseChannel
      * Build an array payload for the DatabaseNotification Model.
      *
      * @param  mixed  $notifiable
-     * @param  \Illuminate\Notifications\Notification  $notification
-     * @return array
      */
-    protected function buildPayload($notifiable, Notification $notification)
+    protected function buildPayload($notifiable, Notification $notification): array
     {
         return [
             'id' => $notification->id,
             'type' => method_exists($notification, 'databaseType')
                 ? $notification->databaseType($notifiable)
-                : get_class($notification),
+                : $notification::class,
             'data' => $this->getData($notifiable, $notification),
             'read_at' => method_exists($notification, 'initialDatabaseReadAtValue')
                 ? $notification->initialDatabaseReadAtValue($notifiable)
@@ -46,9 +43,7 @@ class DatabaseChannel
      * Get the data for the notification.
      *
      * @param  mixed  $notifiable
-     * @param  \Illuminate\Notifications\Notification  $notification
      * @return array
-     *
      * @throws \RuntimeException
      */
     protected function getData($notifiable, Notification $notification)

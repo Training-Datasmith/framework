@@ -26,7 +26,7 @@ class HasMany extends HasOneOrMany
                 $this->foreignKey,
                 $this->localKey
             ),
-            function ($hasOne) {
+            function ($hasOne): void {
                 if ($inverse = $this->getInverseRelationship()) {
                     $hasOne->inverse($inverse);
                 }
@@ -43,7 +43,7 @@ class HasMany extends HasOneOrMany
     }
 
     /** @inheritDoc */
-    public function initRelation(array $models, $relation)
+    public function initRelation(array $models, $relation): array
     {
         foreach ($models as $model) {
             $model->setRelation($relation, $this->related->newCollection());

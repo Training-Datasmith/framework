@@ -31,20 +31,16 @@ class CacheTableCommand extends MigrationGeneratorCommand
 
     /**
      * Get the migration table name.
-     *
-     * @return string
      */
-    protected function migrationTableName()
+    protected function migrationTableName(): string
     {
         return 'cache';
     }
 
     /**
      * Get the path to the migration stub file.
-     *
-     * @return string
      */
-    protected function migrationStubFile()
+    protected function migrationStubFile(): string
     {
         return __DIR__.'/stubs/cache.stub';
     }

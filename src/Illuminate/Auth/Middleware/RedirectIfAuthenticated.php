@@ -22,9 +22,8 @@ class RedirectIfAuthenticated
      *
      * @param  string  $guard
      * @param  string  $others
-     * @return string
      */
-    public static function using($guard, ...$others)
+    public static function using($guard, ...$others): string
     {
         return static::class.':'.implode(',', [$guard, ...$others]);
     }
@@ -81,11 +80,8 @@ class RedirectIfAuthenticated
 
     /**
      * Specify the callback that should be used to generate the redirect path.
-     *
-     * @param  callable  $redirectToCallback
-     * @return void
      */
-    public static function redirectUsing(callable $redirectToCallback)
+    public static function redirectUsing(callable $redirectToCallback): void
     {
         static::$redirectToCallback = $redirectToCallback;
     }

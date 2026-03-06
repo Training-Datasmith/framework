@@ -24,15 +24,12 @@ class ScheduleClearCacheCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
      */
-    public function handle(Schedule $schedule)
+    public function handle(Schedule $schedule): void
     {
         $mutexCleared = false;
 
-        foreach ($schedule->events($this->laravel) as $event) {
+        foreach ($schedule->events() as $event) {
             if ($event->mutex->exists($event)) {
                 $this->components->info(sprintf('Deleting mutex for [%s]', $event->command));
 

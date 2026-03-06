@@ -19,9 +19,8 @@ trait CompilesEchos
      *
      * @param  string|callable  $class
      * @param  callable|null  $handler
-     * @return void
      */
-    public function stringable($class, $handler = null)
+    public function stringable($class, $handler = null): void
     {
         if ($class instanceof Closure) {
             [$class, $handler] = [$this->firstClosureParameterType($class), $class];
@@ -47,10 +46,8 @@ trait CompilesEchos
 
     /**
      * Get the echo methods in the proper order for compilation.
-     *
-     * @return array
      */
-    protected function getEchoMethods()
+    protected function getEchoMethods(): array
     {
         return [
             'compileRawEchos',
@@ -65,15 +62,15 @@ trait CompilesEchos
      * @param  string  $value
      * @return string
      */
-    protected function compileRawEchos($value)
+    protected function compileRawEchos($value): ?string
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->rawTags[0], $this->rawTags[1]);
 
-        $callback = function ($matches) {
+        $callback = function ($matches): string {
             $whitespace = empty($matches[3]) ? '' : $matches[3].$matches[3];
 
             return $matches[1]
-                ? substr($matches[0], 1)
+                ? substr((string) $matches[0], 1)
                 : "<?php echo {$this->wrapInEchoHandler($matches[2])}; ?>{$whitespace}";
         };
 
@@ -86,16 +83,16 @@ trait CompilesEchos
      * @param  string  $value
      * @return string
      */
-    protected function compileRegularEchos($value)
+    protected function compileRegularEchos($value): ?string
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->contentTags[0], $this->contentTags[1]);
 
-        $callback = function ($matches) {
+        $callback = function ($matches): string {
             $whitespace = empty($matches[3]) ? '' : $matches[3].$matches[3];
 
             $wrapped = sprintf($this->echoFormat, $this->wrapInEchoHandler($matches[2]));
 
-            return $matches[1] ? substr($matches[0], 1) : "<?php echo {$wrapped}; ?>{$whitespace}";
+            return $matches[1] ? substr((string) $matches[0], 1) : "<?php echo {$wrapped}; ?>{$whitespace}";
         };
 
         return preg_replace_callback($pattern, $callback, $value);
@@ -107,7 +104,7 @@ trait CompilesEchos
      * @param  string  $value
      * @return string
      */
-    protected function compileEscapedEchos($value)
+    protected function compileEscapedEchos($value): ?string
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->escapedTags[0], $this->escapedTags[1]);
 
@@ -124,11 +121,8 @@ trait CompilesEchos
 
     /**
      * Add an instance of the blade echo handler to the start of the compiled string.
-     *
-     * @param  string  $result
-     * @return string
      */
-    protected function addBladeCompilerVariable($result)
+    protected function addBladeCompilerVariable(string $result): string
     {
         return "<?php \$__bladeCompiler = app('blade.compiler'); ?>".$result;
     }
@@ -143,9 +137,7 @@ trait CompilesEchos
     {
         $value = (new Stringable($value))
             ->trim()
-            ->when(str_ends_with($value, ';'), function ($str) {
-                return $str->beforeLast(';');
-            });
+            ->when(str_ends_with($value, ';'), fn($str) => $str->beforeLast(';'));
 
         return empty($this->echoHandlers) ? $value : '$__bladeCompiler->applyEchoHandler('.$value.')';
     }
@@ -158,8 +150,8 @@ trait CompilesEchos
      */
     public function applyEchoHandler($value)
     {
-        if (is_object($value) && isset($this->echoHandlers[get_class($value)])) {
-            return call_user_func($this->echoHandlers[get_class($value)], $value);
+        if (is_object($value) && isset($this->echoHandlers[$value::class])) {
+            return call_user_func($this->echoHandlers[$value::class], $value);
         }
 
         if (is_iterable($value) && isset($this->echoHandlers['iterable'])) {

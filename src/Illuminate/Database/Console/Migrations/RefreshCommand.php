@@ -31,10 +31,8 @@ class RefreshCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         if ($this->isProhibited() ||
             ! $this->confirmToProceed()) {
@@ -120,12 +118,13 @@ class RefreshCommand extends Command
 
     /**
      * Determine if the developer has requested database seeding.
-     *
-     * @return bool
      */
-    protected function needsSeeding()
+    protected function needsSeeding(): bool
     {
-        return $this->option('seed') || $this->option('seeder');
+        if ($this->option('seed')) {
+            return true;
+        }
+        return (bool) $this->option('seeder');
     }
 
     /**
@@ -145,10 +144,8 @@ class RefreshCommand extends Command
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],

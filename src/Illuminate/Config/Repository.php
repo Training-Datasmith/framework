@@ -14,20 +14,17 @@ class Repository implements ArrayAccess, ConfigContract
     use Macroable;
 
     /**
-     * All of the configuration items.
-     *
-     * @var array<string,mixed>
-     */
-    protected $items = [];
-
-    /**
      * Create a new configuration repository.
-     *
-     * @param  array  $items
      */
-    public function __construct(array $items = [])
+    public function __construct(
+        /**
+         * All of the configuration items.
+         *
+         * @var array<string,mixed>
+         */
+        protected array $items = []
+    )
     {
-        $this->items = $items;
     }
 
     /**
@@ -63,7 +60,7 @@ class Repository implements ArrayAccess, ConfigContract
      * @param  array<string|int,mixed>  $keys
      * @return array<string,mixed>
      */
-    public function getMany($keys)
+    public function getMany($keys): array
     {
         $config = [];
 
@@ -81,9 +78,7 @@ class Repository implements ArrayAccess, ConfigContract
     /**
      * Get the specified string configuration value.
      *
-     * @param  string  $key
      * @param  (\Closure():(string|null))|string|null  $default
-     * @return string
      *
      * @throws \InvalidArgumentException
      */
@@ -103,9 +98,7 @@ class Repository implements ArrayAccess, ConfigContract
     /**
      * Get the specified integer configuration value.
      *
-     * @param  string  $key
      * @param  (\Closure():(int|null))|int|null  $default
-     * @return int
      *
      * @throws \InvalidArgumentException
      */
@@ -125,9 +118,7 @@ class Repository implements ArrayAccess, ConfigContract
     /**
      * Get the specified float configuration value.
      *
-     * @param  string  $key
      * @param  (\Closure():(float|null))|float|null  $default
-     * @return float
      *
      * @throws \InvalidArgumentException
      */
@@ -147,9 +138,7 @@ class Repository implements ArrayAccess, ConfigContract
     /**
      * Get the specified boolean configuration value.
      *
-     * @param  string  $key
      * @param  (\Closure():(bool|null))|bool|null  $default
-     * @return bool
      *
      * @throws \InvalidArgumentException
      */
@@ -169,10 +158,8 @@ class Repository implements ArrayAccess, ConfigContract
     /**
      * Get the specified array configuration value.
      *
-     * @param  string  $key
      * @param  (\Closure():(array<array-key, mixed>|null))|array<array-key, mixed>|null  $default
      * @return array<array-key, mixed>
-     *
      * @throws \InvalidArgumentException
      */
     public function array(string $key, $default = null): array
@@ -191,7 +178,6 @@ class Repository implements ArrayAccess, ConfigContract
     /**
      * Get the specified array configuration value as a collection.
      *
-     * @param  string  $key
      * @param  (\Closure():(array<array-key, mixed>|null))|array<array-key, mixed>|null  $default
      * @return Collection<array-key, mixed>
      */
@@ -205,9 +191,8 @@ class Repository implements ArrayAccess, ConfigContract
      *
      * @param  array|string  $key
      * @param  mixed  $value
-     * @return void
      */
-    public function set($key, $value = null)
+    public function set($key, $value = null): void
     {
         $keys = is_array($key) ? $key : [$key => $value];
 
@@ -221,9 +206,8 @@ class Repository implements ArrayAccess, ConfigContract
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return void
      */
-    public function prepend($key, $value)
+    public function prepend($key, $value): void
     {
         $array = $this->get($key, []);
 
@@ -237,9 +221,8 @@ class Repository implements ArrayAccess, ConfigContract
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return void
      */
-    public function push($key, $value)
+    public function push($key, $value): void
     {
         $array = $this->get($key, []);
 
@@ -262,7 +245,6 @@ class Repository implements ArrayAccess, ConfigContract
      * Determine if the given configuration option exists.
      *
      * @param  string  $key
-     * @return bool
      */
     public function offsetExists($key): bool
     {
@@ -273,7 +255,6 @@ class Repository implements ArrayAccess, ConfigContract
      * Get a configuration option.
      *
      * @param  string  $key
-     * @return mixed
      */
     public function offsetGet($key): mixed
     {
@@ -285,7 +266,6 @@ class Repository implements ArrayAccess, ConfigContract
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return void
      */
     public function offsetSet($key, $value): void
     {
@@ -296,10 +276,9 @@ class Repository implements ArrayAccess, ConfigContract
      * Unset a configuration option.
      *
      * @param  string  $key
-     * @return void
      */
     public function offsetUnset($key): void
     {
-        $this->set($key, null);
+        $this->set($key);
     }
 }

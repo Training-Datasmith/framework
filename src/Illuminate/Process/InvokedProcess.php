@@ -10,38 +10,29 @@ use Symfony\Component\Process\Process;
 class InvokedProcess implements InvokedProcessContract
 {
     /**
-     * The underlying process instance.
-     *
-     * @var \Symfony\Component\Process\Process
-     */
-    protected $process;
-
-    /**
      * Create a new invoked process instance.
-     *
-     * @param  \Symfony\Component\Process\Process  $process
      */
-    public function __construct(Process $process)
+    public function __construct(
+        /**
+         * The underlying process instance.
+         */
+        protected \Symfony\Component\Process\Process $process
+    )
     {
-        $this->process = $process;
     }
 
     /**
      * Get the process ID if the process is still running.
-     *
-     * @return int|null
      */
-    public function id()
+    public function id(): ?int
     {
         return $this->process->getPid();
     }
 
     /**
      * Get the command line for the process.
-     *
-     * @return string
      */
-    public function command()
+    public function command(): string
     {
         return $this->process->getCommandLine();
     }
@@ -49,10 +40,9 @@ class InvokedProcess implements InvokedProcessContract
     /**
      * Send a signal to the process.
      *
-     * @param  int  $signal
      * @return $this
      */
-    public function signal(int $signal)
+    public function signal(int $signal): static
     {
         $this->process->signal($signal);
 
@@ -61,62 +51,48 @@ class InvokedProcess implements InvokedProcessContract
 
     /**
      * Stop the process if it is still running.
-     *
-     * @param  float  $timeout
-     * @param  int|null  $signal
-     * @return int|null
      */
-    public function stop(float $timeout = 10, ?int $signal = null)
+    public function stop(float $timeout = 10, ?int $signal = null): ?int
     {
         return $this->process->stop($timeout, $signal);
     }
 
     /**
      * Determine if the process is still running.
-     *
-     * @return bool
      */
-    public function running()
+    public function running(): bool
     {
         return $this->process->isRunning();
     }
 
     /**
      * Get the standard output for the process.
-     *
-     * @return string
      */
-    public function output()
+    public function output(): string
     {
         return $this->process->getOutput();
     }
 
     /**
      * Get the error output for the process.
-     *
-     * @return string
      */
-    public function errorOutput()
+    public function errorOutput(): string
     {
         return $this->process->getErrorOutput();
     }
 
     /**
      * Get the latest standard output for the process.
-     *
-     * @return string
      */
-    public function latestOutput()
+    public function latestOutput(): string
     {
         return $this->process->getIncrementalOutput();
     }
 
     /**
      * Get the latest error output for the process.
-     *
-     * @return string
      */
-    public function latestErrorOutput()
+    public function latestErrorOutput(): string
     {
         return $this->process->getIncrementalErrorOutput();
     }
@@ -124,11 +100,10 @@ class InvokedProcess implements InvokedProcessContract
     /**
      * Ensure that the process has not timed out.
      *
-     * @return void
      *
      * @throws \Illuminate\Process\Exceptions\ProcessTimedOutException
      */
-    public function ensureNotTimedOut()
+    public function ensureNotTimedOut(): void
     {
         try {
             $this->process->checkTimeout();
@@ -140,12 +115,10 @@ class InvokedProcess implements InvokedProcessContract
     /**
      * Wait for the process to finish.
      *
-     * @param  callable|null  $output
-     * @return \Illuminate\Process\ProcessResult
      *
      * @throws \Illuminate\Process\Exceptions\ProcessTimedOutException
      */
-    public function wait(?callable $output = null)
+    public function wait(?callable $output = null): \Illuminate\Process\ProcessResult
     {
         try {
             $this->process->wait($output);
@@ -159,12 +132,10 @@ class InvokedProcess implements InvokedProcessContract
     /**
      * Wait until the given callback returns true.
      *
-     * @param  callable|null  $output
-     * @return \Illuminate\Process\ProcessResult
      *
      * @throws \Illuminate\Process\Exceptions\ProcessTimedOutException
      */
-    public function waitUntil(?callable $output = null)
+    public function waitUntil(?callable $output = null): \Illuminate\Process\ProcessResult
     {
         try {
             $this->process->waitUntil($output);

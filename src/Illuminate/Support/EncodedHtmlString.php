@@ -26,7 +26,6 @@ class EncodedHtmlString extends HtmlString
      * Create a new encoded HTML string instance.
      *
      * @param  \Illuminate\Contracts\Support\DeferringDisplayableValue|\Illuminate\Contracts\Support\Htmlable|\BackedEnum|string|int|float|null  $html
-     * @param  bool  $doubleEncode
      */
     public function __construct($html = '', protected bool $doubleEncode = true)
     {
@@ -39,11 +38,8 @@ class EncodedHtmlString extends HtmlString
      * @internal
      *
      * @param  string|null  $value
-     * @param  int  $withQuote
-     * @param  bool  $doubleEncode
-     * @return string
      */
-    public static function convert($value, bool $withQuote = true, bool $doubleEncode = true)
+    public static function convert($value, bool $withQuote = true, bool $doubleEncode = true): string
     {
         $flag = $withQuote ? ENT_QUOTES : ENT_NOQUOTES;
 
@@ -72,28 +68,21 @@ class EncodedHtmlString extends HtmlString
             $value = $value->value;
         }
 
-        return (static::$encodeUsingFactory ?? function ($value, $doubleEncode) {
-            return static::convert($value, doubleEncode: $doubleEncode);
-        })($value, $this->doubleEncode);
+        return (static::$encodeUsingFactory ?? (fn($value, $doubleEncode) => static::convert($value, doubleEncode: $doubleEncode)))($value, $this->doubleEncode);
     }
 
     /**
      * Set the callable that will be used to encode the HTML strings.
-     *
-     * @param  callable|null  $factory
-     * @return void
      */
-    public static function encodeUsing(?callable $factory = null)
+    public static function encodeUsing(?callable $factory = null): void
     {
         static::$encodeUsingFactory = $factory;
     }
 
     /**
      * Flush the class's global state.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$encodeUsingFactory = null;
     }

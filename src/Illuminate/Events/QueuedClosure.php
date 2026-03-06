@@ -61,8 +61,6 @@ class QueuedClosure
 
     /**
      * Create a new queued closure event listener resolver.
-     *
-     * @param  \Closure  $closure
      */
     public function __construct(Closure $closure)
     {
@@ -75,7 +73,7 @@ class QueuedClosure
      * @param  \UnitEnum|string|null  $connection
      * @return $this
      */
-    public function onConnection($connection)
+    public function onConnection($connection): static
     {
         $this->connection = enum_value($connection);
 
@@ -88,7 +86,7 @@ class QueuedClosure
      * @param  \UnitEnum|string|null  $queue
      * @return $this
      */
-    public function onQueue($queue)
+    public function onQueue($queue): static
     {
         $this->queue = enum_value($queue);
 
@@ -103,7 +101,7 @@ class QueuedClosure
      * @param  \UnitEnum|string  $group
      * @return $this
      */
-    public function onGroup($group)
+    public function onGroup($group): static
     {
         $this->messageGroup = enum_value($group);
 
@@ -118,7 +116,7 @@ class QueuedClosure
      * @param  callable|null  $deduplicator
      * @return $this
      */
-    public function withDeduplicator($deduplicator)
+    public function withDeduplicator($deduplicator): static
     {
         $this->deduplicator = $deduplicator instanceof Closure
             ? new SerializableClosure($deduplicator)
@@ -133,7 +131,7 @@ class QueuedClosure
      * @param  \DateTimeInterface|\DateInterval|int|null  $delay
      * @return $this
      */
-    public function delay($delay)
+    public function delay($delay): static
     {
         $this->delay = $delay;
 
@@ -143,10 +141,9 @@ class QueuedClosure
     /**
      * Specify a callback that should be invoked if the queued listener job fails.
      *
-     * @param  \Closure  $closure
      * @return $this
      */
-    public function catch(Closure $closure)
+    public function catch(Closure $closure): static
     {
         $this->catchCallbacks[] = $closure;
 
@@ -160,12 +157,12 @@ class QueuedClosure
      */
     public function resolve()
     {
-        return function (...$arguments) {
+        return function (...$arguments): void {
             dispatch(new CallQueuedListener(InvokeQueuedClosure::class, 'handle', [
                 'closure' => new SerializableClosure($this->closure),
                 'arguments' => $arguments,
                 'catch' => (new Collection($this->catchCallbacks))
-                    ->map(fn ($callback) => new SerializableClosure($callback))
+                    ->map(fn ($callback): \Laravel\SerializableClosure\SerializableClosure => new SerializableClosure($callback))
                     ->all(),
             ]))
                 ->onConnection($this->connection)

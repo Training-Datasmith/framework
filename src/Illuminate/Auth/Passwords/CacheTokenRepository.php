@@ -29,11 +29,8 @@ class CacheTokenRepository implements TokenRepositoryInterface
 
     /**
      * Create a new token.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
-     * @return string
      */
-    public function create(CanResetPasswordContract $user)
+    public function create(CanResetPasswordContract $user): string
     {
         $this->delete($user);
 
@@ -51,11 +48,9 @@ class CacheTokenRepository implements TokenRepositoryInterface
     /**
      * Determine if a token record exists and is valid.
      *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
      * @param  string  $token
-     * @return bool
      */
-    public function exists(CanResetPasswordContract $user, #[\SensitiveParameter] $token)
+    public function exists(CanResetPasswordContract $user, #[\SensitiveParameter] $token): bool
     {
         [$record, $createdAt] = $this->cache->get($this->cacheKey($user));
 
@@ -77,11 +72,8 @@ class CacheTokenRepository implements TokenRepositoryInterface
 
     /**
      * Determine if the given user recently created a password reset token.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
-     * @return bool
      */
-    public function recentlyCreatedToken(CanResetPasswordContract $user)
+    public function recentlyCreatedToken(CanResetPasswordContract $user): bool
     {
         [$record, $createdAt] = $this->cache->get($this->cacheKey($user));
 
@@ -107,11 +99,8 @@ class CacheTokenRepository implements TokenRepositoryInterface
 
     /**
      * Delete a token record.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
-     * @return void
      */
-    public function delete(CanResetPasswordContract $user)
+    public function delete(CanResetPasswordContract $user): void
     {
         $this->cache->forget($this->cacheKey($user));
     }
@@ -127,9 +116,6 @@ class CacheTokenRepository implements TokenRepositoryInterface
 
     /**
      * Determine the cache key for the given user.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
-     * @return string
      */
     public function cacheKey(CanResetPasswordContract $user): string
     {

@@ -72,10 +72,8 @@ class Auth extends Facade
 {
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'auth';
     }
@@ -83,12 +81,10 @@ class Auth extends Facade
     /**
      * Register the typical authentication routes for an application.
      *
-     * @param  array  $options
-     * @return void
      *
      * @throws \RuntimeException
      */
-    public static function routes(array $options = [])
+    public static function routes(array $options = []): void
     {
         if (! static::$app->providerIsLoaded(UiServiceProvider::class)) {
             throw new RuntimeException('In order to use the Auth::routes() method, please install the laravel/ui package.');

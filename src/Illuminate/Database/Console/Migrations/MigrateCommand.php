@@ -46,39 +46,23 @@ class MigrateCommand extends BaseCommand implements Isolatable
     protected $description = 'Run the database migrations';
 
     /**
-     * The migrator instance.
-     *
-     * @var \Illuminate\Database\Migrations\Migrator
-     */
-    protected $migrator;
-
-    /**
-     * The event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
      * Create a new migration command instance.
-     *
-     * @param  \Illuminate\Database\Migrations\Migrator  $migrator
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
      */
-    public function __construct(Migrator $migrator, Dispatcher $dispatcher)
+    public function __construct(/**
+     * The migrator instance.
+     */
+    protected \Illuminate\Database\Migrations\Migrator $migrator, /**
+     * The event dispatcher instance.
+     */
+    protected \Illuminate\Contracts\Events\Dispatcher $dispatcher)
     {
         parent::__construct();
-
-        $this->migrator = $migrator;
-        $this->dispatcher = $dispatcher;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         if (! $this->confirmToProceed()) {
             return 1;
@@ -106,7 +90,7 @@ class MigrateCommand extends BaseCommand implements Isolatable
      */
     protected function runMigrations()
     {
-        $this->migrator->usingConnection($this->option('database'), function () {
+        $this->migrator->usingConnection($this->option('database'), function (): void {
             $this->prepareDatabase();
 
             // Next, we will check to see if a path option has been defined. If it has
@@ -140,11 +124,9 @@ class MigrateCommand extends BaseCommand implements Isolatable
         if (! $this->repositoryExists()) {
             $this->components->info('Preparing database.');
 
-            $this->components->task('Creating migration table', function () {
-                return $this->callSilent('migrate:install', array_filter([
-                    '--database' => $this->option('database'),
-                ])) == 0;
-            });
+            $this->components->task('Creating migration table', fn() => $this->callSilent('migrate:install', array_filter([
+                '--database' => $this->option('database'),
+            ])) == 0);
 
             $this->newLine();
         }
@@ -173,7 +155,6 @@ class MigrateCommand extends BaseCommand implements Isolatable
     /**
      * Attempt to create the database if it is missing.
      *
-     * @param  \Throwable  $e
      * @return bool
      */
     protected function handleMissingDatabase(Throwable $e)
@@ -201,12 +182,10 @@ class MigrateCommand extends BaseCommand implements Isolatable
     /**
      * Create a missing SQLite database.
      *
-     * @param  string  $path
      * @return bool
-     *
      * @throws \RuntimeException
      */
-    protected function createMissingSqliteDatabase($path)
+    protected function createMissingSqliteDatabase(string $path)
     {
         if ($this->option('force')) {
             return touch($path);
@@ -272,7 +251,7 @@ class MigrateCommand extends BaseCommand implements Isolatable
                     'mysql', 'mariadb' => "CREATE DATABASE IF NOT EXISTS `{$connection->getDatabaseName()}`",
                     'pgsql' => 'CREATE DATABASE "'.$connection->getDatabaseName().'"',
                 }
-            ), function () {
+            ), function (): void {
                 $this->laravel['db']->purge();
             });
         } finally {
@@ -299,13 +278,13 @@ class MigrateCommand extends BaseCommand implements Isolatable
 
         $this->components->info('Loading stored database schemas.');
 
-        $this->components->task($path, function () use ($connection, $path) {
+        $this->components->task($path, function () use ($connection, $path): void {
             // Since the schema file will create the "migrations" table and reload it to its
             // proper state, we need to delete it here so we don't get an error that this
             // table already exists when the stored database schema file gets executed.
             $this->migrator->deleteRepository();
 
-            $connection->getSchemaState()->handleOutputUsing(function ($type, $buffer) {
+            $connection->getSchemaState()->handleOutputUsing(function ($type, string|iterable $buffer): void {
                 $this->output->write($buffer);
             })->load($path);
         });

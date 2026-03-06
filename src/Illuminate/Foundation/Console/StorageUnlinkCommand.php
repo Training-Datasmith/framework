@@ -24,16 +24,16 @@ class StorageUnlinkCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         foreach ($this->links() as $link => $target) {
-            if (! file_exists($link) || ! is_link($link)) {
+            if (! file_exists($link)) {
                 continue;
             }
-
+            if (! is_link($link)) {
+                continue;
+            }
             $this->laravel->make('files')->delete($link);
 
             $this->components->info("The [$link] link has been deleted.");

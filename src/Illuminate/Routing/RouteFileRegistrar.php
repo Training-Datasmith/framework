@@ -5,29 +5,23 @@ namespace Illuminate\Routing;
 class RouteFileRegistrar
 {
     /**
-     * The router instance.
-     *
-     * @var \Illuminate\Routing\Router
-     */
-    protected $router;
-
-    /**
      * Create a new route file registrar instance.
-     *
-     * @param  \Illuminate\Routing\Router  $router
      */
-    public function __construct(Router $router)
+    public function __construct(
+        /**
+         * The router instance.
+         */
+        protected \Illuminate\Routing\Router $router
+    )
     {
-        $this->router = $router;
     }
 
     /**
      * Require the given routes file.
      *
      * @param  string  $routes
-     * @return void
      */
-    public function register($routes)
+    public function register($routes): void
     {
         $router = $this->router;
 

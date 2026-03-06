@@ -12,9 +12,8 @@ class NullStore extends TaggableStore implements LockProvider
      * Retrieve an item from the cache by key.
      *
      * @param  string  $key
-     * @return void
      */
-    public function get($key)
+    public function get($key): void
     {
         //
     }
@@ -25,9 +24,8 @@ class NullStore extends TaggableStore implements LockProvider
      * @param  string  $key
      * @param  mixed  $value
      * @param  int  $seconds
-     * @return bool
      */
-    public function put($key, $value, $seconds)
+    public function put($key, $value, $seconds): bool
     {
         return false;
     }
@@ -39,7 +37,7 @@ class NullStore extends TaggableStore implements LockProvider
      * @param  mixed  $value
      * @return false
      */
-    public function increment($key, $value = 1)
+    public function increment($key, $value = 1): bool
     {
         return false;
     }
@@ -51,7 +49,7 @@ class NullStore extends TaggableStore implements LockProvider
      * @param  mixed  $value
      * @return false
      */
-    public function decrement($key, $value = 1)
+    public function decrement($key, $value = 1): bool
     {
         return false;
     }
@@ -61,9 +59,8 @@ class NullStore extends TaggableStore implements LockProvider
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return bool
      */
-    public function forever($key, $value)
+    public function forever($key, $value): bool
     {
         return false;
     }
@@ -76,7 +73,7 @@ class NullStore extends TaggableStore implements LockProvider
      * @param  string|null  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function lock($name, $seconds = 0, $owner = null)
+    public function lock($name, $seconds = 0, $owner = null): \Illuminate\Cache\NoLock
     {
         return new NoLock($name, $seconds, $owner);
     }
@@ -97,29 +94,24 @@ class NullStore extends TaggableStore implements LockProvider
      * Remove an item from the cache.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function forget($key)
+    public function forget($key): bool
     {
         return true;
     }
 
     /**
      * Remove all items from the cache.
-     *
-     * @return bool
      */
-    public function flush()
+    public function flush(): bool
     {
         return true;
     }
 
     /**
      * Get the cache key prefix.
-     *
-     * @return string
      */
-    public function getPrefix()
+    public function getPrefix(): string
     {
         return '';
     }

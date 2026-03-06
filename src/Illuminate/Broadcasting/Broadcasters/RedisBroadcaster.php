@@ -18,38 +18,26 @@ class RedisBroadcaster extends Broadcaster
     use UsePusherChannelConventions;
 
     /**
-     * The Redis instance.
-     *
-     * @var \Illuminate\Contracts\Redis\Factory
-     */
-    protected $redis;
-
-    /**
-     * The Redis connection to use for broadcasting.
-     *
-     * @var string|null
-     */
-    protected $connection = null;
-
-    /**
-     * The Redis key prefix.
-     *
-     * @var string
-     */
-    protected $prefix = '';
-
-    /**
      * Create a new broadcaster instance.
      *
-     * @param  \Illuminate\Contracts\Redis\Factory  $redis
      * @param  string|null  $connection
      * @param  string  $prefix
      */
-    public function __construct(Redis $redis, $connection = null, $prefix = '')
+    public function __construct(
+        /**
+         * The Redis instance.
+         */
+        protected \Redis $redis,
+        /**
+         * The Redis connection to use for broadcasting.
+         */
+        protected $connection = null,
+        /**
+         * The Redis key prefix.
+         */
+        protected $prefix = ''
+    )
     {
-        $this->redis = $redis;
-        $this->prefix = $prefix;
-        $this->connection = $connection;
     }
 
     /**
@@ -107,14 +95,11 @@ class RedisBroadcaster extends Broadcaster
     /**
      * Broadcast the given event.
      *
-     * @param  array  $channels
      * @param  string  $event
-     * @param  array  $payload
-     * @return void
      *
      * @throws \Illuminate\Broadcasting\BroadcastException
      */
-    public function broadcast(array $channels, $event, array $payload = [])
+    public function broadcast(array $channels, $event, array $payload = []): void
     {
         if (empty($channels)) {
             return;
@@ -165,10 +150,8 @@ class RedisBroadcaster extends Broadcaster
      *
      * ARGV[1] - The payload
      * ARGV[2...] - The channels
-     *
-     * @return string
      */
-    protected function broadcastMultipleChannelsScript()
+    protected function broadcastMultipleChannelsScript(): string
     {
         return <<<'LUA'
 for i = 2, #ARGV do
@@ -179,14 +162,9 @@ LUA;
 
     /**
      * Format the channel array into an array of strings.
-     *
-     * @param  array  $channels
-     * @return array
      */
-    protected function formatChannels(array $channels)
+    protected function formatChannels(array $channels): array
     {
-        return array_map(function ($channel) {
-            return $this->prefix.$channel;
-        }, parent::formatChannels($channels));
+        return array_map(fn($channel) => $this->prefix.$channel, parent::formatChannels($channels));
     }
 }

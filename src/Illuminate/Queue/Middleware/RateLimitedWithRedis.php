@@ -12,13 +12,6 @@ class RateLimitedWithRedis extends RateLimited
     use InteractsWithTime;
 
     /**
-     * The name of the Redis connection that should be used.
-     *
-     * @var string|null
-     */
-    protected $connectionName = null;
-
-    /**
      * The timestamp of the end of the current duration by key.
      *
      * @var array
@@ -30,11 +23,12 @@ class RateLimitedWithRedis extends RateLimited
      *
      * @param  string  $limiterName
      */
-    public function __construct($limiterName, ?string $connection = null)
+    public function __construct($limiterName, /**
+     * The name of the Redis connection that should be used.
+     */
+    protected ?string $connectionName = null)
     {
         parent::__construct($limiterName);
-
-        $this->connectionName = $connection;
     }
 
     /**
@@ -42,7 +36,6 @@ class RateLimitedWithRedis extends RateLimited
      *
      * @param  mixed  $job
      * @param  callable  $next
-     * @param  array  $limits
      * @return mixed
      */
     protected function handleJob($job, $next, array $limits)
@@ -76,7 +69,7 @@ class RateLimitedWithRedis extends RateLimited
             $redis, $key, $maxAttempts, $decaySeconds
         );
 
-        return tap(! $limiter->acquire(), function () use ($key, $limiter) {
+        return tap(! $limiter->acquire(), function () use ($key, $limiter): void {
             $this->decaysAt[$key] = $limiter->decaysAt;
         });
     }
@@ -87,7 +80,7 @@ class RateLimitedWithRedis extends RateLimited
      * @param  string  $key
      * @return int
      */
-    protected function getTimeUntilNextRetry($key)
+    protected function getTimeUntilNextRetry($key): int|float
     {
         return ($this->decaysAt[$key] - $this->currentTime()) + 3;
     }
@@ -95,10 +88,9 @@ class RateLimitedWithRedis extends RateLimited
     /**
      * Specify the Redis connection that should be used.
      *
-     * @param  string  $name
      * @return $this
      */
-    public function connection(string $name)
+    public function connection(string $name): static
     {
         $this->connectionName = $name;
 

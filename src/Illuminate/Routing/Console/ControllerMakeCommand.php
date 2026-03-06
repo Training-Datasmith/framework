@@ -79,10 +79,9 @@ class ControllerMakeCommand extends GeneratorCommand
     /**
      * Resolve the fully-qualified path to the stub.
      *
-     * @param  string  $stub
      * @return string
      */
-    protected function resolveStubPath($stub)
+    protected function resolveStubPath(string $stub)
     {
         return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
@@ -93,9 +92,8 @@ class ControllerMakeCommand extends GeneratorCommand
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
-     * @return string
      */
-    protected function getDefaultNamespace($rootNamespace)
+    protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\Http\Controllers';
     }
@@ -106,9 +104,8 @@ class ControllerMakeCommand extends GeneratorCommand
      * Remove the base controller import if we are already in the base namespace.
      *
      * @param  string  $name
-     * @return string
      */
-    protected function buildClass($name)
+    protected function buildClass($name): string
     {
         $rootNamespace = $this->rootNamespace();
         $controllerNamespace = $this->getNamespace($name);
@@ -143,10 +140,8 @@ class ControllerMakeCommand extends GeneratorCommand
 
     /**
      * Build the replacements for a parent controller.
-     *
-     * @return array
      */
-    protected function buildParentReplacements()
+    protected function buildParentReplacements(): array
     {
         $parentModelClass = $this->parseModel($this->option('parent'));
 
@@ -170,11 +165,8 @@ class ControllerMakeCommand extends GeneratorCommand
 
     /**
      * Build the model replacement values.
-     *
-     * @param  array  $replace
-     * @return array
      */
-    protected function buildModelReplacements(array $replace)
+    protected function buildModelReplacements(array $replace): array
     {
         $modelClass = $this->parseModel($this->option('model'));
 
@@ -217,11 +209,9 @@ class ControllerMakeCommand extends GeneratorCommand
     /**
      * Build the model replacement values.
      *
-     * @param  array  $replace
      * @param  string  $modelClass
-     * @return array
      */
-    protected function buildFormRequestReplacements(array $replace, $modelClass)
+    protected function buildFormRequestReplacements(array $replace, $modelClass): array
     {
         [$namespace, $storeRequestClass, $updateRequestClass] = [
             'Illuminate\\Http', 'Request', 'Request',
@@ -261,9 +251,8 @@ class ControllerMakeCommand extends GeneratorCommand
      * @param  string  $modelClass
      * @param  string  $storeRequestClass
      * @param  string  $updateRequestClass
-     * @return array
      */
-    protected function generateFormRequests($modelClass, $storeRequestClass, $updateRequestClass)
+    protected function generateFormRequests($modelClass, $storeRequestClass, $updateRequestClass): array
     {
         $storeRequestClass = 'Store'.class_basename($modelClass).'Request';
 
@@ -282,10 +271,8 @@ class ControllerMakeCommand extends GeneratorCommand
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['api', null, InputOption::VALUE_NONE, 'Exclude the create and edit methods from the controller'],
@@ -304,8 +291,6 @@ class ControllerMakeCommand extends GeneratorCommand
     /**
      * Interact further with the user if they were prompted for missing arguments.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
     protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)

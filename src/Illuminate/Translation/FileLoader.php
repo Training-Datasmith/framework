@@ -10,18 +10,9 @@ use RuntimeException;
 class FileLoader implements Loader
 {
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
      * The default paths for the loader.
-     *
-     * @var array
      */
-    protected $paths;
+    protected array $paths;
 
     /**
      * All of the registered paths to JSON translation files.
@@ -39,14 +30,12 @@ class FileLoader implements Loader
 
     /**
      * Create a new file loader instance.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  array|string  $path
      */
-    public function __construct(Filesystem $files, array|string $path)
+    public function __construct(/**
+     * The filesystem instance.
+     */
+    protected \Illuminate\Filesystem\Filesystem $files, array|string $path)
     {
-        $this->files = $files;
-
         $this->paths = is_string($path) ? [$path] : $path;
     }
 
@@ -93,7 +82,6 @@ class FileLoader implements Loader
     /**
      * Load a local namespaced translation group for overrides.
      *
-     * @param  array  $lines
      * @param  string  $locale
      * @param  string  $group
      * @param  string  $namespace
@@ -106,7 +94,7 @@ class FileLoader implements Loader
                 $file = "{$path}/vendor/{$namespace}/{$locale}/{$group}.php";
 
                 if ($this->files->exists($file)) {
-                    $output = array_replace_recursive($output, $this->files->getRequire($file));
+                    return array_replace_recursive($output, $this->files->getRequire($file));
                 }
 
                 return $output;
@@ -116,7 +104,6 @@ class FileLoader implements Loader
     /**
      * Load a locale from a given path.
      *
-     * @param  array  $paths
      * @param  string  $locale
      * @param  string  $group
      * @return array
@@ -126,7 +113,7 @@ class FileLoader implements Loader
         return (new Collection($paths))
             ->reduce(function ($output, $path) use ($locale, $group) {
                 if ($this->files->exists($full = "{$path}/{$locale}/{$group}.php")) {
-                    $output = array_replace_recursive($output, $this->files->getRequire($full));
+                    return array_replace_recursive($output, $this->files->getRequire($full));
                 }
 
                 return $output;
@@ -164,9 +151,8 @@ class FileLoader implements Loader
      *
      * @param  string  $namespace
      * @param  string  $hint
-     * @return void
      */
-    public function addNamespace($namespace, $hint)
+    public function addNamespace($namespace, $hint): void
     {
         $this->hints[$namespace] = $hint;
     }
@@ -185,9 +171,8 @@ class FileLoader implements Loader
      * Add a new path to the loader.
      *
      * @param  string  $path
-     * @return void
      */
-    public function addPath($path)
+    public function addPath($path): void
     {
         $this->paths[] = $path;
     }
@@ -196,9 +181,8 @@ class FileLoader implements Loader
      * Add a new JSON path to the loader.
      *
      * @param  string  $path
-     * @return void
      */
-    public function addJsonPath($path)
+    public function addJsonPath($path): void
     {
         $this->jsonPaths[] = $path;
     }

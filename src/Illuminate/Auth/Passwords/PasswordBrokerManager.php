@@ -11,13 +11,6 @@ use InvalidArgumentException;
 class PasswordBrokerManager implements FactoryContract
 {
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
      * The array of created "drivers".
      *
      * @var array
@@ -29,9 +22,13 @@ class PasswordBrokerManager implements FactoryContract
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      */
-    public function __construct($app)
+    public function __construct(
+        /**
+         * The application instance.
+         */
+        protected $app
+    )
     {
-        $this->app = $app;
     }
 
     /**
@@ -55,7 +52,7 @@ class PasswordBrokerManager implements FactoryContract
      *
      * @throws \InvalidArgumentException
      */
-    protected function resolve($name)
+    protected function resolve($name): \Illuminate\Auth\Passwords\PasswordBroker
     {
         $config = $this->getConfig($name);
 
@@ -77,15 +74,14 @@ class PasswordBrokerManager implements FactoryContract
     /**
      * Create a token repository instance based on the given configuration.
      *
-     * @param  array  $config
      * @return \Illuminate\Auth\Passwords\TokenRepositoryInterface
      */
-    protected function createTokenRepository(array $config)
+    protected function createTokenRepository(array $config): \Illuminate\Auth\Passwords\CacheTokenRepository|\Illuminate\Auth\Passwords\DatabaseTokenRepository
     {
         $key = $this->app['config']['app.key'];
 
-        if (str_starts_with($key, 'base64:')) {
-            $key = base64_decode(substr($key, 7));
+        if (str_starts_with((string) $key, 'base64:')) {
+            $key = base64_decode(substr((string) $key, 7));
         }
 
         if (isset($config['driver']) && $config['driver'] === 'cache') {
@@ -133,9 +129,8 @@ class PasswordBrokerManager implements FactoryContract
      * Set the default password broker name.
      *
      * @param  string  $name
-     * @return void
      */
-    public function setDefaultDriver($name)
+    public function setDefaultDriver($name): void
     {
         $this->app['config']['auth.defaults.passwords'] = $name;
     }
@@ -143,11 +138,10 @@ class PasswordBrokerManager implements FactoryContract
     /**
      * Dynamically call the default driver instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->broker()->{$method}(...$parameters);
     }

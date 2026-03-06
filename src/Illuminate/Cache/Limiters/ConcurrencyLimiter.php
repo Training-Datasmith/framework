@@ -9,34 +9,6 @@ use Throwable;
 class ConcurrencyLimiter
 {
     /**
-     * The cache store instance.
-     *
-     * @var \Illuminate\Contracts\Cache\LockProvider
-     */
-    protected $store;
-
-    /**
-     * The name of the limiter.
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The allowed number of concurrent locks.
-     *
-     * @var int
-     */
-    protected $maxLocks;
-
-    /**
-     * The number of seconds a slot should be maintained.
-     *
-     * @var int
-     */
-    protected $releaseAfter;
-
-    /**
      * Create a new concurrency limiter instance.
      *
      * @param  \Illuminate\Contracts\Cache\LockProvider  $store
@@ -44,12 +16,25 @@ class ConcurrencyLimiter
      * @param  int  $maxLocks
      * @param  int  $releaseAfter
      */
-    public function __construct($store, $name, $maxLocks, $releaseAfter)
+    public function __construct(
+        /**
+         * The cache store instance.
+         */
+        protected $store,
+        /**
+         * The name of the limiter.
+         */
+        protected $name,
+        /**
+         * The allowed number of concurrent locks.
+         */
+        protected $maxLocks,
+        /**
+         * The number of seconds a slot should be maintained.
+         */
+        protected $releaseAfter
+    )
     {
-        $this->name = $name;
-        $this->store = $store;
-        $this->maxLocks = $maxLocks;
-        $this->releaseAfter = $releaseAfter;
     }
 
     /**
@@ -79,7 +64,7 @@ class ConcurrencyLimiter
 
         if (is_callable($callback)) {
             try {
-                return tap($callback(), function () use ($slot) {
+                return tap($callback(), function () use ($slot): void {
                     $this->release($slot);
                 });
             } catch (Throwable $exception) {

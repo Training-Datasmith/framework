@@ -8,9 +8,8 @@ trait CompilesClasses
      * Compile the conditional class statement into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileClass($expression)
+    protected function compileClass($expression): string
     {
         $expression = is_null($expression) ? '([])' : $expression;
 

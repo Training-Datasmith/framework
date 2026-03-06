@@ -11,10 +11,9 @@ class SqsConnector implements ConnectorInterface
     /**
      * Establish a queue connection.
      *
-     * @param  array  $config
      * @return \Illuminate\Contracts\Queue\Queue
      */
-    public function connect(array $config)
+    public function connect(array $config): \Illuminate\Queue\SqsQueue
     {
         $config = $this->getDefaultConfiguration($config);
 
@@ -39,11 +38,8 @@ class SqsConnector implements ConnectorInterface
 
     /**
      * Get the default configuration for SQS.
-     *
-     * @param  array  $config
-     * @return array
      */
-    protected function getDefaultConfiguration(array $config)
+    protected function getDefaultConfiguration(array $config): array
     {
         return array_merge([
             'version' => 'latest',

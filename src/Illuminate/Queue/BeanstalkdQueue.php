@@ -13,34 +13,6 @@ use Pheanstalk\Values\TubeName;
 class BeanstalkdQueue extends Queue implements QueueContract
 {
     /**
-     * The Pheanstalk instance.
-     *
-     * @var \Pheanstalk\Contract\PheanstalkManagerInterface&\Pheanstalk\Contract\PheanstalkPublisherInterface&\Pheanstalk\Contract\PheanstalkSubscriberInterface
-     */
-    protected $pheanstalk;
-
-    /**
-     * The name of the default tube.
-     *
-     * @var string
-     */
-    protected $default;
-
-    /**
-     * The "time to run" for all pushed jobs.
-     *
-     * @var int
-     */
-    protected $timeToRun;
-
-    /**
-     * The maximum number of seconds to block for a job.
-     *
-     * @var int
-     */
-    protected $blockFor;
-
-    /**
      * Create a new Beanstalkd queue instance.
      *
      * @param  \Pheanstalk\Contract\PheanstalkManagerInterface&\Pheanstalk\Contract\PheanstalkPublisherInterface&\Pheanstalk\Contract\PheanstalkSubscriberInterface  $pheanstalk
@@ -50,16 +22,24 @@ class BeanstalkdQueue extends Queue implements QueueContract
      * @param  bool  $dispatchAfterCommit
      */
     public function __construct(
-        $pheanstalk,
-        $default,
-        $timeToRun,
-        $blockFor = 0,
+        /**
+         * The Pheanstalk instance.
+         */
+        protected $pheanstalk,
+        /**
+         * The name of the default tube.
+         */
+        protected $default,
+        /**
+         * The "time to run" for all pushed jobs.
+         */
+        protected $timeToRun,
+        /**
+         * The maximum number of seconds to block for a job.
+         */
+        protected $blockFor = 0,
         $dispatchAfterCommit = false,
     ) {
-        $this->default = $default;
-        $this->blockFor = $blockFor;
-        $this->timeToRun = $timeToRun;
-        $this->pheanstalk = $pheanstalk;
         $this->dispatchAfterCommit = $dispatchAfterCommit;
     }
 
@@ -69,7 +49,7 @@ class BeanstalkdQueue extends Queue implements QueueContract
      * @param  string|null  $queue
      * @return int
      */
-    public function size($queue = null)
+    public function size($queue = null): float|int|array
     {
         $stats = $this->pheanstalk->statsTube(new TubeName($this->getQueue($queue)));
 
@@ -117,7 +97,7 @@ class BeanstalkdQueue extends Queue implements QueueContract
      * @param  string|null  $queue
      * @return int|null
      */
-    public function creationTimeOfOldestPendingJob($queue = null)
+    public function creationTimeOfOldestPendingJob($queue = null): null
     {
         // Not supported by Beanstalkd...
         return null;
@@ -138,9 +118,7 @@ class BeanstalkdQueue extends Queue implements QueueContract
             $this->createPayload($job, $this->getQueue($queue), $data),
             $queue,
             null,
-            function ($payload, $queue) {
-                return $this->pushRaw($payload, $queue);
-            }
+            fn($payload, $queue) => $this->pushRaw($payload, $queue)
         );
     }
 
@@ -149,7 +127,6 @@ class BeanstalkdQueue extends Queue implements QueueContract
      *
      * @param  string  $payload
      * @param  string|null  $queue
-     * @param  array  $options
      * @return mixed
      */
     public function pushRaw($payload, $queue = null, array $options = [])
@@ -196,9 +173,8 @@ class BeanstalkdQueue extends Queue implements QueueContract
      * @param  array  $jobs
      * @param  mixed  $data
      * @param  string|null  $queue
-     * @return void
      */
-    public function bulk($jobs, $data = '', $queue = null)
+    public function bulk($jobs, $data = '', $queue = null): void
     {
         foreach ((array) $jobs as $job) {
             if (isset($job->delay)) {
@@ -241,9 +217,8 @@ class BeanstalkdQueue extends Queue implements QueueContract
      *
      * @param  string  $queue
      * @param  string|int  $id
-     * @return void
      */
-    public function deleteMessage($queue, $id)
+    public function deleteMessage($queue, $id): void
     {
         $this->pheanstalk->useTube(new TubeName($this->getQueue($queue)));
 

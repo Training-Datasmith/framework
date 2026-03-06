@@ -38,13 +38,11 @@ trait AsPivot
     /**
      * Create a new pivot model instance.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
      * @param  array  $attributes
      * @param  string  $table
      * @param  bool  $exists
-     * @return static
      */
-    public static function fromAttributes(Model $parent, $attributes, $table, $exists = false)
+    public static function fromAttributes(Model $parent, $attributes, $table, $exists = false): static
     {
         $instance = new static;
 
@@ -71,7 +69,6 @@ trait AsPivot
     /**
      * Create a new pivot model from raw values returned from a query.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
      * @param  array  $attributes
      * @param  string  $table
      * @param  bool  $exists
@@ -139,7 +136,7 @@ trait AsPivot
 
         $this->touchOwners();
 
-        return tap($this->getDeleteQuery()->delete(), function () {
+        return tap($this->getDeleteQuery()->delete(), function (): void {
             $this->exists = false;
 
             $this->fireModelEvent('deleted', false);
@@ -224,7 +221,6 @@ trait AsPivot
     /**
      * Set the related model of the relationship.
      *
-     * @param  \Illuminate\Database\Eloquent\Model|null  $related
      * @return $this
      */
     public function setRelatedModel(?Model $related = null)
@@ -238,9 +234,8 @@ trait AsPivot
      * Determine if the pivot model or given attributes has timestamp attributes.
      *
      * @param  array|null  $attributes
-     * @return bool
      */
-    public function hasTimestampAttributes($attributes = null)
+    public function hasTimestampAttributes($attributes = null): bool
     {
         return ($createdAt = $this->getCreatedAtColumn()) !== null
             && array_key_exists($createdAt, $attributes ?? $this->attributes);
@@ -321,19 +316,17 @@ trait AsPivot
     {
         $ids = array_values($ids);
 
-        if (! str_contains($ids[0], ':')) {
+        if (! str_contains((string) $ids[0], ':')) {
             return parent::newQueryForRestoration($ids);
         }
 
         $query = $this->newQueryWithoutScopes();
 
         foreach ($ids as $id) {
-            $segments = explode(':', $id);
+            $segments = explode(':', (string) $id);
 
-            $query->orWhere(function ($query) use ($segments) {
-                return $query->where($segments[0], $segments[1])
-                    ->where($segments[2], $segments[3]);
-            });
+            $query->orWhere(fn($query) => $query->where($segments[0], $segments[1])
+                ->where($segments[2], $segments[3]));
         }
 
         return $query;

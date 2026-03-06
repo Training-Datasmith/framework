@@ -25,29 +25,22 @@ class ArrayStore extends TaggableStore implements LockProvider
     public $locks = [];
 
     /**
-     * Indicates if values are serialized within the store.
-     *
-     * @var bool
-     */
-    protected $serializesValues;
-
-    /**
-     * The classes that should be allowed during unserialization.
-     *
-     * @var array|bool|null
-     */
-    protected $serializableClasses;
-
-    /**
      * Create a new Array store.
      *
      * @param  bool  $serializesValues
      * @param  array|bool|null  $serializableClasses
      */
-    public function __construct($serializesValues = false, $serializableClasses = null)
+    public function __construct(
+        /**
+         * Indicates if values are serialized within the store.
+         */
+        protected $serializesValues = false,
+        /**
+         * The classes that should be allowed during unserialization.
+         */
+        protected $serializableClasses = null
+    )
     {
-        $this->serializesValues = $serializesValues;
-        $this->serializableClasses = $serializableClasses;
     }
 
     /**
@@ -105,9 +98,8 @@ class ArrayStore extends TaggableStore implements LockProvider
      * @param  string  $key
      * @param  mixed  $value
      * @param  int  $seconds
-     * @return bool
      */
-    public function put($key, $value, $seconds)
+    public function put($key, $value, $seconds): bool
     {
         $this->storage[$key] = [
             'value' => $this->serializesValues ? serialize($value) : $value,
@@ -127,7 +119,7 @@ class ArrayStore extends TaggableStore implements LockProvider
     public function increment($key, $value = 1)
     {
         if (! is_null($existing = $this->get($key))) {
-            return tap(((int) $existing) + $value, function ($incremented) use ($key) {
+            return tap(((int) $existing) + $value, function ($incremented) use ($key): void {
                 $value = $this->serializesValues ? serialize($incremented) : $incremented;
 
                 $this->storage[$key]['value'] = $value;
@@ -167,9 +159,8 @@ class ArrayStore extends TaggableStore implements LockProvider
      * Remove an item from the cache.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function forget($key)
+    public function forget($key): bool
     {
         if (array_key_exists($key, $this->storage)) {
             unset($this->storage[$key]);
@@ -182,10 +173,8 @@ class ArrayStore extends TaggableStore implements LockProvider
 
     /**
      * Remove all items from the cache.
-     *
-     * @return bool
      */
-    public function flush()
+    public function flush(): bool
     {
         $this->storage = [];
 
@@ -194,10 +183,8 @@ class ArrayStore extends TaggableStore implements LockProvider
 
     /**
      * Get the cache key prefix.
-     *
-     * @return string
      */
-    public function getPrefix()
+    public function getPrefix(): string
     {
         return '';
     }
@@ -219,7 +206,7 @@ class ArrayStore extends TaggableStore implements LockProvider
      * @param  int  $seconds
      * @return float
      */
-    protected function toTimestamp($seconds)
+    protected function toTimestamp($seconds): int|float
     {
         return $seconds > 0 ? (Carbon::now()->getPreciseTimestamp(3) / 1000) + $seconds : 0;
     }
@@ -232,7 +219,7 @@ class ArrayStore extends TaggableStore implements LockProvider
      * @param  string|null  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function lock($name, $seconds = 0, $owner = null)
+    public function lock($name, $seconds = 0, $owner = null): \Illuminate\Cache\ArrayLock
     {
         return new ArrayLock($this, $name, $seconds, $owner);
     }
@@ -253,9 +240,8 @@ class ArrayStore extends TaggableStore implements LockProvider
      * Unserialize the given value.
      *
      * @param  string  $value
-     * @return mixed
      */
-    protected function unserialize($value)
+    protected function unserialize($value): mixed
     {
         if ($this->serializableClasses !== null) {
             return unserialize($value, ['allowed_classes' => $this->serializableClasses]);

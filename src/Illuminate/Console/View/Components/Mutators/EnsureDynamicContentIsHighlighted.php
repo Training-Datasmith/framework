@@ -10,7 +10,7 @@ class EnsureDynamicContentIsHighlighted
      * @param  string  $string
      * @return string
      */
-    public function __invoke($string)
+    public function __invoke($string): ?string
     {
         return preg_replace('/\[([^\]]+)\]/', '<options=bold>[$1]</>', (string) $string);
     }

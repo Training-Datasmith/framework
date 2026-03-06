@@ -42,10 +42,8 @@ class ShowModelCommand extends DatabaseInspectionCommand implements PromptsForMi
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle(ModelInspector $modelInspector)
+    public function handle(ModelInspector $modelInspector): int
     {
         try {
             $info = $modelInspector->inspect(
@@ -134,7 +132,7 @@ class ShowModelCommand extends DatabaseInspectionCommand implements PromptsForMi
      * @param  \Illuminate\Support\Collection  $observers
      * @return void
      */
-    protected function displayCli($class, $database, $table, $policy, $attributes, $relations, $events, $observers)
+    protected function displayCli(string $class, $database, $table, $policy, $attributes, $relations, $events, $observers)
     {
         $this->newLine();
 
@@ -159,7 +157,7 @@ class ShowModelCommand extends DatabaseInspectionCommand implements PromptsForMi
                 $attribute['name'],
                 (new Collection(['increments', 'unique', 'nullable', 'fillable', 'hidden', 'appended']))
                     ->filter(fn ($property) => $attribute[$property])
-                    ->map(fn ($property) => sprintf('<fg=gray>%s</>', $property))
+                    ->map(fn (string $property): string => sprintf('<fg=gray>%s</>', $property))
                     ->implode('<fg=gray>,</> ')
             ));
 

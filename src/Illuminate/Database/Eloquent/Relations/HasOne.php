@@ -32,7 +32,7 @@ class HasOne extends HasOneOrMany implements SupportsPartialRelations
     }
 
     /** @inheritDoc */
-    public function initRelation(array $models, $relation)
+    public function initRelation(array $models, $relation): array
     {
         foreach ($models as $model) {
             $model->setRelation($relation, $this->getDefaultFor($model));
@@ -63,9 +63,8 @@ class HasOne extends HasOneOrMany implements SupportsPartialRelations
      * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
      * @param  string|null  $column
      * @param  string|null  $aggregate
-     * @return void
      */
-    public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null)
+    public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null): void
     {
         $query->addSelect($this->foreignKey);
     }
@@ -82,11 +81,8 @@ class HasOne extends HasOneOrMany implements SupportsPartialRelations
 
     /**
      * Add join query constraints for one of many relationships.
-     *
-     * @param  \Illuminate\Database\Query\JoinClause  $join
-     * @return void
      */
-    public function addOneOfManyJoinSubQueryConstraints(JoinClause $join)
+    public function addOneOfManyJoinSubQueryConstraints(JoinClause $join): void
     {
         $join->on($this->qualifySubSelectColumn($this->foreignKey), '=', $this->qualifyRelatedColumn($this->foreignKey));
     }
@@ -99,7 +95,7 @@ class HasOne extends HasOneOrMany implements SupportsPartialRelations
      */
     public function newRelatedInstanceFor(Model $parent)
     {
-        return tap($this->related->newInstance(), function ($instance) use ($parent) {
+        return tap($this->related->newInstance(), function (\Illuminate\Database\Eloquent\Model $instance) use ($parent): void {
             $instance->setAttribute($this->getForeignKeyName(), $parent->{$this->localKey});
             $this->applyInverseRelationToModel($instance, $parent);
         });

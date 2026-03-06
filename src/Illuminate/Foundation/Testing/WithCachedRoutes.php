@@ -9,8 +9,6 @@ trait WithCachedRoutes
 {
     /**
      * After creating the routes once, we can cache them for the remaining tests.
-     *
-     * @return void
      */
     protected function setUpWithCachedRoutes(): void
     {
@@ -30,8 +28,6 @@ trait WithCachedRoutes
      * Reset the route service provider so it's not defaulting to loading cached routes.
      *
      * This is helpful if some of the tests in the suite apply this trait while others do not.
-     *
-     * @return void
      */
     protected function tearDownWithCachedRoutes(): void
     {

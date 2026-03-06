@@ -48,10 +48,10 @@ class ConfigPublishCommand extends Command
 
         $name = (string) (is_null($this->argument('name')) ? select(
             label: 'Which configuration file would you like to publish?',
-            options: (new Collection($config))->map(fn (string $path) => basename($path, '.php')),
+            options: (new Collection($config))->map(fn (string $path): string => basename($path, '.php')),
         ) : $this->argument('name'));
 
-        if (! is_null($name) && ! isset($config[$name])) {
+        if (! isset($config[$name])) {
             $this->components->error('Unrecognized configuration file.');
 
             return 1;
@@ -63,9 +63,6 @@ class ConfigPublishCommand extends Command
     /**
      * Publish the given file to the given destination.
      *
-     * @param  string  $name
-     * @param  string  $file
-     * @param  string  $destination
      * @return void
      */
     protected function publish(string $name, string $file, string $destination)

@@ -10,7 +10,6 @@ class MaintenanceModeBypassCookie
     /**
      * Create a new maintenance mode bypass cookie.
      *
-     * @param  string  $key
      * @return \Symfony\Component\HttpFoundation\Cookie
      */
     public static function create(string $key)
@@ -19,18 +18,14 @@ class MaintenanceModeBypassCookie
 
         return new Cookie('laravel_maintenance', base64_encode(json_encode([
             'expires_at' => $expiresAt->getTimestamp(),
-            'mac' => hash_hmac('sha256', $expiresAt->getTimestamp(), $key),
+            'mac' => hash_hmac('sha256', (string) $expiresAt->getTimestamp(), $key),
         ])), $expiresAt, config('session.path'), config('session.domain'));
     }
 
     /**
      * Determine if the given maintenance mode bypass cookie is valid.
-     *
-     * @param  string  $cookie
-     * @param  string  $key
-     * @return bool
      */
-    public static function isValid(string $cookie, string $key)
+    public static function isValid(string $cookie, string $key): bool
     {
         $payload = json_decode(base64_decode($cookie), true);
 

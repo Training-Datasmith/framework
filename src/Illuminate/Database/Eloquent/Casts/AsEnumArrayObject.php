@@ -19,15 +19,12 @@ class AsEnumArrayObject implements Castable
      * @param  array{class-string<TEnum>}  $arguments
      * @return \Illuminate\Contracts\Database\Eloquent\CastsAttributes<\Illuminate\Database\Eloquent\Casts\ArrayObject<array-key, TEnum>, iterable<TEnum>>
      */
-    public static function castUsing(array $arguments)
+    public static function castUsing(array $arguments): \Illuminate\Contracts\Database\Eloquent\CastsAttributes
     {
         return new class($arguments) implements CastsAttributes
         {
-            protected $arguments;
-
-            public function __construct(array $arguments)
+            public function __construct(protected array $arguments)
             {
-                $this->arguments = $arguments;
             }
 
             public function get($model, $key, $value, $attributes)
@@ -44,14 +41,15 @@ class AsEnumArrayObject implements Castable
 
                 $enumClass = $this->arguments[0];
 
-                return new ArrayObject((new Collection($data))->map(function ($value) use ($enumClass) {
-                    return is_subclass_of($enumClass, BackedEnum::class)
-                        ? $enumClass::from($value)
-                        : constant($enumClass.'::'.$value);
-                })->toArray());
+                return new ArrayObject((new Collection($data))->map(fn($value) => is_subclass_of($enumClass, BackedEnum::class)
+                    ? $enumClass::from($value)
+                    : constant($enumClass.'::'.$value))->toArray());
             }
 
-            public function set($model, $key, $value, $attributes)
+            /**
+             * @return mixed[]
+             */
+            public function set($model, $key, $value, $attributes): array
             {
                 if ($value === null) {
                     return [$key => null];
@@ -88,9 +86,8 @@ class AsEnumArrayObject implements Castable
      * Specify the Enum for the cast.
      *
      * @param  class-string  $class
-     * @return string
      */
-    public static function of($class)
+    public static function of(string $class): string
     {
         return static::class.':'.$class;
     }

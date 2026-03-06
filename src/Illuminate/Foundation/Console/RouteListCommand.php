@@ -36,13 +36,6 @@ class RouteListCommand extends Command
     protected $description = 'List all registered routes';
 
     /**
-     * The router instance.
-     *
-     * @var \Illuminate\Routing\Router
-     */
-    protected $router;
-
-    /**
      * The table headers for the command.
      *
      * @var string[]
@@ -74,14 +67,13 @@ class RouteListCommand extends Command
 
     /**
      * Create a new route command instance.
-     *
-     * @param  \Illuminate\Routing\Router  $router
      */
-    public function __construct(Router $router)
+    public function __construct(/**
+     * The router instance.
+     */
+    protected \Illuminate\Routing\Router $router)
     {
         parent::__construct();
-
-        $this->router = $router;
     }
 
     /**
@@ -114,7 +106,7 @@ class RouteListCommand extends Command
     protected function getRoutes()
     {
         $routes = (new Collection($this->router->getRoutes()))
-            ->map(fn ($route) => $this->getRouteInformation($route))
+            ->map(fn (\Illuminate\Routing\Route $route) => $this->getRouteInformation($route))
             ->filter()
             ->all();
 
@@ -134,7 +126,6 @@ class RouteListCommand extends Command
     /**
      * Get the route information for a given route.
      *
-     * @param  \Illuminate\Routing\Route  $route
      * @return array
      */
     protected function getRouteInformation(Route $route)
@@ -154,7 +145,6 @@ class RouteListCommand extends Command
      * Sort the routes by a given element.
      *
      * @param  string  $sort
-     * @param  array  $routes
      * @return array
      */
     protected function sortRoutes($sort, array $routes)
@@ -174,21 +164,15 @@ class RouteListCommand extends Command
 
     /**
      * Remove unnecessary columns from the routes.
-     *
-     * @param  array  $routes
-     * @return array
      */
-    protected function pluckColumns(array $routes)
+    protected function pluckColumns(array $routes): array
     {
-        return array_map(function ($route) {
-            return Arr::only($route, $this->getColumns());
-        }, $routes);
+        return array_map(fn($route) => Arr::only($route, $this->getColumns()), $routes);
     }
 
     /**
      * Display the route information on the console.
      *
-     * @param  array  $routes
      * @return void
      */
     protected function displayRoutes(array $routes)
@@ -202,11 +186,8 @@ class RouteListCommand extends Command
 
     /**
      * Get the middleware for the route.
-     *
-     * @param  \Illuminate\Routing\Route  $route
-     * @return string
      */
-    protected function getMiddleware($route)
+    protected function getMiddleware(\Illuminate\Routing\Route $route): string
     {
         return (new Collection($this->router->gatherRouteMiddleware($route)))
             ->map(fn ($middleware) => $middleware instanceof Closure ? 'Closure' : $middleware)
@@ -216,7 +197,6 @@ class RouteListCommand extends Command
     /**
      * Determine if the route has been defined outside of the application.
      *
-     * @param  \Illuminate\Routing\Route  $route
      * @return bool
      */
     protected function isVendorRoute(Route $route)
@@ -243,22 +223,18 @@ class RouteListCommand extends Command
 
     /**
      * Determine if the route uses a framework controller.
-     *
-     * @param  \Illuminate\Routing\Route  $route
-     * @return bool
      */
-    protected function isFrameworkController(Route $route)
+    protected function isFrameworkController(Route $route): bool
     {
         return in_array($route->getControllerClass(), [
-            '\Illuminate\Routing\RedirectController',
-            '\Illuminate\Routing\ViewController',
+            \Illuminate\Routing\RedirectController::class,
+            \Illuminate\Routing\ViewController::class,
         ], true);
     }
 
     /**
      * Filter the route by URI and / or name.
      *
-     * @param  array  $route
      * @return array|null
      */
     protected function filterRoute(array $route)
@@ -276,7 +252,7 @@ class RouteListCommand extends Command
 
         if ($this->option('except-path')) {
             foreach (explode(',', $this->option('except-path')) as $path) {
-                if (str_contains($route['uri'], $path)) {
+                if (str_contains((string) $route['uri'], $path)) {
                     return;
                 }
             }
@@ -287,37 +263,30 @@ class RouteListCommand extends Command
 
     /**
      * Get the table headers for the visible columns.
-     *
-     * @return array
      */
-    protected function getHeaders()
+    protected function getHeaders(): array
     {
         return Arr::only($this->headers, array_keys($this->getColumns()));
     }
 
     /**
      * Get the column names to show (lowercase table headers).
-     *
-     * @return array
      */
-    protected function getColumns()
+    protected function getColumns(): array
     {
         return array_map(strtolower(...), $this->headers);
     }
 
     /**
      * Parse the column list.
-     *
-     * @param  array  $columns
-     * @return array
      */
-    protected function parseColumns(array $columns)
+    protected function parseColumns(array $columns): array
     {
         $results = [];
 
         foreach ($columns as $column) {
-            if (str_contains($column, ',')) {
-                $results = array_merge($results, explode(',', $column));
+            if (str_contains((string) $column, ',')) {
+                $results = array_merge($results, explode(',', (string) $column));
             } else {
                 $results[] = $column;
             }
@@ -335,8 +304,8 @@ class RouteListCommand extends Command
     protected function asJson($routes)
     {
         return $routes
-            ->map(function ($route) {
-                $route['middleware'] = empty($route['middleware']) ? [] : explode("\n", $route['middleware']);
+            ->map(function (array $route): array {
+                $route['middleware'] = empty($route['middleware']) ? [] : explode("\n", (string) $route['middleware']);
 
                 return $route;
             })
@@ -353,20 +322,20 @@ class RouteListCommand extends Command
     protected function forCli($routes)
     {
         $routes = $routes->map(
-            fn ($route) => array_merge($route, [
+            fn ($route): array => array_merge($route, [
                 'action' => $this->formatActionForCli($route),
                 'method' => $route['method'] == 'GET|HEAD|POST|PUT|PATCH|DELETE|OPTIONS' ? 'ANY' : $route['method'],
-                'uri' => $route['domain'] ? ($route['domain'].'/'.ltrim($route['uri'], '/')) : $route['uri'],
+                'uri' => $route['domain'] ? ($route['domain'].'/'.ltrim((string) $route['uri'], '/')) : $route['uri'],
             ]),
         );
 
-        $maxMethod = mb_strlen($routes->max('method'));
+        $maxMethod = mb_strlen((string) $routes->max('method'));
 
-        $terminalWidth = $this->getTerminalWidth();
+        $terminalWidth = static::getTerminalWidth();
 
         $routeCount = $this->determineRouteCountOutput($routes, $terminalWidth);
 
-        return $routes->map(function ($route) use ($maxMethod, $terminalWidth) {
+        return $routes->map(function ($route) use ($maxMethod, $terminalWidth): array {
             [
                 'action' => $action,
                 'domain' => $domain,
@@ -376,8 +345,8 @@ class RouteListCommand extends Command
             ] = $route;
 
             $middleware = (new Stringable($middleware))->explode("\n")->filter()->whenNotEmpty(
-                fn ($collection) => $collection->map(
-                    fn ($middleware) => sprintf('         %s⇂ %s', str_repeat(' ', $maxMethod), $middleware)
+                fn ($collection): \Illuminate\Support\Collection => $collection->map(
+                    fn ($middleware): string => sprintf('         %s⇂ %s', str_repeat(' ', $maxMethod), $middleware)
                 )
             )->implode("\n");
 
@@ -394,7 +363,7 @@ class RouteListCommand extends Command
             }
 
             $method = (new Stringable($method))->explode('|')->map(
-                fn ($method) => sprintf('<fg=%s>%s</>', $this->verbColors[$method] ?? 'default', $method),
+                fn ($method): string => sprintf('<fg=%s>%s</>', $this->verbColors[$method] ?? 'default', $method),
             )->implode('<fg=#6C7280>|</>');
 
             return [sprintf(
@@ -432,14 +401,14 @@ class RouteListCommand extends Command
         $rootControllerNamespace = $this->laravel[UrlGenerator::class]->getRootControllerNamespace()
             ?? ($this->laravel->getNamespace().'Http\\Controllers');
 
-        if (str_starts_with($action, $rootControllerNamespace)) {
-            return $name.substr($action, mb_strlen($rootControllerNamespace) + 1);
+        if (str_starts_with((string) $action, (string) $rootControllerNamespace)) {
+            return $name.substr((string) $action, mb_strlen((string) $rootControllerNamespace) + 1);
         }
 
-        $actionClass = explode('@', $action)[0];
+        $actionClass = explode('@', (string) $action)[0];
 
         if (class_exists($actionClass) && str_starts_with((new ReflectionClass($actionClass))->getFilename(), base_path('vendor'))) {
-            $actionCollection = new Collection(explode('\\', $action));
+            $actionCollection = new Collection(explode('\\', (string) $action));
 
             return $name.$actionCollection->take(2)->implode('\\').'   '.$actionCollection->last();
         }
@@ -452,9 +421,8 @@ class RouteListCommand extends Command
      *
      * @param  \Illuminate\Support\Collection  $routes
      * @param  int  $terminalWidth
-     * @return string
      */
-    protected function determineRouteCountOutput($routes, $terminalWidth)
+    protected function determineRouteCountOutput($routes, $terminalWidth): string
     {
         $routeCountText = 'Showing ['.$routes->count().'] routes';
 
@@ -481,19 +449,16 @@ class RouteListCommand extends Command
      * Set a callback that should be used when resolving the terminal width.
      *
      * @param  \Closure|null  $resolver
-     * @return void
      */
-    public static function resolveTerminalWidthUsing($resolver)
+    public static function resolveTerminalWidthUsing($resolver): void
     {
         static::$terminalWidthResolver = $resolver;
     }
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['json', null, InputOption::VALUE_NONE, 'Output the route list as JSON'],

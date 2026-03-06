@@ -14,13 +14,6 @@ class LockableFile
     protected $handle;
 
     /**
-     * The file path.
-     *
-     * @var string
-     */
-    protected $path;
-
-    /**
      * Indicates if the file is locked.
      *
      * @var bool
@@ -33,12 +26,13 @@ class LockableFile
      * @param  string  $path
      * @param  string  $mode
      */
-    public function __construct($path, $mode)
+    public function __construct(/**
+     * The file path.
+     */
+    protected $path, $mode)
     {
-        $this->path = $path;
-
-        $this->ensureDirectoryExists($path);
-        $this->createResource($path, $mode);
+        $this->ensureDirectoryExists($this->path);
+        $this->createResource($this->path, $mode);
     }
 
     /**
@@ -74,7 +68,7 @@ class LockableFile
      * @param  int|null  $length
      * @return string
      */
-    public function read($length = null)
+    public function read($length = null): string|false
     {
         clearstatcache(true, $this->path);
 
@@ -86,7 +80,7 @@ class LockableFile
      *
      * @return int
      */
-    public function size()
+    public function size(): int|false
     {
         return filesize($this->path);
     }
@@ -97,7 +91,7 @@ class LockableFile
      * @param  string  $contents
      * @return $this
      */
-    public function write($contents)
+    public function write($contents): static
     {
         fwrite($this->handle, $contents);
 
@@ -111,7 +105,7 @@ class LockableFile
      *
      * @return $this
      */
-    public function truncate()
+    public function truncate(): static
     {
         rewind($this->handle);
 
@@ -128,7 +122,7 @@ class LockableFile
      *
      * @throws \Illuminate\Contracts\Filesystem\LockTimeoutException
      */
-    public function getSharedLock($block = false)
+    public function getSharedLock($block = false): static
     {
         if (! flock($this->handle, LOCK_SH | ($block ? 0 : LOCK_NB))) {
             throw new LockTimeoutException("Unable to acquire file lock at path [{$this->path}].");
@@ -147,7 +141,7 @@ class LockableFile
      *
      * @throws \Illuminate\Contracts\Filesystem\LockTimeoutException
      */
-    public function getExclusiveLock($block = false)
+    public function getExclusiveLock($block = false): static
     {
         if (! flock($this->handle, LOCK_EX | ($block ? 0 : LOCK_NB))) {
             throw new LockTimeoutException("Unable to acquire file lock at path [{$this->path}].");
@@ -163,7 +157,7 @@ class LockableFile
      *
      * @return $this
      */
-    public function releaseLock()
+    public function releaseLock(): static
     {
         flock($this->handle, LOCK_UN);
 
@@ -174,10 +168,8 @@ class LockableFile
 
     /**
      * Close the file.
-     *
-     * @return bool
      */
-    public function close()
+    public function close(): bool
     {
         if ($this->isLocked) {
             $this->releaseLock();

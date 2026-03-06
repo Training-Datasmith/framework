@@ -23,7 +23,7 @@ abstract class Broadcaster implements BroadcasterContract
      *
      * @var \Closure|null
      */
-    protected $authenticatedUserCallback = null;
+    protected $authenticatedUserCallback;
 
     /**
      * The registered channel authenticators.
@@ -65,11 +65,8 @@ abstract class Broadcaster implements BroadcasterContract
      * Register the user retrieval callback used to authenticate connections.
      *
      * See: https://pusher.com/docs/channels/library_auth_reference/auth-signatures/#user-authentication.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function resolveAuthenticatedUserUsing(Closure $callback)
+    public function resolveAuthenticatedUserUsing(Closure $callback): void
     {
         $this->authenticatedUserCallback = $callback;
     }
@@ -118,10 +115,11 @@ abstract class Broadcaster implements BroadcasterContract
             $handler = $this->normalizeChannelHandlerToCallable($callback);
 
             $result = $handler($this->retrieveUser($request, $channel), ...$parameters);
-
             if ($result === false) {
                 throw new AccessDeniedHttpException;
-            } elseif ($result) {
+            }
+
+            if ($result) {
                 return $this->validAuthenticationResponse($request, $result);
             }
         }
@@ -142,8 +140,8 @@ abstract class Broadcaster implements BroadcasterContract
         $callbackParameters = $this->extractParameters($callback);
 
         return (new Collection($this->extractChannelKeys($pattern, $channel)))
-            ->reject(fn ($value, $key) => is_numeric($key))
-            ->map(fn ($value, $key) => $this->resolveBinding($key, $value, $callbackParameters))
+            ->reject(fn ($value, $key): bool => is_numeric($key))
+            ->map(fn ($value, $key): mixed => $this->resolveBinding($key, $value, $callbackParameters))
             ->values()
             ->all();
     }
@@ -160,7 +158,8 @@ abstract class Broadcaster implements BroadcasterContract
     {
         if (is_callable($callback)) {
             return (new ReflectionFunction($callback))->getParameters();
-        } elseif (is_string($callback)) {
+        }
+        if (is_string($callback)) {
             return $this->extractParametersFromClass($callback);
         }
 
@@ -280,14 +279,11 @@ abstract class Broadcaster implements BroadcasterContract
     /**
      * Format the channel array into an array of strings.
      *
-     * @param  array  $channels
      * @return array
      */
     protected function formatChannels(array $channels)
     {
-        return array_map(function ($channel) {
-            return (string) $channel;
-        }, $channels);
+        return array_map(fn($channel) => (string) $channel, $channels);
     }
 
     /**
@@ -314,11 +310,9 @@ abstract class Broadcaster implements BroadcasterContract
      */
     protected function normalizeChannelHandlerToCallable($callback)
     {
-        return is_callable($callback) ? $callback : function (...$args) use ($callback) {
-            return Container::getInstance()
-                ->make($callback)
-                ->join(...$args);
-        };
+        return is_callable($callback) ? $callback : (fn(...$args) => Container::getInstance()
+            ->make($callback)
+            ->join(...$args));
     }
 
     /**

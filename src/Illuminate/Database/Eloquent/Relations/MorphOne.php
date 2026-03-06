@@ -32,7 +32,7 @@ class MorphOne extends MorphOneOrMany implements SupportsPartialRelations
     }
 
     /** @inheritDoc */
-    public function initRelation(array $models, $relation)
+    public function initRelation(array $models, $relation): array
     {
         foreach ($models as $model) {
             $model->setRelation($relation, $this->getDefaultFor($model));
@@ -63,9 +63,8 @@ class MorphOne extends MorphOneOrMany implements SupportsPartialRelations
      * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
      * @param  string|null  $column
      * @param  string|null  $aggregate
-     * @return void
      */
-    public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null)
+    public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null): void
     {
         $query->addSelect($this->foreignKey, $this->morphType);
     }
@@ -75,18 +74,15 @@ class MorphOne extends MorphOneOrMany implements SupportsPartialRelations
      *
      * @return array|string
      */
-    public function getOneOfManySubQuerySelectColumns()
+    public function getOneOfManySubQuerySelectColumns(): array
     {
         return [$this->foreignKey, $this->morphType];
     }
 
     /**
      * Add join query constraints for one of many relationships.
-     *
-     * @param  \Illuminate\Database\Query\JoinClause  $join
-     * @return void
      */
-    public function addOneOfManyJoinSubQueryConstraints(JoinClause $join)
+    public function addOneOfManyJoinSubQueryConstraints(JoinClause $join): void
     {
         $join
             ->on($this->qualifySubSelectColumn($this->morphType), '=', $this->qualifyRelatedColumn($this->morphType))
@@ -101,7 +97,7 @@ class MorphOne extends MorphOneOrMany implements SupportsPartialRelations
      */
     public function newRelatedInstanceFor(Model $parent)
     {
-        return tap($this->related->newInstance(), function ($instance) use ($parent) {
+        return tap($this->related->newInstance(), function (\Illuminate\Database\Eloquent\Model $instance) use ($parent): void {
             $instance->setAttribute($this->getForeignKeyName(), $parent->{$this->localKey})
                 ->setAttribute($this->getMorphType(), $this->morphClass);
 

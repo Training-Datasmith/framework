@@ -15,9 +15,8 @@ trait CompilesFragments
      * Compile the fragment statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileFragment($expression)
+    protected function compileFragment($expression): string
     {
         $this->lastFragment = trim($expression, "()'\" ");
 
@@ -26,10 +25,8 @@ trait CompilesFragments
 
     /**
      * Compile the end-fragment statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndfragment()
+    protected function compileEndfragment(): string
     {
         return '<?php echo $__env->stopFragment(); ?>';
     }

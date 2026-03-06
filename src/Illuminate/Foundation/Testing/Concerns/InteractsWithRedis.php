@@ -26,17 +26,15 @@ trait InteractsWithRedis
 
     /**
      * Setup redis connection.
-     *
-     * @return void
      */
-    public function setUpRedis()
+    public function setUpRedis(): void
     {
         if (! extension_loaded('redis')) {
-            $this->markTestSkipped('The redis extension is not installed. Please install the extension to enable '.__CLASS__);
+            $this->markTestSkipped('The redis extension is not installed. Please install the extension to enable '.self::class);
         }
 
         if (static::$connectionFailedOnceWithDefaultsSkip) {
-            $this->markTestSkipped('Trying default host/port failed, please set environment variable REDIS_HOST & REDIS_PORT to enable '.__CLASS__);
+            $this->markTestSkipped('Trying default host/port failed, please set environment variable REDIS_HOST & REDIS_PORT to enable '.self::class);
         }
 
         $app = $this->app ?? new Application;
@@ -52,11 +50,11 @@ trait InteractsWithRedis
                     ],
                     'clusters' => [
                         'default' => array_map(
-                            static fn ($hostAndPort) => [
+                            static fn ($hostAndPort): array => [
                                 'host' => explode(':', $hostAndPort)[0],
                                 'port' => explode(':', $hostAndPort)[1],
                             ],
-                            explode(',', Env::get('REDIS_CLUSTER_HOSTS_AND_PORTS')),
+                            explode(',', (string) Env::get('REDIS_CLUSTER_HOSTS_AND_PORTS')),
                         ),
                     ],
                 ];
@@ -91,7 +89,7 @@ trait InteractsWithRedis
             if ($host === '127.0.0.1' && $port === 6379 && Env::get('REDIS_HOST') === null) {
                 static::$connectionFailedOnceWithDefaultsSkip = true;
 
-                $this->markTestSkipped('Trying default host/port failed, please set environment variable REDIS_HOST & REDIS_PORT to enable '.__CLASS__);
+                $this->markTestSkipped('Trying default host/port failed, please set environment variable REDIS_HOST & REDIS_PORT to enable '.self::class);
             }
         }
 
@@ -100,10 +98,8 @@ trait InteractsWithRedis
 
     /**
      * Teardown redis connection.
-     *
-     * @return void
      */
-    public function tearDownRedis()
+    public function tearDownRedis(): void
     {
         if (static::$connectionFailedOnceWithDefaultsSkip === true) {
             return;
@@ -122,10 +118,8 @@ trait InteractsWithRedis
 
     /**
      * Get redis driver provider.
-     *
-     * @return array
      */
-    public static function redisDriverProvider()
+    public static function redisDriverProvider(): array
     {
         return [
             ['predis'],
@@ -137,9 +131,8 @@ trait InteractsWithRedis
      * Run test if redis is available.
      *
      * @param  callable  $callback
-     * @return void
      */
-    public function ifRedisAvailable($callback)
+    public function ifRedisAvailable($callback): void
     {
         $this->setUpRedis();
 

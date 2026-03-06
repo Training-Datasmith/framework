@@ -12,20 +12,15 @@ use function Illuminate\Support\enum_value;
 class Authorize
 {
     /**
-     * The gate instance.
-     *
-     * @var \Illuminate\Contracts\Auth\Access\Gate
-     */
-    protected $gate;
-
-    /**
      * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Auth\Access\Gate  $gate
      */
-    public function __construct(Gate $gate)
+    public function __construct(
+        /**
+         * The gate instance.
+         */
+        protected \Illuminate\Contracts\Auth\Access\Gate $gate
+    )
     {
-        $this->gate = $gate;
     }
 
     /**
@@ -33,9 +28,8 @@ class Authorize
      *
      * @param  \UnitEnum|string  $ability
      * @param  string  ...$models
-     * @return string
      */
-    public static function using($ability, ...$models)
+    public static function using($ability, ...$models): string
     {
         return static::class.':'.implode(',', [enum_value($ability), ...$models]);
     }
@@ -44,7 +38,6 @@ class Authorize
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @param  string  $ability
      * @param  array|null  ...$models
      * @return mixed
@@ -90,7 +83,7 @@ class Authorize
             return trim($model);
         }
 
-        return $request->route($model, null) ??
+        return $request->route($model) ??
             ((preg_match("/^['\"](.*)['\"]$/", trim($model), $matches)) ? $matches[1] : null);
     }
 
@@ -98,9 +91,8 @@ class Authorize
      * Checks if the given string looks like a fully-qualified class name.
      *
      * @param  string  $value
-     * @return bool
      */
-    protected function isClassName($value)
+    protected function isClassName($value): bool
     {
         return str_contains($value, '\\');
     }

@@ -8,9 +8,8 @@ trait CompilesContexts
      * Compile the context statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileContext($expression)
+    protected function compileContext($expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -24,9 +23,8 @@ $value = context()->get($__contextArgs[0]); ?>';
      * Compile the endcontext statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileEndcontext($expression)
+    protected function compileEndcontext($expression): string
     {
         return '<?php unset($value);
 if (isset($__contextPrevious) && !empty($__contextPrevious)) { $value = array_pop($__contextPrevious); }

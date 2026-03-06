@@ -44,7 +44,6 @@ trait FormatsMessages
                 ? [$customKey.".{$this->getAttributeType($attribute)}", $customKey]
                 : $customKey
         );
-
         // First we check for a custom defined validation message for the attribute
         // and rule. This allows the developer to specify specific messages for
         // only some attributes and rules that need to get specially formed.
@@ -55,7 +54,7 @@ trait FormatsMessages
         // If the rule being validated is a "size" rule, we will need to gather the
         // specific error message for the type of attribute being validated such
         // as a number, file or string which all have different message types.
-        elseif (in_array($rule, $this->sizeRules)) {
+        if (in_array($rule, $this->sizeRules)) {
             return $this->getSizeMessage($attributeWithPlaceholders, $rule);
         }
 
@@ -116,8 +115,8 @@ trait FormatsMessages
         // that is not attribute specific. If we find either we'll return it.
         foreach ($keys as $key) {
             foreach (array_keys($source) as $sourceKey) {
-                if (str_contains($sourceKey, '*')) {
-                    $pattern = str_replace('\*', '([^.]*)', preg_quote($sourceKey, '#'));
+                if (str_contains((string) $sourceKey, '*')) {
+                    $pattern = str_replace('\*', '([^.]*)', preg_quote((string) $sourceKey, '#'));
 
                     if (preg_match('#^'.$pattern.'\z#u', $key) === 1) {
                         $message = $source[$sourceKey];
@@ -162,7 +161,7 @@ trait FormatsMessages
             // messages and loop through them and try to find a wildcard match for the
             // given key. Otherwise, we will simply return the key's value back out.
             $shortKey = preg_replace(
-                '/^validation\.custom\./', '', $key
+                '/^validation\.custom\./', '', (string) $key
             );
 
             $message = $this->getWildcardCustomMessages(Arr::dot(
@@ -221,9 +220,8 @@ trait FormatsMessages
      * Get the data type of the given attribute.
      *
      * @param  string  $attribute
-     * @return string
      */
-    protected function getAttributeType($attribute)
+    protected function getAttributeType($attribute): string
     {
         // We assume that the attributes present in the file array are files so that
         // means that if the attribute does not have a numeric rule and the files
@@ -256,10 +254,11 @@ trait FormatsMessages
         $message = $this->replaceIndexPlaceholder($message, $attribute);
         $message = $this->replacePositionPlaceholder($message, $attribute);
         $message = $this->replaceOrdinalPositionPlaceholder($message, $attribute);
-
         if (isset($this->replacers[Str::snake($rule)])) {
             return $this->callReplacer($message, $attribute, Str::snake($rule), $parameters, $this);
-        } elseif (method_exists($this, $replacer = "replace{$rule}")) {
+        }
+
+        if (method_exists($this, $replacer = "replace{$rule}")) {
             return $this->$replacer($message, $attribute, $rule, $parameters);
         }
 
@@ -339,8 +338,8 @@ trait FormatsMessages
         }
 
         foreach (array_keys($source) as $sourceKey) {
-            if (str_contains($sourceKey, '*')) {
-                $pattern = str_replace('\*', '([^.]*)', preg_quote($sourceKey, '#'));
+            if (str_contains((string) $sourceKey, '*')) {
+                $pattern = str_replace('\*', '([^.]*)', preg_quote((string) $sourceKey, '#'));
 
                 if (preg_match('#^'.$pattern.'\z#u', $attribute) === 1) {
                     return $source[$sourceKey];
@@ -354,9 +353,8 @@ trait FormatsMessages
      *
      * @param  string  $message
      * @param  string  $value
-     * @return string
      */
-    protected function replaceAttributePlaceholder($message, $value)
+    protected function replaceAttributePlaceholder($message, $value): string
     {
         return str_replace(
             [':attribute', ':ATTRIBUTE', ':Attribute'],
@@ -389,7 +387,7 @@ trait FormatsMessages
     protected function replacePositionPlaceholder($message, $attribute)
     {
         return $this->replaceIndexOrPositionPlaceholder(
-            $message, $attribute, 'position', fn ($segment) => $segment + 1
+            $message, $attribute, 'position', fn ($segment): int|float => $segment + 1
         );
     }
 
@@ -407,7 +405,7 @@ trait FormatsMessages
         }
 
         return $this->replaceIndexOrPositionPlaceholder(
-            $message, $attribute, 'ordinal-position', fn ($segment) => Number::ordinal($segment + 1)
+            $message, $attribute, 'ordinal-position', fn ($segment): string|false => Number::ordinal($segment + 1)
         );
     }
 
@@ -416,11 +414,9 @@ trait FormatsMessages
      *
      * @param  string  $message
      * @param  string  $attribute
-     * @param  string  $placeholder
-     * @param  \Closure|null  $modifier
      * @return string
      */
-    protected function replaceIndexOrPositionPlaceholder($message, $attribute, $placeholder, ?Closure $modifier = null)
+    protected function replaceIndexOrPositionPlaceholder($message, $attribute, string $placeholder, ?Closure $modifier = null)
     {
         $segments = explode('.', $attribute);
 
@@ -449,11 +445,8 @@ trait FormatsMessages
 
     /**
      * Get the word for a index or position segment.
-     *
-     * @param  int  $value
-     * @return string
      */
-    protected function numberToIndexOrPositionWord(int $value)
+    protected function numberToIndexOrPositionWord(int $value): string
     {
         return [
             1 => 'first',
@@ -466,7 +459,7 @@ trait FormatsMessages
             8 => 'eighth',
             9 => 'ninth',
             10 => 'tenth',
-        ][(int) $value] ?? 'other';
+        ][$value] ?? 'other';
     }
 
     /**
@@ -481,7 +474,7 @@ trait FormatsMessages
         $actualValue = $this->getValue($attribute);
 
         if (is_scalar($actualValue) || is_null($actualValue)) {
-            $message = str_replace(':input', $this->getDisplayableValue($attribute, $actualValue), $message);
+            return str_replace(':input', $this->getDisplayableValue($attribute, $actualValue), $message);
         }
 
         return $message;
@@ -523,11 +516,8 @@ trait FormatsMessages
 
     /**
      * Transform an array of attributes to their displayable form.
-     *
-     * @param  array  $values
-     * @return array
      */
-    protected function getAttributeList(array $values)
+    protected function getAttributeList(array $values): array
     {
         $attributes = [];
 
@@ -554,10 +544,11 @@ trait FormatsMessages
     protected function callReplacer($message, $attribute, $rule, $parameters, $validator)
     {
         $callback = $this->replacers[$rule];
-
         if ($callback instanceof Closure) {
             return $callback(...func_get_args());
-        } elseif (is_string($callback)) {
+        }
+
+        if (is_string($callback)) {
             return $this->callClassBasedReplacer($callback, $message, $attribute, $rule, $parameters, $validator);
         }
     }

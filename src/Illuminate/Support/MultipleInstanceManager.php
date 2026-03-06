@@ -9,13 +9,6 @@ use RuntimeException;
 abstract class MultipleInstanceManager
 {
     /**
-     * The application instance.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
      * The configuration repository instance.
      *
      * @var \Illuminate\Contracts\Config\Repository
@@ -48,10 +41,12 @@ abstract class MultipleInstanceManager
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      */
-    public function __construct($app)
+    public function __construct(/**
+     * The application instance.
+     */
+    protected $app)
     {
-        $this->app = $app;
-        $this->config = $app->make('config');
+        $this->config = $this->app->make('config');
     }
 
     /**
@@ -126,27 +121,21 @@ abstract class MultipleInstanceManager
 
         if (isset($this->customCreators[$driverName])) {
             return $this->callCustomCreator($config);
-        } else {
-            $createMethod = 'create'.ucfirst($driverName).ucfirst($this->driverKey);
-
-            if (method_exists($this, $createMethod)) {
-                return $this->{$createMethod}($config);
-            }
-
-            $createMethod = 'create'.Str::studly($driverName).ucfirst($this->driverKey);
-
-            if (method_exists($this, $createMethod)) {
-                return $this->{$createMethod}($config);
-            }
-
-            throw new InvalidArgumentException("Instance {$this->driverKey} [{$config[$this->driverKey]}] is not supported.");
         }
+        $createMethod = 'create'.ucfirst((string) $driverName).ucfirst($this->driverKey);
+        if (method_exists($this, $createMethod)) {
+            return $this->{$createMethod}($config);
+        }
+        $createMethod = 'create'.Str::studly($driverName).ucfirst($this->driverKey);
+        if (method_exists($this, $createMethod)) {
+            return $this->{$createMethod}($config);
+        }
+        throw new InvalidArgumentException("Instance {$this->driverKey} [{$config[$this->driverKey]}] is not supported.");
     }
 
     /**
      * Call a custom instance creator.
      *
-     * @param  array  $config
      * @return mixed
      */
     protected function callCustomCreator(array $config)
@@ -177,9 +166,8 @@ abstract class MultipleInstanceManager
      * Disconnect the given instance and remove from local cache.
      *
      * @param  string|null  $name
-     * @return void
      */
-    public function purge($name = null)
+    public function purge($name = null): void
     {
         $name ??= $this->getDefaultInstance();
 
@@ -190,10 +178,8 @@ abstract class MultipleInstanceManager
      * Register a custom instance creator Closure.
      *
      * @param  string  $name
-     * @param  \Closure  $callback
      *
      * @param-closure-this  $this  $callback
-     *
      * @return $this
      */
     public function extend($name, Closure $callback)
@@ -219,11 +205,10 @@ abstract class MultipleInstanceManager
     /**
      * Dynamically call the default instance.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->instance()->$method(...$parameters);
     }

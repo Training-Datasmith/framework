@@ -28,14 +28,12 @@ class ViewCacheCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->callSilent('view:clear');
 
-        $this->paths()->each(function ($path) {
+        $this->paths()->each(function (string $path): void {
             $prefix = $this->output->isVeryVerbose() ? '<fg=yellow;options=bold>DIR</> ' : '';
 
             $this->components->task($prefix.$path, null, OutputInterface::VERBOSITY_VERBOSE);
@@ -51,14 +49,13 @@ class ViewCacheCommand extends Command
     /**
      * Compile the given view files.
      *
-     * @param  \Illuminate\Support\Collection  $views
      * @return void
      */
     protected function compileViews(Collection $views)
     {
         $compiler = $this->laravel['view']->getEngineResolver()->resolve('blade')->getCompiler();
 
-        $views->map(function (SplFileInfo $file) use ($compiler) {
+        $views->map(function (SplFileInfo $file) use ($compiler): void {
             $this->components->task('    '.$file->getRelativePathname(), null, OutputInterface::VERBOSITY_VERY_VERBOSE);
 
             $compiler->compile($file->getRealPath());
@@ -71,16 +68,13 @@ class ViewCacheCommand extends Command
 
     /**
      * Get the Blade files in the given path.
-     *
-     * @param  array  $paths
-     * @return \Illuminate\Support\Collection
      */
-    protected function bladeFilesIn(array $paths)
+    protected function bladeFilesIn(array $paths): \Illuminate\Support\Collection
     {
         $extensions = (new Collection($this->laravel['view']->getExtensions()))
-            ->filter(fn ($value) => $value === 'blade')
+            ->filter(fn ($value): bool => $value === 'blade')
             ->keys()
-            ->map(fn ($extension) => "*.{$extension}")
+            ->map(fn ($extension): string => "*.{$extension}")
             ->all();
 
         return new Collection(
@@ -94,10 +88,8 @@ class ViewCacheCommand extends Command
 
     /**
      * Get all of the possible view paths.
-     *
-     * @return \Illuminate\Support\Collection
      */
-    protected function paths()
+    protected function paths(): \Illuminate\Support\Collection
     {
         $finder = $this->laravel['view']->getFinder();
 

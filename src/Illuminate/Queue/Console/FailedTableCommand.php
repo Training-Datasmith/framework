@@ -43,10 +43,8 @@ class FailedTableCommand extends MigrationGeneratorCommand
 
     /**
      * Get the path to the migration stub file.
-     *
-     * @return string
      */
-    protected function migrationStubFile()
+    protected function migrationStubFile(): string
     {
         return __DIR__.'/stubs/failed_jobs.stub';
     }
@@ -54,10 +52,9 @@ class FailedTableCommand extends MigrationGeneratorCommand
     /**
      * Determine whether a migration for the table already exists.
      *
-     * @param  string  $table
      * @return bool
      */
-    protected function migrationExists($table)
+    protected function migrationExists(string $table)
     {
         if ($table !== 'failed_jobs') {
             return parent::migrationExists($table);

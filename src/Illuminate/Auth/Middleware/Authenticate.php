@@ -11,13 +11,6 @@ use Illuminate\Http\Request;
 class Authenticate implements AuthenticatesRequests
 {
     /**
-     * The authentication factory instance.
-     *
-     * @var \Illuminate\Contracts\Auth\Factory
-     */
-    protected $auth;
-
-    /**
      * The callback that should be used to generate the authentication redirect path.
      *
      * @var callable
@@ -26,12 +19,14 @@ class Authenticate implements AuthenticatesRequests
 
     /**
      * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
      */
-    public function __construct(Auth $auth)
+    public function __construct(
+        /**
+         * The authentication factory instance.
+         */
+        protected \Illuminate\Contracts\Auth\Factory $auth
+    )
     {
-        $this->auth = $auth;
     }
 
     /**
@@ -39,9 +34,8 @@ class Authenticate implements AuthenticatesRequests
      *
      * @param  string  $guard
      * @param  string  $others
-     * @return string
      */
-    public static function using($guard, ...$others)
+    public static function using($guard, ...$others): string
     {
         return static::class.':'.implode(',', [$guard, ...$others]);
     }
@@ -50,10 +44,8 @@ class Authenticate implements AuthenticatesRequests
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @param  string  ...$guards
      * @return mixed
-     *
      * @throws \Illuminate\Auth\AuthenticationException
      */
     public function handle($request, Closure $next, ...$guards)
@@ -67,9 +59,7 @@ class Authenticate implements AuthenticatesRequests
      * Determine if the user is logged in to any of the given guards.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  array  $guards
      * @return void
-     *
      * @throws \Illuminate\Auth\AuthenticationException
      */
     protected function authenticate($request, array $guards)
@@ -91,12 +81,10 @@ class Authenticate implements AuthenticatesRequests
      * Handle an unauthenticated user.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  array  $guards
-     * @return never
      *
      * @throws \Illuminate\Auth\AuthenticationException
      */
-    protected function unauthenticated($request, array $guards)
+    protected function unauthenticated($request, array $guards): never
     {
         throw new AuthenticationException(
             'Unauthenticated.',
@@ -108,7 +96,6 @@ class Authenticate implements AuthenticatesRequests
     /**
      * Get the path the user should be redirected to when they are not authenticated.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return string|null
      */
     protected function redirectTo(Request $request)
@@ -120,11 +107,8 @@ class Authenticate implements AuthenticatesRequests
 
     /**
      * Specify the callback that should be used to generate the redirect path.
-     *
-     * @param  callable  $redirectToCallback
-     * @return void
      */
-    public static function redirectUsing(callable $redirectToCallback)
+    public static function redirectUsing(callable $redirectToCallback): void
     {
         static::$redirectToCallback = $redirectToCallback;
     }

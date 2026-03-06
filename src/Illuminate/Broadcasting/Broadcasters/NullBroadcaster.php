@@ -7,7 +7,7 @@ class NullBroadcaster extends Broadcaster
     /**
      * {@inheritdoc}
      */
-    public function auth($request)
+    public function auth($request): void
     {
         //
     }
@@ -15,7 +15,7 @@ class NullBroadcaster extends Broadcaster
     /**
      * {@inheritdoc}
      */
-    public function validAuthenticationResponse($request, $result)
+    public function validAuthenticationResponse($request, $result): void
     {
         //
     }
@@ -23,7 +23,7 @@ class NullBroadcaster extends Broadcaster
     /**
      * {@inheritdoc}
      */
-    public function broadcast(array $channels, $event, array $payload = [])
+    public function broadcast(array $channels, $event, array $payload = []): void
     {
         //
     }

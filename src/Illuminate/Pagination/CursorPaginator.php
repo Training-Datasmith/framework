@@ -102,10 +102,8 @@ class CursorPaginator extends AbstractCursorPaginator implements Arrayable, Arra
 
     /**
      * Determine if there are more items in the data source.
-     *
-     * @return bool
      */
-    public function hasMorePages()
+    public function hasMorePages(): bool
     {
         return (is_null($this->cursor) && $this->hasMore) ||
             (! is_null($this->cursor) && $this->cursor->pointsToNextItems() && $this->hasMore) ||
@@ -114,40 +112,35 @@ class CursorPaginator extends AbstractCursorPaginator implements Arrayable, Arra
 
     /**
      * Determine if there are enough items to split into multiple pages.
-     *
-     * @return bool
      */
-    public function hasPages()
+    public function hasPages(): bool
     {
-        return ! $this->onFirstPage() || $this->hasMorePages();
+        if (! $this->onFirstPage()) {
+            return true;
+        }
+        return $this->hasMorePages();
     }
 
     /**
      * Determine if the paginator is on the first page.
-     *
-     * @return bool
      */
-    public function onFirstPage()
+    public function onFirstPage(): bool
     {
         return is_null($this->cursor) || ($this->cursor->pointsToPreviousItems() && ! $this->hasMore);
     }
 
     /**
      * Determine if the paginator is on the last page.
-     *
-     * @return bool
      */
-    public function onLastPage()
+    public function onLastPage(): bool
     {
         return ! $this->hasMorePages();
     }
 
     /**
      * Get the instance as an array.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'data' => $this->items->toArray(),
@@ -162,8 +155,6 @@ class CursorPaginator extends AbstractCursorPaginator implements Arrayable, Arra
 
     /**
      * Convert the object into something JSON serializable.
-     *
-     * @return array
      */
     public function jsonSerialize(): array
     {

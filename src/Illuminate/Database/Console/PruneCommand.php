@@ -38,11 +38,8 @@ class PruneCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @return void
      */
-    public function handle(Dispatcher $events)
+    public function handle(Dispatcher $events): void
     {
         $models = $this->models();
 
@@ -53,7 +50,7 @@ class PruneCommand extends Command
         }
 
         if ($this->option('pretend')) {
-            $models->each(function ($model) {
+            $models->each(function ($model): void {
                 $this->pretendToPrune($model);
             });
 
@@ -62,7 +59,7 @@ class PruneCommand extends Command
 
         $pruning = [];
 
-        $events->listen(ModelsPruned::class, function ($event) use (&$pruning) {
+        $events->listen(ModelsPruned::class, function ($event) use (&$pruning): void {
             if (! in_array($event->model, $pruning)) {
                 $pruning[] = $event->model;
 
@@ -76,7 +73,7 @@ class PruneCommand extends Command
 
         $events->dispatch(new ModelPruningStarting($models->all()));
 
-        $models->each(function ($model) {
+        $models->each(function (string $model): void {
             $this->pruneModel($model);
         });
 
@@ -88,7 +85,6 @@ class PruneCommand extends Command
     /**
      * Prune the given model.
      *
-     * @param  string  $model
      * @return void
      */
     protected function pruneModel(string $model)
@@ -110,10 +106,8 @@ class PruneCommand extends Command
 
     /**
      * Determine the models that should be pruned.
-     *
-     * @return \Illuminate\Support\Collection
      */
-    protected function models()
+    protected function models(): \Illuminate\Support\Collection
     {
         $models = $this->option('model');
         $except = $this->option('except');
@@ -124,7 +118,7 @@ class PruneCommand extends Command
 
         if ($models) {
             return (new Collection($models))
-                ->filter(static fn (string $model) => class_exists($model))
+                ->filter(static fn (string $model): bool => class_exists($model))
                 ->values();
         }
 
@@ -138,8 +132,8 @@ class PruneCommand extends Command
                     Str::after($model->getRealPath(), realpath(app_path()).DIRECTORY_SEPARATOR)
                 );
             })
-            ->when(! empty($except), fn ($models) => $models->reject(fn ($model) => in_array($model, $except)))
-            ->filter(fn ($model) => $this->isPrunable($model))
+            ->when(! empty($except), fn ($models) => $models->reject(fn ($model): bool => in_array($model, $except)))
+            ->filter(fn (string $model) => $this->isPrunable($model))
             ->values();
     }
 
@@ -152,7 +146,7 @@ class PruneCommand extends Command
     {
         if (! empty($path = $this->option('path'))) {
             return (new Collection($path))
-                ->map(fn ($path) => base_path($path))
+                ->map(fn ($path): string => base_path($path))
                 ->all();
         }
 
@@ -170,7 +164,7 @@ class PruneCommand extends Command
         $instance = new $model;
 
         $count = $instance->prunable()
-            ->when($model::isSoftDeletable(), function ($query) {
+            ->when($model::isSoftDeletable(), function ($query): void {
                 $query->withTrashed();
             })->count();
 
@@ -183,11 +177,8 @@ class PruneCommand extends Command
 
     /**
      * Determine if the given model is prunable.
-     *
-     * @param  string  $model
-     * @return bool
      */
-    protected function isPrunable(string $model)
+    protected function isPrunable(string $model): bool
     {
         return class_exists($model)
             && is_a($model, Model::class, true)

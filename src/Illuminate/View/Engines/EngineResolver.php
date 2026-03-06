@@ -27,10 +27,8 @@ class EngineResolver
      * The engine string typically corresponds to a file extension.
      *
      * @param  string  $engine
-     * @param  \Closure  $resolver
-     * @return void
      */
-    public function register($engine, Closure $resolver)
+    public function register($engine, Closure $resolver): void
     {
         $this->forget($engine);
 
@@ -62,9 +60,8 @@ class EngineResolver
      * Remove a resolved engine.
      *
      * @param  string  $engine
-     * @return void
      */
-    public function forget($engine)
+    public function forget($engine): void
     {
         unset($this->resolved[$engine]);
     }

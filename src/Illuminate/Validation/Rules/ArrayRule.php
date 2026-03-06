@@ -11,10 +11,8 @@ class ArrayRule implements Stringable
 {
     /**
      * The accepted keys.
-     *
-     * @var array
      */
-    protected $keys;
+    protected array $keys;
 
     /**
      * Create a new array rule instance.
@@ -32,10 +30,8 @@ class ArrayRule implements Stringable
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (empty($this->keys)) {
             return 'array';

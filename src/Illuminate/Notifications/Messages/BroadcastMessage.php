@@ -17,8 +17,6 @@ class BroadcastMessage
 
     /**
      * Create a new message instance.
-     *
-     * @param  array  $data
      */
     public function __construct(array $data)
     {
@@ -31,7 +29,7 @@ class BroadcastMessage
      * @param  array  $data
      * @return $this
      */
-    public function data($data)
+    public function data($data): static
     {
         $this->data = $data;
 

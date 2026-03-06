@@ -16,25 +16,11 @@ class ValidationException extends Exception
     public $validator;
 
     /**
-     * The recommended response to send to the client.
-     *
-     * @var \Symfony\Component\HttpFoundation\Response|null
-     */
-    public $response;
-
-    /**
      * The status code to use for the response.
      *
      * @var int
      */
     public $status = 422;
-
-    /**
-     * The name of the error bag.
-     *
-     * @var string
-     */
-    public $errorBag;
 
     /**
      * The path the client should be redirected to.
@@ -50,24 +36,24 @@ class ValidationException extends Exception
      * @param  \Symfony\Component\HttpFoundation\Response|null  $response
      * @param  string  $errorBag
      */
-    public function __construct($validator, $response = null, $errorBag = 'default')
+    public function __construct($validator, /**
+     * The recommended response to send to the client.
+     */
+    public $response = null, /**
+     * The name of the error bag.
+     */
+    public $errorBag = 'default')
     {
         parent::__construct(static::summarize($validator));
-
-        $this->response = $response;
-        $this->errorBag = $errorBag;
         $this->validator = $validator;
     }
 
     /**
      * Create a new validation exception from a plain array of messages.
-     *
-     * @param  array  $messages
-     * @return static
      */
-    public static function withMessages(array $messages)
+    public static function withMessages(array $messages): static
     {
-        return new static(tap(ValidatorFacade::make([], []), function ($validator) use ($messages) {
+        return new static(tap(ValidatorFacade::make([], []), function ($validator) use ($messages): void {
             foreach ($messages as $key => $value) {
                 foreach (Arr::wrap($value) as $message) {
                     $validator->errors()->add($key, $message);
@@ -117,7 +103,7 @@ class ValidationException extends Exception
      * @param  int  $status
      * @return $this
      */
-    public function status($status)
+    public function status($status): static
     {
         $this->status = $status;
 
@@ -130,7 +116,7 @@ class ValidationException extends Exception
      * @param  string  $errorBag
      * @return $this
      */
-    public function errorBag($errorBag)
+    public function errorBag($errorBag): static
     {
         $this->errorBag = $errorBag;
 
@@ -143,7 +129,7 @@ class ValidationException extends Exception
      * @param  string  $url
      * @return $this
      */
-    public function redirectTo($url)
+    public function redirectTo($url): static
     {
         $this->redirectTo = $url;
 

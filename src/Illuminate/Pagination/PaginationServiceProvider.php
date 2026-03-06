@@ -8,10 +8,8 @@ class PaginationServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->loadViewsFrom(__DIR__.'/resources/views', 'pagination');
 
@@ -24,10 +22,8 @@ class PaginationServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         PaginationState::resolveUsing($this->app);
     }

@@ -10,11 +10,9 @@ class SqliteSchemaState extends SchemaState
     /**
      * Dump the database's schema into a file.
      *
-     * @param  \Illuminate\Database\Connection  $connection
      * @param  string  $path
-     * @return void
      */
-    public function dump(Connection $connection, $path)
+    public function dump(Connection $connection, $path): void
     {
         $process = $this->makeProcess($this->baseCommand().' ".schema --indent"')
             ->setTimeout(null)
@@ -34,7 +32,6 @@ class SqliteSchemaState extends SchemaState
     /**
      * Append the migration data to the schema dump.
      *
-     * @param  string  $path
      * @return void
      */
     protected function appendMigrationData(string $path)
@@ -46,7 +43,7 @@ class SqliteSchemaState extends SchemaState
         ]));
 
         $migrations = (new Collection(preg_split("/\r\n|\n|\r/", $process->getOutput())))
-            ->filter(fn ($line) => preg_match('/^\s*(--|INSERT\s)/iu', $line) === 1 && strlen($line) > 0)
+            ->filter(fn ($line): bool => preg_match('/^\s*(--|INSERT\s)/iu', (string) $line) === 1 && strlen((string) $line) > 0)
             ->all();
 
         $this->files->append($path, implode(PHP_EOL, $migrations).PHP_EOL);
@@ -56,9 +53,8 @@ class SqliteSchemaState extends SchemaState
      * Load the given schema file into the database.
      *
      * @param  string  $path
-     * @return void
      */
-    public function load($path)
+    public function load($path): void
     {
         $database = $this->connection->getDatabaseName();
 
@@ -80,21 +76,16 @@ class SqliteSchemaState extends SchemaState
 
     /**
      * Get the base sqlite command arguments as a string.
-     *
-     * @return string
      */
-    protected function baseCommand()
+    protected function baseCommand(): string
     {
         return 'sqlite3 "${:LARAVEL_LOAD_DATABASE}"';
     }
 
     /**
      * Get the base variables for a dump / load command.
-     *
-     * @param  array  $config
-     * @return array
      */
-    protected function baseVariables(array $config)
+    protected function baseVariables(array $config): array
     {
         return [
             'LARAVEL_LOAD_DATABASE' => $config['database'],

@@ -5,13 +5,6 @@ namespace Illuminate\Support;
 class HigherOrderWhenProxy
 {
     /**
-     * The target being conditionally operated on.
-     *
-     * @var mixed
-     */
-    protected $target;
-
-    /**
      * The condition for proxying.
      *
      * @var bool
@@ -37,9 +30,13 @@ class HigherOrderWhenProxy
      *
      * @param  mixed  $target
      */
-    public function __construct($target)
+    public function __construct(
+        /**
+         * The target being conditionally operated on.
+         */
+        protected $target
+    )
     {
-        $this->target = $target;
     }
 
     /**
@@ -48,7 +45,7 @@ class HigherOrderWhenProxy
      * @param  bool  $condition
      * @return $this
      */
-    public function condition($condition)
+    public function condition($condition): static
     {
         [$this->condition, $this->hasCondition] = [$condition, true];
 
@@ -60,7 +57,7 @@ class HigherOrderWhenProxy
      *
      * @return $this
      */
-    public function negateConditionOnCapture()
+    public function negateConditionOnCapture(): static
     {
         $this->negateConditionOnCapture = true;
 
@@ -69,11 +66,8 @@ class HigherOrderWhenProxy
 
     /**
      * Proxy accessing an attribute onto the target.
-     *
-     * @param  string  $key
-     * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         if (! $this->hasCondition) {
             $condition = $this->target->{$key};
@@ -89,11 +83,10 @@ class HigherOrderWhenProxy
     /**
      * Proxy a method call on the target.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (! $this->hasCondition) {
             $condition = $this->target->{$method}(...$parameters);

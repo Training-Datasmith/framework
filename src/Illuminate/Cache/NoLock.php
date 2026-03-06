@@ -6,30 +6,24 @@ class NoLock extends Lock
 {
     /**
      * Attempt to acquire the lock.
-     *
-     * @return bool
      */
-    public function acquire()
+    public function acquire(): bool
     {
         return true;
     }
 
     /**
      * Release the lock.
-     *
-     * @return bool
      */
-    public function release()
+    public function release(): bool
     {
         return true;
     }
 
     /**
      * Releases this lock in disregard of ownership.
-     *
-     * @return void
      */
-    public function forceRelease()
+    public function forceRelease(): void
     {
         //
     }

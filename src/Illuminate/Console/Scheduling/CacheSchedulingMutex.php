@@ -25,8 +25,6 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
 
     /**
      * Create a new scheduling strategy.
-     *
-     * @param  \Illuminate\Contracts\Cache\Factory  $cache
      */
     public function __construct(Cache $cache)
     {
@@ -36,8 +34,6 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
     /**
      * Attempt to obtain a scheduling mutex for the given event.
      *
-     * @param  \Illuminate\Console\Scheduling\Event  $event
-     * @param  \DateTimeInterface  $time
      * @return bool
      */
     public function create(Event $event, DateTimeInterface $time)
@@ -58,8 +54,6 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
     /**
      * Determine if a scheduling mutex exists for the given event.
      *
-     * @param  \Illuminate\Console\Scheduling\Event  $event
-     * @param  \DateTimeInterface  $time
      * @return bool
      */
     public function exists(Event $event, DateTimeInterface $time)
@@ -69,7 +63,7 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
         if ($this->shouldUseLocks($this->cache->store($this->store)->getStore())) {
             return ! $this->cache->store($this->store)->getStore()
                 ->lock($mutexName, 3600)
-                ->get(fn () => true);
+                ->get(fn (): true => true);
         }
 
         return $this->cache->store($this->store)->has($mutexName);
@@ -79,9 +73,8 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
      * Determine if the given store should use locks for cache event mutexes.
      *
      * @param  \Illuminate\Contracts\Cache\Store  $store
-     * @return bool
      */
-    protected function shouldUseLocks($store)
+    protected function shouldUseLocks($store): bool
     {
         return $store instanceof LockProvider && ! $store instanceof DynamoDbStore;
     }
@@ -92,7 +85,7 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
      * @param  string  $store
      * @return $this
      */
-    public function useStore($store)
+    public function useStore($store): static
     {
         $this->store = $store;
 

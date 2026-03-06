@@ -28,10 +28,8 @@ class PauseCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle(QueueManager $manager)
+    public function handle(QueueManager $manager): int
     {
         [$connection, $queue] = $this->parseQueue($this->argument('queue'));
 

@@ -9,13 +9,6 @@ use Illuminate\Support\Stringable;
 class NotPwnedVerifier implements UncompromisedVerifier
 {
     /**
-     * The HTTP factory instance.
-     *
-     * @var \Illuminate\Http\Client\Factory
-     */
-    protected $factory;
-
-    /**
      * The number of seconds the request can run before timing out.
      *
      * @var int
@@ -28,9 +21,11 @@ class NotPwnedVerifier implements UncompromisedVerifier
      * @param  \Illuminate\Http\Client\Factory  $factory
      * @param  int|null  $timeout
      */
-    public function __construct($factory, $timeout = null)
+    public function __construct(/**
+     * The HTTP factory instance.
+     */
+    protected $factory, $timeout = null)
     {
-        $this->factory = $factory;
         $this->timeout = $timeout ?? 30;
     }
 
@@ -52,7 +47,7 @@ class NotPwnedVerifier implements UncompromisedVerifier
         [$hash, $hashPrefix] = $this->getHash($value);
 
         return ! $this->search($hashPrefix)
-            ->contains(function ($line) use ($hash, $hashPrefix, $threshold) {
+            ->contains(function ($line) use ($hash, $hashPrefix, $threshold): bool {
                 [$hashSuffix, $count] = explode(':', $line);
 
                 return $hashPrefix.$hashSuffix == $hash && $count > $threshold;
@@ -63,9 +58,8 @@ class NotPwnedVerifier implements UncompromisedVerifier
      * Get the hash and its first 5 chars.
      *
      * @param  string  $value
-     * @return array
      */
-    protected function getHash($value)
+    protected function getHash($value): array
     {
         $hash = strtoupper(sha1((string) $value));
 
@@ -76,11 +70,8 @@ class NotPwnedVerifier implements UncompromisedVerifier
 
     /**
      * Search by the given hash prefix and returns all occurrences of leaked passwords.
-     *
-     * @param  string  $hashPrefix
-     * @return \Illuminate\Support\Collection
      */
-    protected function search($hashPrefix)
+    protected function search(string $hashPrefix): \Illuminate\Support\Collection
     {
         try {
             $response = $this->factory->withHeaders([
@@ -96,8 +87,6 @@ class NotPwnedVerifier implements UncompromisedVerifier
             ? $response->body()
             : '';
 
-        return (new Stringable($body))->trim()->explode("\n")->filter(function ($line) {
-            return str_contains($line, ':');
-        });
+        return (new Stringable($body))->trim()->explode("\n")->filter(fn($line) => str_contains($line, ':'));
     }
 }

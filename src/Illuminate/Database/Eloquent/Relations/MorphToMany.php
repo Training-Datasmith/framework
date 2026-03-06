@@ -19,10 +19,8 @@ class MorphToMany extends BelongsToMany
 {
     /**
      * The type of the polymorphic relation.
-     *
-     * @var string
      */
-    protected $morphType;
+    protected string $morphType;
 
     /**
      * The class name of the morph type constraint.
@@ -30,15 +28,6 @@ class MorphToMany extends BelongsToMany
      * @var class-string<TRelatedModel>
      */
     protected $morphClass;
-
-    /**
-     * Indicates if we are connecting the inverse of the relation.
-     *
-     * This primarily affects the morphClass constraint.
-     *
-     * @var bool
-     */
-    protected $inverse;
 
     /**
      * Create a new morph to many relationship instance.
@@ -64,11 +53,15 @@ class MorphToMany extends BelongsToMany
         $parentKey,
         $relatedKey,
         $relationName = null,
-        $inverse = false,
+        /**
+         * Indicates if we are connecting the inverse of the relation.
+         *
+         * This primarily affects the morphClass constraint.
+         */
+        protected $inverse = false,
     ) {
-        $this->inverse = $inverse;
         $this->morphType = $name.'_type';
-        $this->morphClass = $inverse ? $query->getModel()->getMorphClass() : $parent->getMorphClass();
+        $this->morphClass = $this->inverse ? $query->getModel()->getMorphClass() : $parent->getMorphClass();
 
         parent::__construct(
             $query, $parent, $table, $foreignPivotKey,
@@ -81,7 +74,7 @@ class MorphToMany extends BelongsToMany
      *
      * @return $this
      */
-    protected function addWhereConstraints()
+    protected function addWhereConstraints(): static
     {
         parent::addWhereConstraints();
 
@@ -91,7 +84,7 @@ class MorphToMany extends BelongsToMany
     }
 
     /** @inheritDoc */
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models): void
     {
         parent::addEagerConstraints($models);
 
@@ -126,14 +119,12 @@ class MorphToMany extends BelongsToMany
      * @param  mixed  $ids
      * @return \Illuminate\Support\Collection<int, TPivotModel>
      */
-    protected function getCurrentlyAttachedPivotsForIds($ids = null)
+    protected function getCurrentlyAttachedPivotsForIds($ids = null): \Illuminate\Support\Collection
     {
-        return parent::getCurrentlyAttachedPivotsForIds($ids)->map(function ($record) {
-            return $record instanceof MorphPivot
-                ? $record->setMorphType($this->morphType)
-                    ->setMorphClass($this->morphClass)
-                : $record;
-        });
+        return parent::getCurrentlyAttachedPivotsForIds($ids)->map(fn($record) => $record instanceof MorphPivot
+            ? $record->setMorphType($this->morphType)
+                ->setMorphClass($this->morphClass)
+            : $record);
     }
 
     /**
@@ -149,7 +140,6 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new pivot model instance.
      *
-     * @param  array  $attributes
      * @param  bool  $exists
      * @return TPivotModel
      */

@@ -7,7 +7,7 @@ use Illuminate\JsonSchema\JsonSchema;
 use Illuminate\JsonSchema\Serializer;
 use InvalidArgumentException;
 
-abstract class Type extends JsonSchema
+abstract class Type extends JsonSchema implements \Stringable
 {
     /**
      * Whether the type is required.

@@ -11,13 +11,6 @@ class ResponseSequence
     use Macroable;
 
     /**
-     * The responses in the sequence.
-     *
-     * @var array
-     */
-    protected $responses;
-
-    /**
      * Indicates that invoking this sequence when it is empty should throw an exception.
      *
      * @var bool
@@ -33,20 +26,20 @@ class ResponseSequence
 
     /**
      * Create a new response sequence.
-     *
-     * @param  array  $responses
      */
-    public function __construct(array $responses)
+    public function __construct(
+        /**
+         * The responses in the sequence.
+         */
+        protected array $responses
+    )
     {
-        $this->responses = $responses;
     }
 
     /**
      * Push a response to the sequence.
      *
      * @param  string|array|null  $body
-     * @param  int  $status
-     * @param  array  $headers
      * @return $this
      */
     public function push($body = null, int $status = 200, array $headers = [])
@@ -59,8 +52,6 @@ class ResponseSequence
     /**
      * Push a response with the given status code to the sequence.
      *
-     * @param  int  $status
-     * @param  array  $headers
      * @return $this
      */
     public function pushStatus(int $status, array $headers = [])
@@ -73,9 +64,6 @@ class ResponseSequence
     /**
      * Push a response with the contents of a file as the body to the sequence.
      *
-     * @param  string  $filePath
-     * @param  int  $status
-     * @param  array  $headers
      * @return $this
      */
     public function pushFile(string $filePath, int $status = 200, array $headers = [])
@@ -106,7 +94,7 @@ class ResponseSequence
      * @param  mixed  $response
      * @return $this
      */
-    public function pushResponse($response)
+    public function pushResponse($response): static
     {
         $this->responses[] = $response;
 
@@ -119,7 +107,7 @@ class ResponseSequence
      * @param  \GuzzleHttp\Promise\PromiseInterface|\Closure  $response
      * @return $this
      */
-    public function whenEmpty($response)
+    public function whenEmpty($response): static
     {
         $this->failWhenEmpty = false;
         $this->emptyResponse = $response;
@@ -139,10 +127,8 @@ class ResponseSequence
 
     /**
      * Indicate that this sequence has depleted all of its responses.
-     *
-     * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return count($this->responses) === 0;
     }

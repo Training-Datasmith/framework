@@ -16,34 +16,6 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
     use InteractsWithTime;
 
     /**
-     * The database connection instance.
-     *
-     * @var \Illuminate\Database\ConnectionInterface
-     */
-    protected $connection;
-
-    /**
-     * The name of the session table.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * The number of minutes the session should be valid.
-     *
-     * @var int
-     */
-    protected $minutes;
-
-    /**
-     * The container instance.
-     *
-     * @var \Illuminate\Contracts\Container\Container|null
-     */
-    protected $container;
-
-    /**
      * The existence state of the session.
      *
      * @var bool
@@ -53,23 +25,32 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
     /**
      * Create a new database session handler instance.
      *
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
      * @param  string  $table
      * @param  int  $minutes
-     * @param  \Illuminate\Contracts\Container\Container|null  $container
      */
-    public function __construct(ConnectionInterface $connection, $table, $minutes, ?Container $container = null)
+    public function __construct(
+        /**
+         * The database connection instance.
+         */
+        protected \Illuminate\Database\ConnectionInterface $connection,
+        /**
+         * The name of the session table.
+         */
+        protected $table,
+        /**
+         * The number of minutes the session should be valid.
+         */
+        protected $minutes,
+        /**
+         * The container instance.
+         */
+        protected ?\Illuminate\Contracts\Container\Container $container = null
+    )
     {
-        $this->table = $table;
-        $this->minutes = $minutes;
-        $this->container = $container;
-        $this->connection = $connection;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function open($savePath, $sessionName): bool
     {
@@ -78,8 +59,6 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function close(): bool
     {
@@ -114,9 +93,8 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
      * Determine if the session is expired.
      *
      * @param  \stdClass  $session
-     * @return bool
      */
-    protected function expired($session)
+    protected function expired($session): bool
     {
         return isset($session->last_activity) &&
             $session->last_activity < Carbon::now()->subMinutes($this->minutes)->getTimestamp();
@@ -124,8 +102,6 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function write($sessionId, $data): bool
     {
@@ -167,7 +143,7 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
      * @param  array<string, mixed>  $payload
      * @return int
      */
-    protected function performUpdate($sessionId, $payload)
+    protected function performUpdate($sessionId, array $payload)
     {
         return $this->getQuery()->where('id', $sessionId)->update($payload);
     }
@@ -189,7 +165,7 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
             return $payload;
         }
 
-        return tap($payload, function (&$payload) {
+        return tap($payload, function (&$payload): void {
             $this->addUserInformation($payload)
                 ->addRequestInformation($payload);
         });
@@ -198,10 +174,9 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
     /**
      * Add the user information to the session payload.
      *
-     * @param  array  $payload
      * @return $this
      */
-    protected function addUserInformation(&$payload)
+    protected function addUserInformation(array &$payload): static
     {
         if ($this->container->bound(Guard::class)) {
             $payload['user_id'] = $this->userId();
@@ -226,7 +201,7 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
      * @param  array  $payload
      * @return $this
      */
-    protected function addRequestInformation(&$payload)
+    protected function addRequestInformation(&$payload): static
     {
         if ($this->container->bound('request')) {
             $payload = array_merge($payload, [
@@ -250,18 +225,14 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * Get the user agent for the current request.
-     *
-     * @return string
      */
-    protected function userAgent()
+    protected function userAgent(): string
     {
         return mb_substr(mb_convert_encoding((string) $this->container->make('request')->header('User-Agent'), 'UTF-8'), 0, 500);
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function destroy($sessionId): bool
     {
@@ -272,8 +243,6 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
     public function gc($lifetime): int
     {
@@ -282,10 +251,8 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * Get a fresh query builder instance for the table.
-     *
-     * @return \Illuminate\Database\Query\Builder
      */
-    protected function getQuery()
+    protected function getQuery(): \Illuminate\Database\Query\Builder
     {
         return $this->connection->table($this->table)->useWritePdo();
     }
@@ -296,7 +263,7 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
      * @param  \Illuminate\Contracts\Foundation\Application  $container
      * @return $this
      */
-    public function setContainer($container)
+    public function setContainer($container): static
     {
         $this->container = $container;
 
@@ -309,7 +276,7 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
      * @param  bool  $value
      * @return $this
      */
-    public function setExists($value)
+    public function setExists($value): static
     {
         $this->exists = $value;
 

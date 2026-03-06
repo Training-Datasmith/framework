@@ -11,20 +11,6 @@ use Illuminate\Support\Str;
 class BlueprintState
 {
     /**
-     * The blueprint instance.
-     *
-     * @var \Illuminate\Database\Schema\Blueprint
-     */
-    protected $blueprint;
-
-    /**
-     * The connection instance.
-     *
-     * @var \Illuminate\Database\Connection
-     */
-    protected $connection;
-
-    /**
      * The columns.
      *
      * @var \Illuminate\Database\Schema\ColumnDefinition[]
@@ -54,19 +40,19 @@ class BlueprintState
 
     /**
      * Create a new blueprint state instance.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Database\Connection  $connection
      */
-    public function __construct(Blueprint $blueprint, Connection $connection)
+    public function __construct(/**
+     * The blueprint instance.
+     */
+    protected \Illuminate\Database\Schema\Blueprint $blueprint, /**
+     * The connection instance.
+     */
+    protected \Illuminate\Database\Connection $connection)
     {
-        $this->blueprint = $blueprint;
-        $this->connection = $connection;
+        $schema = $this->connection->getSchemaBuilder();
+        $table = $this->blueprint->getTable();
 
-        $schema = $connection->getSchemaBuilder();
-        $table = $blueprint->getTable();
-
-        $this->columns = (new Collection($schema->getColumns($table)))->map(fn ($column) => new ColumnDefinition([
+        $this->columns = (new Collection($schema->getColumns($table)))->map(fn ($column): \Illuminate\Database\Schema\ColumnDefinition => new ColumnDefinition([
             'name' => $column['name'],
             'type' => $column['type_name'],
             'full_type_definition' => $column['type'],
@@ -83,7 +69,7 @@ class BlueprintState
                 : null,
         ]))->all();
 
-        [$primary, $indexes] = (new Collection($schema->getIndexes($table)))->map(fn ($index) => new IndexDefinition([
+        [$primary, $indexes] = (new Collection($schema->getIndexes($table)))->map(fn ($index): \Illuminate\Database\Schema\IndexDefinition => new IndexDefinition([
             'name' => match (true) {
                 $index['primary'] => 'primary',
                 $index['unique'] => 'unique',
@@ -91,12 +77,12 @@ class BlueprintState
             },
             'index' => $index['name'],
             'columns' => $index['columns'],
-        ]))->partition(fn ($index) => $index->name === 'primary');
+        ]))->partition(fn ($index): bool => $index->name === 'primary');
 
         $this->indexes = $indexes->all();
         $this->primaryKey = $primary->first();
 
-        $this->foreignKeys = (new Collection($schema->getForeignKeys($table)))->map(fn ($foreignKey) => new ForeignKeyDefinition([
+        $this->foreignKeys = (new Collection($schema->getForeignKeys($table)))->map(fn ($foreignKey): \Illuminate\Database\Schema\ForeignKeyDefinition => new ForeignKeyDefinition([
             'columns' => $foreignKey['columns'],
             'on' => new Expression($foreignKey['foreign_table']),
             'references' => $foreignKey['foreign_columns'],
@@ -151,7 +137,7 @@ class BlueprintState
      * @param  \Illuminate\Support\Fluent  $command
      * @return void
      */
-    public function update(Fluent $command)
+    public function update(Fluent $command): void
     {
         switch ($command->name) {
             case 'alter':
@@ -196,7 +182,7 @@ class BlueprintState
 
             case 'dropColumn':
                 $this->columns = array_values(
-                    array_filter($this->columns, fn ($column) => ! in_array($column->name, $command->columns))
+                    array_filter($this->columns, fn (\Illuminate\Database\Schema\ColumnDefinition $column): bool => ! in_array($column->name, $command->columns))
                 );
 
                 break;
@@ -231,14 +217,14 @@ class BlueprintState
             case 'dropIndex':
             case 'dropUnique':
                 $this->indexes = array_values(
-                    array_filter($this->indexes, fn ($index) => $index->index !== $command->index)
+                    array_filter($this->indexes, fn (\Illuminate\Database\Schema\IndexDefinition $index): bool => $index->index !== $command->index)
                 );
 
                 break;
 
             case 'dropForeign':
                 $this->foreignKeys = array_values(
-                    array_filter($this->foreignKeys, fn ($fk) => $fk->columns !== $command->columns)
+                    array_filter($this->foreignKeys, fn (\Illuminate\Database\Schema\ForeignKeyDefinition $fk): bool => $fk->columns !== $command->columns)
                 );
 
                 break;

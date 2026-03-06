@@ -14,28 +14,21 @@ class PusherBroadcaster extends Broadcaster
     use UsePusherChannelConventions;
 
     /**
-     * The Pusher SDK instance.
-     *
-     * @var \Pusher\Pusher
-     */
-    protected $pusher;
-
-    /**
-     * Indicates if JSONP callbacks are allowed on authorization.
-     *
-     * @var bool
-     */
-    protected $allowJsonp = false;
-
-    /**
      * Create a new broadcaster instance.
      *
      * @param  \Pusher\Pusher  $pusher
      */
-    public function __construct(Pusher $pusher, bool $allowJsonp = false)
+    public function __construct(
+        /**
+         * The Pusher SDK instance.
+         */
+        protected \Pusher\Pusher $pusher,
+        /**
+         * Indicates if JSONP callbacks are allowed on authorization.
+         */
+        protected bool $allowJsonp = false
+    )
     {
-        $this->pusher = $pusher;
-        $this->allowJsonp = $allowJsonp;
     }
 
     /**
@@ -62,7 +55,7 @@ class PusherBroadcaster extends Broadcaster
         $decodedString = "{$request->socket_id}::user::{$encodedUser}";
 
         $auth = $settings['auth_key'].':'.hash_hmac(
-            'sha256', $decodedString, $settings['secret']
+            'sha256', $decodedString, (string) $settings['secret']
         );
 
         return [
@@ -103,7 +96,7 @@ class PusherBroadcaster extends Broadcaster
      */
     public function validAuthenticationResponse($request, $result)
     {
-        if (str_starts_with($request->channel_name, 'private')) {
+        if (str_starts_with((string) $request->channel_name, 'private')) {
             return $this->decodePusherResponse(
                 $request,
                 method_exists($this->pusher, 'authorizeChannel')
@@ -138,24 +131,21 @@ class PusherBroadcaster extends Broadcaster
     protected function decodePusherResponse($request, $response)
     {
         if (! $request->input('callback', false) || ! $this->allowJsonp) {
-            return json_decode($response, true);
+            return json_decode((string) $response, true);
         }
 
-        return response()->json(json_decode($response, true))
+        return response()->json(json_decode((string) $response, true))
             ->withCallback($request->callback);
     }
 
     /**
      * Broadcast the given event.
      *
-     * @param  array  $channels
      * @param  string  $event
-     * @param  array  $payload
-     * @return void
      *
      * @throws \Illuminate\Broadcasting\BroadcastException
      */
-    public function broadcast(array $channels, $event, array $payload = [])
+    public function broadcast(array $channels, $event, array $payload = []): void
     {
         $socket = Arr::pull($payload, 'socket');
 
@@ -164,7 +154,7 @@ class PusherBroadcaster extends Broadcaster
         $channels = new Collection($this->formatChannels($channels));
 
         try {
-            $channels->chunk(100)->each(function ($channels) use ($event, $payload, $parameters) {
+            $channels->chunk(100)->each(function ($channels) use ($event, $payload, $parameters): void {
                 $this->pusher->trigger($channels->toArray(), $event, $payload, $parameters);
             });
         } catch (ApiErrorException $e) {
@@ -188,9 +178,8 @@ class PusherBroadcaster extends Broadcaster
      * Set the Pusher SDK instance.
      *
      * @param  \Pusher\Pusher  $pusher
-     * @return void
      */
-    public function setPusher($pusher)
+    public function setPusher($pusher): void
     {
         $this->pusher = $pusher;
     }

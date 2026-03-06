@@ -24,8 +24,6 @@ class Manager
 
     /**
      * Create a new queue capsule manager.
-     *
-     * @param  \Illuminate\Container\Container|null  $container
      */
     public function __construct(?Container $container = null)
     {
@@ -141,11 +139,9 @@ class Manager
     /**
      * Register a connection with the manager.
      *
-     * @param  array  $config
      * @param  string  $name
-     * @return void
      */
-    public function addConnection(array $config, $name = 'default')
+    public function addConnection(array $config, $name = 'default'): void
     {
         $this->container['config']["queue.connections.{$name}"] = $config;
     }
@@ -163,11 +159,10 @@ class Manager
     /**
      * Pass dynamic instance methods to the manager.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->manager->$method(...$parameters);
     }
@@ -175,11 +170,10 @@ class Manager
     /**
      * Dynamically pass methods to the default connection.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public static function __callStatic($method, $parameters)
+    public static function __callStatic(string $method, array $parameters)
     {
         return static::connection()->$method(...$parameters);
     }

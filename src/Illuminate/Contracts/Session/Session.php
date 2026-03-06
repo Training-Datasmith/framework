@@ -101,7 +101,6 @@ interface Session
     /**
      * Flash a key / value pair to the session.
      *
-     * @param  string  $key
      * @param  mixed  $value
      * @return void
      */

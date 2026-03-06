@@ -20,40 +20,20 @@ class Exception
     protected $exception;
 
     /**
-     * The current request instance.
-     *
-     * @var \Illuminate\Http\Request
-     */
-    protected $request;
-
-    /**
-     * The exception listener instance.
-     *
-     * @var \Illuminate\Foundation\Exceptions\Renderer\Listener
-     */
-    protected $listener;
-
-    /**
-     * The application's base path.
-     *
-     * @var string
-     */
-    protected $basePath;
-
-    /**
      * Creates a new exception renderer instance.
-     *
-     * @param  \Symfony\Component\ErrorHandler\Exception\FlattenException  $exception
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Foundation\Exceptions\Renderer\Listener  $listener
-     * @param  string  $basePath
      */
-    public function __construct(FlattenException $exception, Request $request, Listener $listener, string $basePath)
+    public function __construct(FlattenException $exception, /**
+     * The current request instance.
+     */
+    protected \Illuminate\Http\Request $request, /**
+     * The exception listener instance.
+     */
+    protected \Illuminate\Foundation\Exceptions\Renderer\Listener $listener, /**
+     * The application's base path.
+     */
+    protected string $basePath)
     {
         $this->exception = $exception;
-        $this->request = $request;
-        $this->listener = $listener;
-        $this->basePath = $basePath;
     }
 
     /**
@@ -113,10 +93,8 @@ class Exception
      */
     public function frames()
     {
-        return once(function () {
-            $classMap = array_map(function ($path) {
-                return (string) realpath($path);
-            }, array_values(ClassLoader::getRegisteredLoaders())[0]->getClassMap());
+        return once(function (): \Illuminate\Support\Collection {
+            $classMap = array_map(fn(string $path) => (string) realpath($path), array_values(ClassLoader::getRegisteredLoaders())[0]->getClassMap());
 
             $trace = $this->exception->getTrace();
 
@@ -128,7 +106,7 @@ class Exception
             }
 
             $trace = array_values(array_filter(
-                $trace, fn ($trace) => isset($trace['file']),
+                $trace, fn (array $trace): bool => isset($trace['file']),
             ));
 
             if (($trace[1]['class'] ?? '') === HandleExceptions::class) {
@@ -163,7 +141,7 @@ class Exception
      *
      * @return array<int, array{is_vendor: bool, frames: array<int, Frame>}>
      */
-    public function frameGroups()
+    public function frameGroups(): array
     {
         $groups = [];
 
@@ -198,19 +176,15 @@ class Exception
      *
      * @return array<string, string>
      */
-    public function requestHeaders()
+    public function requestHeaders(): array
     {
-        return array_map(function (array $header) {
-            return implode(', ', $header);
-        }, $this->request()->headers->all());
+        return array_map(fn(array $header) => implode(', ', $header), $this->request()->headers->all());
     }
 
     /**
      * Get the request's body parameters.
-     *
-     * @return string|null
      */
-    public function requestBody()
+    public function requestBody(): ?string
     {
         if (empty($payload = $this->request()->all())) {
             return null;
@@ -226,16 +200,14 @@ class Exception
      *
      * @return array<string, string>
      */
-    public function applicationRouteContext()
+    public function applicationRouteContext(): array
     {
         $route = $this->request()->route();
 
         return $route ? array_filter([
             'controller' => $route->getActionName(),
             'route name' => $route->getName() ?: null,
-            'middleware' => implode(', ', array_map(function ($middleware) {
-                return $middleware instanceof Closure ? 'Closure' : $middleware;
-            }, $route->gatherMiddleware())),
+            'middleware' => implode(', ', array_map(fn($middleware) => $middleware instanceof Closure ? 'Closure' : $middleware, $route->gatherMiddleware())),
         ]) : [];
     }
 
@@ -259,9 +231,9 @@ class Exception
      *
      * @return array<int, array{connectionName: string, time: float, sql: string}>
      */
-    public function applicationQueries()
+    public function applicationQueries(): array
     {
-        return array_map(function (array $query) {
+        return array_map(function (array $query): array {
             $sql = $query['sql'];
 
             foreach ($query['bindings'] as $binding) {

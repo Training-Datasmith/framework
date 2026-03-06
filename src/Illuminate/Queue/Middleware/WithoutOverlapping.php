@@ -11,20 +11,6 @@ class WithoutOverlapping
     use InteractsWithTime;
 
     /**
-     * The job's unique key used for preventing overlaps.
-     *
-     * @var string
-     */
-    public $key;
-
-    /**
-     * The number of seconds before a job should be available again if no lock was acquired.
-     *
-     * @var \DateTimeInterface|int|null
-     */
-    public $releaseAfter;
-
-    /**
      * The number of seconds before the lock should expire.
      *
      * @var int
@@ -52,10 +38,14 @@ class WithoutOverlapping
      * @param  \DateTimeInterface|int|null  $releaseAfter
      * @param  \DateTimeInterface|int  $expiresAfter
      */
-    public function __construct($key = '', $releaseAfter = 0, $expiresAfter = 0)
+    public function __construct(/**
+     * The job's unique key used for preventing overlaps.
+     */
+    public $key = '', /**
+     * The number of seconds before a job should be available again if no lock was acquired.
+     */
+    public $releaseAfter = 0, $expiresAfter = 0)
     {
-        $this->key = $key;
-        $this->releaseAfter = $releaseAfter;
         $this->expiresAfter = $this->secondsUntil($expiresAfter);
     }
 
@@ -64,9 +54,8 @@ class WithoutOverlapping
      *
      * @param  mixed  $job
      * @param  callable  $next
-     * @return mixed
      */
-    public function handle($job, $next)
+    public function handle($job, $next): void
     {
         $lock = Container::getInstance()->make(Cache::class)->lock(
             $this->getLockKey($job), $this->expiresAfter
@@ -89,7 +78,7 @@ class WithoutOverlapping
      * @param  \DateTimeInterface|int  $releaseAfter
      * @return $this
      */
-    public function releaseAfter($releaseAfter)
+    public function releaseAfter($releaseAfter): static
     {
         $this->releaseAfter = $releaseAfter;
 
@@ -101,7 +90,7 @@ class WithoutOverlapping
      *
      * @return $this
      */
-    public function dontRelease()
+    public function dontRelease(): static
     {
         $this->releaseAfter = null;
 
@@ -114,7 +103,7 @@ class WithoutOverlapping
      * @param  \DateTimeInterface|\DateInterval|int  $expiresAfter
      * @return $this
      */
-    public function expireAfter($expiresAfter)
+    public function expireAfter($expiresAfter): static
     {
         $this->expiresAfter = $this->secondsUntil($expiresAfter);
 
@@ -124,10 +113,9 @@ class WithoutOverlapping
     /**
      * Set the prefix of the lock key.
      *
-     * @param  string  $prefix
      * @return $this
      */
-    public function withPrefix(string $prefix)
+    public function withPrefix(string $prefix): static
     {
         $this->prefix = $prefix;
 
@@ -139,7 +127,7 @@ class WithoutOverlapping
      *
      * @return $this
      */
-    public function shared()
+    public function shared(): static
     {
         $this->shareKey = true;
 
@@ -150,9 +138,8 @@ class WithoutOverlapping
      * Get the lock key for the given job.
      *
      * @param  mixed  $job
-     * @return string
      */
-    public function getLockKey($job)
+    public function getLockKey($job): string
     {
         if ($this->shareKey) {
             return $this->prefix.$this->key;
@@ -160,7 +147,7 @@ class WithoutOverlapping
 
         $jobName = method_exists($job, 'displayName')
             ? $job->displayName()
-            : get_class($job);
+            : $job::class;
 
         return $this->prefix.$jobName.':'.$this->key;
     }

@@ -22,20 +22,17 @@ class Listener
 
     /**
      * Register the appropriate listeners on the given event dispatcher.
-     *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @return void
      */
-    public function registerListeners(Dispatcher $events)
+    public function registerListeners(Dispatcher $events): void
     {
         $events->listen(QueryExecuted::class, $this->onQueryExecuted(...));
 
-        $events->listen([JobProcessing::class, JobProcessed::class], function () {
+        $events->listen([JobProcessing::class, JobProcessed::class], function (): void {
             $this->queries = [];
         });
 
         if (isset($_SERVER['LARAVEL_OCTANE'])) {
-            $events->listen([RequestReceived::class, TaskReceived::class, TickReceived::class, RequestTerminated::class], function () {
+            $events->listen([RequestReceived::class, TaskReceived::class, TickReceived::class, RequestTerminated::class], function (): void {
                 $this->queries = [];
             });
         }
@@ -53,11 +50,8 @@ class Listener
 
     /**
      * Listens for the query executed event.
-     *
-     * @param  \Illuminate\Database\Events\QueryExecuted  $event
-     * @return void
      */
-    public function onQueryExecuted(QueryExecuted $event)
+    public function onQueryExecuted(QueryExecuted $event): void
     {
         if (count($this->queries) === 101) {
             return;

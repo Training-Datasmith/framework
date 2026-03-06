@@ -15,13 +15,6 @@ class PreventRequestsDuringMaintenance
     use ExcludesPaths;
 
     /**
-     * The application implementation.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
      * The URIs that should be excluded.
      *
      * @var array<int, string>
@@ -37,19 +30,20 @@ class PreventRequestsDuringMaintenance
 
     /**
      * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
      */
-    public function __construct(Application $app)
+    public function __construct(
+        /**
+         * The application implementation.
+         */
+        protected \Illuminate\Contracts\Foundation\Application $app
+    )
     {
-        $this->app = $app;
     }
 
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
@@ -83,7 +77,7 @@ class PreventRequestsDuringMaintenance
             if (isset($data['redirect'])) {
                 $path = $data['redirect'] === '/'
                     ? $data['redirect']
-                    : trim($data['redirect'], '/');
+                    : trim((string) $data['redirect'], '/');
 
                 if ($request->path() !== $path) {
                     return redirect($path);
@@ -113,10 +107,8 @@ class PreventRequestsDuringMaintenance
      * Determine if the incoming request has a maintenance mode bypass cookie.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  array  $data
-     * @return bool
      */
-    protected function hasValidBypassCookie($request, array $data)
+    protected function hasValidBypassCookie($request, array $data): bool
     {
         return isset($data['secret']) &&
                 $request->cookie('laravel_maintenance') &&
@@ -129,7 +121,6 @@ class PreventRequestsDuringMaintenance
     /**
      * Redirect the user to their intended destination with a maintenance mode bypass cookie.
      *
-     * @param  string  $secret
      * @return \Illuminate\Http\RedirectResponse
      */
     protected function bypassResponse(string $secret)
@@ -141,11 +132,8 @@ class PreventRequestsDuringMaintenance
 
     /**
      * Get the headers that should be sent with the response.
-     *
-     * @param  array  $data
-     * @return array
      */
-    protected function getHeaders($data)
+    protected function getHeaders(array $data): array
     {
         $headers = isset($data['retry']) ? ['Retry-After' => $data['retry']] : [];
 
@@ -158,10 +146,8 @@ class PreventRequestsDuringMaintenance
 
     /**
      * Get the URIs that should be excluded.
-     *
-     * @return array
      */
-    public function getExcludedPaths()
+    public function getExcludedPaths(): array
     {
         return array_merge($this->except, static::$neverPrevent);
     }
@@ -170,9 +156,8 @@ class PreventRequestsDuringMaintenance
      * Indicate that the given URIs should always be accessible.
      *
      * @param  array|string  $uris
-     * @return void
      */
-    public static function except($uris)
+    public static function except($uris): void
     {
         static::$neverPrevent = array_values(array_unique(
             array_merge(static::$neverPrevent, Arr::wrap($uris))
@@ -181,10 +166,8 @@ class PreventRequestsDuringMaintenance
 
     /**
      * Flush the state of the middleware.
-     *
-     * @return void
      */
-    public static function flushState()
+    public static function flushState(): void
     {
         static::$neverPrevent = [];
     }

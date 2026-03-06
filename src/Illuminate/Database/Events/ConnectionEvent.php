@@ -12,20 +12,15 @@ abstract class ConnectionEvent
     public $connectionName;
 
     /**
-     * The database connection instance.
-     *
-     * @var \Illuminate\Database\Connection
-     */
-    public $connection;
-
-    /**
      * Create a new event instance.
      *
      * @param  \Illuminate\Database\Connection  $connection
      */
-    public function __construct($connection)
+    public function __construct(/**
+     * The database connection instance.
+     */
+    public $connection)
     {
-        $this->connection = $connection;
-        $this->connectionName = $connection->getName();
+        $this->connectionName = $this->connection->getName();
     }
 }

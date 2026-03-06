@@ -173,7 +173,6 @@ trait ResponseTrait
     /**
      * Set the exception to attach to the response.
      *
-     * @param  \Throwable  $e
      * @return $this
      */
     public function withException(Throwable $e)
@@ -186,11 +185,10 @@ trait ResponseTrait
     /**
      * Throws the response in a HttpResponseException instance.
      *
-     * @return never
      *
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
-    public function throwResponse()
+    public function throwResponse(): never
     {
         throw new HttpResponseException($this);
     }

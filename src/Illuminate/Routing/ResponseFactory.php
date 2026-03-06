@@ -23,29 +23,19 @@ class ResponseFactory implements FactoryContract
     use Macroable;
 
     /**
-     * The view factory instance.
-     *
-     * @var \Illuminate\Contracts\View\Factory
-     */
-    protected $view;
-
-    /**
-     * The redirector instance.
-     *
-     * @var \Illuminate\Routing\Redirector
-     */
-    protected $redirector;
-
-    /**
      * Create a new response factory instance.
-     *
-     * @param  \Illuminate\Contracts\View\Factory  $view
-     * @param  \Illuminate\Routing\Redirector  $redirector
      */
-    public function __construct(ViewFactory $view, Redirector $redirector)
+    public function __construct(
+        /**
+         * The view factory instance.
+         */
+        protected \Illuminate\Contracts\View\Factory $view,
+        /**
+         * The redirector instance.
+         */
+        protected \Illuminate\Routing\Redirector $redirector
+    )
     {
-        $this->view = $view;
-        $this->redirector = $redirector;
     }
 
     /**
@@ -53,10 +43,8 @@ class ResponseFactory implements FactoryContract
      *
      * @param  mixed  $content
      * @param  int  $status
-     * @param  array  $headers
-     * @return \Illuminate\Http\Response
      */
-    public function make($content = '', $status = 200, array $headers = [])
+    public function make($content = '', $status = 200, array $headers = []): \Illuminate\Http\Response
     {
         return new Response($content, $status, $headers);
     }
@@ -65,7 +53,6 @@ class ResponseFactory implements FactoryContract
      * Create a new "no content" response.
      *
      * @param  int  $status
-     * @param  array  $headers
      * @return \Illuminate\Http\Response
      */
     public function noContent($status = 204, array $headers = [])
@@ -79,7 +66,6 @@ class ResponseFactory implements FactoryContract
      * @param  string|array  $view
      * @param  array  $data
      * @param  int  $status
-     * @param  array  $headers
      * @return \Illuminate\Http\Response
      */
     public function view($view, $data = [], $status = 200, array $headers = [])
@@ -96,11 +82,9 @@ class ResponseFactory implements FactoryContract
      *
      * @param  mixed  $data
      * @param  int  $status
-     * @param  array  $headers
      * @param  int  $options
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function json($data = [], $status = 200, array $headers = [], $options = 0)
+    public function json($data = [], $status = 200, array $headers = [], $options = 0): \Illuminate\Http\JsonResponse
     {
         return new JsonResponse($data, $status, $headers, $options);
     }
@@ -111,7 +95,6 @@ class ResponseFactory implements FactoryContract
      * @param  string  $callback
      * @param  mixed  $data
      * @param  int  $status
-     * @param  array  $headers
      * @param  int  $options
      * @return \Illuminate\Http\JsonResponse
      */
@@ -123,14 +106,11 @@ class ResponseFactory implements FactoryContract
     /**
      * Create a new event stream response.
      *
-     * @param  \Closure  $callback
-     * @param  array  $headers
-     * @param  \Illuminate\Http\StreamedEvent|string|null  $endStreamWith
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
     public function eventStream(Closure $callback, array $headers = [], StreamedEvent|string|null $endStreamWith = '</stream>')
     {
-        return $this->stream(function () use ($callback, $endStreamWith) {
+        return $this->stream(function () use ($callback, $endStreamWith): void {
             foreach ($callback() as $message) {
                 if (connection_aborted()) {
                     break;
@@ -188,7 +168,6 @@ class ResponseFactory implements FactoryContract
      *
      * @param  callable|null  $callback
      * @param  int  $status
-     * @param  array  $headers
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
     public function stream($callback, $status = 200, array $headers = [])
@@ -200,10 +179,10 @@ class ResponseFactory implements FactoryContract
                 ))->setCallback($callback);
             }
 
-            return new StreamedResponse(function () use ($callback) {
+            return new StreamedResponse(function () use ($callback): void {
                 foreach ($callback() as $chunk) {
                     echo $chunk;
-                    when(ob_get_level() > 0, fn () => ob_flush());
+                    when(ob_get_level() > 0, fn (): bool => ob_flush());
                     flush();
                 }
             }, $status, array_merge($headers, ['X-Accel-Buffering' => 'no']));
@@ -231,15 +210,13 @@ class ResponseFactory implements FactoryContract
      *
      * @param  callable  $callback
      * @param  string|null  $name
-     * @param  array  $headers
      * @param  string|null  $disposition
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
      *
      * @throws \Illuminate\Routing\Exceptions\StreamedResponseException
      */
-    public function streamDownload($callback, $name = null, array $headers = [], $disposition = 'attachment')
+    public function streamDownload($callback, $name = null, array $headers = [], $disposition = 'attachment'): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        $withWrappedException = function () use ($callback) {
+        $withWrappedException = function () use ($callback): void {
             try {
                 $callback();
             } catch (Throwable $e) {
@@ -265,7 +242,6 @@ class ResponseFactory implements FactoryContract
      *
      * @param  \SplFileInfo|string  $file
      * @param  string|null  $name
-     * @param  array  $headers
      * @param  string|null  $disposition
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
@@ -284,9 +260,8 @@ class ResponseFactory implements FactoryContract
      * Convert the string to ASCII characters that are equivalent to the given name.
      *
      * @param  string  $name
-     * @return string
      */
-    protected function fallbackName($name)
+    protected function fallbackName($name): string
     {
         return str_replace('%', '', Str::ascii($name));
     }
@@ -295,7 +270,6 @@ class ResponseFactory implements FactoryContract
      * Return the raw contents of a binary file.
      *
      * @param  \SplFileInfo|string  $file
-     * @param  array  $headers
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function file($file, array $headers = [])

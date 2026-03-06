@@ -45,10 +45,9 @@ class FactoryMakeCommand extends GeneratorCommand
     /**
      * Resolve the fully-qualified path to the stub.
      *
-     * @param  string  $stub
      * @return string
      */
-    protected function resolveStubPath($stub)
+    protected function resolveStubPath(string $stub)
     {
         return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
@@ -59,9 +58,8 @@ class FactoryMakeCommand extends GeneratorCommand
      * Build the class with the given name.
      *
      * @param  string  $name
-     * @return string
      */
-    protected function buildClass($name)
+    protected function buildClass($name): string
     {
         $factory = class_basename(Str::ucfirst(str_replace('Factory', '', $name)));
 
@@ -96,9 +94,8 @@ class FactoryMakeCommand extends GeneratorCommand
      * Get the destination class path.
      *
      * @param  string  $name
-     * @return string
      */
-    protected function getPath($name)
+    protected function getPath($name): string
     {
         $name = (new Stringable($name))->replaceFirst($this->rootNamespace(), '')->finish('Factory')->value();
 
@@ -109,9 +106,8 @@ class FactoryMakeCommand extends GeneratorCommand
      * Guess the model name from the Factory name or return a default model name.
      *
      * @param  string  $name
-     * @return string
      */
-    protected function guessModelName($name)
+    protected function guessModelName($name): string
     {
         if (str_ends_with($name, 'Factory')) {
             $name = substr($name, 0, -7);
@@ -132,10 +128,8 @@ class FactoryMakeCommand extends GeneratorCommand
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['model', 'm', InputOption::VALUE_OPTIONAL, 'The name of the model'],

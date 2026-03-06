@@ -148,7 +148,7 @@ class RedisTaggedCache extends TaggedCache
         LUA;
 
         $entries = $this->tags->entries()
-            ->map(fn (string $key) => $this->store->getPrefix().$key)
+            ->map(fn (string $key): string => $this->store->getPrefix().$key)
             ->chunk(1000);
 
         foreach ($entries as $keysToBeDeleted) {
@@ -167,10 +167,8 @@ class RedisTaggedCache extends TaggedCache
 
     /**
      * Remove all items from the cache.
-     *
-     * @return bool
      */
-    protected function flushClusteredConnection()
+    protected function flushClusteredConnection(): bool
     {
         $this->event(new CacheFlushing($this->getName()));
 
@@ -190,14 +188,14 @@ class RedisTaggedCache extends TaggedCache
     protected function flushValues()
     {
         $entries = $this->tags->entries()
-            ->map(fn (string $key) => $this->store->getPrefix().$key)
+            ->map(fn (string $key): string => $this->store->getPrefix().$key)
             ->chunk(1000);
 
         $connection = $this->store->connection();
 
         foreach ($entries as $cacheKeys) {
             if ($connection instanceof PredisClusterConnection) {
-                $connection->pipeline(function ($connection) use ($cacheKeys) {
+                $connection->pipeline(function ($connection) use ($cacheKeys): void {
                     foreach ($cacheKeys as $cacheKey) {
                         $connection->del($cacheKey);
                     }
@@ -210,10 +208,8 @@ class RedisTaggedCache extends TaggedCache
 
     /**
      * Remove all stale reference entries from the tag set.
-     *
-     * @return bool
      */
-    public function flushStale()
+    public function flushStale(): bool
     {
         $this->tags->flushStaleEntries();
 

@@ -18,9 +18,8 @@ class SoftDeletingScope implements Scope
      *
      * @param  \Illuminate\Database\Eloquent\Builder<TModel>  $builder
      * @param  TModel  $model
-     * @return void
      */
-    public function apply(Builder $builder, Model $model)
+    public function apply(Builder $builder, Model $model): void
     {
         $builder->whereNull($model->getQualifiedDeletedAtColumn());
     }
@@ -29,9 +28,8 @@ class SoftDeletingScope implements Scope
      * Extend the query builder with the needed functions.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<*>  $builder
-     * @return void
      */
-    public function extend(Builder $builder)
+    public function extend(Builder $builder): void
     {
         foreach ($this->extensions as $extension) {
             $this->{"add{$extension}"}($builder);
@@ -87,7 +85,7 @@ class SoftDeletingScope implements Scope
         $builder->macro('restoreOrCreate', function (Builder $builder, array $attributes = [], array $values = []) {
             $builder->withTrashed();
 
-            return tap($builder->firstOrCreate($attributes, $values), function ($instance) {
+            return tap($builder->firstOrCreate($attributes, $values), function ($instance): void {
                 $instance->restore();
             });
         });
@@ -104,7 +102,7 @@ class SoftDeletingScope implements Scope
         $builder->macro('createOrRestore', function (Builder $builder, array $attributes = [], array $values = []) {
             $builder->withTrashed();
 
-            return tap($builder->createOrFirst($attributes, $values), function ($instance) {
+            return tap($builder->createOrFirst($attributes, $values), function ($instance): void {
                 $instance->restore();
             });
         });
@@ -135,7 +133,7 @@ class SoftDeletingScope implements Scope
      */
     protected function addWithoutTrashed(Builder $builder)
     {
-        $builder->macro('withoutTrashed', function (Builder $builder) {
+        $builder->macro('withoutTrashed', function (Builder $builder): \Illuminate\Database\Eloquent\Builder {
             $model = $builder->getModel();
 
             $builder->withoutGlobalScope($this)->whereNull(
@@ -154,7 +152,7 @@ class SoftDeletingScope implements Scope
      */
     protected function addOnlyTrashed(Builder $builder)
     {
-        $builder->macro('onlyTrashed', function (Builder $builder) {
+        $builder->macro('onlyTrashed', function (Builder $builder): \Illuminate\Database\Eloquent\Builder {
             $model = $builder->getModel();
 
             $builder->withoutGlobalScope($this)->whereNotNull(

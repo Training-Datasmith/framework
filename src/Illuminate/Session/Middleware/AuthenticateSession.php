@@ -12,13 +12,6 @@ use Illuminate\Http\Request;
 class AuthenticateSession implements AuthenticatesSessions
 {
     /**
-     * The authentication factory implementation.
-     *
-     * @var \Illuminate\Contracts\Auth\Factory
-     */
-    protected $auth;
-
-    /**
      * The callback that should be used to generate the authentication redirect path.
      *
      * @var callable
@@ -27,19 +20,20 @@ class AuthenticateSession implements AuthenticatesSessions
 
     /**
      * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
      */
-    public function __construct(AuthFactory $auth)
+    public function __construct(
+        /**
+         * The authentication factory implementation.
+         */
+        protected \Illuminate\Contracts\Auth\Factory $auth
+    )
     {
-        $this->auth = $auth;
     }
 
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -49,7 +43,7 @@ class AuthenticateSession implements AuthenticatesSessions
         }
 
         if ($this->guard()->viaRemember()) {
-            $passwordHashFromCookie = explode('|', $request->cookies->get($this->guard()->getRecallerName()))[2] ?? null;
+            $passwordHashFromCookie = explode('|', (string) $request->cookies->get($this->guard()->getRecallerName()))[2] ?? null;
 
             if (! $passwordHashFromCookie ||
                 ! $this->validatePasswordHash($request->user()->getAuthPassword(), $passwordHashFromCookie)) {
@@ -67,7 +61,7 @@ class AuthenticateSession implements AuthenticatesSessions
             $this->logout($request);
         }
 
-        return tap($next($request), function () use ($request) {
+        return tap($next($request), function () use ($request): void {
             if (! is_null($this->guard()->user())) {
                 $this->storePasswordHashInSession($request);
             }
@@ -103,9 +97,8 @@ class AuthenticateSession implements AuthenticatesSessions
      *
      * @param  string  $passwordHash
      * @param  string  $storedValue
-     * @return bool
      */
-    protected function validatePasswordHash($passwordHash, $storedValue)
+    protected function validatePasswordHash($passwordHash, $storedValue): bool
     {
         try {
             // Try new HMAC format first, then fall back to raw password hash format for backward compatibility
@@ -119,12 +112,10 @@ class AuthenticateSession implements AuthenticatesSessions
     /**
      * Log the user out of the application.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
      *
      * @throws \Illuminate\Auth\AuthenticationException
      */
-    protected function logout($request)
+    protected function logout(\Illuminate\Http\Request $request): never
     {
         $this->guard()->logoutCurrentDevice();
 
@@ -148,7 +139,6 @@ class AuthenticateSession implements AuthenticatesSessions
     /**
      * Get the path the user should be redirected to when their session is not authenticated.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return string|null
      */
     protected function redirectTo(Request $request)
@@ -160,11 +150,8 @@ class AuthenticateSession implements AuthenticatesSessions
 
     /**
      * Specify the callback that should be used to generate the redirect path.
-     *
-     * @param  callable  $redirectToCallback
-     * @return void
      */
-    public static function redirectUsing(callable $redirectToCallback)
+    public static function redirectUsing(callable $redirectToCallback): void
     {
         static::$redirectToCallback = $redirectToCallback;
     }

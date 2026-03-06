@@ -11,16 +11,14 @@ trait DatabaseMigrations
 
     /**
      * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
      */
-    public function runDatabaseMigrations()
+    public function runDatabaseMigrations(): void
     {
         $this->beforeRefreshingDatabase();
         $this->refreshTestDatabase();
         $this->afterRefreshingDatabase();
 
-        $this->beforeApplicationDestroyed(function () {
+        $this->beforeApplicationDestroyed(function (): void {
             $this->artisan('migrate:rollback');
 
             RefreshDatabaseState::$migrated = false;

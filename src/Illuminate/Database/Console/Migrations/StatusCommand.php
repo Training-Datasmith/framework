@@ -26,22 +26,14 @@ class StatusCommand extends BaseCommand
     protected $description = 'Show the status of each migration';
 
     /**
-     * The migrator instance.
-     *
-     * @var \Illuminate\Database\Migrations\Migrator
-     */
-    protected $migrator;
-
-    /**
      * Create a new migration rollback command instance.
-     *
-     * @param  \Illuminate\Database\Migrations\Migrator  $migrator
      */
-    public function __construct(Migrator $migrator)
+    public function __construct(/**
+     * The migrator instance.
+     */
+    protected \Illuminate\Database\Migrations\Migrator $migrator)
     {
         parent::__construct();
-
-        $this->migrator = $migrator;
     }
 
     /**
@@ -63,9 +55,7 @@ class StatusCommand extends BaseCommand
             $batches = $this->migrator->getRepository()->getMigrationBatches();
 
             $migrations = $this->getStatusFor($ran, $batches)
-                ->when($this->option('pending') !== false, fn ($collection) => $collection->filter(function ($migration) {
-                    return (new Stringable($migration[1]))->contains('Pending');
-                }));
+                ->when($this->option('pending') !== false, fn ($collection): \Illuminate\Support\Collection => $collection->filter(fn($migration) => (new Stringable($migration[1]))->contains('Pending')));
 
             if (count($migrations) > 0) {
                 $this->newLine();
@@ -92,15 +82,11 @@ class StatusCommand extends BaseCommand
 
     /**
      * Get the status for the given run migrations.
-     *
-     * @param  array  $ran
-     * @param  array  $batches
-     * @return \Illuminate\Support\Collection
      */
-    protected function getStatusFor(array $ran, array $batches)
+    protected function getStatusFor(array $ran, array $batches): \Illuminate\Support\Collection
     {
         return (new Collection($this->getAllMigrationFiles()))
-            ->map(function ($migration) use ($ran, $batches) {
+            ->map(function ($migration) use ($ran, $batches): array {
                 $migrationName = $this->migrator->getMigrationName($migration);
 
                 $status = in_array($migrationName, $ran)
@@ -127,10 +113,8 @@ class StatusCommand extends BaseCommand
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],

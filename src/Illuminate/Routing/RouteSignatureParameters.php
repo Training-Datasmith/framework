@@ -12,11 +12,9 @@ class RouteSignatureParameters
     /**
      * Extract the route action's signature parameters.
      *
-     * @param  array  $action
-     * @param  array  $conditions
      * @return array
      */
-    public static function fromAction(array $action, $conditions = [])
+    public static function fromAction(array $action, array $conditions = [])
     {
         $callback = RouteAction::containsSerializedClosure($action)
             ? unserialize($action['uses'])->getClosure()
@@ -27,8 +25,8 @@ class RouteSignatureParameters
             : (new ReflectionFunction($callback))->getParameters();
 
         return match (true) {
-            ! empty($conditions['subClass']) => array_filter($parameters, fn ($p) => Reflector::isParameterSubclassOf($p, $conditions['subClass'])),
-            ! empty($conditions['backedEnum']) => array_filter($parameters, fn ($p) => Reflector::isParameterBackedEnumWithStringBackingType($p)),
+            ! empty($conditions['subClass']) => array_filter($parameters, fn ($p): bool => Reflector::isParameterSubclassOf($p, $conditions['subClass'])),
+            ! empty($conditions['backedEnum']) => array_filter($parameters, Reflector::isParameterBackedEnumWithStringBackingType(...)),
             default => $parameters,
         };
     }
@@ -37,9 +35,8 @@ class RouteSignatureParameters
      * Get the parameters for the given class / method by string.
      *
      * @param  string  $uses
-     * @return array
      */
-    protected static function fromClassMethodString($uses)
+    protected static function fromClassMethodString($uses): array
     {
         [$class, $method] = Str::parseCallback($uses);
 

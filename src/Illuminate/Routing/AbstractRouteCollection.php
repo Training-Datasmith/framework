@@ -20,10 +20,8 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
     /**
      * Handle the matched route.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Routing\Route|null  $route
      * @return \Illuminate\Routing\Route
-     *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     protected function handleMatchedRoute(Request $request, $route)
@@ -62,9 +60,7 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
         // proper error response with the correct headers on the response string.
         return array_values(array_filter(
             $methods,
-            function ($method) use ($request) {
-                return ! is_null($this->matchAgainstRoutes($this->get($method), $request, false));
-            }
+            fn(string $method) => ! is_null($this->matchAgainstRoutes($this->get($method), $request, false))
         ));
     }
 
@@ -107,9 +103,7 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
     protected function getRouteForMethods($request, array $methods)
     {
         if ($request->isMethod('OPTIONS')) {
-            return (new Route('OPTIONS', $request->path(), function () use ($methods) {
-                return new Response('', 200, ['Allow' => implode(',', $methods)]);
-            }))->bind($request);
+            return (new Route('OPTIONS', $request->path(), fn() => new Response('', 200, ['Allow' => implode(',', $methods)])))->bind($request);
         }
 
         $this->requestMethodNotAllowed($request, $methods, $request->method());
@@ -119,13 +113,11 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
      * Throw a method not allowed HTTP exception.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  array  $others
-     * @param  string  $method
      * @return never
      *
      * @throws \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException
      */
-    protected function requestMethodNotAllowed($request, array $others, $method)
+    protected function requestMethodNotAllowed($request, array $others, string $method)
     {
         throw new MethodNotAllowedHttpException(
             $others,
@@ -141,15 +133,13 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
     /**
      * Throw a method not allowed HTTP exception.
      *
-     * @param  array  $others
-     * @param  string  $method
      * @return void
      *
      * @deprecated use requestMethodNotAllowed
      *
      * @throws \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException
      */
-    protected function methodNotAllowed(array $others, $method)
+    protected function methodNotAllowed(array $others, string $method)
     {
         throw new MethodNotAllowedHttpException(
             $others,
@@ -231,8 +221,6 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
     /**
      * Add a route to the SymfonyRouteCollection instance.
      *
-     * @param  \Symfony\Component\Routing\RouteCollection  $symfonyRoutes
-     * @param  \Illuminate\Routing\Route  $route
      * @return \Symfony\Component\Routing\RouteCollection
      *
      * @throws \LogicException
@@ -284,8 +272,6 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
 
     /**
      * Count the number of items in the collection.
-     *
-     * @return int
      */
     public function count(): int
     {

@@ -63,7 +63,6 @@ class Bus extends Facade
      * Replace the bound instance with a fake.
      *
      * @param  array|string  $jobsToFake
-     * @param  \Illuminate\Bus\BatchRepository|null  $batchRepository
      * @return \Illuminate\Support\Testing\Fakes\BusFake
      */
     public static function fake($jobsToFake = [], ?BatchRepository $batchRepository = null)
@@ -72,7 +71,7 @@ class Bus extends Facade
             ? static::getFacadeRoot()->dispatcher
             : static::getFacadeRoot();
 
-        return tap(new BusFake($actualDispatcher, $jobsToFake, $batchRepository), function ($fake) {
+        return tap(new BusFake($actualDispatcher, $jobsToFake, $batchRepository), function ($fake): void {
             static::swap($fake);
         });
     }
@@ -93,10 +92,8 @@ class Bus extends Facade
 
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return BusDispatcherContract::class;
     }

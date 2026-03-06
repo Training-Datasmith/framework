@@ -24,10 +24,8 @@ class FlushFailedCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->laravel['queue.failer']->flush($this->option('hours'));
 

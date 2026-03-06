@@ -10,11 +10,9 @@ class PostgresSchemaState extends SchemaState
     /**
      * Dump the database's schema into a file.
      *
-     * @param  \Illuminate\Database\Connection  $connection
      * @param  string  $path
-     * @return void
      */
-    public function dump(Connection $connection, $path)
+    public function dump(Connection $connection, $path): void
     {
         $commands = new Collection([
             $this->baseDumpCommand().' --schema-only > '.$path,
@@ -24,7 +22,7 @@ class PostgresSchemaState extends SchemaState
             $commands->push($this->baseDumpCommand().' -t '.$this->getMigrationTable().' --data-only >> '.$path);
         }
 
-        $commands->map(function ($command, $path) {
+        $commands->map(function ($command, $path): void {
             $this->makeProcess($command)->mustRun($this->output, array_merge($this->baseVariables($this->connection->getConfig()), [
                 'LARAVEL_LOAD_PATH' => $path,
             ]));
@@ -35,9 +33,8 @@ class PostgresSchemaState extends SchemaState
      * Load the given schema file into the database.
      *
      * @param  string  $path
-     * @return void
      */
-    public function load($path)
+    public function load($path): void
     {
         $command = 'pg_restore --no-owner --no-acl --clean --if-exists --host="${:LARAVEL_LOAD_HOST}" --port="${:LARAVEL_LOAD_PORT}" --username="${:LARAVEL_LOAD_USER}" --dbname="${:LARAVEL_LOAD_DATABASE}" "${:LARAVEL_LOAD_PATH}"';
 
@@ -54,8 +51,6 @@ class PostgresSchemaState extends SchemaState
 
     /**
      * Get the name of the application's migration table.
-     *
-     * @return string
      */
     protected function getMigrationTable(): string
     {
@@ -66,21 +61,16 @@ class PostgresSchemaState extends SchemaState
 
     /**
      * Get the base dump command arguments for PostgreSQL as a string.
-     *
-     * @return string
      */
-    protected function baseDumpCommand()
+    protected function baseDumpCommand(): string
     {
         return 'pg_dump --no-owner --no-acl --host="${:LARAVEL_LOAD_HOST}" --port="${:LARAVEL_LOAD_PORT}" --username="${:LARAVEL_LOAD_USER}" --dbname="${:LARAVEL_LOAD_DATABASE}"';
     }
 
     /**
      * Get the base variables for a dump / load command.
-     *
-     * @param  array  $config
-     * @return array
      */
-    protected function baseVariables(array $config)
+    protected function baseVariables(array $config): array
     {
         $config['host'] ??= '';
 

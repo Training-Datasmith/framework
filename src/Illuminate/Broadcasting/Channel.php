@@ -26,10 +26,8 @@ class Channel implements Stringable
 
     /**
      * Convert the channel instance to a string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name;
     }

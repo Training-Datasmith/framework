@@ -24,8 +24,6 @@ class AblyBroadcaster extends Broadcaster
 
     /**
      * Create a new broadcaster instance.
-     *
-     * @param  \Ably\AblyRest  $ably
      */
     public function __construct(AblyRest $ably)
     {
@@ -60,11 +58,10 @@ class AblyBroadcaster extends Broadcaster
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  mixed  $result
-     * @return mixed
      */
-    public function validAuthenticationResponse($request, $result)
+    public function validAuthenticationResponse($request, $result): array
     {
-        if (str_starts_with($request->channel_name, 'private')) {
+        if (str_starts_with((string) $request->channel_name, 'private')) {
             $signature = $this->generateAblySignature(
                 $request->channel_name, $request->socket_id
             );
@@ -99,11 +96,9 @@ class AblyBroadcaster extends Broadcaster
      * Generate the signature needed for Ably authentication headers.
      *
      * @param  string  $channelName
-     * @param  string  $socketId
      * @param  array|null  $userData
-     * @return string
      */
-    public function generateAblySignature($channelName, $socketId, $userData = null)
+    public function generateAblySignature($channelName, string $socketId, $userData = null): string
     {
         return hash_hmac(
             'sha256',
@@ -115,14 +110,11 @@ class AblyBroadcaster extends Broadcaster
     /**
      * Broadcast the given event.
      *
-     * @param  array  $channels
      * @param  string  $event
-     * @param  array  $payload
-     * @return void
      *
      * @throws \Illuminate\Broadcasting\BroadcastException
      */
-    public function broadcast(array $channels, $event, array $payload = [])
+    public function broadcast(array $channels, $event, array $payload = []): void
     {
         try {
             foreach ($this->formatChannels($channels) as $channel) {
@@ -141,12 +133,11 @@ class AblyBroadcaster extends Broadcaster
      * Build an Ably message object for broadcasting.
      *
      * @param  string  $event
-     * @param  array  $payload
      * @return \Ably\Models\Message
      */
     protected function buildAblyMessage($event, array $payload = [])
     {
-        return tap(new AblyMessage, function ($message) use ($event, $payload) {
+        return tap(new AblyMessage, function ($message) use ($event, $payload): void {
             $message->name = $event;
             $message->data = $payload;
             $message->connectionKey = data_get($payload, 'socket');
@@ -183,11 +174,8 @@ class AblyBroadcaster extends Broadcaster
 
     /**
      * Format the channel array into an array of strings.
-     *
-     * @param  array  $channels
-     * @return array
      */
-    protected function formatChannels(array $channels)
+    protected function formatChannels(array $channels): array
     {
         return array_map(function ($channel) {
             $channel = (string) $channel;
@@ -236,9 +224,8 @@ class AblyBroadcaster extends Broadcaster
      * Set the underlying Ably SDK instance.
      *
      * @param  \Ably\AblyRest  $ably
-     * @return void
      */
-    public function setAbly($ably)
+    public function setAbly($ably): void
     {
         $this->ably = $ably;
     }

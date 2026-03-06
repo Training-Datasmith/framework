@@ -28,7 +28,7 @@ trait ForwardsCalls
                 throw $e;
             }
 
-            if ($matches['class'] != get_class($object) ||
+            if ($matches['class'] != $object::class ||
                 $matches['method'] != $method) {
                 throw $e;
             }
@@ -58,11 +58,10 @@ trait ForwardsCalls
      * Throw a bad method call exception for the given method.
      *
      * @param  string  $method
-     * @return never
      *
      * @throws \BadMethodCallException
      */
-    protected static function throwBadMethodCallException($method)
+    protected static function throwBadMethodCallException($method): never
     {
         throw new BadMethodCallException(sprintf(
             'Call to undefined method %s::%s()', static::class, $method

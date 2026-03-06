@@ -26,11 +26,8 @@ class PruneStaleTagsCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @param  \Illuminate\Cache\CacheManager  $cache
-     * @return int|null
      */
-    public function handle(CacheManager $cache)
+    public function handle(CacheManager $cache): void
     {
         $cache = $cache->store($this->argument('store'));
 
@@ -43,10 +40,8 @@ class PruneStaleTagsCommand extends Command
 
     /**
      * Get the console command arguments.
-     *
-     * @return array
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['store', InputArgument::OPTIONAL, 'The name of the store you would like to prune tags from'],

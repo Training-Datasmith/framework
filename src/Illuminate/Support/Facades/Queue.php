@@ -81,9 +81,8 @@ class Queue extends Facade
      *
      * @param  string  $workerName
      * @param  callable  $callback
-     * @return void
      */
-    public static function popUsing($workerName, $callback)
+    public static function popUsing($workerName, $callback): void
     {
         Worker::popUsing($workerName, $callback);
     }
@@ -100,7 +99,7 @@ class Queue extends Facade
             ? tap(static::getFacadeRoot(), fn ($fake) => $fake->releaseUniqueJobLocks())->queue
             : static::getFacadeRoot();
 
-        return tap(new QueueFake(static::getFacadeApplication(), $jobsToFake, $actualQueueManager), function ($fake) {
+        return tap(new QueueFake(static::getFacadeApplication(), $jobsToFake, $actualQueueManager), function ($fake): void {
             static::swap($fake);
         });
     }
@@ -119,8 +118,6 @@ class Queue extends Facade
     /**
      * Replace the bound instance with a fake during the given callable's execution.
      *
-     * @param  callable  $callable
-     * @param  array  $jobsToFake
      * @return mixed
      */
     public static function fakeFor(callable $callable, array $jobsToFake = [])
@@ -139,8 +136,6 @@ class Queue extends Facade
     /**
      * Replace the bound instance with a fake during the given callable's execution.
      *
-     * @param  callable  $callable
-     * @param  array  $jobsToAllow
      * @return mixed
      */
     public static function fakeExceptFor(callable $callable, array $jobsToAllow = [])
@@ -158,10 +153,8 @@ class Queue extends Facade
 
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'queue';
     }

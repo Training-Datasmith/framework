@@ -12,13 +12,6 @@ use InvalidArgumentException;
 class Pipe
 {
     /**
-     * The process factory instance.
-     *
-     * @var \Illuminate\Process\Factory
-     */
-    protected $factory;
-
-    /**
      * The callback that resolves the pending processes.
      *
      * @var callable
@@ -34,25 +27,23 @@ class Pipe
 
     /**
      * Create a new series of piped processes.
-     *
-     * @param  \Illuminate\Process\Factory  $factory
-     * @param  callable  $callback
      */
-    public function __construct(Factory $factory, callable $callback)
+    public function __construct(/**
+     * The process factory instance.
+     */
+    protected \Illuminate\Process\Factory $factory, callable $callback)
     {
-        $this->factory = $factory;
         $this->callback = $callback;
     }
 
     /**
      * Add a process to the pipe with a key.
      *
-     * @param  string  $key
      * @return \Illuminate\Process\PendingProcess
      */
     public function as(string $key)
     {
-        return tap($this->factory->newPendingProcess(), function ($pendingProcess) use ($key) {
+        return tap($this->factory->newPendingProcess(), function ($pendingProcess) use ($key): void {
             $this->pendingProcesses[$key] = $pendingProcess;
         });
     }
@@ -60,9 +51,7 @@ class Pipe
     /**
      * Runs the processes in the pipe.
      *
-     * @param  callable|null  $output
      * @return \Illuminate\Contracts\Process\ProcessResult
-     *
      * @throws \InvalidArgumentException
      */
     public function run(?callable $output = null)
@@ -82,7 +71,7 @@ class Pipe
                 return $pendingProcess->when(
                     $previousProcessResult,
                     fn () => $pendingProcess->input($previousProcessResult->output())
-                )->run(output: $output ? function ($type, $buffer) use ($key, $output) {
+                )->run(output: $output ? function ($type, $buffer) use ($key, $output): void {
                     $output($type, $buffer, $key);
                 } : null);
             });
@@ -91,13 +80,12 @@ class Pipe
     /**
      * Dynamically proxy methods calls to a new pending process.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return \Illuminate\Process\PendingProcess
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
-        return tap($this->factory->{$method}(...$parameters), function ($pendingProcess) {
+        return tap($this->factory->{$method}(...$parameters), function ($pendingProcess): void {
             $this->pendingProcesses[] = $pendingProcess;
         });
     }

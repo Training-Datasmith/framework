@@ -15,25 +15,9 @@ use Symfony\Component\Routing\RequestContext;
 class CompiledRouteCollection extends AbstractRouteCollection
 {
     /**
-     * The compiled routes collection.
-     *
-     * @var array
-     */
-    protected $compiled = [];
-
-    /**
-     * An array of the route attributes keyed by name.
-     *
-     * @var array
-     */
-    protected $attributes = [];
-
-    /**
      * The dynamically added routes that were added after loading the cached, compiled routes.
-     *
-     * @var \Illuminate\Routing\RouteCollection|null
      */
-    protected $routes;
+    protected \Illuminate\Routing\RouteCollection $routes;
 
     /**
      * The router instance used by the route.
@@ -51,21 +35,21 @@ class CompiledRouteCollection extends AbstractRouteCollection
 
     /**
      * Create a new CompiledRouteCollection instance.
-     *
-     * @param  array  $compiled
-     * @param  array  $attributes
      */
-    public function __construct(array $compiled, array $attributes)
+    public function __construct(/**
+     * The compiled routes collection.
+     */
+    protected array $compiled, /**
+     * An array of the route attributes keyed by name.
+     */
+    protected array $attributes)
     {
-        $this->compiled = $compiled;
-        $this->attributes = $attributes;
         $this->routes = new RouteCollection;
     }
 
     /**
      * Add a Route instance to the collection.
      *
-     * @param  \Illuminate\Routing\Route  $route
      * @return \Illuminate\Routing\Route
      */
     public function add(Route $route)
@@ -77,10 +61,8 @@ class CompiledRouteCollection extends AbstractRouteCollection
      * Refresh the name look-up table.
      *
      * This is done in case any names are fluently defined or if routes are overwritten.
-     *
-     * @return void
      */
-    public function refreshNameLookups()
+    public function refreshNameLookups(): void
     {
         //
     }
@@ -89,10 +71,8 @@ class CompiledRouteCollection extends AbstractRouteCollection
      * Refresh the action look-up table.
      *
      * This is done in case any actions are overwritten with new controllers.
-     *
-     * @return void
      */
-    public function refreshActionLookups()
+    public function refreshActionLookups(): void
     {
         //
     }
@@ -100,7 +80,6 @@ class CompiledRouteCollection extends AbstractRouteCollection
     /**
      * Find the first route matching a given request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Routing\Route
      *
      * @throws \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException
@@ -146,14 +125,13 @@ class CompiledRouteCollection extends AbstractRouteCollection
     /**
      * Get a cloned instance of the given request without any trailing slash on the URI.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Request
      */
     protected function requestWithoutTrailingSlash(Request $request)
     {
         $trimmedRequest = $request->duplicate();
 
-        $parts = explode('?', $request->server->get('REQUEST_URI'), 2);
+        $parts = explode('?', (string) $request->server->get('REQUEST_URI'), 2);
 
         $trimmedRequest->server->set(
             'REQUEST_URI', rtrim($parts[0], '/').(isset($parts[1]) ? '?'.$parts[1] : '')
@@ -177,9 +155,8 @@ class CompiledRouteCollection extends AbstractRouteCollection
      * Determine if the route collection contains a given named route.
      *
      * @param  string  $name
-     * @return bool
      */
-    public function hasNamedRoute($name)
+    public function hasNamedRoute($name): bool
     {
         return isset($this->attributes[$name]) || $this->routes->hasNamedRoute($name);
     }
@@ -207,9 +184,9 @@ class CompiledRouteCollection extends AbstractRouteCollection
      */
     public function getByAction($action)
     {
-        $attributes = (new Collection($this->attributes))->first(function (array $attributes) use ($action) {
+        $attributes = (new Collection($this->attributes))->first(function (array $attributes) use ($action): bool {
             if (isset($attributes['action']['controller'])) {
-                return trim($attributes['action']['controller'], '\\') === $action;
+                return trim((string) $attributes['action']['controller'], '\\') === $action;
             }
 
             return $attributes['action']['uses'] === $action;
@@ -230,9 +207,7 @@ class CompiledRouteCollection extends AbstractRouteCollection
     public function getRoutes()
     {
         return (new Collection($this->attributes))
-            ->map(function (array $attributes) {
-                return $this->newRoute($attributes);
-            })
+            ->map(fn(array $attributes) => $this->newRoute($attributes))
             ->merge($this->routes->getRoutes())
             ->values()
             ->all();
@@ -246,14 +221,8 @@ class CompiledRouteCollection extends AbstractRouteCollection
     public function getRoutesByMethod()
     {
         return (new Collection($this->getRoutes()))
-            ->groupBy(function (Route $route) {
-                return $route->methods();
-            })
-            ->map(function (Collection $routes) {
-                return $routes->mapWithKeys(function (Route $route) {
-                    return [$route->getDomain().$route->uri => $route];
-                })->all();
-            })
+            ->groupBy(fn(Route $route) => $route->methods())
+            ->map(fn(Collection $routes) => $routes->mapWithKeys(fn(Route $route) => [$route->getDomain().$route->uri => $route])->all())
             ->all();
     }
 
@@ -265,16 +234,13 @@ class CompiledRouteCollection extends AbstractRouteCollection
     public function getRoutesByName()
     {
         return (new Collection($this->getRoutes()))
-            ->keyBy(function (Route $route) {
-                return $route->getName();
-            })
+            ->keyBy(fn(Route $route) => $route->getName())
             ->all();
     }
 
     /**
      * Resolve an array of attributes to a Route instance.
      *
-     * @param  array  $attributes
      * @return \Illuminate\Routing\Route
      */
     protected function newRoute(array $attributes)
@@ -286,7 +252,7 @@ class CompiledRouteCollection extends AbstractRouteCollection
 
             $baseUri = trim(implode(
                 '/', array_slice(
-                    explode('/', trim($attributes['uri'], '/')),
+                    explode('/', trim((string) $attributes['uri'], '/')),
                     count($prefix !== '' ? explode('/', $prefix) : [])
                 )
             ), '/');
@@ -304,10 +270,9 @@ class CompiledRouteCollection extends AbstractRouteCollection
     /**
      * Set the router instance on the route.
      *
-     * @param  \Illuminate\Routing\Router  $router
      * @return $this
      */
-    public function setRouter(Router $router)
+    public function setRouter(Router $router): static
     {
         $this->router = $router;
 
@@ -317,10 +282,9 @@ class CompiledRouteCollection extends AbstractRouteCollection
     /**
      * Set the container instance on the route.
      *
-     * @param  \Illuminate\Container\Container  $container
      * @return $this
      */
-    public function setContainer(Container $container)
+    public function setContainer(Container $container): static
     {
         $this->container = $container;
 

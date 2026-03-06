@@ -296,11 +296,10 @@ trait Queueable
      * Serialize a job for queuing.
      *
      * @param  mixed  $job
-     * @return string
      *
      * @throws \RuntimeException
      */
-    protected function serializeJob($job)
+    protected function serializeJob($job): string
     {
         if ($job instanceof Closure) {
             if (! class_exists(CallQueuedClosure::class)) {
@@ -317,13 +316,11 @@ trait Queueable
 
     /**
      * Dispatch the next job on the chain.
-     *
-     * @return void
      */
-    public function dispatchNextJobInChain()
+    public function dispatchNextJobInChain(): void
     {
         if (is_array($this->chained) && ! empty($this->chained)) {
-            dispatch(tap(unserialize(array_shift($this->chained)), function ($next) {
+            dispatch(tap(unserialize(array_shift($this->chained)), function ($next): void {
                 $next->chained = $this->chained;
 
                 $next->onConnection($next->connection ?: $this->chainConnection);
@@ -340,11 +337,10 @@ trait Queueable
      * Invoke all of the chain's failed job callbacks.
      *
      * @param  \Throwable  $e
-     * @return void
      */
-    public function invokeChainCatchCallbacks($e)
+    public function invokeChainCatchCallbacks($e): void
     {
-        (new Collection($this->chainCatchCallbacks))->each(function ($callback) use ($e) {
+        (new Collection($this->chainCatchCallbacks))->each(function ($callback) use ($e): void {
             $callback($e);
         });
     }
@@ -353,19 +349,18 @@ trait Queueable
      * Assert that the job has the given chain of jobs attached to it.
      *
      * @param  array  $expectedChain
-     * @return void
      */
-    public function assertHasChain($expectedChain)
+    public function assertHasChain($expectedChain): void
     {
         PHPUnit::assertTrue(
             (new Collection($expectedChain))->isNotEmpty(),
             'The expected chain can not be empty.'
         );
 
-        if ((new Collection($expectedChain))->contains(fn ($job) => is_object($job))) {
-            $expectedChain = (new Collection($expectedChain))->map(fn ($job) => serialize($job))->all();
+        if ((new Collection($expectedChain))->contains(fn ($job): bool => is_object($job))) {
+            $expectedChain = (new Collection($expectedChain))->map(fn ($job): string => serialize($job))->all();
         } else {
-            $chain = (new Collection($this->chained))->map(fn ($job) => get_class(unserialize($job)))->all();
+            $chain = (new Collection($this->chained))->map(fn ($job): string|false => unserialize($job)::class)->all();
         }
 
         PHPUnit::assertTrue(
@@ -376,10 +371,8 @@ trait Queueable
 
     /**
      * Assert that the job has no remaining chained jobs.
-     *
-     * @return void
      */
-    public function assertDoesntHaveChain()
+    public function assertDoesntHaveChain(): void
     {
         PHPUnit::assertEmpty($this->chained, 'The job has chained jobs.');
     }

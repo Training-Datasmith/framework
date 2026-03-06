@@ -12,54 +12,32 @@ class TokenGuard implements Guard
     use GuardHelpers, Macroable;
 
     /**
-     * The request instance.
-     *
-     * @var \Illuminate\Http\Request
-     */
-    protected $request;
-
-    /**
-     * The name of the query string item from the request containing the API token.
-     *
-     * @var string
-     */
-    protected $inputKey;
-
-    /**
-     * The name of the token "column" in persistent storage.
-     *
-     * @var string
-     */
-    protected $storageKey;
-
-    /**
-     * Indicates if the API token is hashed in storage.
-     *
-     * @var bool
-     */
-    protected $hash = false;
-
-    /**
      * Create a new authentication guard.
      *
-     * @param  \Illuminate\Contracts\Auth\UserProvider  $provider
-     * @param  \Illuminate\Http\Request  $request
      * @param  string  $inputKey
      * @param  string  $storageKey
      * @param  bool  $hash
      */
     public function __construct(
         UserProvider $provider,
-        Request $request,
-        $inputKey = 'api_token',
-        $storageKey = 'api_token',
-        $hash = false,
+        /**
+         * The request instance.
+         */
+        protected \Illuminate\Http\Request $request,
+        /**
+         * The name of the query string item from the request containing the API token.
+         */
+        protected $inputKey = 'api_token',
+        /**
+         * The name of the token "column" in persistent storage.
+         */
+        protected $storageKey = 'api_token',
+        /**
+         * Indicates if the API token is hashed in storage.
+         */
+        protected $hash = false,
     ) {
-        $this->hash = $hash;
-        $this->request = $request;
         $this->provider = $provider;
-        $this->inputKey = $inputKey;
-        $this->storageKey = $storageKey;
     }
 
     /**
@@ -105,7 +83,6 @@ class TokenGuard implements Guard
     /**
      * Validate a user's credentials.
      *
-     * @param  array  $credentials
      * @return bool
      */
     public function validate(array $credentials = [])
@@ -122,10 +99,9 @@ class TokenGuard implements Guard
     /**
      * Set the current request instance.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return $this
      */
-    public function setRequest(Request $request)
+    public function setRequest(Request $request): static
     {
         $this->request = $request;
 

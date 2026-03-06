@@ -17,7 +17,7 @@ class SqlServerConnection extends Connection
     /**
      * {@inheritdoc}
      */
-    public function getDriverTitle()
+    public function getDriverTitle(): string
     {
         return 'SQL Server';
     }
@@ -25,10 +25,8 @@ class SqlServerConnection extends Connection
     /**
      * Execute a Closure within a transaction.
      *
-     * @param  \Closure  $callback
      * @param  int  $attempts
      * @return mixed
-     *
      * @throws \Throwable
      */
     public function transaction(Closure $callback, $attempts = 1)
@@ -77,11 +75,8 @@ class SqlServerConnection extends Connection
 
     /**
      * Determine if the given database exception was caused by a unique constraint violation.
-     *
-     * @param  \Exception  $exception
-     * @return bool
      */
-    protected function isUniqueConstraintError(Exception $exception)
+    protected function isUniqueConstraintError(Exception $exception): bool
     {
         return (bool) preg_match('#Cannot insert duplicate key row in object#i', $exception->getMessage());
     }
@@ -91,7 +86,7 @@ class SqlServerConnection extends Connection
      *
      * @return \Illuminate\Database\Query\Grammars\SqlServerGrammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): \Illuminate\Database\Query\Grammars\Grammar
     {
         return new QueryGrammar($this);
     }
@@ -101,7 +96,7 @@ class SqlServerConnection extends Connection
      *
      * @return \Illuminate\Database\Schema\SqlServerBuilder
      */
-    public function getSchemaBuilder()
+    public function getSchemaBuilder(): \Illuminate\Database\Schema\Builder
     {
         if (is_null($this->schemaGrammar)) {
             $this->useDefaultSchemaGrammar();
@@ -112,10 +107,8 @@ class SqlServerConnection extends Connection
 
     /**
      * Get the default schema grammar instance.
-     *
-     * @return \Illuminate\Database\Schema\Grammars\SqlServerGrammar
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): \Illuminate\Database\Schema\Grammars\SqlServerGrammar
     {
         return new SchemaGrammar($this);
     }
@@ -123,12 +116,10 @@ class SqlServerConnection extends Connection
     /**
      * Get the schema state for the connection.
      *
-     * @param  \Illuminate\Filesystem\Filesystem|null  $files
-     * @param  callable|null  $processFactory
      *
      * @throws \RuntimeException
      */
-    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null)
+    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null): never
     {
         throw new RuntimeException('Schema dumping is not supported when using SQL Server.');
     }
@@ -138,7 +129,7 @@ class SqlServerConnection extends Connection
      *
      * @return \Illuminate\Database\Query\Processors\SqlServerProcessor
      */
-    protected function getDefaultPostProcessor()
+    protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\Processor
     {
         return new SqlServerProcessor;
     }

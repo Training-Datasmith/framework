@@ -6,10 +6,8 @@ trait CanConfigureMigrationCommands
 {
     /**
      * The parameters that should be used when running "migrate:fresh".
-     *
-     * @return array
      */
-    protected function migrateFreshUsing()
+    protected function migrateFreshUsing(): array
     {
         $seeder = $this->seeder();
 

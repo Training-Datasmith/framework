@@ -33,11 +33,8 @@ class ShowCommand extends DatabaseInspectionCommand
 
     /**
      * Execute the console command.
-     *
-     * @param  \Illuminate\Database\ConnectionResolverInterface  $connections
-     * @return int
      */
-    public function handle(ConnectionResolverInterface $connections)
+    public function handle(ConnectionResolverInterface $connections): int
     {
         $connection = $connections->connection($database = $this->input->getOption('database'));
 
@@ -69,14 +66,10 @@ class ShowCommand extends DatabaseInspectionCommand
 
     /**
      * Get information regarding the tables within the database.
-     *
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
-     * @param  \Illuminate\Database\Schema\Builder  $schema
-     * @return \Illuminate\Support\Collection
      */
-    protected function tables(ConnectionInterface $connection, Builder $schema)
+    protected function tables(ConnectionInterface $connection, Builder $schema): \Illuminate\Support\Collection
     {
-        return (new Collection($schema->getTables()))->map(fn ($table) => [
+        return (new Collection($schema->getTables()))->map(fn ($table): array => [
             'table' => $table['name'],
             'schema' => $table['schema'],
             'schema_qualified_name' => $table['schema_qualified_name'],
@@ -92,15 +85,11 @@ class ShowCommand extends DatabaseInspectionCommand
 
     /**
      * Get information regarding the views within the database.
-     *
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
-     * @param  \Illuminate\Database\Schema\Builder  $schema
-     * @return \Illuminate\Support\Collection
      */
-    protected function views(ConnectionInterface $connection, Builder $schema)
+    protected function views(ConnectionInterface $connection, Builder $schema): \Illuminate\Support\Collection
     {
         return (new Collection($schema->getViews()))
-            ->map(fn ($view) => [
+            ->map(fn ($view): array => [
                 'view' => $view['name'],
                 'schema' => $view['schema'],
                 'rows' => $connection->withoutTablePrefix(fn ($connection) => $connection->table($view['schema_qualified_name'])->count()),
@@ -109,15 +98,11 @@ class ShowCommand extends DatabaseInspectionCommand
 
     /**
      * Get information regarding the user-defined types within the database.
-     *
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
-     * @param  \Illuminate\Database\Schema\Builder  $schema
-     * @return \Illuminate\Support\Collection
      */
-    protected function types(ConnectionInterface $connection, Builder $schema)
+    protected function types(ConnectionInterface $connection, Builder $schema): \Illuminate\Support\Collection
     {
         return (new Collection($schema->getTypes()))
-            ->map(fn ($type) => [
+            ->map(fn ($type): array => [
                 'name' => $type['name'],
                 'schema' => $type['schema'],
                 'type' => $type['type'],
@@ -128,7 +113,6 @@ class ShowCommand extends DatabaseInspectionCommand
     /**
      * Render the database information.
      *
-     * @param  array  $data
      * @return void
      */
     protected function display(array $data)
@@ -139,7 +123,6 @@ class ShowCommand extends DatabaseInspectionCommand
     /**
      * Render the database information as JSON.
      *
-     * @param  array  $data
      * @return void
      */
     protected function displayJson(array $data)
@@ -150,7 +133,6 @@ class ShowCommand extends DatabaseInspectionCommand
     /**
      * Render the database information formatted for the CLI.
      *
-     * @param  array  $data
      * @return void
      */
     protected function displayForCli(array $data)
@@ -186,7 +168,7 @@ class ShowCommand extends DatabaseInspectionCommand
                 'Size'.($this->option('counts') ? ' <fg=gray;options=bold>/</> <fg=yellow;options=bold>Rows</>' : '')
             );
 
-            $tables->each(function ($table) {
+            $tables->each(function (array $table): void {
                 $tableSize = is_null($table['size']) ? null : Number::fileSize($table['size'], 2);
 
                 $this->components->twoColumnDetail(

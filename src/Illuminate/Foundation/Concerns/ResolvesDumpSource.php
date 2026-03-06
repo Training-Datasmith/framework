@@ -112,8 +112,8 @@ trait ResolvesDumpSource
             $line = null;
         }
 
-        if (str_starts_with($file, $this->basePath)) {
-            $relativeFile = substr($file, strlen($this->basePath) + 1);
+        if (str_starts_with((string) $file, $this->basePath)) {
+            $relativeFile = substr((string) $file, strlen($this->basePath) + 1);
         }
 
         return [$file, $relativeFile, $line];
@@ -123,9 +123,8 @@ trait ResolvesDumpSource
      * Determine if the given file is a view compiled.
      *
      * @param  string  $file
-     * @return bool
      */
-    protected function isCompiledViewFile($file)
+    protected function isCompiledViewFile($file): bool
     {
         return str_starts_with($file, $this->compiledViewPath) && str_ends_with($file, '.php');
     }
@@ -140,11 +139,7 @@ trait ResolvesDumpSource
     {
         preg_match('/\/\*\*PATH\s(.*)\sENDPATH/', file_get_contents($file), $matches);
 
-        if (isset($matches[1])) {
-            $file = $matches[1];
-        }
-
-        return $file;
+        return $matches[1] ?? $file;
     }
 
     /**
@@ -187,19 +182,16 @@ trait ResolvesDumpSource
      * Set the resolver that resolves the source of the dump call.
      *
      * @param  (callable(): (array{0: string, 1: string, 2: int|null}|null))|null  $callable
-     * @return void
      */
-    public static function resolveDumpSourceUsing($callable)
+    public static function resolveDumpSourceUsing($callable): void
     {
         static::$dumpSourceResolver = $callable;
     }
 
     /**
      * Don't include the location / file of the dump in dumps.
-     *
-     * @return void
      */
-    public static function dontIncludeSource()
+    public static function dontIncludeSource(): void
     {
         static::$dumpSourceResolver = false;
     }

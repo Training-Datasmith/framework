@@ -50,18 +50,15 @@ class Notification extends Facade
      */
     public static function fake()
     {
-        return tap(new NotificationFake, function ($fake) {
+        return tap(new NotificationFake, function ($fake): void {
             static::swap($fake);
         });
     }
 
     /**
      * Begin sending a notification to an anonymous notifiable on the given channels.
-     *
-     * @param  array  $channels
-     * @return \Illuminate\Notifications\AnonymousNotifiable
      */
-    public static function routes(array $channels)
+    public static function routes(array $channels): \Illuminate\Notifications\AnonymousNotifiable
     {
         $notifiable = new AnonymousNotifiable;
 
@@ -77,19 +74,16 @@ class Notification extends Facade
      *
      * @param  string  $channel
      * @param  mixed  $route
-     * @return \Illuminate\Notifications\AnonymousNotifiable
      */
-    public static function route($channel, $route)
+    public static function route($channel, $route): \Illuminate\Notifications\AnonymousNotifiable
     {
         return (new AnonymousNotifiable)->route($channel, $route);
     }
 
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return ChannelManager::class;
     }

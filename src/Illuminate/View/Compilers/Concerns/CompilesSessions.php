@@ -8,9 +8,8 @@ trait CompilesSessions
      * Compile the session statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileSession($expression)
+    protected function compileSession($expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -24,9 +23,8 @@ $value = session()->get($__sessionArgs[0]); ?>';
      * Compile the endsession statements into valid PHP.
      *
      * @param  string  $expression
-     * @return string
      */
-    protected function compileEndsession($expression)
+    protected function compileEndsession($expression): string
     {
         return '<?php unset($value);
 if (isset($__sessionPrevious) && !empty($__sessionPrevious)) { $value = array_pop($__sessionPrevious); }

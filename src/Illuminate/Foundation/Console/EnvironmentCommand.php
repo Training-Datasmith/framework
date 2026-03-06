@@ -24,10 +24,8 @@ class EnvironmentCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->components->info(sprintf(
             'The application environment is [%s].',

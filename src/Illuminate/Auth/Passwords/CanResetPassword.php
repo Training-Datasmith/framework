@@ -20,9 +20,8 @@ trait CanResetPassword
      * Send the password reset notification.
      *
      * @param  string  $token
-     * @return void
      */
-    public function sendPasswordResetNotification(#[\SensitiveParameter] $token)
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
     {
         $this->notify(new ResetPasswordNotification($token));
     }

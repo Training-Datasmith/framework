@@ -17,13 +17,6 @@ class TestView implements Stringable
     use Macroable;
 
     /**
-     * The original view.
-     *
-     * @var \Illuminate\View\View
-     */
-    protected $view;
-
-    /**
      * The rendered view contents.
      *
      * @var string
@@ -32,13 +25,13 @@ class TestView implements Stringable
 
     /**
      * Create a new test view instance.
-     *
-     * @param  \Illuminate\View\View  $view
      */
-    public function __construct(View $view)
+    public function __construct(/**
+     * The original view.
+     */
+    protected \Illuminate\View\View $view)
     {
-        $this->view = $view;
-        $this->rendered = $view->render();
+        $this->rendered = $this->view->render();
     }
 
     /**
@@ -77,10 +70,9 @@ class TestView implements Stringable
     /**
      * Assert that the response view has a given list of bound data.
      *
-     * @param  array  $bindings
      * @return $this
      */
-    public function assertViewHasAll(array $bindings)
+    public function assertViewHasAll(array $bindings): static
     {
         foreach ($bindings as $key => $value) {
             if (is_int($key)) {
@@ -99,7 +91,7 @@ class TestView implements Stringable
      * @param  string  $key
      * @return $this
      */
-    public function assertViewMissing($key)
+    public function assertViewMissing($key): static
     {
         PHPUnit::assertFalse(Arr::has($this->view->gatherData(), $key));
 
@@ -111,7 +103,7 @@ class TestView implements Stringable
      *
      * @return $this
      */
-    public function assertViewEmpty()
+    public function assertViewEmpty(): static
     {
         PHPUnit::assertEmpty($this->rendered);
 
@@ -125,7 +117,7 @@ class TestView implements Stringable
      * @param  bool  $escape
      * @return $this
      */
-    public function assertSee($value, $escape = true)
+    public function assertSee($value, $escape = true): static
     {
         $value = $escape ? e($value) : $value;
 
@@ -137,11 +129,10 @@ class TestView implements Stringable
     /**
      * Assert that the given strings are contained in order within the view.
      *
-     * @param  array  $values
      * @param  bool  $escape
      * @return $this
      */
-    public function assertSeeInOrder(array $values, $escape = true)
+    public function assertSeeInOrder(array $values, $escape = true): static
     {
         $values = $escape ? array_map(e(...), $values) : $values;
 
@@ -157,7 +148,7 @@ class TestView implements Stringable
      * @param  bool  $escape
      * @return $this
      */
-    public function assertSeeText($value, $escape = true)
+    public function assertSeeText($value, $escape = true): static
     {
         $value = $escape ? e($value) : $value;
 
@@ -169,11 +160,10 @@ class TestView implements Stringable
     /**
      * Assert that the given strings are contained in order within the view text.
      *
-     * @param  array  $values
      * @param  bool  $escape
      * @return $this
      */
-    public function assertSeeTextInOrder(array $values, $escape = true)
+    public function assertSeeTextInOrder(array $values, $escape = true): static
     {
         $values = $escape ? array_map(e(...), $values) : $values;
 
@@ -189,7 +179,7 @@ class TestView implements Stringable
      * @param  bool  $escape
      * @return $this
      */
-    public function assertDontSee($value, $escape = true)
+    public function assertDontSee($value, $escape = true): static
     {
         $value = $escape ? e($value) : $value;
 
@@ -205,7 +195,7 @@ class TestView implements Stringable
      * @param  bool  $escape
      * @return $this
      */
-    public function assertDontSeeText($value, $escape = true)
+    public function assertDontSeeText($value, $escape = true): static
     {
         $value = $escape ? e($value) : $value;
 
@@ -216,10 +206,8 @@ class TestView implements Stringable
 
     /**
      * Get the string contents of the rendered view.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->rendered;
     }

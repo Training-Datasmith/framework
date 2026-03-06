@@ -11,7 +11,7 @@ trait FileHelpers
      *
      * @var string|null
      */
-    protected $hashName = null;
+    protected $hashName;
 
     /**
      * Get the fully-qualified path to the file.
@@ -59,7 +59,7 @@ trait FileHelpers
      *
      * @return array|null
      */
-    public function dimensions()
+    public function dimensions(): array|false
     {
         return @getimagesize($this->getRealPath());
     }

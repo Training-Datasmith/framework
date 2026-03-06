@@ -12,8 +12,6 @@ class AnyOf implements Rule, ValidatorAwareRule
 {
     /**
      * The rules to match against.
-     *
-     * @var array
      */
     protected array $rules = [];
 
@@ -45,9 +43,8 @@ class AnyOf implements Rule, ValidatorAwareRule
      *
      * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         foreach ($this->rules as $rule) {
             $validator = Validator::make(
@@ -85,7 +82,7 @@ class AnyOf implements Rule, ValidatorAwareRule
      * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return $this
      */
-    public function setValidator($validator)
+    public function setValidator($validator): static
     {
         $this->validator = $validator;
 

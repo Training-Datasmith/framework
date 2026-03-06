@@ -67,7 +67,7 @@ class MorphPivot extends Pivot
 
         $query->where($this->morphType, $this->morphClass);
 
-        return tap($query->delete(), function () {
+        return tap($query->delete(), function (): void {
             $this->exists = false;
 
             $this->fireModelEvent('deleted', false);
@@ -90,7 +90,7 @@ class MorphPivot extends Pivot
      * @param  string  $morphType
      * @return $this
      */
-    public function setMorphType($morphType)
+    public function setMorphType($morphType): static
     {
         $this->morphType = $morphType;
 
@@ -101,9 +101,8 @@ class MorphPivot extends Pivot
      * Set the morph class for the pivot.
      *
      * @param  class-string  $morphClass
-     * @return \Illuminate\Database\Eloquent\Relations\MorphPivot
      */
-    public function setMorphClass($morphClass)
+    public function setMorphClass($morphClass): static
     {
         $this->morphClass = $morphClass;
 
@@ -156,27 +155,24 @@ class MorphPivot extends Pivot
     /**
      * Get a new query to restore multiple models by their queueable IDs.
      *
-     * @param  array  $ids
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
     protected function newQueryForCollectionRestoration(array $ids)
     {
         $ids = array_values($ids);
 
-        if (! str_contains($ids[0], ':')) {
+        if (! str_contains((string) $ids[0], ':')) {
             return parent::newQueryForRestoration($ids);
         }
 
         $query = $this->newQueryWithoutScopes();
 
         foreach ($ids as $id) {
-            $segments = explode(':', $id);
+            $segments = explode(':', (string) $id);
 
-            $query->orWhere(function ($query) use ($segments) {
-                return $query->where($segments[0], $segments[1])
-                    ->where($segments[2], $segments[3])
-                    ->where($segments[4], $segments[5]);
-            });
+            $query->orWhere(fn($query) => $query->where($segments[0], $segments[1])
+                ->where($segments[2], $segments[3])
+                ->where($segments[4], $segments[5]));
         }
 
         return $query;

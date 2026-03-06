@@ -69,7 +69,6 @@ trait MakesHttpRequests
     /**
      * Define additional headers to be sent with the request.
      *
-     * @param  array  $headers
      * @return $this
      */
     public function withHeaders(array $headers)
@@ -82,8 +81,6 @@ trait MakesHttpRequests
     /**
      * Add a header to be sent with the request.
      *
-     * @param  string  $name
-     * @param  string  $value
      * @return $this
      */
     public function withHeader(string $name, string $value)
@@ -96,7 +93,6 @@ trait MakesHttpRequests
     /**
      * Remove a header from the request.
      *
-     * @param  string  $name
      * @return $this
      */
     public function withoutHeader(string $name)
@@ -109,7 +105,6 @@ trait MakesHttpRequests
     /**
      * Remove headers from the request.
      *
-     * @param  array  $headers
      * @return $this
      */
     public function withoutHeaders(array $headers)
@@ -124,8 +119,6 @@ trait MakesHttpRequests
     /**
      * Add an authorization token for the request.
      *
-     * @param  string  $token
-     * @param  string  $type
      * @return $this
      */
     public function withToken(string $token, string $type = 'Bearer')
@@ -136,8 +129,6 @@ trait MakesHttpRequests
     /**
      * Add a basic authentication header to the request with the given credentials.
      *
-     * @param  string  $username
-     * @param  string  $password
      * @return $this
      */
     public function withBasicAuth(string $username, string $password)
@@ -170,7 +161,6 @@ trait MakesHttpRequests
     /**
      * Define a set of server variables to be sent with the requests.
      *
-     * @param  array  $server
      * @return $this
      */
     public function withServerVariables(array $server)
@@ -231,7 +221,6 @@ trait MakesHttpRequests
     /**
      * Define additional cookies to be sent with the request.
      *
-     * @param  array  $cookies
      * @return $this
      */
     public function withCookies(array $cookies)
@@ -244,8 +233,6 @@ trait MakesHttpRequests
     /**
      * Add a cookie to be sent with the request.
      *
-     * @param  string  $name
-     * @param  string  $value
      * @return $this
      */
     public function withCookie(string $name, string $value)
@@ -258,7 +245,6 @@ trait MakesHttpRequests
     /**
      * Define additional cookies will not be encrypted before sending with the request.
      *
-     * @param  array  $cookies
      * @return $this
      */
     public function withUnencryptedCookies(array $cookies)
@@ -271,8 +257,6 @@ trait MakesHttpRequests
     /**
      * Add a cookie will not be encrypted before sending with the request.
      *
-     * @param  string  $name
-     * @param  string  $value
      * @return $this
      */
     public function withUnencryptedCookie(string $name, string $value)
@@ -321,7 +305,6 @@ trait MakesHttpRequests
     /**
      * Set the referer header and previous URL session value from a given URL in order to simulate a previous request.
      *
-     * @param  string  $url
      * @return $this
      */
     public function from(string $url)
@@ -334,7 +317,6 @@ trait MakesHttpRequests
     /**
      * Set the referer header and previous URL session value from a given route in order to simulate a previous request.
      *
-     * @param  \BackedEnum|string  $name
      * @param  mixed  $parameters
      * @return $this
      */
@@ -357,7 +339,6 @@ trait MakesHttpRequests
      * Visit the given URI with a GET request.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $headers
      * @return \Illuminate\Testing\TestResponse
      */
     public function get($uri, array $headers = [])
@@ -372,7 +353,6 @@ trait MakesHttpRequests
      * Visit the given URI with a GET request, expecting a JSON response.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $headers
      * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
@@ -385,8 +365,6 @@ trait MakesHttpRequests
      * Visit the given URI with a POST request.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @return \Illuminate\Testing\TestResponse
      */
     public function post($uri, array $data = [], array $headers = [])
@@ -401,8 +379,6 @@ trait MakesHttpRequests
      * Visit the given URI with a POST request, expecting a JSON response.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
@@ -415,8 +391,6 @@ trait MakesHttpRequests
      * Visit the given URI with a PUT request.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @return \Illuminate\Testing\TestResponse
      */
     public function put($uri, array $data = [], array $headers = [])
@@ -431,8 +405,6 @@ trait MakesHttpRequests
      * Visit the given URI with a PUT request, expecting a JSON response.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
@@ -445,8 +417,6 @@ trait MakesHttpRequests
      * Visit the given URI with a PATCH request.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @return \Illuminate\Testing\TestResponse
      */
     public function patch($uri, array $data = [], array $headers = [])
@@ -461,8 +431,6 @@ trait MakesHttpRequests
      * Visit the given URI with a PATCH request, expecting a JSON response.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
@@ -475,8 +443,6 @@ trait MakesHttpRequests
      * Visit the given URI with a DELETE request.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @return \Illuminate\Testing\TestResponse
      */
     public function delete($uri, array $data = [], array $headers = [])
@@ -491,8 +457,6 @@ trait MakesHttpRequests
      * Visit the given URI with a DELETE request, expecting a JSON response.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
@@ -505,8 +469,6 @@ trait MakesHttpRequests
      * Visit the given URI with an OPTIONS request.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @return \Illuminate\Testing\TestResponse
      */
     public function options($uri, array $data = [], array $headers = [])
@@ -522,8 +484,6 @@ trait MakesHttpRequests
      * Visit the given URI with an OPTIONS request, expecting a JSON response.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
@@ -536,7 +496,6 @@ trait MakesHttpRequests
      * Visit the given URI with a HEAD request.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $headers
      * @return \Illuminate\Testing\TestResponse
      */
     public function head($uri, array $headers = [])
@@ -553,8 +512,6 @@ trait MakesHttpRequests
      *
      * @param  string  $method
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
@@ -621,9 +578,8 @@ trait MakesHttpRequests
      * Turn the given URI into a fully-qualified URL.
      *
      * @param  \Illuminate\Support\Uri|string  $uri
-     * @return string
      */
-    protected function prepareUrlForRequest($uri)
+    protected function prepareUrlForRequest($uri): string
     {
         $uri = $uri instanceof Uri ? $uri->value() : $uri;
 
@@ -637,12 +593,11 @@ trait MakesHttpRequests
     /**
      * Transform headers array to array of $_SERVER vars with HTTP_* format.
      *
-     * @param  array  $headers
      * @return array
      */
     protected function transformHeadersToServerVars(array $headers)
     {
-        return (new Collection(array_merge($this->defaultHeaders, $headers)))->mapWithKeys(function ($value, $name) {
+        return (new Collection(array_merge($this->defaultHeaders, $headers)))->mapWithKeys(function ($value, $name): array {
             $name = strtr(strtoupper($name), '-', '_');
 
             return [$this->formatServerHeaderKey($name) => $value];
@@ -653,9 +608,8 @@ trait MakesHttpRequests
      * Format the header name for the server array.
      *
      * @param  string  $name
-     * @return string
      */
-    protected function formatServerHeaderKey($name)
+    protected function formatServerHeaderKey($name): string
     {
         if (! str_starts_with($name, 'HTTP_') && $name !== 'CONTENT_TYPE' && $name !== 'REMOTE_ADDR') {
             return 'HTTP_'.$name;
@@ -666,11 +620,8 @@ trait MakesHttpRequests
 
     /**
      * Extract the file uploads from the given data array.
-     *
-     * @param  array  $data
-     * @return array
      */
-    protected function extractFilesFromDataArray(&$data)
+    protected function extractFilesFromDataArray(array &$data): array
     {
         $files = [];
 
@@ -703,7 +654,7 @@ trait MakesHttpRequests
         }
 
         return (new Collection($this->defaultCookies))
-            ->map(fn ($value, $key) => encrypt(CookieValuePrefix::create($key, app('encrypter')->getKey()).$value, false))
+            ->map(fn ($value, string $key): string => encrypt(CookieValuePrefix::create($key, app('encrypter')->getKey()).$value, false))
             ->merge($this->unencryptedCookies)
             ->all();
     }
@@ -738,10 +689,9 @@ trait MakesHttpRequests
     /**
      * Create the request instance used for testing from the given Symfony request.
      *
-     * @param  \Symfony\Component\HttpFoundation\Request  $symfonyRequest
      * @return \Illuminate\Http\Request
      */
-    protected function createTestRequest($symfonyRequest)
+    protected function createTestRequest(\Symfony\Component\HttpFoundation\Request $symfonyRequest)
     {
         return Request::createFromBase($symfonyRequest);
     }
@@ -755,7 +705,7 @@ trait MakesHttpRequests
      */
     protected function createTestResponse($response, $request)
     {
-        return tap(TestResponse::fromBaseResponse($response, $request), function ($response) {
+        return tap(TestResponse::fromBaseResponse($response, $request), function ($response): void {
             $response->withExceptions(
                 $this->app->bound(LoggedExceptionCollection::class)
                     ? $this->app->make(LoggedExceptionCollection::class)

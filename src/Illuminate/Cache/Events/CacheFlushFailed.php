@@ -5,13 +5,6 @@ namespace Illuminate\Cache\Events;
 class CacheFlushFailed
 {
     /**
-     * The name of the cache store.
-     *
-     * @var string|null
-     */
-    public $storeName;
-
-    /**
      * The tags that were assigned to the key.
      *
      * @var array
@@ -22,11 +15,12 @@ class CacheFlushFailed
      * Create a new event instance.
      *
      * @param  string|null  $storeName
-     * @param  array  $tags
      */
-    public function __construct($storeName, array $tags = [])
+    public function __construct(/**
+     * The name of the cache store.
+     */
+    public $storeName, array $tags = [])
     {
-        $this->storeName = $storeName;
         $this->tags = $tags;
     }
 
@@ -36,7 +30,7 @@ class CacheFlushFailed
      * @param  array  $tags
      * @return $this
      */
-    public function setTags($tags)
+    public function setTags($tags): static
     {
         $this->tags = $tags;
 

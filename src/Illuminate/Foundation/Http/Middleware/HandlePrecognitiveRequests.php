@@ -11,20 +11,15 @@ use Illuminate\Routing\Contracts\ControllerDispatcher as ControllerDispatcherCon
 class HandlePrecognitiveRequests
 {
     /**
-     * The container instance.
-     *
-     * @var \Illuminate\Container\Container
-     */
-    protected $container;
-
-    /**
      * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Container\Container  $container
      */
-    public function __construct(Container $container)
+    public function __construct(
+        /**
+         * The container instance.
+         */
+        protected \Illuminate\Container\Container $container
+    )
     {
-        $this->container = $container;
     }
 
     /**
@@ -46,7 +41,7 @@ class HandlePrecognitiveRequests
 
         $this->prepareForPrecognition($request);
 
-        return tap($next($request), function ($response) use ($request, $callableBinding, $controllerBinding) {
+        return tap($next($request), function ($response) use ($request, $callableBinding, $controllerBinding): void {
             $response->headers->set('Precognition', 'true');
 
             $this->appendVaryHeader($request, $response);
@@ -65,8 +60,8 @@ class HandlePrecognitiveRequests
     {
         $request->attributes->set('precognitive', true);
 
-        $this->container->bind(CallableDispatcherContract::class, fn ($app) => new PrecognitionCallableDispatcher($app));
-        $this->container->bind(ControllerDispatcherContract::class, fn ($app) => new PrecognitionControllerDispatcher($app));
+        $this->container->bind(CallableDispatcherContract::class, fn ($app): \Illuminate\Foundation\Routing\PrecognitionCallableDispatcher => new PrecognitionCallableDispatcher($app));
+        $this->container->bind(ControllerDispatcherContract::class, fn ($app): \Illuminate\Foundation\Routing\PrecognitionControllerDispatcher => new PrecognitionControllerDispatcher($app));
     }
 
     /**
@@ -91,7 +86,7 @@ class HandlePrecognitiveRequests
      * @param  array|null  $controllerBinding
      * @return void
      */
-    protected function restoreDispatchers($callableBinding, $controllerBinding)
+    protected function restoreDispatchers(array $callableBinding, array $controllerBinding)
     {
         if ($callableBinding) {
             $this->container->bind(CallableDispatcherContract::class, $callableBinding['concrete'], $callableBinding['shared']);

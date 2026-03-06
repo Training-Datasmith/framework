@@ -15,13 +15,6 @@ use Throwable;
 class CompilerEngine extends PhpEngine
 {
     /**
-     * The Blade compiler instance.
-     *
-     * @var \Illuminate\View\Compilers\CompilerInterface
-     */
-    protected $compiler;
-
-    /**
      * A stack of the last compiled templates.
      *
      * @var array
@@ -37,24 +30,20 @@ class CompilerEngine extends PhpEngine
 
     /**
      * Create a new compiler engine instance.
-     *
-     * @param  \Illuminate\View\Compilers\CompilerInterface  $compiler
-     * @param  \Illuminate\Filesystem\Filesystem|null  $files
      */
-    public function __construct(CompilerInterface $compiler, ?Filesystem $files = null)
+    public function __construct(/**
+     * The Blade compiler instance.
+     */
+    protected \Illuminate\View\Compilers\CompilerInterface $compiler, ?Filesystem $files = null)
     {
         parent::__construct($files ?: new Filesystem);
-
-        $this->compiler = $compiler;
     }
 
     /**
      * Get the evaluated contents of the view.
      *
      * @param  string  $path
-     * @param  array  $data
      * @return string
-     *
      * @throws \Illuminate\View\ViewException
      */
     public function get($path, array $data = [])
@@ -98,10 +87,8 @@ class CompilerEngine extends PhpEngine
     /**
      * Handle a view exception.
      *
-     * @param  \Throwable  $e
      * @param  int  $obLevel
      * @return void
-     *
      * @throws \Throwable
      */
     protected function handleViewException(Throwable $e, $obLevel)
@@ -120,11 +107,8 @@ class CompilerEngine extends PhpEngine
 
     /**
      * Get the exception message for an exception.
-     *
-     * @param  \Throwable  $e
-     * @return string
      */
-    protected function getMessage(Throwable $e)
+    protected function getMessage(Throwable $e): string
     {
         return $e->getMessage().' (View: '.realpath(last($this->lastCompiled)).')';
     }
@@ -141,10 +125,8 @@ class CompilerEngine extends PhpEngine
 
     /**
      * Clear the cache of views that were compiled or not expired.
-     *
-     * @return void
      */
-    public function forgetCompiledOrNotExpired()
+    public function forgetCompiledOrNotExpired(): void
     {
         $this->compiledOrNotExpired = [];
     }

@@ -21,34 +21,6 @@ class NotificationSender
     use Localizable;
 
     /**
-     * The notification manager instance.
-     *
-     * @var \Illuminate\Notifications\ChannelManager
-     */
-    protected $manager;
-
-    /**
-     * The Bus dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Bus\Dispatcher
-     */
-    protected $bus;
-
-    /**
-     * The event dispatcher.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
-    /**
-     * The locale to be used when sending notifications.
-     *
-     * @var string|null
-     */
-    protected $locale;
-
-    /**
      * Indicates whether a NotificationFailed event has been dispatched.
      *
      * @var bool
@@ -63,14 +35,21 @@ class NotificationSender
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @param  string|null  $locale
      */
-    public function __construct($manager, $bus, $events, $locale = null)
+    public function __construct(/**
+     * The notification manager instance.
+     */
+    protected $manager, /**
+     * The Bus dispatcher instance.
+     */
+    protected $bus, /**
+     * The event dispatcher.
+     */
+    protected $events, /**
+     * The locale to be used when sending notifications.
+     */
+    protected $locale = null)
     {
-        $this->bus = $bus;
-        $this->events = $events;
-        $this->locale = $locale;
-        $this->manager = $manager;
-
-        $this->events->listen(NotificationFailed::class, fn () => $this->failedEventWasDispatched = true);
+        $this->events->listen(NotificationFailed::class, fn (): true => $this->failedEventWasDispatched = true);
     }
 
     /**
@@ -94,10 +73,8 @@ class NotificationSender
      *
      * @param  \Illuminate\Support\Collection|mixed  $notifiables
      * @param  mixed  $notification
-     * @param  array|null  $channels
-     * @return void
      */
-    public function sendNow($notifiables, $notification, ?array $channels = null)
+    public function sendNow($notifiables, $notification, ?array $channels = null): void
     {
         $notifiables = $this->formatNotifiables($notifiables);
 
@@ -108,7 +85,7 @@ class NotificationSender
                 continue;
             }
 
-            $this->withLocale($this->preferredLocale($notifiable, $original), function () use ($viaChannels, $notifiable, $original) {
+            $this->withLocale($this->preferredLocale($notifiable, $original), function () use ($viaChannels, $notifiable, $original): void {
                 $notificationId = (string) Str::uuid();
 
                 foreach ((array) $viaChannels as $channel) {
@@ -293,7 +270,7 @@ class NotificationSender
      * @param  mixed  $notifiables
      * @return \Illuminate\Database\Eloquent\Collection|array
      */
-    protected function formatNotifiables($notifiables)
+    protected function formatNotifiables($notifiables): \Illuminate\Database\Eloquent\Collection|array|\Illuminate\Support\Collection
     {
         if (! $notifiables instanceof Collection && ! is_array($notifiables)) {
             return $notifiables instanceof Model

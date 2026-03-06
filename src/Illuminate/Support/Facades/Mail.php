@@ -75,17 +75,15 @@ class Mail extends Facade
             ? static::getFacadeRoot()->manager
             : static::getFacadeRoot();
 
-        return tap(new MailFake($actualMailManager), function ($fake) {
+        return tap(new MailFake($actualMailManager), function ($fake): void {
             static::swap($fake);
         });
     }
 
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'mail.manager';
     }

@@ -13,9 +13,8 @@ trait ManagesEvents
      *
      * @param  array|string  $views
      * @param  \Closure|string  $callback
-     * @return array
      */
-    public function creator($views, $callback)
+    public function creator($views, $callback): array
     {
         $creators = [];
 
@@ -28,11 +27,8 @@ trait ManagesEvents
 
     /**
      * Register multiple view composers via an array.
-     *
-     * @param  array  $composers
-     * @return array
      */
-    public function composers(array $composers)
+    public function composers(array $composers): array
     {
         $registered = [];
 
@@ -48,9 +44,8 @@ trait ManagesEvents
      *
      * @param  array|string  $views
      * @param  \Closure|string  $callback
-     * @return array
      */
-    public function composer($views, $callback)
+    public function composer($views, $callback): array
     {
         $composers = [];
 
@@ -66,18 +61,17 @@ trait ManagesEvents
      *
      * @param  string  $view
      * @param  \Closure|string  $callback
-     * @param  string  $prefix
      * @return \Closure|null
      */
-    protected function addViewEvent($view, $callback, $prefix = 'composing: ')
+    protected function addViewEvent($view, $callback, string $prefix = 'composing: ')
     {
         $view = $this->normalizeName($view);
-
         if ($callback instanceof Closure) {
             $this->addEventListener($prefix.$view, $callback);
-
             return $callback;
-        } elseif (is_string($callback)) {
+        }
+
+        if (is_string($callback)) {
             return $this->addClassEvent($view, $callback, $prefix);
         }
     }
@@ -85,12 +79,10 @@ trait ManagesEvents
     /**
      * Register a class based view composer.
      *
-     * @param  string  $view
      * @param  string  $class
-     * @param  string  $prefix
      * @return \Closure
      */
-    protected function addClassEvent($view, $class, $prefix)
+    protected function addClassEvent(string $view, $class, string $prefix)
     {
         $name = $prefix.$view;
 
@@ -120,9 +112,7 @@ trait ManagesEvents
         // Once we have the class and method name, we can build the Closure to resolve
         // the instance out of the IoC container and call the method on it with the
         // given arguments that are passed to the Closure as the composer's data.
-        return function () use ($class, $method) {
-            return $this->container->make($class)->{$method}(...func_get_args());
-        };
+        return fn() => $this->container->make($class)->{$method}(...func_get_args());
     }
 
     /**
@@ -130,9 +120,8 @@ trait ManagesEvents
      *
      * @param  string  $class
      * @param  string  $prefix
-     * @return array
      */
-    protected function parseClassEvent($class, $prefix)
+    protected function parseClassEvent($class, $prefix): array
     {
         return Str::parseCallback($class, $this->classEventMethodForPrefix($prefix));
     }
@@ -141,9 +130,8 @@ trait ManagesEvents
      * Determine the class event method based on the given prefix.
      *
      * @param  string  $prefix
-     * @return string
      */
-    protected function classEventMethodForPrefix($prefix)
+    protected function classEventMethodForPrefix($prefix): string
     {
         return str_contains($prefix, 'composing') ? 'compose' : 'create';
     }
@@ -158,9 +146,7 @@ trait ManagesEvents
     protected function addEventListener($name, $callback)
     {
         if (str_contains($name, '*')) {
-            $callback = function ($name, array $data) use ($callback) {
-                return $callback($data[0]);
-            };
+            $callback = (fn($name, array $data) => $callback($data[0]));
         }
 
         $this->events->listen($name, $callback);
@@ -168,11 +154,8 @@ trait ManagesEvents
 
     /**
      * Call the composer for a given view.
-     *
-     * @param  \Illuminate\Contracts\View\View  $view
-     * @return void
      */
-    public function callComposer(ViewContract $view)
+    public function callComposer(ViewContract $view): void
     {
         if ($this->events->hasListeners($event = 'composing: '.$view->name())) {
             $this->events->dispatch($event, [$view]);
@@ -181,11 +164,8 @@ trait ManagesEvents
 
     /**
      * Call the creator for a given view.
-     *
-     * @param  \Illuminate\Contracts\View\View  $view
-     * @return void
      */
-    public function callCreator(ViewContract $view)
+    public function callCreator(ViewContract $view): void
     {
         if ($this->events->hasListeners($event = 'creating: '.$view->name())) {
             $this->events->dispatch($event, [$view]);

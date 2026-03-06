@@ -94,10 +94,9 @@ abstract class Component
     /**
      * Resolve the component instance with the given data.
      *
-     * @param  array  $data
      * @return static
      */
-    public static function resolve($data)
+    public static function resolve(array $data)
     {
         if (static::$componentsResolver) {
             return call_user_func(static::$componentsResolver, static::class, $data);
@@ -159,9 +158,7 @@ abstract class Component
             return $this->extractBladeViewFromString($view);
         };
 
-        return $view instanceof Closure ? function (array $data = []) use ($view, $resolver) {
-            return $resolver($view($data));
-        }
+        return $view instanceof Closure ? fn(array $data = []) => $resolver($view($data))
         : $resolver($view);
     }
 
@@ -235,15 +232,15 @@ abstract class Component
      */
     protected function extractPublicProperties()
     {
-        $class = get_class($this);
+        $class = static::class;
 
         if (! isset(static::$propertyCache[$class])) {
             $reflection = new ReflectionClass($this);
 
             static::$propertyCache[$class] = (new Collection($reflection->getProperties(ReflectionProperty::IS_PUBLIC)))
-                ->reject(fn (ReflectionProperty $property) => $property->isStatic())
+                ->reject(fn (ReflectionProperty $property): bool => $property->isStatic())
                 ->reject(fn (ReflectionProperty $property) => $this->shouldIgnore($property->getName()))
-                ->map(fn (ReflectionProperty $property) => $property->getName())
+                ->map(fn (ReflectionProperty $property): string => $property->getName())
                 ->all();
         }
 
@@ -263,14 +260,14 @@ abstract class Component
      */
     protected function extractPublicMethods()
     {
-        $class = get_class($this);
+        $class = static::class;
 
         if (! isset(static::$methodCache[$class])) {
             $reflection = new ReflectionClass($this);
 
             static::$methodCache[$class] = (new Collection($reflection->getMethods(ReflectionMethod::IS_PUBLIC)))
                 ->reject(fn (ReflectionMethod $method) => $this->shouldIgnore($method->getName()))
-                ->map(fn (ReflectionMethod $method) => $method->getName());
+                ->map(fn (ReflectionMethod $method): string => $method->getName());
         }
 
         $values = [];
@@ -285,7 +282,6 @@ abstract class Component
     /**
      * Create a callable variable from the given method.
      *
-     * @param  \ReflectionMethod  $method
      * @return mixed
      */
     protected function createVariableFromMethod(ReflectionMethod $method)
@@ -298,14 +294,11 @@ abstract class Component
     /**
      * Create an invokable, toStringable variable for the given component method.
      *
-     * @param  string  $method
      * @return \Illuminate\View\InvokableComponentVariable
      */
     protected function createInvokableVariable(string $method)
     {
-        return new InvokableComponentVariable(function () use ($method) {
-            return $this->{$method}();
-        });
+        return new InvokableComponentVariable(fn() => $this->{$method}());
     }
 
     /**
@@ -359,7 +352,6 @@ abstract class Component
     /**
      * Set the extra attributes that the component should make available.
      *
-     * @param  array  $attributes
      * @return $this
      */
     public function withAttributes(array $attributes)
@@ -374,7 +366,6 @@ abstract class Component
     /**
      * Get a new attribute bag instance.
      *
-     * @param  array  $attributes
      * @return \Illuminate\View\ComponentAttributeBag
      */
     protected function newAttributeBag(array $attributes = [])
@@ -446,10 +437,8 @@ abstract class Component
 
     /**
      * Flush the component's cached state.
-     *
-     * @return void
      */
-    public static function flushCache()
+    public static function flushCache(): void
     {
         static::$bladeViewCache = [];
         static::$constructorParametersCache = [];
@@ -459,10 +448,8 @@ abstract class Component
 
     /**
      * Forget the component's factory instance.
-     *
-     * @return void
      */
-    public static function forgetFactory()
+    public static function forgetFactory(): void
     {
         static::$factory = null;
     }
@@ -470,11 +457,10 @@ abstract class Component
     /**
      * Forget the component's resolver callback.
      *
-     * @return void
      *
      * @internal
      */
-    public static function forgetComponentsResolver()
+    public static function forgetComponentsResolver(): void
     {
         static::$componentsResolver = null;
     }
@@ -483,11 +469,10 @@ abstract class Component
      * Set the callback that should be used to resolve components within views.
      *
      * @param  \Closure(string $component, array $data): Component  $resolver
-     * @return void
      *
      * @internal
      */
-    public static function resolveComponentsUsing($resolver)
+    public static function resolveComponentsUsing($resolver): void
     {
         static::$componentsResolver = $resolver;
     }

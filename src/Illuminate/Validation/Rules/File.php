@@ -35,21 +35,21 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      *
      * @var null|int
      */
-    protected $minimumFileSize = null;
+    protected $minimumFileSize;
 
     /**
      * The maximum size in kilobytes that the file can be.
      *
      * @var null|int
      */
-    protected $maximumFileSize = null;
+    protected $maximumFileSize;
 
     /**
      * The required file encoding.
      *
      * @var string|null
      */
-    protected $encoding = null;
+    protected $encoding;
 
     /**
      * An array of custom rules that will be merged into the validation rules.
@@ -114,7 +114,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      *
      * @return static
      */
-    public static function default()
+    public static function default(): \Illuminate\Contracts\Validation\Rule
     {
         $file = is_callable(static::$defaultCallback)
             ? call_user_func(static::$defaultCallback)
@@ -127,9 +127,8 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * Limit the uploaded file to only image types.
      *
      * @param  bool  $allowSvg
-     * @return ImageFile
      */
-    public static function image($allowSvg = false)
+    public static function image($allowSvg = false): \Illuminate\Validation\Rules\ImageFile
     {
         return new ImageFile($allowSvg);
     }
@@ -142,7 +141,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      */
     public static function types($mimetypes)
     {
-        return tap(new static(), fn ($file) => $file->allowedMimetypes = (array) $mimetypes);
+        return tap(new static(), fn ($file): array => $file->allowedMimetypes = (array) $mimetypes);
     }
 
     /**
@@ -151,7 +150,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  string|array<int, string>  $extensions
      * @return $this
      */
-    public function extensions($extensions)
+    public function extensions($extensions): static
     {
         $this->allowedExtensions = (array) $extensions;
 
@@ -164,7 +163,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  string|int  $size
      * @return $this
      */
-    public function size($size)
+    public function size($size): static
     {
         $this->minimumFileSize = $this->toKilobytes($size);
         $this->maximumFileSize = $this->minimumFileSize;
@@ -179,7 +178,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  string|int  $maxSize
      * @return $this
      */
-    public function between($minSize, $maxSize)
+    public function between($minSize, $maxSize): static
     {
         $this->minimumFileSize = $this->toKilobytes($minSize);
         $this->maximumFileSize = $this->toKilobytes($maxSize);
@@ -193,7 +192,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  string|int  $size
      * @return $this
      */
-    public function min($size)
+    public function min($size): static
     {
         $this->minimumFileSize = $this->toKilobytes($size);
 
@@ -206,7 +205,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  string|int  $size
      * @return $this
      */
-    public function max($size)
+    public function max($size): static
     {
         $this->maximumFileSize = $this->toKilobytes($size);
 
@@ -219,7 +218,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  string  $encoding
      * @return $this
      */
-    public function encoding($encoding)
+    public function encoding($encoding): static
     {
         $this->encoding = $encoding;
 
@@ -245,7 +244,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
         $value = (float) $size;
 
         return round(match (true) {
-            Str::endsWith($size, 'kb') => $value * 1,
+            Str::endsWith($size, 'kb') => $value,
             Str::endsWith($size, 'mb') => $value * 1_000,
             Str::endsWith($size, 'gb') => $value * 1_000_000,
             Str::endsWith($size, 'tb') => $value * 1_000_000_000,
@@ -259,7 +258,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  string|array  $rules
      * @return $this
      */
-    public function rules($rules)
+    public function rules($rules): static
     {
         $this->customRules = array_merge($this->customRules, Arr::wrap($rules));
 
@@ -293,10 +292,8 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
 
     /**
      * Build the array of underlying validation rules based on the current state.
-     *
-     * @return array
      */
-    protected function buildValidationRules()
+    protected function buildValidationRules(): array
     {
         $rules = ['file'];
 
@@ -323,10 +320,8 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
 
     /**
      * Separate the given MIME types from extensions and return an array of correct rules to validate against.
-     *
-     * @return array
      */
-    protected function buildMimetypes()
+    protected function buildMimetypes(): array
     {
         if (count($this->allowedMimetypes) === 0) {
             return [];
@@ -336,7 +331,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
 
         $mimetypes = array_filter(
             $this->allowedMimetypes,
-            fn ($type) => str_contains($type, '/')
+            fn ($type): bool => str_contains((string) $type, '/')
         );
 
         $mimes = array_diff($this->allowedMimetypes, $mimetypes);
@@ -356,9 +351,8 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * Adds the given failures, and return false.
      *
      * @param  array|string  $messages
-     * @return bool
      */
-    protected function fail($messages)
+    protected function fail($messages): bool
     {
         $this->messages = array_merge($this->messages, Arr::wrap($messages));
 
@@ -381,7 +375,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return $this
      */
-    public function setValidator($validator)
+    public function setValidator($validator): static
     {
         $this->validator = $validator;
 
@@ -394,7 +388,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  array  $data
      * @return $this
      */
-    public function setData($data)
+    public function setData($data): static
     {
         $this->data = $data;
 

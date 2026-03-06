@@ -15,7 +15,7 @@ class SQLiteConnection extends Connection
     /**
      * {@inheritdoc}
      */
-    public function getDriverTitle()
+    public function getDriverTitle(): string
     {
         return 'SQLite';
     }
@@ -27,14 +27,6 @@ class SQLiteConnection extends Connection
      */
     protected function executeBeginTransactionStatement()
     {
-        if (version_compare(PHP_VERSION, '8.4.0', '>=')) {
-            $mode = $this->getConfig('transaction_mode') ?? 'DEFERRED';
-
-            $this->getPdo()->exec("BEGIN {$mode} TRANSACTION");
-
-            return;
-        }
-
         $this->getPdo()->beginTransaction();
     }
 
@@ -53,11 +45,8 @@ class SQLiteConnection extends Connection
 
     /**
      * Determine if the given database exception was caused by a unique constraint violation.
-     *
-     * @param  \Exception  $exception
-     * @return bool
      */
-    protected function isUniqueConstraintError(Exception $exception)
+    protected function isUniqueConstraintError(Exception $exception): bool
     {
         return (bool) preg_match('#(column(s)? .* (is|are) not unique|UNIQUE constraint failed: .*)#i', $exception->getMessage());
     }
@@ -67,7 +56,7 @@ class SQLiteConnection extends Connection
      *
      * @return \Illuminate\Database\Query\Grammars\SQLiteGrammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): \Illuminate\Database\Query\Grammars\Grammar
     {
         return new QueryGrammar($this);
     }
@@ -77,7 +66,7 @@ class SQLiteConnection extends Connection
      *
      * @return \Illuminate\Database\Schema\SQLiteBuilder
      */
-    public function getSchemaBuilder()
+    public function getSchemaBuilder(): \Illuminate\Database\Schema\Builder
     {
         if (is_null($this->schemaGrammar)) {
             $this->useDefaultSchemaGrammar();
@@ -88,10 +77,8 @@ class SQLiteConnection extends Connection
 
     /**
      * Get the default schema grammar instance.
-     *
-     * @return \Illuminate\Database\Schema\Grammars\SQLiteGrammar
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): \Illuminate\Database\Schema\Grammars\SQLiteGrammar
     {
         return new SchemaGrammar($this);
     }
@@ -99,12 +86,10 @@ class SQLiteConnection extends Connection
     /**
      * Get the schema state for the connection.
      *
-     * @param  \Illuminate\Filesystem\Filesystem|null  $files
-     * @param  callable|null  $processFactory
      *
      * @throws \RuntimeException
      */
-    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null)
+    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null): \Illuminate\Database\Schema\SqliteSchemaState
     {
         return new SqliteSchemaState($this, $files, $processFactory);
     }
@@ -114,7 +99,7 @@ class SQLiteConnection extends Connection
      *
      * @return \Illuminate\Database\Query\Processors\SQLiteProcessor
      */
-    protected function getDefaultPostProcessor()
+    protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\Processor
     {
         return new SQLiteProcessor;
     }

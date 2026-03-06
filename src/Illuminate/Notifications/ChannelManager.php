@@ -40,9 +40,8 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
      *
      * @param  \Illuminate\Support\Collection|mixed  $notifiables
      * @param  mixed  $notification
-     * @return void
      */
-    public function send($notifiables, $notification)
+    public function send($notifiables, $notification): void
     {
         $this->resolveNotificationSender()->send($notifiables, $notification);
     }
@@ -52,10 +51,8 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
      *
      * @param  \Illuminate\Support\Collection|mixed  $notifiables
      * @param  mixed  $notification
-     * @param  array|null  $channels
-     * @return void
      */
-    public function sendNow($notifiables, $notification, ?array $channels = null)
+    public function sendNow($notifiables, $notification, ?array $channels = null): void
     {
         $this->resolveNotificationSender()->sendNow($notifiables, $notification, $channels);
     }
@@ -158,9 +155,8 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
      * Set the default channel driver name.
      *
      * @param  string  $channel
-     * @return void
      */
-    public function deliverVia($channel)
+    public function deliverVia($channel): void
     {
         $this->defaultChannel = $channel;
     }
@@ -171,7 +167,7 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
      * @param  string  $locale
      * @return $this
      */
-    public function locale($locale)
+    public function locale($locale): static
     {
         $this->locale = $locale;
 

@@ -27,7 +27,7 @@ class JobQueueing
      *
      * @return array
      */
-    public function payload()
+    public function payload(): mixed
     {
         return json_decode($this->payload, true, flags: JSON_THROW_ON_ERROR);
     }

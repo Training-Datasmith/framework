@@ -7,11 +7,9 @@ class CookieValuePrefix
     /**
      * Create a new cookie value prefix for the given cookie name.
      *
-     * @param  string  $cookieName
      * @param  string  $key
-     * @return string
      */
-    public static function create($cookieName, $key)
+    public static function create(string $cookieName, $key): string
     {
         return hash_hmac('sha1', $cookieName.'v2', $key).'|';
     }
@@ -20,9 +18,8 @@ class CookieValuePrefix
      * Remove the cookie value prefix.
      *
      * @param  string  $cookieValue
-     * @return string
      */
-    public static function remove($cookieValue)
+    public static function remove($cookieValue): string
     {
         return substr($cookieValue, 41);
     }
@@ -32,7 +29,6 @@ class CookieValuePrefix
      *
      * @param  string  $cookieName
      * @param  string  $cookieValue
-     * @param  array  $keys
      * @return string|null
      */
     public static function validate($cookieName, $cookieValue, array $keys)

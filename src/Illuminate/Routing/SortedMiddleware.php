@@ -9,7 +9,6 @@ class SortedMiddleware extends Collection
     /**
      * Create a new Sorted Middleware container.
      *
-     * @param  array  $priorityMap
      * @param  \Illuminate\Support\Collection|array  $middlewares
      */
     public function __construct(array $priorityMap, $middlewares)
@@ -113,12 +112,10 @@ class SortedMiddleware extends Collection
     /**
      * Splice a middleware into a new position and remove the old entry.
      *
-     * @param  array  $middlewares
      * @param  int  $from
      * @param  int  $to
-     * @return array
      */
-    protected function moveMiddleware($middlewares, $from, $to)
+    protected function moveMiddleware(array $middlewares, $from, $to): array
     {
         array_splice($middlewares, $to, 0, $middlewares[$from]);
 

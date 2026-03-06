@@ -16,37 +16,27 @@ class HasInDatabase extends Constraint
     protected $show = 3;
 
     /**
-     * The database connection.
-     *
-     * @var \Illuminate\Database\Connection
-     */
-    protected $database;
-
-    /**
-     * The data that will be used to narrow the search in the database table.
-     *
-     * @var array<string, mixed>
-     */
-    protected $data;
-
-    /**
      * Create a new constraint instance.
      *
-     * @param  \Illuminate\Database\Connection  $database
      * @param  array<string, mixed>  $data
      */
-    public function __construct(Connection $database, array $data)
+    public function __construct(
+        /**
+         * The database connection.
+         */
+        protected \Illuminate\Database\Connection $database,
+        /**
+         * The data that will be used to narrow the search in the database table.
+         */
+        protected array $data
+    )
     {
-        $this->data = $data;
-
-        $this->database = $database;
     }
 
     /**
      * Check if the data is found in the given table.
      *
      * @param  string  $table
-     * @return bool
      */
     public function matches($table): bool
     {
@@ -59,7 +49,6 @@ class HasInDatabase extends Constraint
      * Get the description of the failure.
      *
      * @param  string  $table
-     * @return string
      */
     public function failureDescription($table): string
     {
@@ -109,7 +98,6 @@ class HasInDatabase extends Constraint
      * Get a string representation of the object.
      *
      * @param  int  $options
-     * @return string
      */
     public function toString($options = 0): string
     {

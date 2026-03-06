@@ -11,7 +11,7 @@ class BackgroundConnector implements ConnectorInterface
      *
      * @return \Illuminate\Contracts\Queue\Queue
      */
-    public function connect(array $config)
+    public function connect(array $config): \Illuminate\Queue\BackgroundQueue
     {
         return new BackgroundQueue($config['after_commit'] ?? null);
     }

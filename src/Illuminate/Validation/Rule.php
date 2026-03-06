@@ -32,9 +32,8 @@ class Rule
      *
      * @param  string  $ability
      * @param  mixed  ...$arguments
-     * @return \Illuminate\Validation\Rules\Can
      */
-    public static function can($ability, ...$arguments)
+    public static function can($ability, ...$arguments): \Illuminate\Validation\Rules\Can
     {
         return new Can($ability, $arguments);
     }
@@ -45,9 +44,8 @@ class Rule
      * @param  callable|bool  $condition
      * @param  \Illuminate\Contracts\Validation\ValidationRule|\Illuminate\Contracts\Validation\InvokableRule|\Illuminate\Contracts\Validation\Rule|\Closure|array|string  $rules
      * @param  \Illuminate\Contracts\Validation\ValidationRule|\Illuminate\Contracts\Validation\InvokableRule|\Illuminate\Contracts\Validation\Rule|\Closure|array|string  $defaultRules
-     * @return \Illuminate\Validation\ConditionalRules
      */
-    public static function when($condition, $rules, $defaultRules = [])
+    public static function when($condition, $rules, $defaultRules = []): \Illuminate\Validation\ConditionalRules
     {
         return new ConditionalRules($condition, $rules, $defaultRules);
     }
@@ -58,9 +56,8 @@ class Rule
      * @param  callable|bool  $condition
      * @param  \Illuminate\Contracts\Validation\ValidationRule|\Illuminate\Contracts\Validation\InvokableRule|\Illuminate\Contracts\Validation\Rule|\Closure|array|string  $rules
      * @param  \Illuminate\Contracts\Validation\ValidationRule|\Illuminate\Contracts\Validation\InvokableRule|\Illuminate\Contracts\Validation\Rule|\Closure|array|string  $defaultRules
-     * @return \Illuminate\Validation\ConditionalRules
      */
-    public static function unless($condition, $rules, $defaultRules = [])
+    public static function unless($condition, $rules, $defaultRules = []): \Illuminate\Validation\ConditionalRules
     {
         return new ConditionalRules($condition, $defaultRules, $rules);
     }
@@ -69,9 +66,8 @@ class Rule
      * Get an array rule builder instance.
      *
      * @param  array|null  $keys
-     * @return \Illuminate\Validation\Rules\ArrayRule
      */
-    public static function array($keys = null)
+    public static function array($keys = null): \Illuminate\Validation\Rules\ArrayRule
     {
         return new ArrayRule(...func_get_args());
     }
@@ -80,9 +76,8 @@ class Rule
      * Create a new nested rule set.
      *
      * @param  callable  $callback
-     * @return \Illuminate\Validation\NestedRules
      */
-    public static function forEach($callback)
+    public static function forEach($callback): \Illuminate\Validation\NestedRules
     {
         return new NestedRules($callback);
     }
@@ -92,9 +87,8 @@ class Rule
      *
      * @param  string  $table
      * @param  string  $column
-     * @return \Illuminate\Validation\Rules\Unique
      */
-    public static function unique($table, $column = 'NULL')
+    public static function unique($table, $column = 'NULL'): \Illuminate\Validation\Rules\Unique
     {
         return new Unique($table, $column);
     }
@@ -104,9 +98,8 @@ class Rule
      *
      * @param  string  $table
      * @param  string  $column
-     * @return \Illuminate\Validation\Rules\Exists
      */
-    public static function exists($table, $column = 'NULL')
+    public static function exists($table, $column = 'NULL'): \Illuminate\Validation\Rules\Exists
     {
         return new Exists($table, $column);
     }
@@ -115,9 +108,8 @@ class Rule
      * Get an in rule builder instance.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable|\UnitEnum|array|string  $values
-     * @return \Illuminate\Validation\Rules\In
      */
-    public static function in($values)
+    public static function in($values): \Illuminate\Validation\Rules\In
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -130,9 +122,8 @@ class Rule
      * Get a not_in rule builder instance.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable|\UnitEnum|array|string  $values
-     * @return \Illuminate\Validation\Rules\NotIn
      */
-    public static function notIn($values)
+    public static function notIn($values): \Illuminate\Validation\Rules\NotIn
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -145,9 +136,8 @@ class Rule
      * Get a required_if rule builder instance.
      *
      * @param  (\Closure(): bool)|bool  $callback
-     * @return \Illuminate\Validation\Rules\RequiredIf
      */
-    public static function requiredIf($callback)
+    public static function requiredIf($callback): \Illuminate\Validation\Rules\RequiredIf
     {
         return new RequiredIf($callback);
     }
@@ -156,9 +146,8 @@ class Rule
      * Get a exclude_if rule builder instance.
      *
      * @param  (\Closure(): bool)|bool  $callback
-     * @return \Illuminate\Validation\Rules\ExcludeIf
      */
-    public static function excludeIf($callback)
+    public static function excludeIf($callback): \Illuminate\Validation\Rules\ExcludeIf
     {
         return new ExcludeIf($callback);
     }
@@ -167,19 +156,16 @@ class Rule
      * Get a prohibited_if rule builder instance.
      *
      * @param  (\Closure(): bool)|bool  $callback
-     * @return \Illuminate\Validation\Rules\ProhibitedIf
      */
-    public static function prohibitedIf($callback)
+    public static function prohibitedIf($callback): \Illuminate\Validation\Rules\ProhibitedIf
     {
         return new ProhibitedIf($callback);
     }
 
     /**
      * Get a date rule builder instance.
-     *
-     * @return \Illuminate\Validation\Rules\Date
      */
-    public static function date()
+    public static function date(): \Illuminate\Validation\Rules\Date
     {
         return new Date;
     }
@@ -194,10 +180,8 @@ class Rule
 
     /**
      * Get an email rule builder instance.
-     *
-     * @return \Illuminate\Validation\Rules\Email
      */
-    public static function email()
+    public static function email(): \Illuminate\Validation\Rules\Email
     {
         return new Email;
     }
@@ -206,19 +190,16 @@ class Rule
      * Get an enum rule builder instance.
      *
      * @param  class-string  $type
-     * @return \Illuminate\Validation\Rules\Enum
      */
-    public static function enum($type)
+    public static function enum($type): \Illuminate\Validation\Rules\Enum
     {
         return new Enum($type);
     }
 
     /**
      * Get a file rule builder instance.
-     *
-     * @return \Illuminate\Validation\Rules\File
      */
-    public static function file()
+    public static function file(): \Illuminate\Validation\Rules\File
     {
         return new File;
     }
@@ -227,30 +208,24 @@ class Rule
      * Get an image file rule builder instance.
      *
      * @param  bool  $allowSvg
-     * @return \Illuminate\Validation\Rules\ImageFile
      */
-    public static function imageFile($allowSvg = false)
+    public static function imageFile($allowSvg = false): \Illuminate\Validation\Rules\ImageFile
     {
         return new ImageFile($allowSvg);
     }
 
     /**
      * Get a dimensions rule builder instance.
-     *
-     * @param  array  $constraints
-     * @return \Illuminate\Validation\Rules\Dimensions
      */
-    public static function dimensions(array $constraints = [])
+    public static function dimensions(array $constraints = []): \Illuminate\Validation\Rules\Dimensions
     {
         return new Dimensions($constraints);
     }
 
     /**
      * Get a numeric rule builder instance.
-     *
-     * @return \Illuminate\Validation\Rules\Numeric
      */
-    public static function numeric()
+    public static function numeric(): \Illuminate\Validation\Rules\Numeric
     {
         return new Numeric;
     }
@@ -259,11 +234,10 @@ class Rule
      * Get an "any of" rule builder instance.
      *
      * @param  array  $rules
-     * @return \Illuminate\Validation\Rules\AnyOf
      *
      * @throws \InvalidArgumentException
      */
-    public static function anyOf($rules)
+    public static function anyOf($rules): \Illuminate\Validation\Rules\AnyOf
     {
         return new AnyOf($rules);
     }
@@ -272,9 +246,8 @@ class Rule
      * Get a contains rule builder instance.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable|\UnitEnum|array|string  $values
-     * @return \Illuminate\Validation\Rules\Contains
      */
-    public static function contains($values)
+    public static function contains($values): \Illuminate\Validation\Rules\Contains
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -287,9 +260,8 @@ class Rule
      * Get a "does not contain" rule builder instance.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable|\UnitEnum|array|string  $values
-     * @return \Illuminate\Validation\Rules\DoesntContain
      */
-    public static function doesntContain($values)
+    public static function doesntContain($values): \Illuminate\Validation\Rules\DoesntContain
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -301,12 +273,11 @@ class Rule
     /**
      * Compile a set of rules for an attribute.
      *
-     * @param  string  $attribute
      * @param  array  $rules
      * @param  array|null  $data
      * @return object|\stdClass
      */
-    public static function compile($attribute, $rules, $data = null)
+    public static function compile(string $attribute, $rules, $data = null)
     {
         $parser = new ValidationRuleParser(
             Arr::undot(Arr::wrap($data))

@@ -19,27 +19,11 @@ class ModelIdentifier
     public $class;
 
     /**
-     * The unique identifier of the model.
-     *
-     * This may be either a single ID or an array of IDs.
-     *
-     * @var mixed
-     */
-    public $id;
-
-    /**
      * The relationships loaded on the model.
      *
      * @var array
      */
     public $relations;
-
-    /**
-     * The connection name of the model.
-     *
-     * @var string|null
-     */
-    public $connection;
 
     /**
      * The class name of the model collection.
@@ -53,19 +37,24 @@ class ModelIdentifier
      *
      * @param  class-string<\Illuminate\Database\Eloquent\Model>|null  $class
      * @param  mixed  $id
-     * @param  array  $relations
      * @param  mixed  $connection
      */
-    public function __construct($class, $id, array $relations, $connection)
+    public function __construct($class, /**
+     * The unique identifier of the model.
+     *
+     * This may be either a single ID or an array of IDs.
+     */
+    public $id, array $relations, /**
+     * The connection name of the model.
+     */
+    public $connection)
     {
         if ($class !== null && self::$useMorphMap) {
             $class = Relation::getMorphAlias($class);
         }
 
         $this->class = $class;
-        $this->id = $id;
         $this->relations = $relations;
-        $this->connection = $connection;
     }
 
     /**
@@ -74,7 +63,7 @@ class ModelIdentifier
      * @param  class-string<\Illuminate\Database\Eloquent\Collection>  $collectionClass
      * @return $this
      */
-    public function useCollectionClass(?string $collectionClass)
+    public function useCollectionClass(?string $collectionClass): static
     {
         $this->collectionClass = $collectionClass;
 

@@ -31,48 +31,30 @@ class MonitorCommand extends Command
     protected $description = 'Monitor the size of the specified queues';
 
     /**
-     * The queue manager instance.
-     *
-     * @var \Illuminate\Contracts\Queue\Factory
-     */
-    protected $manager;
-
-    /**
-     * The events dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
-    /**
      * Create a new queue monitor command.
-     *
-     * @param  \Illuminate\Contracts\Queue\Factory  $manager
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      */
-    public function __construct(Factory $manager, Dispatcher $events)
+    public function __construct(/**
+     * The queue manager instance.
+     */
+    protected \Illuminate\Contracts\Queue\Factory $manager, /**
+     * The events dispatcher instance.
+     */
+    protected \Illuminate\Contracts\Events\Dispatcher $events)
     {
         parent::__construct();
-
-        $this->manager = $manager;
-        $this->events = $events;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $queues = $this->parseQueues($this->argument('queues'));
 
         if ($this->option('json')) {
-            $this->output->writeln((new Collection($queues))->map(function ($queue) {
-                return array_merge($queue, [
-                    'status' => str_contains($queue['status'], 'ALERT') ? 'ALERT' : 'OK',
-                ]);
-            })->toJson());
+            $this->output->writeln((new Collection($queues))->map(fn($queue) => array_merge($queue, [
+                'status' => str_contains((string) $queue['status'], 'ALERT') ? 'ALERT' : 'OK',
+            ]))->toJson());
         } else {
             $this->displaySizes($queues);
         }
@@ -84,11 +66,10 @@ class MonitorCommand extends Command
      * Parse the queues into an array of the connections and queues.
      *
      * @param  string  $queues
-     * @return \Illuminate\Support\Collection
      */
-    protected function parseQueues($queues)
+    protected function parseQueues($queues): \Illuminate\Support\Collection
     {
-        return (new Collection(explode(',', $queues)))->map(function ($queue) {
+        return (new Collection(explode(',', $queues)))->map(function ($queue): array {
             [$connection, $queue] = array_pad(explode(':', $queue, 2), 2, null);
 
             if (! isset($queue)) {
@@ -120,7 +101,6 @@ class MonitorCommand extends Command
     /**
      * Display the queue sizes in the console.
      *
-     * @param  \Illuminate\Support\Collection  $queues
      * @return void
      */
     protected function displaySizes(Collection $queues)
@@ -129,7 +109,7 @@ class MonitorCommand extends Command
 
         $this->components->twoColumnDetail('<fg=gray>Queue name</>', '<fg=gray>Size / Status</>');
 
-        $queues->each(function ($queue) {
+        $queues->each(function (array $queue): void {
             $name = '['.$queue['connection'].'] '.$queue['queue'];
             $status = '['.$queue['size'].'] '.$queue['status'];
 
@@ -150,7 +130,6 @@ class MonitorCommand extends Command
     /**
      * Fire the monitoring events.
      *
-     * @param  \Illuminate\Support\Collection  $queues
      * @return void
      */
     protected function dispatchEvents(Collection $queues)

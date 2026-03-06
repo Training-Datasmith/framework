@@ -37,7 +37,6 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
     /**
      * Create a new exception handler fake.
      *
-     * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $handler
      * @param  list<class-string<\Throwable>>  $exceptions
      */
     public function __construct(
@@ -49,10 +48,8 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
 
     /**
      * Get the underlying handler implementation.
-     *
-     * @return \Illuminate\Contracts\Debug\ExceptionHandler
      */
-    public function handler()
+    public function handler(): \Illuminate\Contracts\Debug\ExceptionHandler
     {
         return $this->handler;
     }
@@ -61,9 +58,8 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
      * Assert if an exception of the given type has been reported.
      *
      * @param  (\Closure(\Throwable): bool)|class-string<\Throwable>  $exception
-     * @return void
      */
-    public function assertReported(Closure|string $exception)
+    public function assertReported(Closure|string $exception): void
     {
         $message = sprintf(
             'The expected [%s] exception was not reported.',
@@ -81,7 +77,7 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
 
         Assert::assertTrue(
             (new Collection($this->reported))->contains(
-                fn (Throwable $e) => $this->firstClosureParameterType($exception) === get_class($e)
+                fn (Throwable $e): bool => $this->firstClosureParameterType($exception) === $e::class
                     && $exception($e) === true,
             ), $message,
         );
@@ -89,11 +85,8 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
 
     /**
      * Assert the number of exceptions that have been reported.
-     *
-     * @param  int  $count
-     * @return void
      */
-    public function assertReportedCount(int $count)
+    public function assertReportedCount(int $count): void
     {
         $total = (new Collection($this->reported))->count();
 
@@ -107,9 +100,8 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
      * Assert if an exception of the given type has not been reported.
      *
      * @param  (\Closure(\Throwable): bool)|class-string<\Throwable>  $exception
-     * @return void
      */
-    public function assertNotReported(Closure|string $exception)
+    public function assertNotReported(Closure|string $exception): void
     {
         try {
             $this->assertReported($exception);
@@ -125,10 +117,8 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
 
     /**
      * Assert nothing has been reported.
-     *
-     * @return void
      */
-    public function assertNothingReported()
+    public function assertNothingReported(): void
     {
         Assert::assertEmpty(
             $this->reported,
@@ -143,9 +133,8 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
      * Report or log an exception.
      *
      * @param  \Throwable  $e
-     * @return void
      */
-    public function report($e)
+    public function report($e): void
     {
         if (! $this->isFakedException($e)) {
             $this->handler->report($e);
@@ -166,32 +155,29 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
 
     /**
      * Determine if the given exception is faked.
-     *
-     * @param  \Throwable  $e
-     * @return bool
      */
-    protected function isFakedException(Throwable $e)
+    protected function isFakedException(Throwable $e): bool
     {
-        return count($this->exceptions) === 0 || in_array(get_class($e), $this->exceptions, true);
+        return count($this->exceptions) === 0 || in_array($e::class, $this->exceptions, true);
     }
 
     /**
      * Determine if the exception should be reported.
      *
      * @param  \Throwable  $e
-     * @return bool
      */
-    public function shouldReport($e)
+    public function shouldReport($e): bool
     {
-        return $this->runningWithoutExceptionHandling() || $this->handler->shouldReport($e);
+        if ($this->runningWithoutExceptionHandling()) {
+            return true;
+        }
+        return $this->handler->shouldReport($e);
     }
 
     /**
      * Determine if the handler is running without exception handling.
-     *
-     * @return bool
      */
-    protected function runningWithoutExceptionHandling()
+    protected function runningWithoutExceptionHandling(): bool
     {
         return $this->handler instanceof WithoutExceptionHandlingHandler;
     }
@@ -212,10 +198,8 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
      * Render an exception to the console.
      *
      * @param  \Symfony\Component\Console\Output\OutputInterface  $output
-     * @param  \Throwable  $e
-     * @return void
      */
-    public function renderForConsole($output, Throwable $e)
+    public function renderForConsole($output, Throwable $e): void
     {
         $this->handler->renderForConsole($output, $e);
     }
@@ -225,7 +209,7 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
      *
      * @return $this
      */
-    public function throwOnReport()
+    public function throwOnReport(): static
     {
         $this->throwOnReport = true;
 
@@ -239,7 +223,7 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
      *
      * @throws \Throwable
      */
-    public function throwFirstReported()
+    public function throwFirstReported(): static
     {
         foreach ($this->reported as $e) {
             throw $e;
@@ -261,10 +245,9 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
     /**
      * Set the "original" handler that should be used by the fake.
      *
-     * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $handler
      * @return $this
      */
-    public function setHandler(ExceptionHandler $handler)
+    public function setHandler(ExceptionHandler $handler): static
     {
         $this->handler = $handler;
 
@@ -274,7 +257,6 @@ class ExceptionHandlerFake implements ExceptionHandler, Fake
     /**
      * Handle dynamic method calls to the handler.
      *
-     * @param  string  $method
      * @param  array<string, mixed>  $parameters
      * @return mixed
      */

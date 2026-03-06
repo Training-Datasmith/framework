@@ -20,10 +20,8 @@ class AggregateServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->instances = [];
 
@@ -37,7 +35,7 @@ class AggregateServiceProvider extends ServiceProvider
      *
      * @return array<int, string>
      */
-    public function provides()
+    public function provides(): array
     {
         $provides = [];
 

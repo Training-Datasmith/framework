@@ -8,10 +8,8 @@ trait ExplainsQueries
 {
     /**
      * Explains the query.
-     *
-     * @return \Illuminate\Support\Collection
      */
-    public function explain()
+    public function explain(): \Illuminate\Support\Collection
     {
         $sql = $this->toSql();
 

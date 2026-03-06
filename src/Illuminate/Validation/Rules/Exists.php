@@ -11,10 +11,8 @@ class Exists implements Stringable
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return rtrim(sprintf('exists:%s,%s,%s',
             $this->table,

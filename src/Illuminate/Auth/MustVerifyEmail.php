@@ -8,10 +8,8 @@ trait MustVerifyEmail
 {
     /**
      * Determine if the user has verified their email address.
-     *
-     * @return bool
      */
-    public function hasVerifiedEmail()
+    public function hasVerifiedEmail(): bool
     {
         return ! is_null($this->email_verified_at);
     }
@@ -42,10 +40,8 @@ trait MustVerifyEmail
 
     /**
      * Send the email verification notification.
-     *
-     * @return void
      */
-    public function sendEmailVerificationNotification()
+    public function sendEmailVerificationNotification(): void
     {
         $this->notify(new VerifyEmail);
     }

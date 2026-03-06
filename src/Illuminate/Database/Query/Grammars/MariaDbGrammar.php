@@ -11,9 +11,6 @@ class MariaDbGrammar extends MySqlGrammar
     /**
      * Compile a "lateral join" clause.
      *
-     * @param  \Illuminate\Database\Query\JoinLateralClause  $join
-     * @param  string  $expression
-     * @return string
      *
      * @throws \RuntimeException
      */
@@ -26,30 +23,24 @@ class MariaDbGrammar extends MySqlGrammar
      * Compile a "JSON value cast" statement into SQL.
      *
      * @param  string  $value
-     * @return string
      */
-    public function compileJsonValueCast($value)
+    public function compileJsonValueCast($value): string
     {
         return "json_query({$value}, '$')";
     }
 
     /**
      * Compile a query to get the number of open connections for a database.
-     *
-     * @return string
      */
-    public function compileThreadCount()
+    public function compileThreadCount(): string
     {
         return 'select variable_value as `Value` from information_schema.global_status where variable_name = \'THREADS_CONNECTED\'';
     }
 
     /**
      * Determine whether to use a legacy group limit clause for MySQL < 8.0.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return bool
      */
-    public function useLegacyGroupLimit(Builder $query)
+    public function useLegacyGroupLimit(Builder $query): bool
     {
         return false;
     }
@@ -58,9 +49,8 @@ class MariaDbGrammar extends MySqlGrammar
      * Wrap the given JSON selector.
      *
      * @param  string  $value
-     * @return string
      */
-    protected function wrapJsonSelector($value)
+    protected function wrapJsonSelector($value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 

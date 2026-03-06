@@ -21,7 +21,6 @@ trait CallsCommands
      * Call another console command.
      *
      * @param  \Symfony\Component\Console\Command\Command|string  $command
-     * @param  array  $arguments
      * @return int
      */
     public function call($command, array $arguments = [])
@@ -33,7 +32,6 @@ trait CallsCommands
      * Call another console command without output.
      *
      * @param  \Symfony\Component\Console\Command\Command|string  $command
-     * @param  array  $arguments
      * @return int
      */
     public function callSilent($command, array $arguments = [])
@@ -45,7 +43,6 @@ trait CallsCommands
      * Call another console command without output.
      *
      * @param  \Symfony\Component\Console\Command\Command|string  $command
-     * @param  array  $arguments
      * @return int
      */
     public function callSilently($command, array $arguments = [])
@@ -57,8 +54,6 @@ trait CallsCommands
      * Run the given console command.
      *
      * @param  \Symfony\Component\Console\Command\Command|string  $command
-     * @param  array  $arguments
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return int
      */
     protected function runCommand($command, array $arguments, OutputInterface $output)
@@ -77,12 +72,11 @@ trait CallsCommands
     /**
      * Create an input instance from the given arguments.
      *
-     * @param  array  $arguments
      * @return \Symfony\Component\Console\Input\ArrayInput
      */
     protected function createInputFromArguments(array $arguments)
     {
-        return tap(new ArrayInput(array_merge($this->context(), $arguments)), function ($input) {
+        return tap(new ArrayInput(array_merge($this->context(), $arguments)), function ($input): void {
             if ($input->getParameterOption('--no-interaction')) {
                 $input->setInteractive(false);
             }
@@ -105,7 +99,7 @@ trait CallsCommands
                 'verbose',
             ])
             ->filter()
-            ->mapWithKeys(fn ($value, $key) => ["--{$key}" => $value])
+            ->mapWithKeys(fn ($value, $key): array => ["--{$key}" => $value])
             ->all();
     }
 }

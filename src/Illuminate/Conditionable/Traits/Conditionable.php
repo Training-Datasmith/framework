@@ -29,10 +29,11 @@ trait Conditionable
         if (func_num_args() === 1) {
             return (new HigherOrderWhenProxy($this))->condition($value);
         }
-
         if ($value) {
             return $callback($this, $value) ?? $this;
-        } elseif ($default) {
+        }
+
+        if ($default) {
             return $default($this, $value) ?? $this;
         }
 
@@ -61,10 +62,11 @@ trait Conditionable
         if (func_num_args() === 1) {
             return (new HigherOrderWhenProxy($this))->condition(! $value);
         }
-
         if (! $value) {
             return $callback($this, $value) ?? $this;
-        } elseif ($default) {
+        }
+
+        if ($default) {
             return $default($this, $value) ?? $this;
         }
 

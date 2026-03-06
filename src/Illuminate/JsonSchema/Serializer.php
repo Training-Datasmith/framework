@@ -23,16 +23,16 @@ class Serializer
     public static function serialize(Types\Type $type): array
     {
         /** @var array<string, mixed> $attributes */
-        $attributes = (fn () => get_object_vars($type))->call($type);
+        $attributes = (fn (): array => get_object_vars($type))->call($type);
 
-        $attributes['type'] = match (get_class($type)) {
+        $attributes['type'] = match ($type::class) {
             Types\ArrayType::class => 'array',
             Types\BooleanType::class => 'boolean',
             Types\IntegerType::class => 'integer',
             Types\NumberType::class => 'number',
             Types\ObjectType::class => 'object',
             Types\StringType::class => 'string',
-            default => throw new RuntimeException('Unsupported ['.get_class($type).'] type.'),
+            default => throw new RuntimeException('Unsupported ['.$type::class.'] type.'),
         };
 
         $nullable = static::isNullable($type);
@@ -41,7 +41,7 @@ class Serializer
             $attributes['type'] = [$attributes['type'], 'null'];
         }
 
-        $attributes = array_filter($attributes, static function (mixed $value, string $key) {
+        $attributes = array_filter($attributes, static function (mixed $value, string $key): bool {
             if (in_array($key, static::$ignore, true)) {
                 return false;
             }
@@ -55,7 +55,7 @@ class Serializer
             } else {
                 $required = array_keys(array_filter(
                     $attributes['properties'],
-                    static fn (Types\Type $property) => static::isRequired($property),
+                    static::isRequired(...),
                 ));
 
                 if (count($required) > 0) {
@@ -63,7 +63,7 @@ class Serializer
                 }
 
                 $attributes['properties'] = array_map(
-                    static fn (Types\Type $property) => static::serialize($property),
+                    static::serialize(...),
                     $attributes['properties'],
                 );
             }
@@ -83,7 +83,7 @@ class Serializer
      */
     protected static function isRequired(Types\Type $type): bool
     {
-        $attributes = (fn () => get_object_vars($type))->call($type);
+        $attributes = (fn (): array => get_object_vars($type))->call($type);
 
         return isset($attributes['required']) && $attributes['required'] === true;
     }
@@ -93,7 +93,7 @@ class Serializer
      */
     protected static function isNullable(Types\Type $type): bool
     {
-        $attributes = (fn () => get_object_vars($type))->call($type);
+        $attributes = (fn (): array => get_object_vars($type))->call($type);
 
         return isset($attributes['nullable']) && $attributes['nullable'] === true;
     }

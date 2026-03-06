@@ -6,10 +6,8 @@ class DefaultProviders
 {
     /**
      * The current providers.
-     *
-     * @var array
      */
-    protected $providers;
+    protected array $providers;
 
     /**
      * Create a new default provider collection.
@@ -45,11 +43,8 @@ class DefaultProviders
 
     /**
      * Merge the given providers into the provider collection.
-     *
-     * @param  array  $providers
-     * @return static
      */
-    public function merge(array $providers)
+    public function merge(array $providers): static
     {
         $this->providers = array_merge($this->providers, $providers);
 
@@ -58,11 +53,8 @@ class DefaultProviders
 
     /**
      * Replace the given providers with other providers.
-     *
-     * @param  array  $replacements
-     * @return static
      */
-    public function replace(array $replacements)
+    public function replace(array $replacements): static
     {
         $current = new Collection($this->providers);
 
@@ -77,14 +69,11 @@ class DefaultProviders
 
     /**
      * Disable the given providers.
-     *
-     * @param  array  $providers
-     * @return static
      */
-    public function except(array $providers)
+    public function except(array $providers): static
     {
         return new static((new Collection($this->providers))
-            ->reject(fn ($p) => in_array($p, $providers))
+            ->reject(fn ($p): bool => in_array($p, $providers))
             ->values()
             ->toArray());
     }

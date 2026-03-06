@@ -85,7 +85,6 @@ trait InteractsWithDatabase
      * Assert the count of table entries.
      *
      * @param  \Illuminate\Database\Eloquent\Model|class-string<\Illuminate\Database\Eloquent\Model>|string  $table
-     * @param  int  $count
      * @param  string|null  $connection
      * @return $this
      */
@@ -229,13 +228,13 @@ trait InteractsWithDatabase
 
         $actual = 0;
 
-        $connectionInstance->listen(function (QueryExecuted $event) use (&$actual, $connectionInstance, $connection) {
+        $connectionInstance->listen(function (QueryExecuted $event) use (&$actual, $connectionInstance, $connection): void {
             if (is_null($connection) || $connectionInstance === $event->connection) {
                 $actual++;
             }
         });
 
-        $this->beforeApplicationDestroyed(function () use (&$actual, $expected, $connectionInstance) {
+        $this->beforeApplicationDestroyed(function () use (&$actual, $expected, $connectionInstance): void {
             $this->assertSame(
                 $expected,
                 $actual,
@@ -250,9 +249,8 @@ trait InteractsWithDatabase
      * Determine if the argument is a soft deletable model.
      *
      * @param  mixed  $model
-     * @return bool
      */
-    protected function isSoftDeletableModel($model)
+    protected function isSoftDeletableModel($model): bool
     {
         return $model instanceof Model && $model::isSoftDeletable();
     }
@@ -264,7 +262,7 @@ trait InteractsWithDatabase
      * @param  string|null  $connection
      * @return \Illuminate\Contracts\Database\Query\Expression
      */
-    public function castAsJson($value, $connection = null)
+    public function castAsJson($value, $connection = null): \Illuminate\Database\Query\Expression
     {
         if ($value instanceof Jsonable) {
             $value = $value->toJson();
@@ -343,9 +341,8 @@ trait InteractsWithDatabase
      * Get the model entity from the given model or string.
      *
      * @param  \Illuminate\Database\Eloquent\Model|class-string<\Illuminate\Database\Eloquent\Model>|string  $table
-     * @return \Illuminate\Database\Eloquent\Model|null
      */
-    protected function newModelFor($table)
+    protected function newModelFor($table): ?\Illuminate\Database\Eloquent\Model
     {
         return is_subclass_of($table, Model::class) ? (new $table) : null;
     }

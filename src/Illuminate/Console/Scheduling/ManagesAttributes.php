@@ -18,7 +18,7 @@ trait ManagesAttributes
      *
      * @var int|null
      */
-    public $repeatSeconds = null;
+    public $repeatSeconds;
 
     /**
      * The timezone the date should be evaluated on.
@@ -148,9 +148,7 @@ trait ManagesAttributes
 
         $this->expiresAt = $expiresAt;
 
-        return $this->skip(function () {
-            return $this->mutex->exists($this);
-        });
+        return $this->skip(fn() => $this->mutex->exists($this));
     }
 
     /**
@@ -185,9 +183,7 @@ trait ManagesAttributes
      */
     public function when($callback)
     {
-        $this->filters[] = Reflector::isCallable($callback) ? $callback : function () use ($callback) {
-            return $callback;
-        };
+        $this->filters[] = Reflector::isCallable($callback) ? $callback : (fn() => $callback);
 
         return $this;
     }
@@ -200,9 +196,7 @@ trait ManagesAttributes
      */
     public function skip($callback)
     {
-        $this->rejects[] = Reflector::isCallable($callback) ? $callback : function () use ($callback) {
-            return $callback;
-        };
+        $this->rejects[] = Reflector::isCallable($callback) ? $callback : (fn() => $callback);
 
         return $this;
     }

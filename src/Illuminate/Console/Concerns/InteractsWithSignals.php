@@ -21,11 +21,10 @@ trait InteractsWithSignals
      *
      * @param  (\Closure():(TSignals))|TSignals  $signals
      * @param  callable(int $signal): void  $callback
-     * @return void
      */
-    public function trap($signals, $callback)
+    public function trap($signals, $callback): void
     {
-        Signals::whenAvailable(function () use ($signals, $callback) {
+        Signals::whenAvailable(function () use ($signals, $callback): void {
             $this->signals ??= new Signals(
                 $this->getApplication()->getSignalRegistry(),
             );
@@ -38,11 +37,10 @@ trait InteractsWithSignals
     /**
      * Untrap signal handlers set within the command's handler.
      *
-     * @return void
      *
      * @internal
      */
-    public function untrap()
+    public function untrap(): void
     {
         if (! is_null($this->signals)) {
             $this->signals->unregister();

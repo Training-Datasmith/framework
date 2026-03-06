@@ -16,13 +16,6 @@ class Builder
     use Macroable;
 
     /**
-     * The database connection instance.
-     *
-     * @var \Illuminate\Database\Connection
-     */
-    protected $connection;
-
-    /**
      * The schema grammar instance.
      *
      * @var \Illuminate\Database\Schema\Grammars\Grammar
@@ -57,22 +50,21 @@ class Builder
 
     /**
      * Create a new database Schema manager.
-     *
-     * @param  \Illuminate\Database\Connection  $connection
      */
-    public function __construct(Connection $connection)
+    public function __construct(/**
+     * The database connection instance.
+     */
+    protected \Illuminate\Database\Connection $connection)
     {
-        $this->connection = $connection;
-        $this->grammar = $connection->getSchemaGrammar();
+        $this->grammar = $this->connection->getSchemaGrammar();
     }
 
     /**
      * Set the default string length for migrations.
      *
      * @param  non-negative-int  $length
-     * @return void
      */
-    public static function defaultStringLength($length)
+    public static function defaultStringLength($length): void
     {
         static::$defaultStringLength = $length;
     }
@@ -88,12 +80,10 @@ class Builder
     /**
      * Set the default morph key type for migrations.
      *
-     * @param  string  $type
-     * @return void
      *
      * @throws \InvalidArgumentException
      */
-    public static function defaultMorphKeyType(string $type)
+    public static function defaultMorphKeyType(string $type): void
     {
         if (! in_array($type, ['int', 'uuid', 'ulid'])) {
             throw new InvalidArgumentException("Morph key type must be 'int', 'uuid', or 'ulid'.");
@@ -104,20 +94,16 @@ class Builder
 
     /**
      * Set the default morph key type for migrations to UUIDs.
-     *
-     * @return void
      */
-    public static function morphUsingUuids()
+    public static function morphUsingUuids(): void
     {
         static::defaultMorphKeyType('uuid');
     }
 
     /**
      * Set the default morph key type for migrations to ULIDs.
-     *
-     * @return void
      */
-    public static function morphUsingUlids()
+    public static function morphUsingUlids(): void
     {
         static::defaultMorphKeyType('ulid');
     }
@@ -189,9 +175,8 @@ class Builder
      * Determine if the given view exists.
      *
      * @param  string  $view
-     * @return bool
      */
-    public function hasView($view)
+    public function hasView($view): bool
     {
         [$schema, $view] = $this->parseSchemaAndTable($view);
 
@@ -226,7 +211,7 @@ class Builder
      * @param  bool  $schemaQualified
      * @return list<string>
      */
-    public function getTableListing($schema = null, $schemaQualified = true)
+    public function getTableListing($schema = null, $schemaQualified = true): array
     {
         return array_column(
             $this->getTables($schema),
@@ -265,9 +250,8 @@ class Builder
      *
      * @param  string  $table
      * @param  string  $column
-     * @return bool
      */
-    public function hasColumn($table, $column)
+    public function hasColumn($table, $column): bool
     {
         return in_array(
             strtolower($column), array_map(strtolower(...), $this->getColumnListing($table))
@@ -279,9 +263,8 @@ class Builder
      *
      * @param  string  $table
      * @param  array<string>  $columns
-     * @return bool
      */
-    public function hasColumns($table, array $columns)
+    public function hasColumns($table, array $columns): bool
     {
         $tableColumns = array_map(strtolower(...), $this->getColumnListing($table));
 
@@ -296,13 +279,8 @@ class Builder
 
     /**
      * Execute a table builder callback if the given table has a given column.
-     *
-     * @param  string  $table
-     * @param  string  $column
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function whenTableHasColumn(string $table, string $column, Closure $callback)
+    public function whenTableHasColumn(string $table, string $column, Closure $callback): void
     {
         if ($this->hasColumn($table, $column)) {
             $this->table($table, fn (Blueprint $table) => $callback($table));
@@ -311,13 +289,8 @@ class Builder
 
     /**
      * Execute a table builder callback if the given table doesn't have a given column.
-     *
-     * @param  string  $table
-     * @param  string  $column
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function whenTableDoesntHaveColumn(string $table, string $column, Closure $callback)
+    public function whenTableDoesntHaveColumn(string $table, string $column, Closure $callback): void
     {
         if (! $this->hasColumn($table, $column)) {
             $this->table($table, fn (Blueprint $table) => $callback($table));
@@ -326,14 +299,8 @@ class Builder
 
     /**
      * Execute a table builder callback if the given table has a given index.
-     *
-     * @param  string  $table
-     * @param  string|array  $index
-     * @param  \Closure  $callback
-     * @param  string|null  $type
-     * @return void
      */
-    public function whenTableHasIndex(string $table, string|array $index, Closure $callback, ?string $type = null)
+    public function whenTableHasIndex(string $table, string|array $index, Closure $callback, ?string $type = null): void
     {
         if ($this->hasIndex($table, $index, $type)) {
             $this->table($table, fn (Blueprint $table) => $callback($table));
@@ -342,14 +309,8 @@ class Builder
 
     /**
      * Execute a table builder callback if the given table doesn't have a given index.
-     *
-     * @param  string  $table
-     * @param  string|array  $index
-     * @param  \Closure  $callback
-     * @param  string|null  $type
-     * @return void
      */
-    public function whenTableDoesntHaveIndex(string $table, string|array $index, Closure $callback, ?string $type = null)
+    public function whenTableDoesntHaveIndex(string $table, string|array $index, Closure $callback, ?string $type = null): void
     {
         if (! $this->hasIndex($table, $index, $type)) {
             $this->table($table, fn (Blueprint $table) => $callback($table));
@@ -383,7 +344,7 @@ class Builder
      * @param  string  $table
      * @return list<string>
      */
-    public function getColumnListing($table)
+    public function getColumnListing($table): array
     {
         return array_column($this->getColumns($table), 'name');
     }
@@ -432,7 +393,7 @@ class Builder
      * @param  string  $table
      * @return list<string>
      */
-    public function getIndexListing($table)
+    public function getIndexListing($table): array
     {
         return array_column($this->getIndexes($table), 'name');
     }
@@ -443,9 +404,8 @@ class Builder
      * @param  string  $table
      * @param  string|array  $index
      * @param  string|null  $type
-     * @return bool
      */
-    public function hasIndex($table, $index, $type = null)
+    public function hasIndex($table, $index, $type = null): bool
     {
         $type = is_null($type) ? $type : strtolower($type);
 
@@ -486,10 +446,8 @@ class Builder
      * Modify a table on the schema.
      *
      * @param  string  $table
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function table($table, Closure $callback)
+    public function table($table, Closure $callback): void
     {
         $this->build($this->createBlueprint($table, $callback));
     }
@@ -498,12 +456,10 @@ class Builder
      * Create a new table on the schema.
      *
      * @param  string  $table
-     * @param  \Closure  $callback
-     * @return void
      */
-    public function create($table, Closure $callback)
+    public function create($table, Closure $callback): void
     {
-        $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($callback) {
+        $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($callback): void {
             $blueprint->create();
 
             $callback($blueprint);
@@ -514,11 +470,10 @@ class Builder
      * Drop a table from the schema.
      *
      * @param  string  $table
-     * @return void
      */
-    public function drop($table)
+    public function drop($table): void
     {
-        $this->build(tap($this->createBlueprint($table), function ($blueprint) {
+        $this->build(tap($this->createBlueprint($table), function ($blueprint): void {
             $blueprint->drop();
         }));
     }
@@ -527,11 +482,10 @@ class Builder
      * Drop a table from the schema if it exists.
      *
      * @param  string  $table
-     * @return void
      */
-    public function dropIfExists($table)
+    public function dropIfExists($table): void
     {
-        $this->build(tap($this->createBlueprint($table), function ($blueprint) {
+        $this->build(tap($this->createBlueprint($table), function ($blueprint): void {
             $blueprint->dropIfExists();
         }));
     }
@@ -541,11 +495,10 @@ class Builder
      *
      * @param  string  $table
      * @param  string|array<string>  $columns
-     * @return void
      */
-    public function dropColumns($table, $columns)
+    public function dropColumns($table, $columns): void
     {
-        $this->table($table, function (Blueprint $blueprint) use ($columns) {
+        $this->table($table, function (Blueprint $blueprint) use ($columns): void {
             $blueprint->dropColumn($columns);
         });
     }
@@ -553,11 +506,10 @@ class Builder
     /**
      * Drop all tables from the database.
      *
-     * @return void
      *
      * @throws \LogicException
      */
-    public function dropAllTables()
+    public function dropAllTables(): never
     {
         throw new LogicException('This database driver does not support dropping all tables.');
     }
@@ -565,11 +517,10 @@ class Builder
     /**
      * Drop all views from the database.
      *
-     * @return void
      *
      * @throws \LogicException
      */
-    public function dropAllViews()
+    public function dropAllViews(): never
     {
         throw new LogicException('This database driver does not support dropping all views.');
     }
@@ -577,11 +528,10 @@ class Builder
     /**
      * Drop all types from the database.
      *
-     * @return void
      *
      * @throws \LogicException
      */
-    public function dropAllTypes()
+    public function dropAllTypes(): never
     {
         throw new LogicException('This database driver does not support dropping all types.');
     }
@@ -591,11 +541,10 @@ class Builder
      *
      * @param  string  $from
      * @param  string  $to
-     * @return void
      */
-    public function rename($from, $to)
+    public function rename($from, $to): void
     {
-        $this->build(tap($this->createBlueprint($from), function ($blueprint) use ($to) {
+        $this->build(tap($this->createBlueprint($from), function ($blueprint) use ($to): void {
             $blueprint->rename($to);
         }));
     }
@@ -647,9 +596,8 @@ class Builder
      * Create the vector extension on the schema if it does not exist.
      *
      * @param  string|null  $schema
-     * @return void
      */
-    public function ensureVectorExtensionExists($schema = null)
+    public function ensureVectorExtensionExists($schema = null): void
     {
         $this->ensureExtensionExists('vector', $schema);
     }
@@ -659,9 +607,8 @@ class Builder
      *
      * @param  string  $name
      * @param  string|null  $schema
-     * @return void
      */
-    public function ensureExtensionExists($name, $schema = null)
+    public function ensureExtensionExists($name, $schema = null): void
     {
         if (! $this->getConnection() instanceof PostgresConnection) {
             throw new RuntimeException('Extensions are only supported by Postgres.');
@@ -678,7 +625,6 @@ class Builder
     /**
      * Execute the blueprint to build / modify the table.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
      * @return void
      */
     protected function build(Blueprint $blueprint)
@@ -690,7 +636,6 @@ class Builder
      * Create a new command set with a Closure.
      *
      * @param  string  $table
-     * @param  \Closure|null  $callback
      * @return \Illuminate\Database\Schema\Blueprint
      */
     protected function createBlueprint($table, ?Closure $callback = null)
@@ -709,7 +654,7 @@ class Builder
      *
      * @return string[]|null
      */
-    public function getCurrentSchemaListing()
+    public function getCurrentSchemaListing(): null
     {
         return null;
     }
@@ -731,7 +676,7 @@ class Builder
      * @param  string|bool|null  $withDefaultSchema
      * @return array{string|null, string}
      */
-    public function parseSchemaAndTable($reference, $withDefaultSchema = null)
+    public function parseSchemaAndTable($reference, $withDefaultSchema = null): array
     {
         $segments = explode('.', $reference);
 
@@ -767,9 +712,8 @@ class Builder
      * Set the Schema Blueprint resolver callback.
      *
      * @param  \Closure(\Illuminate\Database\Connection, string, \Closure|null): \Illuminate\Database\Schema\Blueprint  $resolver
-     * @return void
      */
-    public function blueprintResolver(Closure $resolver)
+    public function blueprintResolver(Closure $resolver): void
     {
         $this->resolver = $resolver;
     }

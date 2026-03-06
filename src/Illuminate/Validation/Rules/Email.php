@@ -84,10 +84,8 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
 
     /**
      * Get the default configuration of the email rule.
-     *
-     * @return static
      */
-    public static function default()
+    public static function default(): static
     {
         $email = is_callable(static::$defaultCallback)
             ? call_user_func(static::$defaultCallback)
@@ -99,10 +97,9 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
     /**
      * Ensure that the email is an RFC compliant email address.
      *
-     * @param  bool  $strict
      * @return $this
      */
-    public function rfcCompliant(bool $strict = false)
+    public function rfcCompliant(bool $strict = false): static
     {
         if ($strict) {
             $this->strictRfcCompliant = true;
@@ -130,7 +127,7 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
      *
      * @return $this
      */
-    public function validateMxRecord()
+    public function validateMxRecord(): static
     {
         $this->validateMxRecord = true;
 
@@ -142,7 +139,7 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
      *
      * @return $this
      */
-    public function preventSpoofing()
+    public function preventSpoofing(): static
     {
         $this->preventSpoofing = true;
 
@@ -152,10 +149,9 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
     /**
      * Ensure the email address is valid using PHP's native email validation functions.
      *
-     * @param  bool  $allowUnicode
      * @return $this
      */
-    public function withNativeValidation(bool $allowUnicode = false)
+    public function withNativeValidation(bool $allowUnicode = false): static
     {
         if ($allowUnicode) {
             $this->nativeValidationWithUnicodeAllowed = true;
@@ -172,7 +168,7 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  string|array  $rules
      * @return $this
      */
-    public function rules($rules)
+    public function rules($rules): static
     {
         $this->customRules = array_merge($this->customRules, Arr::wrap($rules));
 
@@ -184,9 +180,8 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
      *
      * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         $this->messages = [];
 
@@ -208,10 +203,8 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
 
     /**
      * Build the array of underlying validation rules based on the current state.
-     *
-     * @return array
      */
-    protected function buildValidationRules()
+    protected function buildValidationRules(): array
     {
         $rules = [];
 
@@ -264,7 +257,7 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return $this
      */
-    public function setValidator($validator)
+    public function setValidator($validator): static
     {
         $this->validator = $validator;
 
@@ -277,7 +270,7 @@ class Email implements Rule, DataAwareRule, ValidatorAwareRule
      * @param  array  $data
      * @return $this
      */
-    public function setData($data)
+    public function setData($data): static
     {
         $this->data = $data;
 

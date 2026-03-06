@@ -92,9 +92,8 @@ abstract class Queue
      * @param  array  $jobs
      * @param  mixed  $data
      * @param  string|null  $queue
-     * @return void
      */
-    public function bulk($jobs, $data = '', $queue = null)
+    public function bulk($jobs, $data = '', $queue = null): void
     {
         foreach ((array) $jobs as $job) {
             $this->push($job, $data, $queue);
@@ -183,7 +182,7 @@ abstract class Queue
                 : serialize(clone $job);
         } catch (Throwable $e) {
             throw new RuntimeException(
-                sprintf('Failed to serialize job of type [%s]: %s', get_class($job), $e->getMessage()),
+                sprintf('Failed to serialize job of type [%s]: %s', $job::class, $e->getMessage()),
                 0,
                 $e
             );
@@ -191,7 +190,7 @@ abstract class Queue
 
         return array_merge($payload, [
             'data' => array_merge($payload['data'], [
-                'commandName' => get_class($job),
+                'commandName' => $job::class,
                 'command' => $command,
             ]),
         ]);
@@ -207,7 +206,7 @@ abstract class Queue
     {
         return method_exists($job, 'displayName')
             ? $job->displayName()
-            : get_class($job);
+            : $job::class;
     }
 
     /**
@@ -312,9 +311,8 @@ abstract class Queue
      * Register a callback to be executed when creating job payloads.
      *
      * @param  callable|null  $callback
-     * @return void
      */
-    public static function createPayloadUsing($callback)
+    public static function createPayloadUsing($callback): void
     {
         if (is_null($callback)) {
             static::$createPayloadCallbacks = [];
@@ -327,15 +325,12 @@ abstract class Queue
      * Create the given payload using any registered payload hooks.
      *
      * @param  string  $queue
-     * @param  array  $payload
      * @return array
      */
     protected function withCreatePayloadHooks($queue, array $payload)
     {
-        if (! empty(static::$createPayloadCallbacks)) {
-            foreach (static::$createPayloadCallbacks as $callback) {
-                $payload = array_merge($payload, $callback($this->getConnectionName(), $queue, $payload));
-            }
+        foreach (static::$createPayloadCallbacks as $callback) {
+            $payload = array_merge($payload, $callback($this->getConnectionName(), $queue, $payload));
         }
 
         return $payload;
@@ -357,7 +352,7 @@ abstract class Queue
             $this->container->bound('db.transactions')) {
             if ($job instanceof ShouldBeUnique) {
                 $this->container->make('db.transactions')->addCallbackForRollback(
-                    function () use ($job) {
+                    function () use ($job): void {
                         (new UniqueLock($this->container->make(Cache::class)))->release($job);
                     }
                 );
@@ -367,7 +362,7 @@ abstract class Queue
                 function () use ($queue, $job, $payload, $delay, $callback) {
                     $this->raiseJobQueueingEvent($queue, $job, $payload, $delay);
 
-                    return tap($callback($payload, $queue, $delay), function ($jobId) use ($queue, $job, $payload, $delay) {
+                    return tap($callback($payload, $queue, $delay), function ($jobId) use ($queue, $job, $payload, $delay): void {
                         $this->raiseJobQueuedEvent($queue, $jobId, $job, $payload, $delay);
                     });
                 }
@@ -376,7 +371,7 @@ abstract class Queue
 
         $this->raiseJobQueueingEvent($queue, $job, $payload, $delay);
 
-        return tap($callback($payload, $queue, $delay), function ($jobId) use ($queue, $job, $payload, $delay) {
+        return tap($callback($payload, $queue, $delay), function ($jobId) use ($queue, $job, $payload, $delay): void {
             $this->raiseJobQueuedEvent($queue, $jobId, $job, $payload, $delay);
         });
     }
@@ -473,7 +468,6 @@ abstract class Queue
     /**
      * Set the queue configuration array.
      *
-     * @param  array  $config
      * @return $this
      */
     public function setConfig(array $config)
@@ -495,11 +489,8 @@ abstract class Queue
 
     /**
      * Set the IoC container instance.
-     *
-     * @param  \Illuminate\Container\Container  $container
-     * @return void
      */
-    public function setContainer(Container $container)
+    public function setContainer(Container $container): void
     {
         $this->container = $container;
     }

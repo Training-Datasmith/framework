@@ -10,13 +10,6 @@ use Illuminate\Redis\Limiters\DurationLimiter;
 class ThrottleRequestsWithRedis extends ThrottleRequests
 {
     /**
-     * The Redis factory implementation.
-     *
-     * @var \Illuminate\Contracts\Redis\Factory
-     */
-    protected $redis;
-
-    /**
      * The timestamp of the end of the current duration by key.
      *
      * @var array
@@ -32,23 +25,19 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
 
     /**
      * Create a new request throttler.
-     *
-     * @param  \Illuminate\Cache\RateLimiter  $limiter
-     * @param  \Illuminate\Contracts\Redis\Factory  $redis
      */
-    public function __construct(RateLimiter $limiter, Redis $redis)
+    public function __construct(RateLimiter $limiter, /**
+     * The Redis factory implementation.
+     */
+    protected \Redis $redis)
     {
         parent::__construct($limiter);
-
-        $this->redis = $redis;
     }
 
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  array  $limits
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Illuminate\Http\Exceptions\ThrottleRequestsException
@@ -96,7 +85,7 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
             $this->getRedisConnection(), $key, $maxAttempts, $decaySeconds
         );
 
-        return tap($limiter->tooManyAttempts(), function () use ($key, $limiter) {
+        return tap($limiter->tooManyAttempts(), function () use ($key, $limiter): void {
             [$this->decaysAt[$key], $this->remaining[$key]] = [
                 $limiter->decaysAt, $limiter->remaining,
             ];
@@ -143,7 +132,7 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
      * @param  string  $key
      * @return int
      */
-    protected function getTimeUntilNextRetry($key)
+    protected function getTimeUntilNextRetry($key): int|float
     {
         return $this->decaysAt[$key] - $this->currentTime();
     }

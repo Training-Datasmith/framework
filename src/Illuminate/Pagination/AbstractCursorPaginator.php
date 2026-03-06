@@ -117,7 +117,7 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
         }
 
         return $this->path()
-            .(str_contains($this->path(), '?') ? '&' : '?')
+            .(str_contains((string) $this->path(), '?') ? '&' : '?')
             .Arr::query($parameters)
             .$this->buildFragment();
     }
@@ -217,15 +217,17 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
                 if ($item instanceof JsonResource) {
                     $item = $item->resource;
                 }
-
                 if ($item instanceof Model &&
                     ! is_null($parameter = $this->getPivotParameterForItem($item, $parameterName))) {
                     return $parameter;
-                } elseif ($item instanceof ArrayAccess || is_array($item)) {
+                }
+                if ($item instanceof ArrayAccess || is_array($item)) {
                     return $this->ensureParameterIsPrimitive(
                         $item[$parameterName] ?? $item[Str::afterLast($parameterName, '.')]
                     );
-                } elseif (is_object($item)) {
+                }
+
+                if (is_object($item)) {
                     return $this->ensureParameterIsPrimitive(
                         $item->{$parameterName} ?? $item->{Str::afterLast($parameterName, '.')}
                     );
@@ -310,7 +312,6 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
     /**
      * Add an array of query string values.
      *
-     * @param  array  $keys
      * @return $this
      */
     protected function appendArray(array $keys)
@@ -512,11 +513,8 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
 
     /**
      * Set the current cursor resolver callback.
-     *
-     * @param  \Closure  $resolver
-     * @return void
      */
-    public static function currentCursorResolver(Closure $resolver)
+    public static function currentCursorResolver(Closure $resolver): void
     {
         static::$currentCursorResolver = $resolver;
     }
@@ -563,8 +561,6 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
 
     /**
      * Get the number of items for the current page.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -613,7 +609,6 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
      * Determine if the given item exists.
      *
      * @param  TKey  $key
-     * @return bool
      */
     public function offsetExists($key): bool
     {
@@ -636,7 +631,6 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
      *
      * @param  TKey|null  $key
      * @param  TValue  $value
-     * @return void
      */
     public function offsetSet($key, $value): void
     {
@@ -647,7 +641,6 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
      * Unset the item at the given key.
      *
      * @param  TKey  $key
-     * @return void
      */
     public function offsetUnset($key): void
     {
@@ -667,21 +660,18 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
     /**
      * Make dynamic calls into the collection.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return $this->forwardCallTo($this->getCollection(), $method, $parameters);
     }
 
     /**
      * Render the contents of the paginator when casting to a string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->render();
     }

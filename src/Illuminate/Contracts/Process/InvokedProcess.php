@@ -14,7 +14,6 @@ interface InvokedProcess
     /**
      * Send a signal to the process.
      *
-     * @param  int  $signal
      * @return $this
      */
     public function signal(int $signal);
@@ -57,7 +56,6 @@ interface InvokedProcess
     /**
      * Wait for the process to finish.
      *
-     * @param  callable|null  $output
      * @return \Illuminate\Process\ProcessResult
      */
     public function wait(?callable $output = null);
@@ -65,7 +63,6 @@ interface InvokedProcess
     /**
      * Wait until the given callback returns true.
      *
-     * @param  callable|null  $output
      * @return \Illuminate\Process\ProcessResult
      */
     public function waitUntil(?callable $output = null);

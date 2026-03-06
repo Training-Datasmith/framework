@@ -12,11 +12,10 @@ class Mix
      *
      * @param  string  $path
      * @param  string  $manifestDirectory
-     * @return \Illuminate\Support\HtmlString|string
      *
      * @throws \Illuminate\Foundation\MixManifestNotFoundException|\Illuminate\Foundation\MixFileNotFoundException
      */
-    public function __invoke($path, $manifestDirectory = '')
+    public function __invoke($path, $manifestDirectory = ''): \Illuminate\Support\HtmlString|string
     {
         static $manifests = [];
 
@@ -63,9 +62,8 @@ class Mix
                 report($exception);
 
                 return $path;
-            } else {
-                throw $exception;
             }
+            throw $exception;
         }
 
         return new HtmlString(app('config')->get('app.mix_url').$manifestDirectory.$manifest[$path]);

@@ -14,38 +14,23 @@ use Throwable;
 class DatabaseBatchRepository implements PrunableBatchRepository
 {
     /**
-     * The batch factory instance.
-     *
-     * @var \Illuminate\Bus\BatchFactory
-     */
-    protected $factory;
-
-    /**
-     * The database connection instance.
-     *
-     * @var \Illuminate\Database\Connection
-     */
-    protected $connection;
-
-    /**
-     * The database table to use to store batch information.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
      * Create a new batch repository instance.
-     *
-     * @param  \Illuminate\Bus\BatchFactory  $factory
-     * @param  \Illuminate\Database\Connection  $connection
-     * @param  string  $table
      */
-    public function __construct(BatchFactory $factory, Connection $connection, string $table)
+    public function __construct(
+        /**
+         * The batch factory instance.
+         */
+        protected \Illuminate\Bus\BatchFactory $factory,
+        /**
+         * The database connection instance.
+         */
+        protected \Illuminate\Database\Connection $connection,
+        /**
+         * The database table to use to store batch information.
+         */
+        protected string $table
+    )
     {
-        $this->factory = $factory;
-        $this->connection = $connection;
-        $this->table = $table;
     }
 
     /**
@@ -62,16 +47,13 @@ class DatabaseBatchRepository implements PrunableBatchRepository
             ->limit($limit)
             ->when($before, fn ($q) => $q->where('id', '<', $before))
             ->get()
-            ->map(function ($batch) {
-                return $this->toBatch($batch);
-            })
+            ->map(fn($batch) => $this->toBatch($batch))
             ->all();
     }
 
     /**
      * Retrieve information about an existing batch.
      *
-     * @param  string  $batchId
      * @return \Illuminate\Bus\Batch|null
      */
     public function find(string $batchId)
@@ -89,7 +71,6 @@ class DatabaseBatchRepository implements PrunableBatchRepository
     /**
      * Store a new pending batch.
      *
-     * @param  \Illuminate\Bus\PendingBatch  $batch
      * @return \Illuminate\Bus\Batch
      */
     public function store(PendingBatch $batch)
@@ -114,12 +95,8 @@ class DatabaseBatchRepository implements PrunableBatchRepository
 
     /**
      * Increment the total number of jobs within the batch.
-     *
-     * @param  string  $batchId
-     * @param  int  $amount
-     * @return void
      */
-    public function incrementTotalJobs(string $batchId, int $amount)
+    public function incrementTotalJobs(string $batchId, int $amount): void
     {
         $this->connection->table($this->table)->where('id', $batchId)->update([
             'total_jobs' => new Expression('total_jobs + '.$amount),
@@ -130,20 +107,14 @@ class DatabaseBatchRepository implements PrunableBatchRepository
 
     /**
      * Decrement the total number of pending jobs for the batch.
-     *
-     * @param  string  $batchId
-     * @param  string  $jobId
-     * @return \Illuminate\Bus\UpdatedBatchJobCounts
      */
-    public function decrementPendingJobs(string $batchId, string $jobId)
+    public function decrementPendingJobs(string $batchId, string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
-        $values = $this->updateAtomicValues($batchId, function ($batch) use ($jobId) {
-            return [
-                'pending_jobs' => $batch->pending_jobs - 1,
-                'failed_jobs' => $batch->failed_jobs,
-                'failed_job_ids' => json_encode(array_values(array_diff((array) json_decode($batch->failed_job_ids, true), [$jobId]))),
-            ];
-        });
+        $values = $this->updateAtomicValues($batchId, fn($batch) => [
+            'pending_jobs' => $batch->pending_jobs - 1,
+            'failed_jobs' => $batch->failed_jobs,
+            'failed_job_ids' => json_encode(array_values(array_diff((array) json_decode((string) $batch->failed_job_ids, true), [$jobId]))),
+        ]);
 
         return new UpdatedBatchJobCounts(
             $values['pending_jobs'],
@@ -153,20 +124,14 @@ class DatabaseBatchRepository implements PrunableBatchRepository
 
     /**
      * Increment the total number of failed jobs for the batch.
-     *
-     * @param  string  $batchId
-     * @param  string  $jobId
-     * @return \Illuminate\Bus\UpdatedBatchJobCounts
      */
-    public function incrementFailedJobs(string $batchId, string $jobId)
+    public function incrementFailedJobs(string $batchId, string $jobId): \Illuminate\Bus\UpdatedBatchJobCounts
     {
-        $values = $this->updateAtomicValues($batchId, function ($batch) use ($jobId) {
-            return [
-                'pending_jobs' => $batch->pending_jobs,
-                'failed_jobs' => $batch->failed_jobs + 1,
-                'failed_job_ids' => json_encode(array_values(array_unique(array_merge((array) json_decode($batch->failed_job_ids, true), [$jobId])))),
-            ];
-        });
+        $values = $this->updateAtomicValues($batchId, fn($batch) => [
+            'pending_jobs' => $batch->pending_jobs,
+            'failed_jobs' => $batch->failed_jobs + 1,
+            'failed_job_ids' => json_encode(array_values(array_unique(array_merge((array) json_decode((string) $batch->failed_job_ids, true), [$jobId])))),
+        ]);
 
         return new UpdatedBatchJobCounts(
             $values['pending_jobs'],
@@ -177,8 +142,6 @@ class DatabaseBatchRepository implements PrunableBatchRepository
     /**
      * Update an atomic value within the batch.
      *
-     * @param  string  $batchId
-     * @param  \Closure  $callback
      * @return int|null
      */
     protected function updateAtomicValues(string $batchId, Closure $callback)
@@ -188,7 +151,7 @@ class DatabaseBatchRepository implements PrunableBatchRepository
                 ->lockForUpdate()
                 ->first();
 
-            return is_null($batch) ? [] : tap($callback($batch), function ($values) use ($batchId) {
+            return is_null($batch) ? [] : tap($callback($batch), function (array $values) use ($batchId): void {
                 $this->connection->table($this->table)->where('id', $batchId)->update($values);
             });
         });
@@ -196,11 +159,8 @@ class DatabaseBatchRepository implements PrunableBatchRepository
 
     /**
      * Mark the batch that has the given ID as finished.
-     *
-     * @param  string  $batchId
-     * @return void
      */
-    public function markAsFinished(string $batchId)
+    public function markAsFinished(string $batchId): void
     {
         $this->connection->table($this->table)->where('id', $batchId)->update([
             'finished_at' => time(),
@@ -209,11 +169,8 @@ class DatabaseBatchRepository implements PrunableBatchRepository
 
     /**
      * Cancel the batch that has the given ID.
-     *
-     * @param  string  $batchId
-     * @return void
      */
-    public function cancel(string $batchId)
+    public function cancel(string $batchId): void
     {
         $this->connection->table($this->table)->where('id', $batchId)->update([
             'cancelled_at' => time(),
@@ -223,11 +180,8 @@ class DatabaseBatchRepository implements PrunableBatchRepository
 
     /**
      * Delete the batch that has the given ID.
-     *
-     * @param  string  $batchId
-     * @return void
      */
-    public function delete(string $batchId)
+    public function delete(string $batchId): void
     {
         $this->connection->table($this->table)->where('id', $batchId)->delete();
     }
@@ -235,10 +189,9 @@ class DatabaseBatchRepository implements PrunableBatchRepository
     /**
      * Prune all of the entries older than the given date.
      *
-     * @param  \DateTimeInterface  $before
      * @return int
      */
-    public function prune(DateTimeInterface $before)
+    public function prune(DateTimeInterface $before): int|float
     {
         $query = $this->connection->table($this->table)
             ->whereNotNull('finished_at')
@@ -258,10 +211,9 @@ class DatabaseBatchRepository implements PrunableBatchRepository
     /**
      * Prune all of the unfinished entries older than the given date.
      *
-     * @param  \DateTimeInterface  $before
      * @return int
      */
-    public function pruneUnfinished(DateTimeInterface $before)
+    public function pruneUnfinished(DateTimeInterface $before): int|float
     {
         $query = $this->connection->table($this->table)
             ->whereNull('finished_at')
@@ -281,10 +233,9 @@ class DatabaseBatchRepository implements PrunableBatchRepository
     /**
      * Prune all of the cancelled entries older than the given date.
      *
-     * @param  \DateTimeInterface  $before
      * @return int
      */
-    public function pruneCancelled(DateTimeInterface $before)
+    public function pruneCancelled(DateTimeInterface $before): int|float
     {
         $query = $this->connection->table($this->table)
             ->whereNotNull('cancelled_at')
@@ -304,7 +255,6 @@ class DatabaseBatchRepository implements PrunableBatchRepository
     /**
      * Execute the given Closure within a storage specific transaction.
      *
-     * @param  \Closure  $callback
      * @return mixed
      */
     public function transaction(Closure $callback)
@@ -314,10 +264,8 @@ class DatabaseBatchRepository implements PrunableBatchRepository
 
     /**
      * Rollback the last database transaction for the connection.
-     *
-     * @return void
      */
-    public function rollBack()
+    public function rollBack(): void
     {
         $this->connection->rollBack(toLevel: 0);
     }
@@ -326,9 +274,8 @@ class DatabaseBatchRepository implements PrunableBatchRepository
      * Serialize the given value.
      *
      * @param  mixed  $value
-     * @return string
      */
-    protected function serialize($value)
+    protected function serialize($value): string
     {
         $serialized = serialize($value);
 
@@ -372,7 +319,7 @@ class DatabaseBatchRepository implements PrunableBatchRepository
             (int) $batch->total_jobs,
             (int) $batch->pending_jobs,
             (int) $batch->failed_jobs,
-            (array) json_decode($batch->failed_job_ids, true),
+            (array) json_decode((string) $batch->failed_job_ids, true),
             $this->unserialize($batch->options),
             CarbonImmutable::createFromTimestamp($batch->created_at, date_default_timezone_get()),
             $batch->cancelled_at ? CarbonImmutable::createFromTimestamp($batch->cancelled_at, date_default_timezone_get()) : $batch->cancelled_at,
@@ -392,11 +339,8 @@ class DatabaseBatchRepository implements PrunableBatchRepository
 
     /**
      * Set the underlying database connection.
-     *
-     * @param  \Illuminate\Database\Connection  $connection
-     * @return void
      */
-    public function setConnection(Connection $connection)
+    public function setConnection(Connection $connection): void
     {
         $this->connection = $connection;
     }

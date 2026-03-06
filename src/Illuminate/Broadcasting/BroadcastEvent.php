@@ -16,13 +16,6 @@ class BroadcastEvent implements ShouldQueue
     use Queueable;
 
     /**
-     * The event instance.
-     *
-     * @var mixed
-     */
-    public $event;
-
-    /**
      * The number of times the job may be attempted.
      *
      * @var int
@@ -62,27 +55,26 @@ class BroadcastEvent implements ShouldQueue
      *
      * @param  mixed  $event
      */
-    public function __construct($event)
+    public function __construct(/**
+     * The event instance.
+     */
+    public $event)
     {
-        $this->event = $event;
-        $this->tries = property_exists($event, 'tries') ? $event->tries : null;
-        $this->timeout = property_exists($event, 'timeout') ? $event->timeout : null;
-        $this->backoff = property_exists($event, 'backoff') ? $event->backoff : null;
-        $this->afterCommit = property_exists($event, 'afterCommit') ? $event->afterCommit : null;
-        $this->maxExceptions = property_exists($event, 'maxExceptions') ? $event->maxExceptions : null;
+        $this->tries = property_exists($this->event, 'tries') ? $this->event->tries : null;
+        $this->timeout = property_exists($this->event, 'timeout') ? $this->event->timeout : null;
+        $this->backoff = property_exists($this->event, 'backoff') ? $this->event->backoff : null;
+        $this->afterCommit = property_exists($this->event, 'afterCommit') ? $this->event->afterCommit : null;
+        $this->maxExceptions = property_exists($this->event, 'maxExceptions') ? $this->event->maxExceptions : null;
     }
 
     /**
      * Handle the queued job.
-     *
-     * @param  \Illuminate\Contracts\Broadcasting\Factory  $manager
-     * @return void
      */
-    public function handle(BroadcastingFactory $manager)
+    public function handle(BroadcastingFactory $manager): void
     {
         $name = method_exists($this->event, 'broadcastAs')
             ? $this->event->broadcastAs()
-            : get_class($this->event);
+            : $this->event::class;
 
         $channels = Arr::wrap($this->event->broadcastOn());
 
@@ -109,9 +101,8 @@ class BroadcastEvent implements ShouldQueue
      * Get the payload for the given event.
      *
      * @param  mixed  $event
-     * @return array
      */
-    protected function getPayloadFromEvent($event)
+    protected function getPayloadFromEvent($event): array
     {
         if (method_exists($event, 'broadcastWith') &&
             ! is_null($payload = $event->broadcastWith())) {
@@ -147,11 +138,9 @@ class BroadcastEvent implements ShouldQueue
     /**
      * Get the channels for the given connection.
      *
-     * @param  array  $channels
      * @param  string|null  $connection
-     * @return array
      */
-    protected function getConnectionChannels($channels, $connection)
+    protected function getConnectionChannels(array $channels, $connection): array
     {
         return is_array($channels[$connection ?? ''] ?? null)
             ? $channels[$connection ?? '']
@@ -161,11 +150,9 @@ class BroadcastEvent implements ShouldQueue
     /**
      * Get the payload for the given connection.
      *
-     * @param  array  $payload
      * @param  string|null  $connection
-     * @return array
      */
-    protected function getConnectionPayload($payload, $connection)
+    protected function getConnectionPayload(array $payload, $connection): array
     {
         $connectionPayload = is_array($payload[$connection ?? ''] ?? null)
             ? $payload[$connection ?? '']
@@ -194,9 +181,6 @@ class BroadcastEvent implements ShouldQueue
 
     /**
      * Handle a job failure.
-     *
-     * @param  \Throwable|null  $e
-     * @return void
      */
     public function failed(?Throwable $e = null): void
     {
@@ -212,15 +196,13 @@ class BroadcastEvent implements ShouldQueue
      *
      * @return string
      */
-    public function displayName()
+    public function displayName(): string|false
     {
-        return get_class($this->event);
+        return $this->event::class;
     }
 
     /**
      * Prepare the instance for cloning.
-     *
-     * @return void
      */
     public function __clone()
     {

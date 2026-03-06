@@ -11,7 +11,7 @@ trait TestCaches
      *
      * @var string|null
      */
-    protected static $originalCachePrefix = null;
+    protected static $originalCachePrefix;
 
     /**
      * Boot test cache for parallel testing.
@@ -20,7 +20,7 @@ trait TestCaches
      */
     protected function bootTestCache()
     {
-        ParallelTesting::setUpTestCase(function () {
+        ParallelTesting::setUpTestCase(function (): void {
             if (ParallelTesting::option('without_cache')) {
                 return;
             }
@@ -31,10 +31,8 @@ trait TestCaches
 
     /**
      * Get the test cache prefix.
-     *
-     * @return string
      */
-    protected function parallelSafeCachePrefix()
+    protected function parallelSafeCachePrefix(): string
     {
         self::$originalCachePrefix ??= $this->app['config']->get('cache.prefix', '');
 

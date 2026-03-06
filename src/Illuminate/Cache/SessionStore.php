@@ -11,29 +11,22 @@ class SessionStore implements Store
     use InteractsWithTime, RetrievesMultipleKeys;
 
     /**
-     * The key for cache items.
-     *
-     * @var string
-     */
-    public $key;
-
-    /**
-     * The session instance.
-     *
-     * @var \Illuminate\Contracts\Session\Session
-     */
-    public $session;
-
-    /**
      * Create a new session cache store.
      *
      * @param  \Illuminate\Contracts\Session\Session  $session
      * @param  string  $key
      */
-    public function __construct($session, $key = '_cache')
+    public function __construct(
+        /**
+         * The session instance.
+         */
+        public $session,
+        /**
+         * The key for cache items.
+         */
+        public $key = '_cache'
+    )
     {
-        $this->key = $key;
-        $this->session = $session;
     }
 
     /**
@@ -75,9 +68,8 @@ class SessionStore implements Store
      * Determine if the given expiration time is expired.
      *
      * @param  int|float  $expiresAt
-     * @return bool
      */
-    protected function isExpired($expiresAt)
+    protected function isExpired($expiresAt): bool
     {
         return $expiresAt !== 0 && (Carbon::now()->getPreciseTimestamp(3) / 1000) >= $expiresAt;
     }
@@ -88,9 +80,8 @@ class SessionStore implements Store
      * @param  string  $key
      * @param  mixed  $value
      * @param  int  $seconds
-     * @return bool
      */
-    public function put($key, $value, $seconds)
+    public function put($key, $value, $seconds): bool
     {
         $this->session->put($this->itemKey($key), [
             'value' => $value,
@@ -106,7 +97,7 @@ class SessionStore implements Store
      * @param  int  $seconds
      * @return float
      */
-    protected function toTimestamp($seconds)
+    protected function toTimestamp($seconds): int|float
     {
         return $seconds > 0 ? (Carbon::now()->getPreciseTimestamp(3) / 1000) + $seconds : 0;
     }
@@ -121,7 +112,7 @@ class SessionStore implements Store
     public function increment($key, $value = 1)
     {
         if (! is_null($existing = $this->get($key))) {
-            return tap(((int) $existing) + $value, function ($incremented) use ($key) {
+            return tap(((int) $existing) + $value, function ($incremented) use ($key): void {
                 $this->session->put($this->itemKey("{$key}.value"), $incremented);
             });
         }
@@ -159,9 +150,8 @@ class SessionStore implements Store
      * Remove an item from the cache.
      *
      * @param  string  $key
-     * @return bool
      */
-    public function forget($key)
+    public function forget($key): bool
     {
         if ($this->session->exists($this->itemKey($key))) {
             $this->session->forget($this->itemKey($key));
@@ -174,10 +164,8 @@ class SessionStore implements Store
 
     /**
      * Remove all items from the cache.
-     *
-     * @return bool
      */
-    public function flush()
+    public function flush(): bool
     {
         $this->session->put($this->key, []);
 
@@ -186,20 +174,16 @@ class SessionStore implements Store
 
     /**
      * Get the cache key prefix.
-     *
-     * @return string
      */
-    public function itemKey($key)
+    public function itemKey($key): string
     {
         return "{$this->key}.{$key}";
     }
 
     /**
      * Get the cache key prefix.
-     *
-     * @return string
      */
-    public function getPrefix()
+    public function getPrefix(): string
     {
         return '';
     }

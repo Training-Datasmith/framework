@@ -97,9 +97,8 @@ class ComponentMakeCommand extends GeneratorCommand
      * Build the class with the given name.
      *
      * @param  string  $name
-     * @return string
      */
-    protected function buildClass($name)
+    protected function buildClass($name): string
     {
         if ($this->option('inline')) {
             return str_replace(
@@ -121,7 +120,7 @@ class ComponentMakeCommand extends GeneratorCommand
      *
      * @return string view
      */
-    protected function getView()
+    protected function getView(): string
     {
         $segments = explode('/', str_replace('\\', '/', $this->argument('name')));
 
@@ -154,10 +153,9 @@ class ComponentMakeCommand extends GeneratorCommand
     /**
      * Resolve the fully-qualified path to the stub.
      *
-     * @param  string  $stub
      * @return string
      */
-    protected function resolveStubPath($stub)
+    protected function resolveStubPath(string $stub)
     {
         return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
@@ -168,19 +166,16 @@ class ComponentMakeCommand extends GeneratorCommand
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
-     * @return string
      */
-    protected function getDefaultNamespace($rootNamespace)
+    protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\View\Components';
     }
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['inline', null, InputOption::VALUE_NONE, 'Create a component that renders an inline view'],

@@ -15,9 +15,8 @@ trait ConfirmableTrait
      *
      * @param  string  $warning
      * @param  (\Closure(): TReturn)|TReturn|null  $callback
-     * @return (TReturn is false ? true : bool)
      */
-    public function confirmToProceed($warning = 'Application In Production', $callback = null)
+    public function confirmToProceed($warning = 'Application In Production', $callback = null): bool
     {
         $callback = is_null($callback) ? $this->getDefaultConfirmCallback() : $callback;
 
@@ -49,8 +48,6 @@ trait ConfirmableTrait
      */
     protected function getDefaultConfirmCallback()
     {
-        return function () {
-            return $this->getLaravel()->environment() === 'production';
-        };
+        return fn() => $this->getLaravel()->environment() === 'production';
     }
 }

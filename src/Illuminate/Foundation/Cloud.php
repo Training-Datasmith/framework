@@ -25,15 +25,15 @@ class Cloud
     public static function bootstrapperBootstrapped(Application $app, string $bootstrapper): void
     {
         (match ($bootstrapper) {
-            LoadConfiguration::class => function () use ($app) {
+            LoadConfiguration::class => function () use ($app): void {
                 static::configureDisks($app);
                 static::configureUnpooledPostgresConnection($app);
                 static::ensureMigrationsUseUnpooledConnection($app);
             },
-            HandleExceptions::class => function () use ($app) {
+            HandleExceptions::class => function () use ($app): void {
                 static::configureCloudLogging($app);
             },
-            default => fn () => true,
+            default => fn (): true => true,
         })();
     }
 
@@ -46,7 +46,7 @@ class Cloud
             return;
         }
 
-        $disks = json_decode($_SERVER['LARAVEL_CLOUD_DISK_CONFIG'], true);
+        $disks = json_decode((string) $_SERVER['LARAVEL_CLOUD_DISK_CONFIG'], true);
 
         foreach ($disks as $disk) {
             $app['config']->set('filesystems.disks.'.$disk['disk'], [
@@ -75,8 +75,8 @@ class Cloud
     {
         $host = $app['config']->get('database.connections.pgsql.host', '');
 
-        if (str_contains($host, 'pg.laravel.cloud') &&
-            str_contains($host, '-pooler')) {
+        if (str_contains((string) $host, 'pg.laravel.cloud') &&
+            str_contains((string) $host, '-pooler')) {
             $app['config']->set(
                 'database.connections.pgsql-unpooled',
                 array_merge($app['config']->get('database.connections.pgsql'), [
@@ -104,7 +104,7 @@ class Cloud
         }
 
         Migrator::resolveConnectionsUsing(function ($resolver, $connection) use ($app) {
-            $connection = $connection ?? $app['config']->get('database.default');
+            $connection ??= $app['config']->get('database.default');
 
             return $resolver->connection(
                 $connection === 'pgsql' ? 'pgsql-unpooled' : $connection

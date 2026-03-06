@@ -15,7 +15,7 @@ class PostgresConnection extends Connection
     /**
      * {@inheritdoc}
      */
-    public function getDriverTitle()
+    public function getDriverTitle(): string
     {
         return 'PostgreSQL';
     }
@@ -24,9 +24,8 @@ class PostgresConnection extends Connection
      * Escape a binary value for safe SQL embedding.
      *
      * @param  string  $value
-     * @return string
      */
-    protected function escapeBinary($value)
+    protected function escapeBinary($value): string
     {
         $hex = bin2hex($value);
 
@@ -37,40 +36,32 @@ class PostgresConnection extends Connection
      * Escape a bool value for safe SQL embedding.
      *
      * @param  bool  $value
-     * @return string
      */
-    protected function escapeBool($value)
+    protected function escapeBool($value): string
     {
         return $value ? 'true' : 'false';
     }
 
     /**
      * Determine if the given database exception was caused by a unique constraint violation.
-     *
-     * @param  \Exception  $exception
-     * @return bool
      */
-    protected function isUniqueConstraintError(Exception $exception)
+    protected function isUniqueConstraintError(Exception $exception): bool
     {
         return '23505' === $exception->getCode();
     }
 
     /**
      * Get the default query grammar instance.
-     *
-     * @return \Illuminate\Database\Query\Grammars\PostgresGrammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): \Illuminate\Database\Query\Grammars\PostgresGrammar
     {
         return new QueryGrammar($this);
     }
 
     /**
      * Get a schema builder instance for the connection.
-     *
-     * @return \Illuminate\Database\Schema\PostgresBuilder
      */
-    public function getSchemaBuilder()
+    public function getSchemaBuilder(): \Illuminate\Database\Schema\PostgresBuilder
     {
         if (is_null($this->schemaGrammar)) {
             $this->useDefaultSchemaGrammar();
@@ -81,32 +72,24 @@ class PostgresConnection extends Connection
 
     /**
      * Get the default schema grammar instance.
-     *
-     * @return \Illuminate\Database\Schema\Grammars\PostgresGrammar
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): \Illuminate\Database\Schema\Grammars\PostgresGrammar
     {
         return new SchemaGrammar($this);
     }
 
     /**
      * Get the schema state for the connection.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem|null  $files
-     * @param  callable|null  $processFactory
-     * @return \Illuminate\Database\Schema\PostgresSchemaState
      */
-    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null)
+    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null): \Illuminate\Database\Schema\PostgresSchemaState
     {
         return new PostgresSchemaState($this, $files, $processFactory);
     }
 
     /**
      * Get the default post processor instance.
-     *
-     * @return \Illuminate\Database\Query\Processors\PostgresProcessor
      */
-    protected function getDefaultPostProcessor()
+    protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\PostgresProcessor
     {
         return new PostgresProcessor;
     }

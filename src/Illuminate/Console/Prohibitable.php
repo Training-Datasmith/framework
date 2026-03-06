@@ -15,20 +15,16 @@ trait Prohibitable
      * Indicate whether the command should be prohibited from running.
      *
      * @param  bool  $prohibit
-     * @return void
      */
-    public static function prohibit($prohibit = true)
+    public static function prohibit($prohibit = true): void
     {
         static::$prohibitedFromRunning = $prohibit;
     }
 
     /**
      * Determine if the command is prohibited from running and display a warning if so.
-     *
-     * @param  bool  $quiet
-     * @return bool
      */
-    protected function isProhibited(bool $quiet = false)
+    protected function isProhibited(bool $quiet = false): bool
     {
         if (! static::$prohibitedFromRunning) {
             return false;

@@ -9,10 +9,9 @@ class NullConnector implements ConnectorInterface
     /**
      * Establish a queue connection.
      *
-     * @param  array  $config
      * @return \Illuminate\Contracts\Queue\Queue
      */
-    public function connect(array $config)
+    public function connect(array $config): \Illuminate\Queue\NullQueue
     {
         return new NullQueue;
     }

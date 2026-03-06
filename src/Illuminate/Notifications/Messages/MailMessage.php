@@ -117,10 +117,9 @@ class MailMessage extends SimpleMessage implements Renderable
      * Set the view for the mail message.
      *
      * @param  array|string  $view
-     * @param  array  $data
      * @return $this
      */
-    public function view($view, array $data = [])
+    public function view($view, array $data = []): static
     {
         $this->view = $view;
         $this->viewData = $data;
@@ -134,7 +133,6 @@ class MailMessage extends SimpleMessage implements Renderable
      * Set the plain text view for the mail message.
      *
      * @param  string  $textView
-     * @param  array  $data
      * @return $this
      */
     public function text($textView, array $data = [])
@@ -149,10 +147,9 @@ class MailMessage extends SimpleMessage implements Renderable
      * Set the Markdown template for the notification.
      *
      * @param  string  $view
-     * @param  array  $data
      * @return $this
      */
-    public function markdown($view, array $data = [])
+    public function markdown($view, array $data = []): static
     {
         $this->markdown = $view;
         $this->viewData = $data;
@@ -168,7 +165,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  string  $template
      * @return $this
      */
-    public function template($template)
+    public function template($template): static
     {
         $this->markdown = $template;
 
@@ -181,7 +178,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  string  $theme
      * @return $this
      */
-    public function theme($theme)
+    public function theme($theme): static
     {
         $this->theme = $theme;
 
@@ -195,7 +192,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function from($address, $name = null)
+    public function from($address, $name = null): static
     {
         $this->from = [$address, $name];
 
@@ -209,7 +206,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function replyTo($address, $name = null)
+    public function replyTo($address, $name = null): static
     {
         if ($this->arrayOfAddresses($address)) {
             $this->replyTo = array_merge($this->replyTo, $this->parseAddresses($address));
@@ -227,7 +224,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function cc($address, $name = null)
+    public function cc($address, $name = null): static
     {
         if ($this->arrayOfAddresses($address)) {
             $this->cc = array_merge($this->cc, $this->parseAddresses($address));
@@ -245,7 +242,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  string|null  $name
      * @return $this
      */
-    public function bcc($address, $name = null)
+    public function bcc($address, $name = null): static
     {
         if ($this->arrayOfAddresses($address)) {
             $this->bcc = array_merge($this->bcc, $this->parseAddresses($address));
@@ -260,7 +257,6 @@ class MailMessage extends SimpleMessage implements Renderable
      * Attach a file to the message.
      *
      * @param  string|\Illuminate\Contracts\Mail\Attachable|\Illuminate\Mail\Attachment  $file
-     * @param  array  $options
      * @return $this
      */
     public function attach($file, array $options = [])
@@ -284,7 +280,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  array<string|\Illuminate\Contracts\Mail\Attachable|\Illuminate\Mail\Attachment|array>  $files
      * @return $this
      */
-    public function attachMany($files)
+    public function attachMany($files): static
     {
         foreach ($files as $file => $options) {
             if (is_int($file)) {
@@ -302,10 +298,9 @@ class MailMessage extends SimpleMessage implements Renderable
      *
      * @param  string  $data
      * @param  string  $name
-     * @param  array  $options
      * @return $this
      */
-    public function attachData($data, $name, array $options = [])
+    public function attachData($data, $name, array $options = []): static
     {
         $this->rawAttachments[] = compact('data', 'name', 'options');
 
@@ -318,7 +313,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  string  $value
      * @return $this
      */
-    public function tag($value)
+    public function tag($value): static
     {
         $this->tags[] = $value;
 
@@ -332,7 +327,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  string  $value
      * @return $this
      */
-    public function metadata($key, $value)
+    public function metadata($key, $value): static
     {
         $this->metadata[$key] = $value;
 
@@ -347,7 +342,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  int  $level
      * @return $this
      */
-    public function priority($level)
+    public function priority($level): static
     {
         $this->priority = $level;
 
@@ -356,10 +351,8 @@ class MailMessage extends SimpleMessage implements Renderable
 
     /**
      * Get the data array for the mail message.
-     *
-     * @return array
      */
-    public function data()
+    public function data(): array
     {
         return array_merge($this->toArray(), $this->viewData);
     }
@@ -373,7 +366,7 @@ class MailMessage extends SimpleMessage implements Renderable
     protected function parseAddresses($value)
     {
         return (new Collection($value))
-            ->map(fn ($address, $name) => [$address, is_numeric($name) ? null : $name])
+            ->map(fn ($address, $name): array => [$address, is_numeric($name) ? null : $name])
             ->values()
             ->all();
     }
@@ -382,9 +375,8 @@ class MailMessage extends SimpleMessage implements Renderable
      * Determine if the given "address" is actually an array of addresses.
      *
      * @param  mixed  $address
-     * @return bool
      */
-    protected function arrayOfAddresses($address)
+    protected function arrayOfAddresses($address): bool
     {
         return is_iterable($address) || $address instanceof Arrayable;
     }
@@ -414,7 +406,7 @@ class MailMessage extends SimpleMessage implements Renderable
      * @param  callable  $callback
      * @return $this
      */
-    public function withSymfonyMessage($callback)
+    public function withSymfonyMessage($callback): static
     {
         $this->callbacks[] = $callback;
 

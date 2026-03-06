@@ -11,40 +11,31 @@ use Symfony\Component\Process\Process;
 class Composer
 {
     /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
-     * The working path to regenerate from.
-     *
-     * @var string|null
-     */
-    protected $workingPath;
-
-    /**
      * Create a new Composer manager instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @param  string|null  $workingPath
      */
-    public function __construct(Filesystem $files, $workingPath = null)
+    public function __construct(
+        /**
+         * The filesystem instance.
+         */
+        protected \Illuminate\Filesystem\Filesystem $files,
+        /**
+         * The working path to regenerate from.
+         */
+        protected $workingPath = null
+    )
     {
-        $this->files = $files;
-        $this->workingPath = $workingPath;
     }
 
     /**
      * Determine if the given Composer package is installed.
      *
      * @param  string  $package
-     * @return bool
      *
      * @throws \RuntimeException
      */
-    public function hasPackage($package)
+    public function hasPackage($package): bool
     {
         $composer = json_decode(file_get_contents($this->findComposerFile()), true);
 
@@ -56,26 +47,23 @@ class Composer
      * Install the given Composer packages into the application.
      *
      * @param  array<int, string>  $packages
-     * @param  bool  $dev
-     * @param  \Closure|\Symfony\Component\Console\Output\OutputInterface|null  $output
      * @param  string|null  $composerBinary
-     * @return bool
      */
-    public function requirePackages(array $packages, bool $dev = false, Closure|OutputInterface|null $output = null, $composerBinary = null)
+    public function requirePackages(array $packages, bool $dev = false, Closure|OutputInterface|null $output = null, $composerBinary = null): bool
     {
         $command = (new Collection([
             ...$this->findComposer($composerBinary),
             'require',
             ...$packages,
         ]))
-            ->when($dev, function ($command) {
+            ->when($dev, function ($command): void {
                 $command->push('--dev');
             })->all();
 
         return 0 === $this->getProcess($command, ['COMPOSER_MEMORY_LIMIT' => '-1'])
             ->run(
                 $output instanceof OutputInterface
-                    ? function ($type, $line) use ($output) {
+                    ? function ($type, string $line) use ($output): void {
                         $output->write('    '.$line);
                     } : $output
             );
@@ -85,26 +73,23 @@ class Composer
      * Remove the given Composer packages from the application.
      *
      * @param  array<int, string>  $packages
-     * @param  bool  $dev
-     * @param  \Closure|\Symfony\Component\Console\Output\OutputInterface|null  $output
      * @param  string|null  $composerBinary
-     * @return bool
      */
-    public function removePackages(array $packages, bool $dev = false, Closure|OutputInterface|null $output = null, $composerBinary = null)
+    public function removePackages(array $packages, bool $dev = false, Closure|OutputInterface|null $output = null, $composerBinary = null): bool
     {
         $command = (new Collection([
             ...$this->findComposer($composerBinary),
             'remove',
             ...$packages,
         ]))
-            ->when($dev, function ($command) {
+            ->when($dev, function ($command): void {
                 $command->push('--dev');
             })->all();
 
         return 0 === $this->getProcess($command, ['COMPOSER_MEMORY_LIMIT' => '-1'])
             ->run(
                 $output instanceof OutputInterface
-                    ? function ($type, $line) use ($output) {
+                    ? function ($type, string $line) use ($output): void {
                         $output->write('    '.$line);
                     } : $output
             );
@@ -114,11 +99,10 @@ class Composer
      * Modify the "composer.json" file contents using the given callback.
      *
      * @param  callable(array):array  $callback
-     * @return void
      *
      * @throws \RuntimeException
      */
-    public function modify(callable $callback)
+    public function modify(callable $callback): void
     {
         $composerFile = $this->findComposerFile();
 
@@ -138,9 +122,8 @@ class Composer
      *
      * @param  string|array  $extra
      * @param  string|null  $composerBinary
-     * @return int
      */
-    public function dumpAutoloads($extra = '', $composerBinary = null)
+    public function dumpAutoloads($extra = '', $composerBinary = null): int
     {
         $extra = $extra ? (array) $extra : [];
 
@@ -164,13 +147,13 @@ class Composer
      * Get the Composer binary / command for the environment.
      *
      * @param  string|null  $composerBinary
-     * @return array
      */
-    public function findComposer($composerBinary = null)
+    public function findComposer($composerBinary = null): array
     {
         if (! is_null($composerBinary) && $this->files->exists($composerBinary)) {
             return [$this->phpBinary(), $composerBinary];
-        } elseif ($this->files->exists($this->workingPath.'/composer.phar')) {
+        }
+        if ($this->files->exists($this->workingPath.'/composer.phar')) {
             return [$this->phpBinary(), 'composer.phar'];
         }
 
@@ -180,11 +163,10 @@ class Composer
     /**
      * Get the path to the "composer.json" file.
      *
-     * @return string
      *
      * @throws \RuntimeException
      */
-    protected function findComposerFile()
+    protected function findComposerFile(): string
     {
         $composerFile = "{$this->workingPath}/composer.json";
 
@@ -197,22 +179,16 @@ class Composer
 
     /**
      * Get the PHP binary.
-     *
-     * @return string
      */
-    protected function phpBinary()
+    protected function phpBinary(): string
     {
         return php_binary();
     }
 
     /**
      * Get a new Symfony process instance.
-     *
-     * @param  array  $command
-     * @param  array  $env
-     * @return \Symfony\Component\Process\Process
      */
-    protected function getProcess(array $command, array $env = [])
+    protected function getProcess(array $command, array $env = []): \Symfony\Component\Process\Process
     {
         return (new Process($command, $this->workingPath, $env))->setTimeout(null);
     }
@@ -223,7 +199,7 @@ class Composer
      * @param  string  $path
      * @return $this
      */
-    public function setWorkingPath($path)
+    public function setWorkingPath($path): static
     {
         $this->workingPath = realpath($path);
 
@@ -232,10 +208,8 @@ class Composer
 
     /**
      * Get the version of Composer.
-     *
-     * @return string|null
      */
-    public function getVersion()
+    public function getVersion(): ?string
     {
         $command = array_merge($this->findComposer(), ['-V', '--no-ansi']);
 

@@ -10,10 +10,8 @@ trait HasUlids
 
     /**
      * Generate a new unique key for the model.
-     *
-     * @return string
      */
-    public function newUniqueId()
+    public function newUniqueId(): string
     {
         return strtolower((string) Str::ulid());
     }
@@ -22,7 +20,6 @@ trait HasUlids
      * Determine if given key is valid.
      *
      * @param  mixed  $value
-     * @return bool
      */
     protected function isValidUniqueId($value): bool
     {

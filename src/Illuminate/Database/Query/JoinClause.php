@@ -7,20 +7,6 @@ use Closure;
 class JoinClause extends Builder
 {
     /**
-     * The type of join being performed.
-     *
-     * @var string
-     */
-    public $type;
-
-    /**
-     * The table the join clause is joining to.
-     *
-     * @var \Illuminate\Contracts\Database\Query\Expression|string
-     */
-    public $table;
-
-    /**
      * The connection of the parent query builder.
      *
      * @var \Illuminate\Database\ConnectionInterface
@@ -43,23 +29,24 @@ class JoinClause extends Builder
 
     /**
      * The class name of the parent query builder.
-     *
-     * @var string
      */
-    protected $parentClass;
+    protected string $parentClass;
 
     /**
      * Create a new join clause instance.
      *
-     * @param  \Illuminate\Database\Query\Builder  $parentQuery
      * @param  string  $type
      * @param  string  $table
      */
-    public function __construct(Builder $parentQuery, $type, $table)
+    public function __construct(Builder $parentQuery, /**
+     * The type of join being performed.
+     */
+    public $type, /**
+     * The table the join clause is joining to.
+     */
+    public $table)
     {
-        $this->type = $type;
-        $this->table = $table;
-        $this->parentClass = get_class($parentQuery);
+        $this->parentClass = $parentQuery::class;
         $this->parentGrammar = $parentQuery->getGrammar();
         $this->parentProcessor = $parentQuery->getProcessor();
         $this->parentConnection = $parentQuery->getConnection();
@@ -113,20 +100,16 @@ class JoinClause extends Builder
 
     /**
      * Get a new instance of the join clause builder.
-     *
-     * @return \Illuminate\Database\Query\JoinClause
      */
-    public function newQuery()
+    public function newQuery(): static
     {
         return new static($this->newParentQuery(), $this->type, $this->table);
     }
 
     /**
      * Create a new query instance for sub-query.
-     *
-     * @return \Illuminate\Database\Query\Builder
      */
-    protected function forSubQuery()
+    protected function forSubQuery(): \Illuminate\Database\Query\Builder
     {
         return $this->newParentQuery()->newQuery();
     }

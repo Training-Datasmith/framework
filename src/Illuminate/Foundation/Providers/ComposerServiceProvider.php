@@ -10,22 +10,16 @@ class ComposerServiceProvider extends ServiceProvider implements DeferrableProvi
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->app->singleton('composer', function ($app) {
-            return new Composer($app['files'], $app->basePath());
-        });
+        $this->app->singleton('composer', fn($app) => new Composer($app['files'], $app->basePath()));
     }
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return ['composer'];
     }

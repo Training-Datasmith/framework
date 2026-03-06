@@ -13,10 +13,9 @@ class AsCollection implements Castable
     /**
      * Get the caster class to use when casting from / to this cast target.
      *
-     * @param  array  $arguments
      * @return \Illuminate\Contracts\Database\Eloquent\CastsAttributes<\Illuminate\Support\Collection<array-key, mixed>, iterable>
      */
-    public static function castUsing(array $arguments)
+    public static function castUsing(array $arguments): \Illuminate\Contracts\Database\Eloquent\CastsAttributes
     {
         return new class($arguments) implements CastsAttributes
         {
@@ -58,7 +57,7 @@ class AsCollection implements Castable
                     : $instance->mapInto($this->arguments[1][0]);
             }
 
-            public function set($model, $key, $value, $attributes)
+            public function set($model, $key, $value, $attributes): array
             {
                 return [$key => Json::encode($value)];
             }
@@ -81,9 +80,8 @@ class AsCollection implements Castable
      *
      * @param  class-string  $class
      * @param  array{class-string, string}|class-string|null  $map
-     * @return string
      */
-    public static function using($class, $map = null)
+    public static function using($class, $map = null): string
     {
         if (is_array($map) && is_callable($map)) {
             $map = $map[0].'@'.$map[1];

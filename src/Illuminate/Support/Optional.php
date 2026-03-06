@@ -13,29 +13,23 @@ class Optional implements ArrayAccess
     }
 
     /**
-     * The underlying object.
-     *
-     * @var mixed
-     */
-    protected $value;
-
-    /**
      * Create a new optional instance.
      *
      * @param  mixed  $value
      */
-    public function __construct($value)
+    public function __construct(
+        /**
+         * The underlying object.
+         */
+        protected $value
+    )
     {
-        $this->value = $value;
     }
 
     /**
      * Dynamically access a property on the underlying object.
-     *
-     * @param  string  $key
-     * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         if (is_object($this->value)) {
             return $this->value->{$key} ?? null;
@@ -48,7 +42,7 @@ class Optional implements ArrayAccess
      * @param  mixed  $name
      * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name)
     {
         if (is_object($this->value)) {
             return isset($this->value->{$name});
@@ -65,7 +59,6 @@ class Optional implements ArrayAccess
      * Determine if an item exists at an offset.
      *
      * @param  mixed  $key
-     * @return bool
      */
     public function offsetExists($key): bool
     {
@@ -76,7 +69,6 @@ class Optional implements ArrayAccess
      * Get an item at a given offset.
      *
      * @param  mixed  $key
-     * @return mixed
      */
     public function offsetGet($key): mixed
     {
@@ -88,7 +80,6 @@ class Optional implements ArrayAccess
      *
      * @param  mixed  $key
      * @param  mixed  $value
-     * @return void
      */
     public function offsetSet($key, $value): void
     {
@@ -101,7 +92,6 @@ class Optional implements ArrayAccess
      * Unset the item at a given offset.
      *
      * @param  string  $key
-     * @return void
      */
     public function offsetUnset($key): void
     {
@@ -113,11 +103,10 @@ class Optional implements ArrayAccess
     /**
      * Dynamically pass a method to the underlying object.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);

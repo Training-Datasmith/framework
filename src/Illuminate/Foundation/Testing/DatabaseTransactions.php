@@ -6,10 +6,8 @@ trait DatabaseTransactions
 {
     /**
      * Handle database transactions on the specified connections.
-     *
-     * @return void
      */
-    public function beginDatabaseTransaction()
+    public function beginDatabaseTransaction(): void
     {
         $database = $this->app->make('db');
 
@@ -27,7 +25,7 @@ trait DatabaseTransactions
             $connection->setEventDispatcher($dispatcher);
         }
 
-        $this->beforeApplicationDestroyed(function () use ($database) {
+        $this->beforeApplicationDestroyed(function () use ($database): void {
             foreach ($this->connectionsToTransact() as $name) {
                 $connection = $database->connection($name);
                 $dispatcher = $connection->getEventDispatcher();

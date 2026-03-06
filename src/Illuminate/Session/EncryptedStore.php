@@ -9,25 +9,17 @@ use SessionHandlerInterface;
 class EncryptedStore extends Store
 {
     /**
-     * The encrypter instance.
-     *
-     * @var \Illuminate\Contracts\Encryption\Encrypter
-     */
-    protected $encrypter;
-
-    /**
      * Create a new session instance.
      *
      * @param  string  $name
-     * @param  \SessionHandlerInterface  $handler
-     * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @param  string|null  $id
      * @param  string  $serialization
      */
-    public function __construct($name, SessionHandlerInterface $handler, EncrypterContract $encrypter, $id = null, $serialization = 'php')
+    public function __construct($name, SessionHandlerInterface $handler, /**
+     * The encrypter instance.
+     */
+    protected \Illuminate\Contracts\Encryption\Encrypter $encrypter, $id = null, $serialization = 'php')
     {
-        $this->encrypter = $encrypter;
-
         parent::__construct($name, $handler, $id, $serialization);
     }
 

@@ -35,7 +35,7 @@ class Json
     {
         return isset(static::$decoder)
             ? (static::$decoder)($value, $associative)
-            : json_decode($value, $associative);
+            : json_decode((string) $value, $associative);
     }
 
     /**

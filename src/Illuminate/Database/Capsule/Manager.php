@@ -23,8 +23,6 @@ class Manager
 
     /**
      * Create a new database capsule manager.
-     *
-     * @param  \Illuminate\Container\Container|null  $container
      */
     public function __construct(?Container $container = null)
     {
@@ -111,11 +109,9 @@ class Manager
     /**
      * Register a connection with the manager.
      *
-     * @param  array  $config
      * @param  string  $name
-     * @return void
      */
-    public function addConnection(array $config, $name = 'default')
+    public function addConnection(array $config, $name = 'default'): void
     {
         $connections = $this->container['config']['database.connections'];
 
@@ -126,10 +122,8 @@ class Manager
 
     /**
      * Bootstrap Eloquent so it is ready for usage.
-     *
-     * @return void
      */
-    public function bootEloquent()
+    public function bootEloquent(): void
     {
         Eloquent::setConnectionResolver($this->manager);
 
@@ -147,7 +141,7 @@ class Manager
      * @param  int  $fetchMode
      * @return $this
      */
-    public function setFetchMode($fetchMode)
+    public function setFetchMode($fetchMode): static
     {
         $this->container['config']['database.fetch'] = $fetchMode;
 
@@ -178,11 +172,8 @@ class Manager
 
     /**
      * Set the event dispatcher instance to be used by connections.
-     *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
-     * @return void
      */
-    public function setEventDispatcher(Dispatcher $dispatcher)
+    public function setEventDispatcher(Dispatcher $dispatcher): void
     {
         $this->container->instance('events', $dispatcher);
     }
@@ -190,11 +181,10 @@ class Manager
     /**
      * Dynamically pass methods to the default connection.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
      */
-    public static function __callStatic($method, $parameters)
+    public static function __callStatic(string $method, array $parameters)
     {
         return static::connection()->$method(...$parameters);
     }

@@ -35,6 +35,6 @@ class ForkDriver implements Driver
      */
     public function defer(Closure|array $tasks): DeferredCallback
     {
-        return defer(fn () => $this->run($tasks));
+        return defer(fn (): array => $this->run($tasks));
     }
 }

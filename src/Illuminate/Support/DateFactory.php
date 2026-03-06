@@ -142,9 +142,11 @@ class DateFactory
     {
         if (is_callable($handler) && is_object($handler)) {
             return static::useCallable($handler);
-        } elseif (is_string($handler)) {
+        }
+        if (is_string($handler)) {
             return static::useClass($handler);
-        } elseif ($handler instanceof Factory) {
+        }
+        if ($handler instanceof Factory) {
             return static::useFactory($handler);
         }
 
@@ -153,10 +155,8 @@ class DateFactory
 
     /**
      * Use the default date class when generating dates.
-     *
-     * @return void
      */
-    public static function useDefault()
+    public static function useDefault(): void
     {
         static::$dateClass = null;
         static::$callable = null;
@@ -165,11 +165,8 @@ class DateFactory
 
     /**
      * Execute the given callable on each date creation.
-     *
-     * @param  callable  $callable
-     * @return void
      */
-    public static function useCallable(callable $callable)
+    public static function useCallable(callable $callable): void
     {
         static::$callable = $callable;
 
@@ -181,9 +178,8 @@ class DateFactory
      * Use the given date type (class) when generating dates.
      *
      * @param  string  $dateClass
-     * @return void
      */
-    public static function useClass($dateClass)
+    public static function useClass($dateClass): void
     {
         static::$dateClass = $dateClass;
 
@@ -195,9 +191,8 @@ class DateFactory
      * Use the given Carbon factory when generating dates.
      *
      * @param  object  $factory
-     * @return void
      */
-    public static function useFactory($factory)
+    public static function useFactory($factory): void
     {
         static::$factory = $factory;
 
@@ -208,13 +203,11 @@ class DateFactory
     /**
      * Handle dynamic calls to generate dates.
      *
-     * @param  string  $method
      * @param  array  $parameters
      * @return mixed
-     *
      * @throws \RuntimeException
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         $defaultClassName = static::DEFAULT_CLASS_NAME;
 

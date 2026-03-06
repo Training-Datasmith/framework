@@ -17,8 +17,6 @@ use Illuminate\Support\Stringable as SupportStringable;
 if (! function_exists('append_config')) {
     /**
      * Assign high numeric IDs to a config item to force appending.
-     *
-     * @param  array  $array
      */
     function append_config(array $array): array
     {
@@ -84,7 +82,7 @@ if (! function_exists('class_basename')) {
      */
     function class_basename($class): string
     {
-        $class = is_object($class) ? get_class($class) : $class;
+        $class = is_object($class) ? $class::class : $class;
 
         return basename(str_replace('\\', '/', $class));
     }
@@ -100,7 +98,7 @@ if (! function_exists('class_uses_recursive')) {
     function class_uses_recursive($class): array
     {
         if (is_object($class)) {
-            $class = get_class($class);
+            $class = $class::class;
         }
 
         $results = [];
@@ -271,7 +269,8 @@ if (! function_exists('optional')) {
     {
         if (is_null($callback)) {
             return new Optional($value);
-        } elseif (! is_null($value)) {
+        }
+        if (! is_null($value)) {
             return $callback($value);
         }
     }
@@ -282,7 +281,6 @@ if (! function_exists('preg_replace_array')) {
      * Replace a given pattern with each value in the array in sequentially.
      *
      * @param  string  $pattern
-     * @param  array  $replacements
      * @param  string  $subject
      */
     function preg_replace_array($pattern, array $replacements, $subject): string
@@ -353,12 +351,12 @@ if (! function_exists('str')) {
         if (func_num_args() === 0) {
             return new class
             {
-                public function __call($method, $parameters)
+                public function __call(string $method, array $parameters)
                 {
                     return Str::$method(...$parameters);
                 }
 
-                public function __toString()
+                public function __toString(): string
                 {
                     return '';
                 }
@@ -407,7 +405,7 @@ if (! function_exists('throw_if')) {
      *
      * @throws TException
      */
-    function throw_if($condition, $exception = 'RuntimeException', ...$parameters)
+    function throw_if($condition, $exception = 'RuntimeException', ...$parameters): array|int|float|string|false|null
     {
         if ($condition) {
             if ($exception instanceof Closure) {

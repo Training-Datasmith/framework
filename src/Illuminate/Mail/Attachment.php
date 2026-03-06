@@ -29,29 +29,23 @@ class Attachment
     public $mime;
 
     /**
-     * A callback that attaches the attachment to the mail message.
-     *
-     * @var \Closure
-     */
-    protected $resolver;
-
-    /**
      * Create a mail attachment.
-     *
-     * @param  \Closure  $resolver
      */
-    private function __construct(Closure $resolver)
+    private function __construct(
+        /**
+         * A callback that attaches the attachment to the mail message.
+         */
+        protected \Closure $resolver
+    )
     {
-        $this->resolver = $resolver;
     }
 
     /**
      * Create a mail attachment from a path.
      *
      * @param  string  $path
-     * @return static
      */
-    public static function fromPath($path)
+    public static function fromPath($path): static
     {
         return new static(fn ($attachment, $pathStrategy) => $pathStrategy($path, $attachment));
     }
@@ -70,7 +64,6 @@ class Attachment
     /**
      * Create a mail attachment from in-memory data.
      *
-     * @param  \Closure  $data
      * @param  string|null  $name
      * @return static
      */
@@ -83,11 +76,8 @@ class Attachment
 
     /**
      * Create a mail attachment from an UploadedFile instance.
-     *
-     * @param  \Illuminate\Http\UploadedFile  $file
-     * @return static
      */
-    public static function fromUploadedFile(UploadedFile $file)
+    public static function fromUploadedFile(UploadedFile $file): static
     {
         return new static(function ($attachment, $pathStrategy, $dataStrategy) use ($file) {
             $attachment
@@ -114,9 +104,8 @@ class Attachment
      *
      * @param  string|null  $disk
      * @param  string  $path
-     * @return static
      */
-    public static function fromStorageDisk($disk, $path)
+    public static function fromStorageDisk($disk, $path): static
     {
         return new static(function ($attachment, $pathStrategy, $dataStrategy) use ($disk, $path) {
             $storage = Container::getInstance()->make(
@@ -148,7 +137,7 @@ class Attachment
      * @param  string|null  $name
      * @return $this
      */
-    public function as($name)
+    public function as($name): static
     {
         $this->as = $name;
 
@@ -161,7 +150,7 @@ class Attachment
      * @param  string  $mime
      * @return $this
      */
-    public function withMime($mime)
+    public function withMime($mime): static
     {
         $this->mime = $mime;
 
@@ -171,8 +160,6 @@ class Attachment
     /**
      * Attach the attachment with the given strategies.
      *
-     * @param  \Closure  $pathStrategy
-     * @param  \Closure  $dataStrategy
      * @return mixed
      */
     public function attachWith(Closure $pathStrategy, Closure $dataStrategy)
@@ -211,12 +198,8 @@ class Attachment
 
     /**
      * Determine if the given attachment is equivalent to this attachment.
-     *
-     * @param  \Illuminate\Mail\Attachment  $attachment
-     * @param  array  $options
-     * @return bool
      */
-    public function isEquivalent(Attachment $attachment, $options = [])
+    public function isEquivalent(Attachment $attachment, array $options = []): bool
     {
         $newOptions = [
             'as' => $options['as'] ?? $attachment->as,
@@ -224,11 +207,11 @@ class Attachment
         ];
 
         return $this->attachWith(
-            fn ($path) => [$path, ['as' => $this->as, 'mime' => $this->mime]],
-            fn ($data) => [$data(), ['as' => $this->as, 'mime' => $this->mime]],
+            fn ($path): array => [$path, ['as' => $this->as, 'mime' => $this->mime]],
+            fn ($data): array => [$data(), ['as' => $this->as, 'mime' => $this->mime]],
         ) === $attachment->attachWith(
-            fn ($path) => [$path, $newOptions],
-            fn ($data) => [$data(), $newOptions],
+            fn ($path): array => [$path, $newOptions],
+            fn ($data): array => [$data(), $newOptions],
         );
     }
 }

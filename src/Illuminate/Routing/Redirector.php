@@ -11,13 +11,6 @@ class Redirector
     use Macroable;
 
     /**
-     * The URL generator instance.
-     *
-     * @var \Illuminate\Routing\UrlGenerator
-     */
-    protected $generator;
-
-    /**
      * The session store instance.
      *
      * @var \Illuminate\Session\Store
@@ -26,12 +19,14 @@ class Redirector
 
     /**
      * Create a new Redirector instance.
-     *
-     * @param  \Illuminate\Routing\UrlGenerator  $generator
      */
-    public function __construct(UrlGenerator $generator)
+    public function __construct(
+        /**
+         * The URL generator instance.
+         */
+        protected \Illuminate\Routing\UrlGenerator $generator
+    )
     {
-        $this->generator = $generator;
     }
 
     /**
@@ -207,7 +202,7 @@ class Redirector
      */
     protected function createRedirect($path, $status, $headers)
     {
-        return tap(new RedirectResponse($path, $status, $headers), function ($redirect) {
+        return tap(new RedirectResponse($path, $status, $headers), function ($redirect): void {
             if (isset($this->session)) {
                 $redirect->setSession($this->session);
             }
@@ -228,11 +223,8 @@ class Redirector
 
     /**
      * Set the active session store.
-     *
-     * @param  \Illuminate\Session\Store  $session
-     * @return void
      */
-    public function setSession(SessionStore $session)
+    public function setSession(SessionStore $session): void
     {
         $this->session = $session;
     }
@@ -253,7 +245,7 @@ class Redirector
      * @param  string  $url
      * @return $this
      */
-    public function setIntendedUrl($url)
+    public function setIntendedUrl($url): static
     {
         $this->session->put('url.intended', $url);
 
