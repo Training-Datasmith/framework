@@ -62,6 +62,6 @@ class CommandBuilder
      */
     protected function ensureCorrectUser(Event $event, string $command): string
     {
-        return $event->user && ! windows_os() ? 'sudo -u '.$event->user.' -- sh -c \''.$command.'\'' : $command;
+        return $event->user && ! windows_os() ? 'sudo -u '.escapeshellarg($event->user).' -- sh -c \''.$command.'\'' : $command;
     }
 }

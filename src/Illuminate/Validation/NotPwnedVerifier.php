@@ -53,7 +53,7 @@ class NotPwnedVerifier implements UncompromisedVerifier
             ->contains(function ($line) use ($hash, $hashPrefix, $threshold): bool {
                 [$hashSuffix, $count] = explode(':', $line);
 
-                return $hashPrefix.$hashSuffix == $hash && $count > $threshold;
+                return hash_equals($hash, $hashPrefix.$hashSuffix) && $count > $threshold;
             });
     }
 

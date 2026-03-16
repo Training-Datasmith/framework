@@ -21,7 +21,7 @@ class EmailVerificationRequest extends FormRequest
             return false;
         }
 
-        if (! hash_equals(sha1((string) $this->user()->getEmailForVerification()), (string) $this->route('hash'))) {
+        if (! hash_equals(hash('sha256', (string) $this->user()->getEmailForVerification()), (string) $this->route('hash'))) {
             return false;
         }
 
