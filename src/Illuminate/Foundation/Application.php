@@ -185,9 +185,16 @@ class Application extends Container implements Application_Contract, Caches_Conf
     /**
      * Create a new Illuminate application instance.
      *
-     * @param  string|null  $basePath
+     * Bootstraps the IoC container, registers core bindings (app, container,
+     * Mix, PackageManifest), boots the four base service providers (Events, Log,
+     * Context, Routing), and registers all core container aliases.
+     *
+     * @param  string|null  $base_path  Absolute path to the application root directory.
+     *                                  When null, the path is inferred via {@see infer_base_path()}.
+     *
+     * @since 4.0
      */
-    public function __construct($base_path = null)
+    public function __construct(?string $base_path = null)
     {
         if ($base_path) {
             $this->set_base_path($base_path);
@@ -199,6 +206,19 @@ class Application extends Container implements Application_Contract, Caches_Conf
     }
     /**
      * Begin configuring a new Laravel application instance.
+     *
+     * Returns a fluent builder that lets callers wire up kernels, event listeners,
+     * Artisan commands, and service providers in a single expressive chain:
+     *
+     *     Application::configure(basePath: __DIR__.'/..')
+     *         ->withRouting(web: __DIR__.'/../routes/web.php')
+     *         ->create();
+     *
+     * @param  string|null  $base_path  Absolute path to the application root.
+     *                                  When null, the path is inferred automatically.
+     * @return \Illuminate\Foundation\Configuration\Application_Builder
+     *
+     * @since 11.0
      */
     public static function configure(?string $base_path = null): \Illuminate\Foundation\Configuration\Application_Builder
     {
@@ -211,9 +231,16 @@ class Application extends Container implements Application_Contract, Caches_Conf
     /**
      * Infer the application's base directory from the environment.
      *
-     * @return string
+     * Resolution order:
+     * 1. `$_ENV['APP_BASE_PATH']`
+     * 2. `$_SERVER['APP_BASE_PATH']`
+     * 3. Parent directory of the first non-phar Composer autoloader path.
+     *
+     * @return string  Absolute path to the inferred application root.
+     *
+     * @since 11.0
      */
-    public static function infer_base_path()
+    public static function infer_base_path(): string
     {
         return match (true) {
             isset($_ENV['APP_BASE_PATH']) => $_ENV['APP_BASE_PATH'],

@@ -431,9 +431,16 @@ class Builder implements Builder_Contract
     /**
      * Find a model by its primary key.
      *
-     * @param  mixed  $id
-     * @param  array|string  $columns
+     * When $id is an array or Arrayable, delegates to {@see findMany()} which
+     * executes a single `WHERE id IN (...)` query.
+     *
+     * @param  mixed              $id       Primary key value, or array/Arrayable of keys.
+     * @param  array|string       $columns  Columns to select (default: all).
      * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TModel> : TModel|null)
+     *
+     * @complexity O(1) database round-trip for a single ID; O(1) for a batch of IDs via IN clause.
+     * @see findOrFail()  To throw instead of returning null.
+     * @since 4.0
      */
     public function find($id, $columns = ['*'])
     {
@@ -696,8 +703,22 @@ class Builder implements Builder_Contract
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array|string  $columns
+     * Applies all registered global scopes, executes the query, and then
+     * eager-loads any relations registered via {@see with()}.
+     *
+     * WARNING: Calling this without eager-loading relations that are accessed
+     * in a loop will cause N+1 queries. Enable `Model::preventLazyLoading()`
+     * in development to detect this automatically.
+     *
+     * @param  array|string  $columns  Columns to select (default: all).
      * @return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     *
+     * @complexity O(n) where n = number of result rows; eager-loading adds
+     *             one query per distinct relation.
+     * @see with()           To register eager-loaded relations.
+     * @see chunk()          For memory-efficient iteration over large sets.
+     * @see lazy()           For cursor-based lazy iteration.
+     * @since 4.0
      */
     public function get($columns = ['*'])
     {
@@ -723,10 +744,18 @@ class Builder implements Builder_Contract
     /**
      * Eager load the relationships for the models.
      *
-     * @param  array<int, TModel>  $models
-     * @return array<int, TModel>
+     * Executes one additional query per distinct top-level relation name in
+     * `$this->eager_load`. Nested relations (dot-notation) are handled
+     * recursively by the relation query.
+     *
+     * @param  array<int, TModel>  $models  The hydrated parent models to attach relations to.
+     * @return array<int, TModel>           The same models with relations populated.
+     *
+     * @complexity O(r) additional queries where r = number of distinct relations.
+     * @see get()  Which calls this automatically after fetching results.
+     * @since 4.0
      */
-    public function eager_load_relations(array $models)
+    public function eager_load_relations(array $models): array
     {
         foreach ($this->eager_load as $name => $constraints) {
             // For nested eager loads we'll skip loading them here and they will be set as an

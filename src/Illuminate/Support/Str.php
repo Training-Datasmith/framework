@@ -78,9 +78,12 @@ class Str
     /**
      * Get a new stringable object from the given string.
      *
-     * @param  string  $string
+     * @param  string  $string  The raw string to wrap in a fluent Stringable instance.
+     * @return \Illuminate\Support\Stringable
+     *
+     * @since 5.5
      */
-    public static function of($string): \Illuminate\Support\Stringable
+    public static function of(string $string): \Illuminate\Support\Stringable
     {
         return new Stringable($string);
     }
@@ -88,11 +91,15 @@ class Str
     /**
      * Return the remainder of a string after the first occurrence of a given value.
      *
-     * @param  string  $subject
-     * @param  string  $search
-     * @return string
+     * If the search string is not found, the original subject is returned unchanged.
+     *
+     * @param  string  $subject    The string to search within.
+     * @param  string  $search     The delimiter to search for.
+     * @return string              Everything after the first occurrence of $search.
+     *
+     * @since 5.4
      */
-    public static function after($subject, $search)
+    public static function after(string $subject, string $search): string
     {
         return $search === '' ? $subject : array_reverse(explode($search, $subject, 2))[0];
     }
@@ -100,11 +107,15 @@ class Str
     /**
      * Return the remainder of a string after the last occurrence of a given value.
      *
-     * @param  string  $subject
-     * @param  string  $search
-     * @return string
+     * If the search string is not found, the original subject is returned unchanged.
+     *
+     * @param  string  $subject    The string to search within.
+     * @param  string  $search     The delimiter to search for.
+     * @return string              Everything after the last occurrence of $search.
+     *
+     * @since 5.4
      */
-    public static function afterLast($subject, $search)
+    public static function afterLast(string $subject, string $search): string
     {
         if ($search === '') {
             return $subject;
@@ -122,11 +133,16 @@ class Str
     /**
      * Transliterate a UTF-8 value to ASCII.
      *
-     * @param  string  $value
-     * @param  string  $language
-     * @return string
+     * Uses the voku/portable-ascii library to map Unicode characters to their
+     * closest ASCII equivalents using language-specific transliteration tables.
+     *
+     * @param  string  $value     The UTF-8 string to convert.
+     * @param  string  $language  BCP 47 language tag used for transliteration rules (default: 'en').
+     * @return string             ASCII representation of the input string.
+     *
+     * @since 5.1
      */
-    public static function ascii($value, $language = 'en')
+    public static function ascii(string $value, string $language = 'en'): string
     {
         return ASCII::to_ascii((string) $value, $language, replace_single_chars_only: false);
     }
@@ -134,12 +150,17 @@ class Str
     /**
      * Transliterate a string to its closest ASCII representation.
      *
-     * @param  string  $string
-     * @param  string|null  $unknown
-     * @param  bool|null  $strict
-     * @return string
+     * Unlike {@see ascii()}, this method replaces unrecognised characters with
+     * the $unknown placeholder rather than dropping them.
+     *
+     * @param  string       $string   The string to transliterate.
+     * @param  string|null  $unknown  Placeholder for characters that cannot be transliterated (default: '?').
+     * @param  bool|null    $strict   Whether to apply strict transliteration rules.
+     * @return string                 Transliterated ASCII string.
+     *
+     * @since 7.x
      */
-    public static function transliterate($string, $unknown = '?', $strict = false)
+    public static function transliterate(string $string, ?string $unknown = '?', ?bool $strict = false): string
     {
         return ASCII::to_transliterate($string, $unknown, $strict);
     }
@@ -147,11 +168,15 @@ class Str
     /**
      * Get the portion of a string before the first occurrence of a given value.
      *
-     * @param  string  $subject
-     * @param  string  $search
-     * @return string
+     * If the search string is empty or not found, the original subject is returned.
+     *
+     * @param  string  $subject  The string to search within.
+     * @param  string  $search   The delimiter to search for.
+     * @return string            Everything before the first occurrence of $search.
+     *
+     * @since 5.4
      */
-    public static function before($subject, $search)
+    public static function before(string $subject, string $search): string
     {
         if ($search === '') {
             return $subject;
@@ -165,11 +190,15 @@ class Str
     /**
      * Get the portion of a string before the last occurrence of a given value.
      *
-     * @param  string  $subject
-     * @param  string  $search
-     * @return string
+     * If the search string is empty or not found, the original subject is returned.
+     *
+     * @param  string  $subject  The string to search within.
+     * @param  string  $search   The delimiter to search for.
+     * @return string            Everything before the last occurrence of $search.
+     *
+     * @since 5.4
      */
-    public static function beforeLast($subject, $search)
+    public static function beforeLast(string $subject, string $search): string
     {
         if ($search === '') {
             return $subject;
@@ -187,12 +216,18 @@ class Str
     /**
      * Get the portion of a string between two given values.
      *
-     * @param  string  $subject
-     * @param  string  $from
-     * @param  string  $to
-     * @return string
+     * Returns the substring between the first occurrence of $from and the last
+     * occurrence of $to. If either delimiter is empty, the original subject is returned.
+     *
+     * @param  string  $subject  The string to extract from.
+     * @param  string  $from     The opening delimiter.
+     * @param  string  $to       The closing delimiter.
+     * @return string            The portion of $subject between $from and $to.
+     *
+     * @see betweenFirst() For extracting between the first pair of delimiters.
+     * @since 5.4
      */
-    public static function between($subject, $from, $to)
+    public static function between(string $subject, string $from, string $to): string
     {
         if ($from === '' || $to === '') {
             return $subject;
@@ -204,12 +239,18 @@ class Str
     /**
      * Get the smallest possible portion of a string between two given values.
      *
-     * @param  string  $subject
-     * @param  string  $from
-     * @param  string  $to
-     * @return string
+     * Returns the substring between the first occurrence of $from and the next
+     * occurrence of $to. If either delimiter is empty, the original subject is returned.
+     *
+     * @param  string  $subject  The string to extract from.
+     * @param  string  $from     The opening delimiter.
+     * @param  string  $to       The closing delimiter.
+     * @return string            The smallest portion of $subject between $from and $to.
+     *
+     * @see between() For extracting between the outermost pair of delimiters.
+     * @since 8.x
      */
-    public static function betweenFirst($subject, $from, $to)
+    public static function betweenFirst(string $subject, string $from, string $to): string
     {
         if ($from === '' || $to === '') {
             return $subject;
@@ -249,11 +290,15 @@ class Str
     /**
      * Remove the given string(s) if it exists at the start of the haystack.
      *
-     * @param  string  $subject
-     * @param  string|string[]  $needle
-     * @return string
+     * Only the first matching needle is removed. The check is multibyte-safe.
+     *
+     * @param  string          $subject  The string to trim.
+     * @param  string|string[] $needle   One or more prefixes to remove.
+     * @return string                    The string with the matching prefix removed.
+     *
+     * @since 10.x
      */
-    public static function chopStart($subject, $needle)
+    public static function chopStart(string $subject, string|array $needle): string
     {
         foreach ((array) $needle as $n) {
             if ($n !== '' && str_starts_with($subject, $n)) {
@@ -267,11 +312,15 @@ class Str
     /**
      * Remove the given string(s) if it exists at the end of the haystack.
      *
-     * @param  string  $subject
-     * @param  string|string[]  $needle
-     * @return string
+     * Only the first matching needle is removed. The check is multibyte-safe.
+     *
+     * @param  string          $subject  The string to trim.
+     * @param  string|string[] $needle   One or more suffixes to remove.
+     * @return string                    The string with the matching suffix removed.
+     *
+     * @since 10.x
      */
-    public static function chopEnd($subject, $needle)
+    public static function chopEnd(string $subject, string|array $needle): string
     {
         foreach ((array) $needle as $n) {
             if ($n !== '' && str_ends_with($subject, $n)) {
@@ -708,12 +757,19 @@ class Str
     /**
      * Limit the number of characters in a string.
      *
-     * @param  string  $value
-     * @param  int  $limit
-     * @param  bool  $preserveWords
-     * @return string
+     * When $preserveWords is true, the string is truncated on a word boundary
+     * so that no word is split in the middle.
+     *
+     * @param  string  $value         The string to truncate.
+     * @param  int     $limit         Maximum number of characters to allow (default: 100).
+     * @param  string  $end           Suffix appended when the string is truncated (default: '...').
+     * @param  bool    $preserveWords Whether to break only on word boundaries.
+     * @return string                 Truncated string, with $end appended if truncation occurred.
+     *
+     * @complexity O(n) proportional to the length of $value.
+     * @since 5.0
      */
-    public static function limit($value, $limit = 100, string $end = '...', $preserveWords = false)
+    public static function limit(string $value, int $limit = 100, string $end = '...', bool $preserveWords = false): string
     {
         if (mb_strwidth($value, 'UTF-8') <= $limit) {
             return $value;
@@ -748,11 +804,17 @@ class Str
     /**
      * Limit the number of words in a string.
      *
-     * @param  string  $value
-     * @param  int  $words
-     * @return string
+     * Counts whitespace-separated tokens and appends $end if the string was truncated.
+     *
+     * @param  string  $value  The string to truncate.
+     * @param  int     $words  Maximum number of words to allow (default: 100).
+     * @param  string  $end    Suffix appended when the string is truncated (default: '...').
+     * @return string          Truncated string, with $end appended if truncation occurred.
+     *
+     * @complexity O(n) proportional to the length of $value.
+     * @since 4.0
      */
-    public static function words($value, $words = 100, string $end = '...')
+    public static function words(string $value, int $words = 100, string $end = '...'): string
     {
         preg_match('/^\s*+(?:\S++\s*+){1,'.$words.'}/u', $value, $matches);
 
@@ -809,14 +871,19 @@ class Str
     /**
      * Masks a portion of a string with a repeated character.
      *
-     * @param  string  $string
-     * @param  string  $character
-     * @param  int  $index
-     * @param  int|null  $length
-     * @param  string  $encoding
-     * @return string
+     * Useful for obscuring sensitive data such as credit card numbers or email addresses.
+     * Negative $index values count from the end of the string.
+     *
+     * @param  string    $string     The original string to mask.
+     * @param  string    $character  The masking character (only first char is used).
+     * @param  int       $index      Start position; negative values count from the end.
+     * @param  int|null  $length     Number of characters to mask; null masks to end of string.
+     * @param  string    $encoding   Multibyte encoding to use (default: 'UTF-8').
+     * @return string                The string with the specified portion replaced by $character.
+     *
+     * @since 8.x
      */
-    public static function mask($string, $character, $index, $length = null, $encoding = 'UTF-8')
+    public static function mask(string $string, string $character, int $index, ?int $length = null, string $encoding = 'UTF-8'): string
     {
         if ($character === '') {
             return $string;
@@ -990,10 +1057,21 @@ class Str
     /**
      * Pluralize the last word of an English, studly caps case string.
      *
-     * @param  string  $value
-     * @param  int|array|\Countable  $count
+     * Splits the StudlyCase string on word boundaries using a regex lookahead,
+     * pluralises the last word, then reassembles the parts.
+     *
+     * @param  string               $value  StudlyCase string, e.g. 'ServiceProvider'.
+     * @param  int|array|\Countable $count  Item count used to decide singular vs plural.
+     * @return string               The string with its last word pluralised.
+     *
+     * @complexity O(n) where n = length of $value (regex split + Inflector lookup).
+     * @see plural()  For simple (non-StudlyCase) pluralisation.
+     * @deprecated 12.x — Use {@see pluralPascal()} which has an identical implementation
+     *             and a more accurate name. This alias will be removed in a future major version.
+     *
+     * @since 5.4
      */
-    public static function pluralStudly($value, $count = 2): string
+    public static function pluralStudly(string $value, int|array|\Countable $count = 2): string
     {
         $parts = preg_split('/(.)(?=[A-Z])/u', $value, -1, PREG_SPLIT_DELIM_CAPTURE);
 
@@ -1073,10 +1151,21 @@ class Str
     /**
      * Generate a more truly "random" alpha-numeric string.
      *
-     * @param  int  $length
-     * @return string
+     * Uses `random_bytes()` (CSPRNG) as the entropy source, making the output
+     * suitable for security-sensitive tokens such as password reset links and
+     * API keys. The output alphabet is URL-safe base64 minus `+`, `/`, and `=`.
+     *
+     * The default factory can be overridden for testing via
+     * {@see createRandomStringsUsing()} or {@see createRandomStringsUsingSequence()}.
+     *
+     * @param  int  $length  Number of characters to generate (default: 16).
+     * @return string        Cryptographically random alphanumeric string.
+     *
+     * @complexity O(n) where n = $length.
+     * @see createRandomStringsUsing() To replace the factory in tests.
+     * @since 4.0
      */
-    public static function random($length = 16)
+    public static function random(int $length = 16): string
     {
         return (static::$randomStringFactory ?? function ($length): string {
             $string = '';

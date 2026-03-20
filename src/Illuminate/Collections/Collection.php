@@ -601,21 +601,32 @@ class Collection implements ArrayAccess, Can_Be_Escaped_When_Cast_To_String, Enu
      *
      * @param  (callable(TValue, TKey): bool)|null  $callback
      *
-     * @deprecated 12.49.0 Use the `hasSole()` method instead.
+     * @deprecated 12.49.0 — Use {@see hasSole()} instead. This method will be removed in a future major version.
      */
     public function contains_one_item(?callable $callback = null): bool
     {
+        trigger_error(
+            'Collection::contains_one_item() is deprecated since 12.49.0. Use hasSole() instead.',
+            E_USER_DEPRECATED
+        );
+
         return $this->has_sole($callback);
     }
+
     /**
      * Determine if the collection contains multiple items.
      *
      * @param  (callable(TValue, TKey): bool)|null  $callback
      *
-     * @deprecated 12.50.0 Use the `hasMany()` method instead.
+     * @deprecated 12.50.0 — Use {@see hasMany()} instead. This method will be removed in a future major version.
      */
     public function contains_many_items(?callable $callback = null): bool
     {
+        trigger_error(
+            'Collection::contains_many_items() is deprecated since 12.50.0. Use hasMany() instead.',
+            E_USER_DEPRECATED
+        );
+
         return $this->has_many($callback);
     }
     /**

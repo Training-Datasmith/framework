@@ -89,12 +89,21 @@ abstract class Relation implements Builder_Contract
     /**
      * Run a callback with constraints disabled on the relation.
      *
+     * The static `$constraints` flag is temporarily set to `false` while the
+     * callback executes, preventing {@see addConstraints()} from adding its
+     * usual WHERE clauses. This is used internally during eager loading to
+     * build an unconstrained query that can then have batch constraints applied.
+     *
+     * The flag is always restored (even on exception) via a `finally` block.
+     *
      * @template TReturn of mixed
      *
-     * @param  Closure(): TReturn  $callback
-     * @return TReturn
+     * @param  Closure(): TReturn  $callback  The callback to run without constraints.
+     * @return TReturn                        The return value of the callback.
+     *
+     * @since 4.0
      */
-    public static function no_constraints(Closure $callback)
+    public static function no_constraints(Closure $callback): mixed
     {
         $previous = static::$constraints;
         static::$constraints = false;
@@ -110,39 +119,72 @@ abstract class Relation implements Builder_Contract
     /**
      * Set the base constraints on the relation query.
      *
+     * Called from the constructor. Implementations should add the minimal set of
+     * WHERE clauses needed to scope the query to the parent model — typically a
+     * foreign key match (e.g. `WHERE user_id = ?`).
+     *
      * @return void
+     *
+     * @since 4.0
      */
-    abstract public function add_constraints();
+    abstract public function add_constraints(): void;
+
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array<int, TDeclaringModel>  $models
+     * Called during eager loading with the full set of parent models. Unlike
+     * {@see addConstraints()}, this should constrain to ALL parent IDs at once
+     * (e.g. `WHERE user_id IN (?)`).
+     *
+     * @param  array<int, TDeclaringModel>  $models  The parent models being eager-loaded.
      * @return void
+     *
+     * @complexity O(n) where n = count($models).
+     * @since 4.0
      */
-    abstract public function add_eager_constraints(array $models);
+    abstract public function add_eager_constraints(array $models): void;
+
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array<int, TDeclaringModel>  $models
-     * @param  string  $relation
-     * @return array<int, TDeclaringModel>
+     * Sets the default value for the relation (e.g. an empty collection for
+     * hasMany, or null for hasOne) on each parent model before results are matched.
+     *
+     * @param  array<int, TDeclaringModel>  $models    The parent models to initialise.
+     * @param  string                       $relation  The relation name (used as the property name).
+     * @return array<int, TDeclaringModel>             The same models with the relation initialised.
+     *
+     * @since 4.0
      */
-    abstract public function init_relation(array $models, $relation);
+    abstract public function init_relation(array $models, string $relation): array;
+
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array<int, TDeclaringModel>  $models
-     * @param  \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>  $results
-     * @param  string  $relation
-     * @return array<int, TDeclaringModel>
+     * Distributes the eager-loaded $results across the $models array, setting
+     * the relation property on each parent to its corresponding related model(s).
+     *
+     * @param  array<int, TDeclaringModel>                                   $models    Parent models to populate.
+     * @param  \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>  $results   All eagerly loaded related models.
+     * @param  string                                                         $relation  Relation name (property to set on parent).
+     * @return array<int, TDeclaringModel>                                              Models with the relation populated.
+     *
+     * @complexity O(n+m) where n = count($models) and m = count($results).
+     * @since 4.0
      */
-    abstract public function match(array $models, Eloquent_Collection $results, $relation);
+    abstract public function match(array $models, Eloquent_Collection $results, string $relation): array;
+
     /**
      * Get the results of the relationship.
      *
+     * For single-result relations (HasOne, BelongsTo), returns the related model
+     * or null. For collection relations (HasMany, BelongsToMany), returns a Collection.
+     *
      * @return TResult
+     *
+     * @since 4.0
      */
-    abstract public function get_results();
+    abstract public function get_results(): mixed;
     /**
      * Get the relationship for eager loading.
      *

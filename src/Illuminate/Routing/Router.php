@@ -144,11 +144,16 @@ class Router implements BindingRegistrar, RegistrarContract
     /**
      * Register a new GET route with the router.
      *
-     * @param  string  $uri
-     * @param  array|string|callable|null  $action
+     * Automatically registers a HEAD route for the same URI so that
+     * HTTP HEAD requests are handled correctly.
+     *
+     * @param  string                          $uri     The URI pattern, e.g. '/users/{id}'.
+     * @param  array|string|callable|null      $action  Controller action or closure to execute.
      * @return \Illuminate\Routing\Route
+     *
+     * @since 4.0
      */
-    public function get($uri, $action = null)
+    public function get(string $uri, array|string|callable|null $action = null): Route
     {
         return $this->addRoute(['GET', 'HEAD'], $uri, $action);
     }
@@ -156,11 +161,13 @@ class Router implements BindingRegistrar, RegistrarContract
     /**
      * Register a new POST route with the router.
      *
-     * @param  string  $uri
-     * @param  array|string|callable|null  $action
+     * @param  string                          $uri     The URI pattern, e.g. '/users'.
+     * @param  array|string|callable|null      $action  Controller action or closure to execute.
      * @return \Illuminate\Routing\Route
+     *
+     * @since 4.0
      */
-    public function post($uri, $action = null)
+    public function post(string $uri, array|string|callable|null $action = null): Route
     {
         return $this->addRoute('POST', $uri, $action);
     }
@@ -168,11 +175,13 @@ class Router implements BindingRegistrar, RegistrarContract
     /**
      * Register a new PUT route with the router.
      *
-     * @param  string  $uri
-     * @param  array|string|callable|null  $action
+     * @param  string                          $uri     The URI pattern, e.g. '/users/{id}'.
+     * @param  array|string|callable|null      $action  Controller action or closure to execute.
      * @return \Illuminate\Routing\Route
+     *
+     * @since 4.0
      */
-    public function put($uri, $action = null)
+    public function put(string $uri, array|string|callable|null $action = null): Route
     {
         return $this->addRoute('PUT', $uri, $action);
     }
@@ -180,11 +189,13 @@ class Router implements BindingRegistrar, RegistrarContract
     /**
      * Register a new PATCH route with the router.
      *
-     * @param  string  $uri
-     * @param  array|string|callable|null  $action
+     * @param  string                          $uri     The URI pattern, e.g. '/users/{id}'.
+     * @param  array|string|callable|null      $action  Controller action or closure to execute.
      * @return \Illuminate\Routing\Route
+     *
+     * @since 4.0
      */
-    public function patch($uri, $action = null)
+    public function patch(string $uri, array|string|callable|null $action = null): Route
     {
         return $this->addRoute('PATCH', $uri, $action);
     }
@@ -192,11 +203,13 @@ class Router implements BindingRegistrar, RegistrarContract
     /**
      * Register a new DELETE route with the router.
      *
-     * @param  string  $uri
-     * @param  array|string|callable|null  $action
+     * @param  string                          $uri     The URI pattern, e.g. '/users/{id}'.
+     * @param  array|string|callable|null      $action  Controller action or closure to execute.
      * @return \Illuminate\Routing\Route
+     *
+     * @since 4.0
      */
-    public function delete($uri, $action = null)
+    public function delete(string $uri, array|string|callable|null $action = null): Route
     {
         return $this->addRoute('DELETE', $uri, $action);
     }
@@ -204,11 +217,13 @@ class Router implements BindingRegistrar, RegistrarContract
     /**
      * Register a new OPTIONS route with the router.
      *
-     * @param  string  $uri
-     * @param  array|string|callable|null  $action
+     * @param  string                          $uri     The URI pattern, e.g. '/users'.
+     * @param  array|string|callable|null      $action  Controller action or closure to execute.
      * @return \Illuminate\Routing\Route
+     *
+     * @since 4.0
      */
-    public function options($uri, $action = null)
+    public function options(string $uri, array|string|callable|null $action = null): Route
     {
         return $this->addRoute('OPTIONS', $uri, $action);
     }
@@ -216,11 +231,15 @@ class Router implements BindingRegistrar, RegistrarContract
     /**
      * Register a new route responding to all verbs.
      *
-     * @param  string  $uri
-     * @param  array|string|callable|null  $action
+     * Registers the route for GET, HEAD, POST, PUT, PATCH, DELETE, and OPTIONS.
+     *
+     * @param  string                          $uri     The URI pattern.
+     * @param  array|string|callable|null      $action  Controller action or closure to execute.
      * @return \Illuminate\Routing\Route
+     *
+     * @since 4.0
      */
-    public function any($uri, $action = null)
+    public function any(string $uri, array|string|callable|null $action = null): Route
     {
         return $this->addRoute(self::$verbs, $uri, $action);
     }
@@ -258,11 +277,17 @@ class Router implements BindingRegistrar, RegistrarContract
     /**
      * Create a permanent redirect from one URI to another.
      *
-     * @param  string  $uri
-     * @param  string  $destination
+     * Registers a 301 Moved Permanently redirect, which instructs browsers and
+     * search engines to update their bookmarks/indexes to the new destination URL.
+     *
+     * @param  string  $uri          The source URI pattern to redirect from.
+     * @param  string  $destination  The target URL or URI to redirect to.
      * @return \Illuminate\Routing\Route
+     *
+     * @see redirect() For temporary (302) redirects.
+     * @since 5.5
      */
-    public function permanentRedirect($uri, $destination)
+    public function permanentRedirect(string $uri, string $destination): Route
     {
         return $this->redirect($uri, $destination, 301);
     }
@@ -289,12 +314,17 @@ class Router implements BindingRegistrar, RegistrarContract
     /**
      * Register a new route with the given verbs.
      *
-     * @param  array|string  $methods
-     * @param  string  $uri
-     * @param  array|string|callable|null  $action
+     * Useful for registering a single route that responds to multiple HTTP methods,
+     * e.g. accepting both GET and POST on the same endpoint.
+     *
+     * @param  array|string                    $methods  One or more HTTP verbs (case-insensitive).
+     * @param  string                          $uri      The URI pattern.
+     * @param  array|string|callable|null      $action   Controller action or closure to execute.
      * @return \Illuminate\Routing\Route
+     *
+     * @since 4.0
      */
-    public function match($methods, $uri, $action = null)
+    public function match(array|string $methods, string $uri, array|string|callable|null $action = null): Route
     {
         return $this->addRoute(array_map(strtoupper(...), (array) $methods), $uri, $action);
     }

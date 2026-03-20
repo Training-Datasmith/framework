@@ -67,64 +67,106 @@ class Request extends Symfony_Request implements Arrayable, ArrayAccess
     /**
      * Create a new Illuminate HTTP request from server variables.
      *
-     * @return static
+     * Enables HTTP method parameter override (X-HTTP-Method-Override header / _method
+     * form field) and wraps the Symfony request built from PHP's superglobals.
+     *
+     * @return static  The current HTTP request populated from $_SERVER / $_REQUEST.
+     *
+     * @since 4.0
      */
-    public static function capture()
+    public static function capture(): static
     {
         static::enable_http_method_parameter_override();
         return static::create_from_base(Symfony_Request::create_from_globals());
     }
+
     /**
      * Return the Request instance.
      *
+     * Satisfies the Fluent interface contract; useful when injecting the request
+     * into view composers or other contexts that expect a fluent API.
+     *
      * @return $this
+     *
+     * @since 4.0
      */
-    public function instance()
+    public function instance(): static
     {
         return $this;
     }
+
     /**
      * Get the request method.
      *
-     * @return string
+     * Returns the effective HTTP verb (e.g. GET, POST, PUT, DELETE, PATCH) after
+     * applying any X-HTTP-Method-Override / _method override.
+     *
+     * @return string  Uppercase HTTP method name.
+     *
+     * @since 4.0
      */
-    public function method()
+    public function method(): string
     {
         return $this->get_method();
     }
+
     /**
      * Get a URI instance for the request.
      *
+     * Wraps the full URL in an {@see \Illuminate\Support\Uri} value object that
+     * exposes a fluent API for reading and modifying URL components.
+     *
      * @return \Illuminate\Support\Uri
+     *
+     * @since 11.x
      */
-    public function uri()
+    public function uri(): Uri
     {
         return Uri::of($this->full_url());
     }
+
     /**
      * Get the root URL for the application.
      *
+     * Returns scheme + host + base path with no trailing slash.
+     * Example: `https://example.com`
+     *
      * @return string
+     *
+     * @since 4.0
      */
-    public function root()
+    public function root(): string
     {
         return rtrim($this->get_scheme_and_http_host() . $this->get_base_url(), '/');
     }
+
     /**
      * Get the URL (no query string) for the request.
      *
-     * @return string
+     * Strips the query string from the full request URI and removes
+     * the trailing slash.
+     *
+     * @return string  Absolute URL without query parameters.
+     *
+     * @see full_url() To include the query string.
+     * @since 4.0
      */
-    public function url()
+    public function url(): string
     {
         return rtrim(preg_replace('/\?.*/', '', $this->get_uri()), '/');
     }
+
     /**
      * Get the full URL for the request.
      *
-     * @return string
+     * Includes the query string if present.
+     *
+     * @return string  Absolute URL including any query parameters.
+     *
+     * @see url() To exclude the query string.
+     * @since 4.0
      */
-    public function full_url()
+    public function full_url(): string
     {
         $query = $this->get_query_string();
         $question = $this->get_base_url() . $this->get_path_info() === '/' ? '/?' : '?';
@@ -133,9 +175,14 @@ class Request extends Symfony_Request implements Arrayable, ArrayAccess
     /**
      * Get the full URL for the request with the added query string parameters.
      *
-     * @return string
+     * Merges $query into any existing query string parameters.
+     *
+     * @param  array  $query  Associative array of parameters to append or override.
+     * @return string         Absolute URL with the merged query string.
+     *
+     * @since 5.3
      */
-    public function full_url_with_query(array $query)
+    public function full_url_with_query(array $query): string
     {
         $question = $this->get_base_url() . $this->get_path_info() === '/' ? '/?' : '?';
         return count($this->query()) > 0 ? $this->url() . $question . Arr::query(array_merge($this->query(), $query)) : $this->full_url() . $question . Arr::query($query);
@@ -143,10 +190,12 @@ class Request extends Symfony_Request implements Arrayable, ArrayAccess
     /**
      * Get the full URL for the request without the given query string parameters.
      *
-     * @param  array|string  $keys
-     * @return string
+     * @param  array|string  $keys  One or more query parameter keys to remove.
+     * @return string               Absolute URL with the specified parameters removed.
+     *
+     * @since 7.x
      */
-    public function full_url_without_query($keys)
+    public function full_url_without_query(array|string $keys): string
     {
         $query = Arr::except($this->query(), $keys);
         $question = $this->get_base_url() . $this->get_path_info() === '/' ? '/?' : '?';
@@ -155,115 +204,174 @@ class Request extends Symfony_Request implements Arrayable, ArrayAccess
     /**
      * Get the current path info for the request.
      *
-     * @return string
+     * Returns '/' for the root path; otherwise returns the path without leading
+     * or trailing slashes.
+     *
+     * @return string  URI path segment, e.g. 'users/42'.
+     *
+     * @since 4.0
      */
-    public function path()
+    public function path(): string
     {
         $pattern = trim($this->get_path_info(), '/');
         return $pattern === '' ? '/' : $pattern;
     }
+
     /**
      * Get the current decoded path info for the request.
      *
-     * @return string
+     * Percent-decodes the path returned by {@see path()} so that URL-encoded
+     * characters are converted to their literal equivalents.
+     *
+     * @return string  URL-decoded path, e.g. 'files/my document'.
+     *
+     * @since 5.x
      */
-    public function decoded_path()
+    public function decoded_path(): string
     {
         return rawurldecode($this->path());
     }
+
     /**
      * Get a segment from the URI (1 based index).
      *
-     * @param  int  $index
-     * @param  string|null  $default
-     * @return string|null
+     * Example: for the path `users/42/edit`, `segment(2)` returns `'42'`.
+     *
+     * @param  int          $index    One-based position of the segment.
+     * @param  string|null  $default  Value returned when the segment does not exist.
+     * @return string|null            The segment value, or $default if not present.
+     *
+     * @since 4.0
      */
-    public function segment($index, $default = null)
+    public function segment(int $index, ?string $default = null): ?string
     {
         return Arr::get($this->segments(), $index - 1, $default);
     }
+
     /**
      * Get all of the segments for the request path.
      *
-     * @return array
+     * Splits the decoded path on `/` and removes empty values caused by
+     * leading/trailing slashes.
+     *
+     * @return string[]  Indexed array of path segments.
+     *
+     * @since 4.0
      */
-    public function segments()
+    public function segments(): array
     {
         $segments = explode('/', $this->decoded_path());
         return array_values(array_filter($segments, fn($value): bool => $value !== ''));
     }
+
     /**
      * Determine if the current request URI matches a pattern.
      *
-     * @param  mixed  ...$patterns
-     * @return bool
+     * Supports `*` wildcards. Matching is performed against the decoded path.
+     *
+     * @param  mixed  ...$patterns  One or more glob-style patterns to test.
+     * @return bool                 True if any pattern matches the current path.
+     *
+     * @since 4.0
      */
-    public function is(...$patterns)
+    public function is(mixed ...$patterns): bool
     {
         return (new Collection($patterns))->contains(fn($pattern): bool => Str::is($pattern, $this->decoded_path()));
     }
+
     /**
      * Determine if the route name matches a given pattern.
      *
-     * @param  mixed  ...$patterns
-     * @return bool
+     * @param  mixed  ...$patterns  One or more route name patterns (supports `*`).
+     * @return bool                 True if the current route matches any pattern.
+     *
+     * @since 5.1
      */
-    public function route_is(...$patterns)
+    public function route_is(mixed ...$patterns): bool
     {
         return $this->route() && $this->route()->named(...$patterns);
     }
+
     /**
      * Determine if the current request URL and query string match a pattern.
      *
-     * @param  mixed  ...$patterns
-     * @return bool
+     * Supports `*` wildcards. Matching is performed against the full URL
+     * including the query string.
+     *
+     * @param  mixed  ...$patterns  One or more glob-style URL patterns to test.
+     * @return bool                 True if any pattern matches the full URL.
+     *
+     * @since 5.1
      */
-    public function full_url_is(...$patterns)
+    public function full_url_is(mixed ...$patterns): bool
     {
         return (new Collection($patterns))->contains(fn($pattern): bool => Str::is($pattern, $this->full_url()));
     }
+
     /**
      * Get the host name.
      *
-     * @return string
+     * @return string  Hostname without port, e.g. 'example.com'.
+     *
+     * @since 4.0
      */
-    public function host()
+    public function host(): string
     {
         return $this->get_host();
     }
+
     /**
      * Get the HTTP host being requested.
      *
-     * @return string
+     * Includes the port when it is non-standard (i.e. not 80/443).
+     *
+     * @return string  Hostname with optional port, e.g. 'example.com:8080'.
+     *
+     * @since 4.0
      */
-    public function http_host()
+    public function http_host(): string
     {
         return $this->get_http_host();
     }
+
     /**
      * Get the scheme and HTTP host.
      *
-     * @return string
+     * @return string  Scheme and host, e.g. 'https://example.com'.
+     *
+     * @since 4.0
      */
-    public function scheme_and_http_host()
+    public function scheme_and_http_host(): string
     {
         return $this->get_scheme_and_http_host();
     }
+
     /**
      * Determine if the request is the result of an AJAX call.
      *
-     * @return bool
+     * Checks for the `X-Requested-With: XMLHttpRequest` header which is sent
+     * by most JavaScript HTTP clients.
+     *
+     * @return bool  True when the request was made via XMLHttpRequest.
+     *
+     * @since 4.0
      */
-    public function ajax()
+    public function ajax(): bool
     {
         return $this->is_xml_http_request();
     }
+
     /**
      * Determine if the request is the result of a PJAX call.
      *
-     * @return bool
+     * Checks for the `X-PJAX` header used by the PJAX JavaScript library for
+     * partial page reloads.
+     *
+     * @return bool  True when the request was made via PJAX.
+     *
+     * @since 4.0
      */
-    public function pjax()
+    public function pjax(): bool
     {
         return $this->headers->get('X-PJAX') == true;
     }

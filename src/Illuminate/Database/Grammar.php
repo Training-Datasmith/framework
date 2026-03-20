@@ -242,25 +242,39 @@ abstract class Grammar
     /**
      * Get the grammar's table prefix.
      *
-     * @deprecated Use DB::getTablePrefix()
-     *
      * @return string
+     *
+     * @deprecated — Use {@see \Illuminate\Database\Connection::get_table_prefix()} via `DB::getTablePrefix()` instead.
+     *              This method will be removed in a future major version.
      */
-    public function get_table_prefix()
+    public function get_table_prefix(): string
     {
+        trigger_error(
+            'Grammar::get_table_prefix() is deprecated. Use DB::getTablePrefix() instead.',
+            E_USER_DEPRECATED
+        );
+
         return $this->connection->get_table_prefix();
     }
+
     /**
      * Set the grammar's table prefix.
      *
-     * @deprecated Use DB::setTablePrefix()
-     *
-     * @param  string  $prefix
+     * @param  string  $prefix  The new table prefix to apply.
      * @return $this
+     *
+     * @deprecated — Use {@see \Illuminate\Database\Connection::set_table_prefix()} via `DB::setTablePrefix()` instead.
+     *              This method will be removed in a future major version.
      */
-    public function set_table_prefix($prefix)
+    public function set_table_prefix(string $prefix): static
     {
+        trigger_error(
+            'Grammar::set_table_prefix() is deprecated. Use DB::setTablePrefix() instead.',
+            E_USER_DEPRECATED
+        );
+
         $this->connection->set_table_prefix($prefix);
+
         return $this;
     }
 }
