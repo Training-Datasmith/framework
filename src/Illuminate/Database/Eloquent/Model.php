@@ -1410,7 +1410,7 @@ abstract class Model implements Arrayable, ArrayAccess, Can_Be_Escaped_When_Cast
      */
     public function has_named_scope(string $scope)
     {
-        return method_exists($this, 'scope' . ucfirst($scope)) || static::is_scope_method_with_attribute($scope);
+        return method_exists($this, 'scope_' . $scope) || static::is_scope_method_with_attribute($scope);
     }
     /**
      * Apply the given named scope if possible.
@@ -1423,7 +1423,7 @@ abstract class Model implements Arrayable, ArrayAccess, Can_Be_Escaped_When_Cast
         if (static::is_scope_method_with_attribute($scope)) {
             return $this->{$scope}(...$parameters);
         }
-        return $this->{'scope' . ucfirst($scope)}(...$parameters);
+        return $this->{'scope_' . $scope}(...$parameters);
     }
     /**
      * Determine if the given method has a scope attribute.

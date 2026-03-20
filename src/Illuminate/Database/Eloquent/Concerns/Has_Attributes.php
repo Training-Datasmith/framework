@@ -518,7 +518,7 @@ trait Has_Attributes
      */
     public function has_get_mutator($key): bool
     {
-        return method_exists($this, 'get' . Str::studly($key) . 'Attribute');
+        return method_exists($this, 'get_' . $key . '_attribute');
     }
     /**
      * Determine if a "Attribute" return type marked mutator exists for an attribute.
@@ -531,7 +531,7 @@ trait Has_Attributes
         if (isset(static::$attribute_mutator_cache[$this::class][$key])) {
             return static::$attribute_mutator_cache[$this::class][$key];
         }
-        if (!method_exists($this, $method = Str::camel($key))) {
+        if (!method_exists($this, $method = $key)) {
             return static::$attribute_mutator_cache[$this::class][$key] = false;
         }
         $return_type = (new ReflectionMethod($this, $method))->get_return_type();
@@ -551,7 +551,7 @@ trait Has_Attributes
         if (!$this->has_attribute_mutator($key)) {
             return static::$get_attribute_mutator_cache[$this::class][$key] = false;
         }
-        return static::$get_attribute_mutator_cache[$this::class][$key] = is_callable($this->{Str::camel($key)}()->get);
+        return static::$get_attribute_mutator_cache[$this::class][$key] = is_callable($this->{$key}()->get);
     }
     /**
      * Determine if any get mutator exists for an attribute.
@@ -575,7 +575,7 @@ trait Has_Attributes
     protected function mutate_attribute($key, $value)
     {
         $this->merge_attributes_from_cached_casts();
-        return $this->{'get' . Str::studly($key) . 'Attribute'}($value);
+        return $this->{'get_' . $key . '_attribute'}($value);
     }
     /**
      * Get the value of an "Attribute" return type marked attribute using its mutator.
@@ -590,7 +590,7 @@ trait Has_Attributes
             return $this->attribute_cast_cache[$key];
         }
         $this->merge_attributes_from_cached_casts();
-        $attribute = $this->{Str::camel($key)}();
+        $attribute = $this->{$key}();
         $value = call_user_func($attribute->get ?: fn($value) => $value, $value, $this->attributes);
         if ($attribute->with_caching || is_object($value) && $attribute->with_object_caching) {
             $this->attribute_cast_cache[$key] = $value;
@@ -903,7 +903,7 @@ trait Has_Attributes
      */
     public function has_set_mutator($key): bool
     {
-        return method_exists($this, 'set' . Str::studly($key) . 'Attribute');
+        return method_exists($this, 'set_' . $key . '_attribute');
     }
     /**
      * Determine if an "Attribute" return type marked set mutator exists for an attribute.
@@ -917,7 +917,7 @@ trait Has_Attributes
         if (isset(static::$set_attribute_mutator_cache[$class][$key])) {
             return static::$set_attribute_mutator_cache[$class][$key];
         }
-        if (!method_exists($this, $method = Str::camel($key))) {
+        if (!method_exists($this, $method = $key)) {
             return static::$set_attribute_mutator_cache[$class][$key] = false;
         }
         $return_type = (new ReflectionMethod($this, $method))->get_return_type();
@@ -933,7 +933,7 @@ trait Has_Attributes
     protected function set_mutated_attribute_value($key, $value)
     {
         $this->merge_attributes_from_cached_casts();
-        return $this->{'set' . Str::studly($key) . 'Attribute'}($value);
+        return $this->{'set_' . $key . '_attribute'}($value);
     }
     /**
      * Set the value of a "Attribute" return type marked attribute using its mutator.
@@ -945,7 +945,7 @@ trait Has_Attributes
     protected function set_attribute_marked_mutated_attribute_value($key, $value)
     {
         $this->merge_attributes_from_cached_casts();
-        $attribute = $this->{Str::camel($key)}();
+        $attribute = $this->{$key}();
         $callback = $attribute->set ?: function ($value) use ($key): void {
             $this->attributes[$key] = $value;
         };
@@ -1587,7 +1587,7 @@ trait Has_Attributes
             return;
         }
         $value = $this->attribute_cast_cache[$key];
-        $attribute = $this->{Str::camel($key)}();
+        $attribute = $this->{$key}();
         if ($attribute->get && !$attribute->set) {
             return;
         }
@@ -2041,7 +2041,7 @@ trait Has_Attributes
      */
     protected static function get_mutator_methods($class)
     {
-        preg_match_all('/(?<=^|;)get([^;]+?)Attribute(;|$)/', implode(';', get_class_methods($class)), $matches);
+        preg_match_all('/(?<=^|;)get_([^;]+?)_attribute(;|$)/', implode(';', get_class_methods($class)), $matches);
         return $matches[1];
     }
     /**
