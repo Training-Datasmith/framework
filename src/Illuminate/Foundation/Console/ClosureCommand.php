@@ -1,73 +1,62 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\ManuallyFailedException;
+use Illuminate\Console\Manually_Failed_Exception;
 use Illuminate\Support\Facades\Schedule;
-use Illuminate\Support\Traits\ForwardsCalls;
+use Illuminate\Support\Traits\Forwards_Calls;
 use ReflectionFunction;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
 /**
  * @mixin \Illuminate\Console\Scheduling\Event
  */
-class ClosureCommand extends Command
+class Closure_Command extends Command
 {
-    use ForwardsCalls;
-
+    use Forwards_Calls;
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = '';
-
     /**
      * Create a new command instance.
      *
      * @param  string  $signature
      */
-    public function __construct($signature, /**
-     * The command callback.
-     */
-        protected \Closure $callback)
+    public function __construct(
+        $signature,
+        /**
+         * The command callback.
+         */
+        protected \Closure $callback
+    )
     {
         $this->signature = $signature;
-
         parent::__construct();
     }
-
     /**
      * Execute the console command.
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(Input_Interface $input, Output_Interface $output): int
     {
-        $inputs = array_merge($input->getArguments(), $input->getOptions());
-
+        $inputs = array_merge($input->get_arguments(), $input->get_options());
         $parameters = [];
-
-        foreach ((new ReflectionFunction($this->callback))->getParameters() as $parameter) {
-            if (isset($inputs[$parameter->getName()])) {
-                $parameters[$parameter->getName()] = $inputs[$parameter->getName()];
+        foreach ((new ReflectionFunction($this->callback))->get_parameters() as $parameter) {
+            if (isset($inputs[$parameter->get_name()])) {
+                $parameters[$parameter->get_name()] = $inputs[$parameter->get_name()];
             }
         }
-
         try {
-            return (int) $this->laravel->call(
-                $this->callback->bindTo($this, $this),
-                $parameters
-            );
-        } catch (ManuallyFailedException $e) {
-            $this->components->error($e->getMessage());
-
+            return (int) $this->laravel->call($this->callback->bind_to($this, $this), $parameters);
+        } catch (Manually_Failed_Exception $e) {
+            $this->components->error($e->get_message());
             return static::FAILURE;
         }
     }
-
     /**
      * Set the description for the command.
      *
@@ -77,7 +66,6 @@ class ClosureCommand extends Command
     {
         return $this->describe($description);
     }
-
     /**
      * Set the description for the command.
      *
@@ -85,11 +73,9 @@ class ClosureCommand extends Command
      */
     public function describe(string $description): static
     {
-        $this->setDescription($description);
-
+        $this->set_description($description);
         return $this;
     }
-
     /**
      * Create a new scheduled event for the command.
      *
@@ -100,7 +86,6 @@ class ClosureCommand extends Command
     {
         return Schedule::command($this->name, $parameters);
     }
-
     /**
      * Dynamically proxy calls to a new scheduled event.
      *
@@ -112,6 +97,6 @@ class ClosureCommand extends Command
      */
     public function __call($method, $parameters)
     {
-        return $this->forwardCallTo($this->schedule(), $method, $parameters);
+        return $this->forward_call_to($this->schedule(), $method, $parameters);
     }
 }

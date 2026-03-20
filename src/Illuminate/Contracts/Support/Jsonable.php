@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Support;
 
 interface Jsonable
@@ -12,5 +11,5 @@ interface Jsonable
      * @param  int  $options
      * @return string
      */
-    public function toJson($options = 0);
+    public function to_json($options = 0);
 }

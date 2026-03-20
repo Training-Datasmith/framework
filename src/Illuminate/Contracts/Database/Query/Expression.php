@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Database\Query;
 
 use Illuminate\Database\Grammar;
-
 interface Expression
 {
     /**
@@ -13,5 +11,5 @@ interface Expression
      *
      * @return string|int|float
      */
-    public function getValue(Grammar $grammar);
+    public function get_value(Grammar $grammar);
 }

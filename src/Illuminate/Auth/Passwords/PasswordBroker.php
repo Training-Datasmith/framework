@@ -1,25 +1,22 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Auth\Passwords;
 
 use Closure;
-use Illuminate\Auth\Events\PasswordResetLinkSent;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
+use Illuminate\Auth\Events\Password_Reset_Link_Sent;
+use Illuminate\Contracts\Auth\Can_Reset_Password as CanResetPasswordContract;
+use Illuminate\Contracts\Auth\Password_Broker as PasswordBrokerContract;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Timebox;
 use UnexpectedValueException;
-
-class PasswordBroker implements PasswordBrokerContract
+class Password_Broker implements Password_Broker_Contract
 {
     /**
      * The timebox instance.
      */
     protected \Illuminate\Support\Timebox $timebox;
-
     /**
      * Create a new password broker instance.
      */
@@ -27,11 +24,12 @@ class PasswordBroker implements PasswordBrokerContract
         /**
          * The password token repository.
          */
-        #[\SensitiveParameter] protected \Illuminate\Auth\Passwords\TokenRepositoryInterface $tokens,
+        #[\Sensitive_Parameter]
+        protected \Illuminate\Auth\Passwords\Token_Repository_Interface $tokens,
         /**
          * The user provider implementation.
          */
-        protected \Illuminate\Contracts\Auth\UserProvider $users,
+        protected \Illuminate\Contracts\Auth\User_Provider $users,
         /**
          * The event dispatcher instance.
          */
@@ -40,157 +38,149 @@ class PasswordBroker implements PasswordBrokerContract
         /**
          * The number of microseconds that the timebox should wait for.
          */
-        protected int $timeboxDuration = 200000,
-    ) {
+        protected int $timebox_duration = 200000
+    )
+    {
         $this->timebox = $timebox ?: new Timebox();
     }
-
     /**
      * Send a password reset link to a user.
      *
      * @return string
      */
-    public function sendResetLink(#[\SensitiveParameter] array $credentials, ?Closure $callback = null)
+    public function send_reset_link(
+        #[\Sensitive_Parameter]
+        array $credentials,
+        ?Closure $callback = null
+    )
     {
         return $this->timebox->call(function () use ($credentials, $callback) {
             // First we will check to see if we found a user at the given credentials and
             // if we did not we will redirect back to this current URI with a piece of
             // "flash" data in the session to indicate to the developers the errors.
-            $user = $this->getUser($credentials);
-
+            $user = $this->get_user($credentials);
             if (is_null($user)) {
                 return static::INVALID_USER;
             }
-
-            if ($this->tokens->recentlyCreatedToken($user)) {
+            if ($this->tokens->recently_created_token($user)) {
                 return static::RESET_THROTTLED;
             }
-
             $token = $this->tokens->create($user);
-
             if ($callback) {
                 return $callback($user, $token) ?? static::RESET_LINK_SENT;
             }
-
             // Once we have the reset token, we are ready to send the message out to this
             // user with a link to reset their password. We will then redirect back to
             // the current URI having nothing set in the session to indicate errors.
-            $user->sendPasswordResetNotification($token);
-
-            $this->events?->dispatch(new PasswordResetLinkSent($user));
-
+            $user->send_password_reset_notification($token);
+            $this->events?->dispatch(new Password_Reset_Link_Sent($user));
             return static::RESET_LINK_SENT;
-        }, $this->timeboxDuration);
+        }, $this->timebox_duration);
     }
-
     /**
      * Reset the password for the given token.
      *
      * @return string
      */
-    public function reset(#[\SensitiveParameter] array $credentials, Closure $callback)
+    public function reset(
+        #[\Sensitive_Parameter]
+        array $credentials,
+        Closure $callback
+    )
     {
         return $this->timebox->call(function ($timebox) use ($credentials, $callback) {
-            $user = $this->validateReset($credentials);
-
+            $user = $this->validate_reset($credentials);
             // If the responses from the validate method is not a user instance, we will
             // assume that it is a redirect and simply return it from this method and
             // the user is properly redirected having an error message on the post.
-            if (! $user instanceof CanResetPasswordContract) {
+            if (!$user instanceof Can_Reset_Password_Contract) {
                 return $user;
             }
-
             $password = $credentials['password'];
-
             // Once the reset has been validated, we'll call the given callback with the
             // new password. This gives the user an opportunity to store the password
             // in their persistent storage. Then we'll delete the token and return.
             $callback($user, $password);
-
             $this->tokens->delete($user);
-
-            $timebox->returnEarly();
-
+            $timebox->return_early();
             return static::PASSWORD_RESET;
-        }, $this->timeboxDuration);
+        }, $this->timebox_duration);
     }
-
     /**
      * Validate a password reset for the given credentials.
      */
-    protected function validateReset(#[\SensitiveParameter] array $credentials): string|\Illuminate\Contracts\Auth\CanResetPassword
+    protected function validate_reset(
+        #[\Sensitive_Parameter]
+        array $credentials
+    ): string|\Illuminate\Contracts\Auth\Can_Reset_Password
     {
-        if (is_null($user = $this->getUser($credentials))) {
+        if (is_null($user = $this->get_user($credentials))) {
             return static::INVALID_USER;
         }
-
-        if (! $this->tokens->exists($user, $credentials['token'])) {
+        if (!$this->tokens->exists($user, $credentials['token'])) {
             return static::INVALID_TOKEN;
         }
-
         return $user;
     }
-
     /**
      * Get the user for the given credentials.
      *
      *
      * @throws \UnexpectedValueException
      */
-    public function getUser(#[\SensitiveParameter] array $credentials): ?\Illuminate\Contracts\Auth\CanResetPassword
+    public function get_user(
+        #[\Sensitive_Parameter]
+        array $credentials
+    ): ?\Illuminate\Contracts\Auth\Can_Reset_Password
     {
         $credentials = Arr::except($credentials, ['token']);
-
-        $user = $this->users->retrieveByCredentials($credentials);
-
-        if ($user && ! $user instanceof CanResetPasswordContract) {
+        $user = $this->users->retrieve_by_credentials($credentials);
+        if ($user && !$user instanceof Can_Reset_Password_Contract) {
             throw new UnexpectedValueException('User must implement CanResetPassword interface.');
         }
-
         return $user;
     }
-
     /**
      * Create a new password reset token for the given user.
      *
      * @return string
      */
-    public function createToken(CanResetPasswordContract $user)
+    public function create_token(Can_Reset_Password_Contract $user)
     {
         return $this->tokens->create($user);
     }
-
     /**
      * Delete password reset tokens of the given user.
      */
-    public function deleteToken(CanResetPasswordContract $user): void
+    public function delete_token(Can_Reset_Password_Contract $user): void
     {
         $this->tokens->delete($user);
     }
-
     /**
      * Validate the given password reset token.
      *
      * @param  string  $token
      * @return bool
      */
-    public function tokenExists(CanResetPasswordContract $user, #[\SensitiveParameter] $token)
+    public function token_exists(
+        Can_Reset_Password_Contract $user,
+        #[\Sensitive_Parameter]
+        $token
+    )
     {
         return $this->tokens->exists($user, $token);
     }
-
     /**
      * Get the password reset token repository implementation.
      */
-    public function getRepository(): \Illuminate\Auth\Passwords\TokenRepositoryInterface
+    public function get_repository(): \Illuminate\Auth\Passwords\Token_Repository_Interface
     {
         return $this->tokens;
     }
-
     /**
      * Get the timebox instance used by the guard.
      */
-    public function getTimebox(): \Illuminate\Support\Timebox
+    public function get_timebox(): \Illuminate\Support\Timebox
     {
         return $this->timebox;
     }

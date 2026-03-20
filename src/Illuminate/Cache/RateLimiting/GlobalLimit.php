@@ -1,16 +1,15 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Illuminate\Cache\Rate_Limiting;
 
-namespace Illuminate\Cache\RateLimiting;
-
-class GlobalLimit extends Limit
+class Global_Limit extends Limit
 {
     /**
      * Create a new limit instance.
      */
-    public function __construct(int $maxAttempts, int $decaySeconds = 60)
+    public function __construct(int $max_attempts, int $decay_seconds = 60)
     {
-        parent::__construct('', $maxAttempts, $decaySeconds);
+        parent::__construct('', $max_attempts, $decay_seconds);
     }
 }

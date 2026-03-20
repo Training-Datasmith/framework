@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\Events;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
-class CommandFinished
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Output\Output_Interface;
+class Command_Finished
 {
     /**
      * Create a new event instance.
@@ -17,11 +15,7 @@ class CommandFinished
      * @param  \Symfony\Component\Console\Output\OutputInterface  $output  The command output implementation.
      * @param  int  $exitCode  The command exit code.
      */
-    public function __construct(
-        public string $command,
-        public InputInterface $input,
-        public OutputInterface $output,
-        public int $exitCode,
-    ) {
+    public function __construct(public string $command, public Input_Interface $input, public Output_Interface $output, public int $exit_code)
+    {
     }
 }

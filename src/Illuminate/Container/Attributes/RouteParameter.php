@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Container\Attributes;
 
 use Attribute;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Container\ContextualAttribute;
-
+use Illuminate\Contracts\Container\Contextual_Attribute;
 #[Attribute(Attribute::TARGET_PARAMETER)]
-class RouteParameter implements ContextualAttribute
+class Route_Parameter implements Contextual_Attribute
 {
     /**
      * Create a new class instance.
@@ -17,7 +15,6 @@ class RouteParameter implements ContextualAttribute
     public function __construct(public string $parameter)
     {
     }
-
     /**
      * Resolve the route parameter.
      *

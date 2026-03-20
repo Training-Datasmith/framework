@@ -1,48 +1,40 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Illuminate\Json_Schema\Types;
 
-namespace Illuminate\JsonSchema\Types;
-
-use BackedEnum;
-use Illuminate\JsonSchema\JsonSchema;
-use Illuminate\JsonSchema\Serializer;
+use Backed_Enum;
+use Illuminate\Json_Schema\Json_Schema;
+use Illuminate\Json_Schema\Serializer;
 use InvalidArgumentException;
-
-abstract class Type extends JsonSchema implements \Stringable
+abstract class Type extends Json_Schema implements \Stringable
 {
     /**
      * Whether the type is required.
      */
     protected ?bool $required = null;
-
     /**
      * The type's title.
      */
     protected ?string $title = null;
-
     /**
      * The type's description.
      */
     protected ?string $description = null;
-
     /**
      * The default value for the type.
      */
     protected mixed $default = null;
-
     /**
      * The set of allowed values for the type.
      *
      * @var array<int, mixed>|null
      */
     protected ?array $enum = null;
-
     /**
      * Indicates if the type is nullable.
      */
     protected ?bool $nullable = null;
-
     /**
      * Indicate that the type is required.
      */
@@ -51,10 +43,8 @@ abstract class Type extends JsonSchema implements \Stringable
         if ($required) {
             $this->required = true;
         }
-
         return $this;
     }
-
     /**
      * Indicate that the type is optional.
      */
@@ -63,30 +53,24 @@ abstract class Type extends JsonSchema implements \Stringable
         if ($nullable) {
             $this->nullable = true;
         }
-
         return $this;
     }
-
     /**
      * Set the type's title.
      */
     public function title(string $value): static
     {
         $this->title = $value;
-
         return $this;
     }
-
     /**
      * Set the type's description.
      */
     public function description(string $value): static
     {
         $this->description = $value;
-
         return $this;
     }
-
     /**
      * Restrict the value to one of the provided enumerated values.
      *
@@ -97,42 +81,36 @@ abstract class Type extends JsonSchema implements \Stringable
     public function enum(array|string $values): static
     {
         if (is_string($values)) {
-            if (! is_subclass_of($values, BackedEnum::class)) {
+            if (!is_subclass_of($values, Backed_Enum::class)) {
                 throw new InvalidArgumentException('The provided class must be a BackedEnum.');
             }
-
             $values = array_column($values::cases(), 'value');
         }
-
         // Keep order and allow complex values (arrays / objects) without forcing uniqueness...
         $this->enum = array_values($values);
-
         return $this;
     }
-
     /**
      * Convert the type to an array.
      *
      * @return array<string, mixed>
      */
-    public function toArray(): array
+    public function to_array(): array
     {
         return Serializer::serialize($this);
     }
-
     /**
      * Convert the type to its string representation.
      */
-    public function toString(): string
+    public function to_string(): string
     {
-        return json_encode($this->toArray(), JSON_PRETTY_PRINT) ?: '';
+        return json_encode($this->to_array(), JSON_PRETTY_PRINT) ?: '';
     }
-
     /**
      * Convert the type to its string representation.
      */
     public function __toString(): string
     {
-        return $this->toString();
+        return $this->to_string();
     }
 }

@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Broadcasting;
 
-use Illuminate\Contracts\Broadcasting\HasBroadcastChannel;
+use Illuminate\Contracts\Broadcasting\Has_Broadcast_Channel;
 use Stringable;
-
 class Channel implements Stringable
 {
     /**
@@ -15,7 +13,6 @@ class Channel implements Stringable
      * @var string
      */
     public $name;
-
     /**
      * Create a new channel instance.
      *
@@ -23,9 +20,8 @@ class Channel implements Stringable
      */
     public function __construct($name)
     {
-        $this->name = $name instanceof HasBroadcastChannel ? $name->broadcastChannel() : $name;
+        $this->name = $name instanceof Has_Broadcast_Channel ? $name->broadcast_channel() : $name;
     }
-
     /**
      * Convert the channel instance to a string.
      */

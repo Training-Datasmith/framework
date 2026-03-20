@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Log\Events;
 
-class MessageLogged
+class Message_Logged
 {
     /**
      * Create a new event instance.
@@ -13,10 +12,7 @@ class MessageLogged
      * @param  string  $message  The log message.
      * @param  array  $context  The log context.
      */
-    public function __construct(
-        public $level,
-        public $message,
-        public array $context = [],
-    ) {
+    public function __construct(public $level, public $message, public array $context = [])
+    {
     }
 }

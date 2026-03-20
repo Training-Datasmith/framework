@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Auth\Access;
 
-trait HandlesAuthorization
+trait Handles_Authorization
 {
     /**
      * Create a new access response.
@@ -16,7 +15,6 @@ trait HandlesAuthorization
     {
         return Response::allow($message, $code);
     }
-
     /**
      * Throws an unauthorized exception.
      *
@@ -27,7 +25,6 @@ trait HandlesAuthorization
     {
         return Response::deny($message, $code);
     }
-
     /**
      * Deny with a HTTP status code.
      *
@@ -36,11 +33,10 @@ trait HandlesAuthorization
      * @param  int|null  $code
      * @return \Illuminate\Auth\Access\Response
      */
-    public function denyWithStatus($status, $message = null, $code = null)
+    public function deny_with_status($status, $message = null, $code = null)
     {
-        return Response::denyWithStatus($status, $message, $code);
+        return Response::deny_with_status($status, $message, $code);
     }
-
     /**
      * Deny with a 404 HTTP status code.
      *
@@ -48,8 +44,8 @@ trait HandlesAuthorization
      * @param  int|null  $code
      * @return \Illuminate\Auth\Access\Response
      */
-    public function denyAsNotFound($message = null, $code = null)
+    public function deny_as_not_found($message = null, $code = null)
     {
-        return Response::denyWithStatus(404, $message, $code);
+        return Response::deny_with_status(404, $message, $code);
     }
 }

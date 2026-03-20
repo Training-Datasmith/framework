@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Http\Events;
 
-class RequestHandled
+class Request_Handled
 {
     /**
      * Create a new event instance.
@@ -21,6 +20,7 @@ class RequestHandled
          * The response instance.
          */
         public $response
-    ) {
+    )
+    {
     }
 }

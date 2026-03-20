@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Routing;
 
-interface ResponseFactory
+interface Response_Factory
 {
     /**
      * Create a new response instance.
@@ -14,15 +13,13 @@ interface ResponseFactory
      * @return \Illuminate\Http\Response
      */
     public function make($content = '', $status = 200, array $headers = []);
-
     /**
      * Create a new "no content" response.
      *
      * @param  int  $status
      * @return \Illuminate\Http\Response
      */
-    public function noContent($status = 204, array $headers = []);
-
+    public function no_content($status = 204, array $headers = []);
     /**
      * Create a new response for a given view.
      *
@@ -32,7 +29,6 @@ interface ResponseFactory
      * @return \Illuminate\Http\Response
      */
     public function view($view, $data = [], $status = 200, array $headers = []);
-
     /**
      * Create a new JSON response instance.
      *
@@ -42,7 +38,6 @@ interface ResponseFactory
      * @return \Illuminate\Http\JsonResponse
      */
     public function json($data = [], $status = 200, array $headers = [], $options = 0);
-
     /**
      * Create a new JSONP response instance.
      *
@@ -53,7 +48,6 @@ interface ResponseFactory
      * @return \Illuminate\Http\JsonResponse
      */
     public function jsonp($callback, $data = [], $status = 200, array $headers = [], $options = 0);
-
     /**
      * Create a new streamed response instance.
      *
@@ -62,7 +56,6 @@ interface ResponseFactory
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
     public function stream($callback, $status = 200, array $headers = []);
-
     /**
      * Create a new streamed JSON response instance.
      *
@@ -72,8 +65,7 @@ interface ResponseFactory
      * @param  int  $encodingOptions
      * @return \Symfony\Component\HttpFoundation\StreamedJsonResponse
      */
-    public function streamJson($data, $status = 200, $headers = [], $encodingOptions = 15);
-
+    public function stream_json($data, $status = 200, $headers = [], $encoding_options = 15);
     /**
      * Create a new streamed response instance as a file download.
      *
@@ -82,8 +74,7 @@ interface ResponseFactory
      * @param  string|null  $disposition
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function streamDownload($callback, $name = null, array $headers = [], $disposition = 'attachment');
-
+    public function stream_download($callback, $name = null, array $headers = [], $disposition = 'attachment');
     /**
      * Create a new file download response.
      *
@@ -93,7 +84,6 @@ interface ResponseFactory
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function download($file, $name = null, array $headers = [], $disposition = 'attachment');
-
     /**
      * Return the raw contents of a binary file.
      *
@@ -101,7 +91,6 @@ interface ResponseFactory
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function file($file, array $headers = []);
-
     /**
      * Create a new redirect response to the given path.
      *
@@ -111,8 +100,7 @@ interface ResponseFactory
      * @param  bool|null  $secure
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function redirectTo($path, $status = 302, $headers = [], $secure = null);
-
+    public function redirect_to($path, $status = 302, $headers = [], $secure = null);
     /**
      * Create a new redirect response to a named route.
      *
@@ -122,8 +110,7 @@ interface ResponseFactory
      * @param  array  $headers
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function redirectToRoute($route, $parameters = [], $status = 302, $headers = []);
-
+    public function redirect_to_route($route, $parameters = [], $status = 302, $headers = []);
     /**
      * Create a new redirect response to a controller action.
      *
@@ -133,8 +120,7 @@ interface ResponseFactory
      * @param  array  $headers
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function redirectToAction($action, $parameters = [], $status = 302, $headers = []);
-
+    public function redirect_to_action($action, $parameters = [], $status = 302, $headers = []);
     /**
      * Create a new redirect response, while putting the current URL in the session.
      *
@@ -144,8 +130,7 @@ interface ResponseFactory
      * @param  bool|null  $secure
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function redirectGuest($path, $status = 302, $headers = [], $secure = null);
-
+    public function redirect_guest($path, $status = 302, $headers = [], $secure = null);
     /**
      * Create a new redirect response to the previously intended location.
      *
@@ -155,5 +140,5 @@ interface ResponseFactory
      * @param  bool|null  $secure
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function redirectToIntended($default = '/', $status = 302, $headers = [], $secure = null);
+    public function redirect_to_intended($default = '/', $status = 302, $headers = [], $secure = null);
 }

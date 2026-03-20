@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Testing\Concerns;
 
-interface WithoutExceptionHandlingHandler
+interface Without_Exception_Handling_Handler
 {
 }

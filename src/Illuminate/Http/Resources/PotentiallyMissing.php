@@ -1,15 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Resources;
 
-interface PotentiallyMissing
+interface Potentially_Missing
 {
     /**
      * Determine if the object should be considered "missing".
      *
      * @return bool
      */
-    public function isMissing();
+    public function is_missing();
 }

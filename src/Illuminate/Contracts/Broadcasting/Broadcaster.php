@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Broadcasting;
 
 interface Broadcaster
@@ -13,7 +12,6 @@ interface Broadcaster
      * @return mixed
      */
     public function auth($request);
-
     /**
      * Return the valid authentication response.
      *
@@ -21,8 +19,7 @@ interface Broadcaster
      * @param  mixed  $result
      * @return mixed
      */
-    public function validAuthenticationResponse($request, $result);
-
+    public function valid_authentication_response($request, $result);
     /**
      * Broadcast the given event.
      *

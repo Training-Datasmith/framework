@@ -1,60 +1,48 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Schema;
 
-class MySqlBuilder extends Builder
+class My_Sql_Builder extends Builder
 {
     /**
      * Drop all tables from the database.
      *
      * @return void
      */
-    public function dropAllTables()
+    public function drop_all_tables()
     {
-        $tables = $this->getTableListing($this->getCurrentSchemaListing());
-
+        $tables = $this->get_table_listing($this->get_current_schema_listing());
         if (empty($tables)) {
             return;
         }
-
-        $this->disableForeignKeyConstraints();
-
+        $this->disable_foreign_key_constraints();
         try {
-            $this->connection->statement(
-                $this->grammar->compileDropAllTables($tables)
-            );
+            $this->connection->statement($this->grammar->compile_drop_all_tables($tables));
         } finally {
-            $this->enableForeignKeyConstraints();
+            $this->enable_foreign_key_constraints();
         }
     }
-
     /**
      * Drop all views from the database.
      *
      * @return void
      */
-    public function dropAllViews()
+    public function drop_all_views()
     {
-        $views = array_column($this->getViews($this->getCurrentSchemaListing()), 'schema_qualified_name');
-
+        $views = array_column($this->get_views($this->get_current_schema_listing()), 'schema_qualified_name');
         if (empty($views)) {
             return;
         }
-
-        $this->connection->statement(
-            $this->grammar->compileDropAllViews($views)
-        );
+        $this->connection->statement($this->grammar->compile_drop_all_views($views));
     }
-
     /**
      * Get the names of current schemas for the connection.
      *
      * @return string[]|null
      */
-    public function getCurrentSchemaListing(): null
+    public function get_current_schema_listing(): null
     {
-        return [$this->connection->getDatabaseName()];
+        return [$this->connection->get_database_name()];
     }
 }

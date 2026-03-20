@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Filesystem;
 
 interface Filesystem
@@ -12,14 +11,12 @@ interface Filesystem
      * @var string
      */
     public const VISIBILITY_PUBLIC = 'public';
-
     /**
      * The private visibility setting.
      *
      * @var string
      */
     public const VISIBILITY_PRIVATE = 'private';
-
     /**
      * Get the full path to the file that exists at the given relative path.
      *
@@ -27,7 +24,6 @@ interface Filesystem
      * @return string
      */
     public function path($path);
-
     /**
      * Determine if a file exists.
      *
@@ -35,7 +31,6 @@ interface Filesystem
      * @return bool
      */
     public function exists($path);
-
     /**
      * Get the contents of a file.
      *
@@ -43,15 +38,13 @@ interface Filesystem
      * @return string|null
      */
     public function get($path);
-
     /**
      * Get a resource to read the file.
      *
      * @param  string  $path
      * @return resource|null The path resource or null on failure.
      */
-    public function readStream($path);
-
+    public function read_stream($path);
     /**
      * Write the contents of a file.
      *
@@ -61,7 +54,6 @@ interface Filesystem
      * @return bool
      */
     public function put($path, $contents, $options = []);
-
     /**
      * Store the uploaded file on the disk.
      *
@@ -70,8 +62,7 @@ interface Filesystem
      * @param  mixed  $options
      * @return string|false
      */
-    public function putFile($path, $file = null, $options = []);
-
+    public function put_file($path, $file = null, $options = []);
     /**
      * Store the uploaded file on the disk with a given name.
      *
@@ -81,8 +72,7 @@ interface Filesystem
      * @param  mixed  $options
      * @return string|false
      */
-    public function putFileAs($path, $file, $name = null, $options = []);
-
+    public function put_file_as($path, $file, $name = null, $options = []);
     /**
      * Write a new file using a stream.
      *
@@ -90,16 +80,14 @@ interface Filesystem
      * @param  resource  $resource
      * @return bool
      */
-    public function writeStream($path, $resource, array $options = []);
-
+    public function write_stream($path, $resource, array $options = []);
     /**
      * Get the visibility for the given path.
      *
      * @param  string  $path
      * @return string
      */
-    public function getVisibility($path);
-
+    public function get_visibility($path);
     /**
      * Set the visibility for the given path.
      *
@@ -107,8 +95,7 @@ interface Filesystem
      * @param  string  $visibility
      * @return bool
      */
-    public function setVisibility($path, $visibility);
-
+    public function set_visibility($path, $visibility);
     /**
      * Prepend to a file.
      *
@@ -117,7 +104,6 @@ interface Filesystem
      * @return bool
      */
     public function prepend($path, $data);
-
     /**
      * Append to a file.
      *
@@ -126,7 +112,6 @@ interface Filesystem
      * @return bool
      */
     public function append($path, $data);
-
     /**
      * Delete the file at a given path.
      *
@@ -134,7 +119,6 @@ interface Filesystem
      * @return bool
      */
     public function delete($paths);
-
     /**
      * Copy a file to a new location.
      *
@@ -143,7 +127,6 @@ interface Filesystem
      * @return bool
      */
     public function copy($from, $to);
-
     /**
      * Move a file to a new location.
      *
@@ -152,7 +135,6 @@ interface Filesystem
      * @return bool
      */
     public function move($from, $to);
-
     /**
      * Get the file size of a given file.
      *
@@ -160,15 +142,13 @@ interface Filesystem
      * @return int
      */
     public function size($path);
-
     /**
      * Get the file's last modification time.
      *
      * @param  string  $path
      * @return int
      */
-    public function lastModified($path);
-
+    public function last_modified($path);
     /**
      * Get an array of all files in a directory.
      *
@@ -177,15 +157,13 @@ interface Filesystem
      * @return array<string>
      */
     public function files($directory = null, $recursive = false);
-
     /**
      * Get all of the files from the given directory (recursive).
      *
      * @param  string|null  $directory
      * @return array<string>
      */
-    public function allFiles($directory = null);
-
+    public function all_files($directory = null);
     /**
      * Get all of the directories within a given directory.
      *
@@ -194,28 +172,25 @@ interface Filesystem
      * @return array<string>
      */
     public function directories($directory = null, $recursive = false);
-
     /**
      * Get all (recursive) of the directories within a given directory.
      *
      * @param  string|null  $directory
      * @return array<string>
      */
-    public function allDirectories($directory = null);
-
+    public function all_directories($directory = null);
     /**
      * Create a directory.
      *
      * @param  string  $path
      * @return bool
      */
-    public function makeDirectory($path);
-
+    public function make_directory($path);
     /**
      * Recursively delete a directory.
      *
      * @param  string  $directory
      * @return bool
      */
-    public function deleteDirectory($directory);
+    public function delete_directory($directory);
 }

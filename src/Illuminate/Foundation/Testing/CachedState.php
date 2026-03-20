@@ -1,11 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Testing;
 
-class CachedState
+class Cached_State
 {
-    public static ?array $cachedRoutes = null;
-    public static ?array $cachedConfig = null;
+    public static ?array $cached_routes = null;
+    public static ?array $cached_config = null;
 }

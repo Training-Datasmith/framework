@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\Scheduling;
 
-interface CacheAware
+interface Cache_Aware
 {
     /**
      * Specify the cache store that should be used.
@@ -12,5 +11,5 @@ interface CacheAware
      * @param  string  $store
      * @return $this
      */
-    public function useStore($store);
+    public function use_store($store);
 }

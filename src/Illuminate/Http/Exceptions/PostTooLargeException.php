@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Exceptions;
 
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Http_Kernel\Exception\Http_Exception;
 use Throwable;
-
-class PostTooLargeException extends HttpException
+class Post_Too_Large_Exception extends Http_Exception
 {
     /**
      * Create a new "post too large" exception instance.

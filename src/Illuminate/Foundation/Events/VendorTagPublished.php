@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Events;
 
-class VendorTagPublished
+class Vendor_Tag_Published
 {
     /**
      * Create a new event instance.
@@ -21,6 +20,7 @@ class VendorTagPublished
          * The publishable paths registered by the tag.
          */
         public $paths
-    ) {
+    )
+    {
     }
 }

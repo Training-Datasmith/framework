@@ -1,17 +1,15 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Illuminate\Support\ServiceProvider;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputOption;
-
-#[AsCommand(name: 'reload')]
-class ReloadCommand extends Command
+use Illuminate\Support\Service_Provider;
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Console\Input\Input_Option;
+#[As_Command(name: 'reload')]
+class Reload_Command extends Command
 {
     /**
      * The console command name.
@@ -19,57 +17,37 @@ class ReloadCommand extends Command
      * @var string
      */
     protected $name = 'reload';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Reload running services';
-
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
         $this->components->info('Reloading services.');
-
-        $exceptions = Collection::wrap(explode(',', $this->option('except') ?? ''))
-            ->map(fn ($except): string => trim($except))
-            ->filter()
-            ->unique()
-            ->flip();
-
-        $tasks = Collection::wrap($this->getReloadTasks())
-            ->reject(fn ($command, $key) => $exceptions->hasAny([$command, $key]))
-            ->toArray();
-
+        $exceptions = Collection::wrap(explode(',', $this->option('except') ?? ''))->map(fn($except): string => trim($except))->filter()->unique()->flip();
+        $tasks = Collection::wrap($this->get_reload_tasks())->reject(fn($command, $key) => $exceptions->has_any([$command, $key]))->to_array();
         foreach ($tasks as $description => $command) {
-            $this->components->task($description, fn (): bool => $this->callSilently($command) == 0);
+            $this->components->task($description, fn(): bool => $this->call_silently($command) == 0);
         }
-
-        $this->newLine();
+        $this->new_line();
     }
-
     /**
      * Get the commands that should be reloaded.
      */
-    public function getReloadTasks(): array
+    public function get_reload_tasks(): array
     {
-        return [
-            'queue' => 'queue:restart',
-            'schedule' => 'schedule:interrupt',
-            ...ServiceProvider::$reloadCommands,
-        ];
+        return ['queue' => 'queue:restart', 'schedule' => 'schedule:interrupt', ...Service_Provider::$reload_commands];
     }
-
     /**
      * Get the console command arguments.
      */
-    protected function getOptions(): array
+    protected function get_options(): array
     {
-        return [
-            ['except', 'e', InputOption::VALUE_OPTIONAL, 'The commands to skip'],
-        ];
+        return [['except', 'e', Input_Option::VALUE_OPTIONAL, 'The commands to skip']];
     }
 }

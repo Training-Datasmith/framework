@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as BaseCollection;
-
 /**
  * @method static \Illuminate\Database\Eloquent\Builder<static> withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static> onlyTrashed()
@@ -14,146 +12,119 @@ use Illuminate\Support\Collection as BaseCollection;
  * @method static static restoreOrCreate(array<string, mixed> $attributes = [], array<string, mixed> $values = [])
  * @method static static createOrRestore(array<string, mixed> $attributes = [], array<string, mixed> $values = [])
  */
-trait SoftDeletes
+trait Soft_Deletes
 {
     /**
      * Indicates if the model is currently force deleting.
      *
      * @var bool
      */
-    protected $forceDeleting = false;
-
+    protected $force_deleting = false;
     /**
      * Boot the soft deleting trait for a model.
      */
-    public static function bootSoftDeletes(): void
+    public static function boot_soft_deletes(): void
     {
-        static::addGlobalScope(new SoftDeletingScope());
+        static::add_global_scope(new Soft_Deleting_Scope());
     }
-
     /**
      * Initialize the soft deleting trait for an instance.
      */
-    public function initializeSoftDeletes(): void
+    public function initialize_soft_deletes(): void
     {
-        if (! isset($this->casts[$this->getDeletedAtColumn()])) {
-            $this->casts[$this->getDeletedAtColumn()] = 'datetime';
+        if (!isset($this->casts[$this->get_deleted_at_column()])) {
+            $this->casts[$this->get_deleted_at_column()] = 'datetime';
         }
     }
-
     /**
      * Force a hard delete on a soft deleted model.
      *
      * @return bool|null
      */
-    public function forceDelete()
+    public function force_delete()
     {
-        if ($this->fireModelEvent('forceDeleting') === false) {
+        if ($this->fire_model_event('forceDeleting') === false) {
             return false;
         }
-
-        $this->forceDeleting = true;
-
+        $this->force_deleting = true;
         return tap($this->delete(), function ($deleted): void {
-            $this->forceDeleting = false;
-
+            $this->force_deleting = false;
             if ($deleted) {
-                $this->fireModelEvent('forceDeleted', false);
+                $this->fire_model_event('forceDeleted', false);
             }
         });
     }
-
     /**
      * Force a hard delete on a soft deleted model without raising any events.
      *
      * @return bool|null
      */
-    public function forceDeleteQuietly()
+    public function force_delete_quietly()
     {
-        return static::withoutEvents(fn () => $this->forceDelete());
+        return static::without_events(fn() => $this->force_delete());
     }
-
     /**
      * Destroy the models for the given IDs.
      *
      * @param  \Illuminate\Support\Collection|array|int|string  $ids
      */
-    public static function forceDestroy($ids): int
+    public static function force_destroy($ids): int
     {
-        if ($ids instanceof EloquentCollection) {
-            $ids = $ids->modelKeys();
+        if ($ids instanceof Eloquent_Collection) {
+            $ids = $ids->model_keys();
         }
-
-        if ($ids instanceof BaseCollection) {
+        if ($ids instanceof Base_Collection) {
             $ids = $ids->all();
         }
-
         $ids = is_array($ids) ? $ids : func_get_args();
-
         if (count($ids) === 0) {
             return 0;
         }
-
         // We will actually pull the models from the database table and call delete on
         // each of them individually so that their events get fired properly with a
         // correct set of attributes in case the developers wants to check these.
-        $key = ($instance = new static())->getKeyName();
-
+        $key = ($instance = new static())->get_key_name();
         $count = 0;
-
-        foreach ($instance->withTrashed()->whereIn($key, $ids)->get() as $model) {
-            if ($model->forceDelete()) {
+        foreach ($instance->with_trashed()->where_in($key, $ids)->get() as $model) {
+            if ($model->force_delete()) {
                 $count++;
             }
         }
-
         return $count;
     }
-
     /**
      * Perform the actual delete query on this model instance.
      *
      * @return mixed
      */
-    protected function performDeleteOnModel()
+    protected function perform_delete_on_model()
     {
-        if ($this->forceDeleting) {
-            return tap($this->setKeysForSaveQuery($this->newModelQuery())->forceDelete(), function (): void {
+        if ($this->force_deleting) {
+            return tap($this->set_keys_for_save_query($this->new_model_query())->force_delete(), function (): void {
                 $this->exists = false;
             });
         }
-
-        return $this->runSoftDelete();
+        return $this->run_soft_delete();
     }
-
     /**
      * Perform the actual delete query on this model instance.
      *
      * @return void
      */
-    protected function runSoftDelete()
+    protected function run_soft_delete()
     {
-        $query = $this->setKeysForSaveQuery($this->newModelQuery());
-
-        $time = $this->freshTimestamp();
-
-        $columns = [$this->getDeletedAtColumn() => $this->fromDateTime($time)];
-
-        $this->{$this->getDeletedAtColumn()} = $time;
-
-        if ($this->usesTimestamps() && ! is_null($this->getUpdatedAtColumn())) {
-            $this->{$this->getUpdatedAtColumn()} = $time;
-
-            $columns[$this->getUpdatedAtColumn()] = $this->fromDateTime($time);
+        $query = $this->set_keys_for_save_query($this->new_model_query());
+        $time = $this->fresh_timestamp();
+        $columns = [$this->get_deleted_at_column() => $this->from_date_time($time)];
+        $this->{$this->get_deleted_at_column()} = $time;
+        if ($this->uses_timestamps() && !is_null($this->get_updated_at_column())) {
+            $this->{$this->get_updated_at_column()} = $time;
+            $columns[$this->get_updated_at_column()] = $this->from_date_time($time);
         }
-
         $query->update($columns);
-
-        $this->syncOriginalAttributes(array_keys($columns));
-
-        $this->fireModelEvent('trashed', false);
+        $this->sync_original_attributes(array_keys($columns));
+        $this->fire_model_event('trashed', false);
     }
-
     /**
      * Restore a soft-deleted model instance.
      *
@@ -164,52 +135,43 @@ trait SoftDeletes
         // If the restoring event does not return false, we will proceed with this
         // restore operation. Otherwise, we bail out so the developer will stop
         // the restore totally. We will clear the deleted timestamp and save.
-        if ($this->fireModelEvent('restoring') === false) {
+        if ($this->fire_model_event('restoring') === false) {
             return false;
         }
-
-        $this->{$this->getDeletedAtColumn()} = null;
-
+        $this->{$this->get_deleted_at_column()} = null;
         // Once we have saved the model, we will fire the "restored" event so this
         // developer will do anything they need to after a restore operation is
         // totally finished. Then we will return the result of the save call.
         $this->exists = true;
-
         $result = $this->save();
-
-        $this->fireModelEvent('restored', false);
-
+        $this->fire_model_event('restored', false);
         return $result;
     }
-
     /**
      * Restore a soft-deleted model instance without raising any events.
      *
      * @return bool
      */
-    public function restoreQuietly()
+    public function restore_quietly()
     {
-        return static::withoutEvents(fn () => $this->restore());
+        return static::without_events(fn() => $this->restore());
     }
-
     /**
      * Determine if the model instance has been soft-deleted.
      */
     public function trashed(): bool
     {
-        return ! is_null($this->{$this->getDeletedAtColumn()});
+        return !is_null($this->{$this->get_deleted_at_column()});
     }
-
     /**
      * Register a "softDeleted" model event callback with the dispatcher.
      *
      * @param  \Illuminate\Events\QueuedClosure|callable|class-string  $callback
      */
-    public static function softDeleted($callback): void
+    public static function soft_deleted($callback): void
     {
-        static::registerModelEvent('trashed', $callback);
+        static::register_model_event('trashed', $callback);
     }
-
     /**
      * Register a "restoring" model event callback with the dispatcher.
      *
@@ -217,9 +179,8 @@ trait SoftDeletes
      */
     public static function restoring($callback): void
     {
-        static::registerModelEvent('restoring', $callback);
+        static::register_model_event('restoring', $callback);
     }
-
     /**
      * Register a "restored" model event callback with the dispatcher.
      *
@@ -227,56 +188,51 @@ trait SoftDeletes
      */
     public static function restored($callback): void
     {
-        static::registerModelEvent('restored', $callback);
+        static::register_model_event('restored', $callback);
     }
-
     /**
      * Register a "forceDeleting" model event callback with the dispatcher.
      *
      * @param  \Illuminate\Events\QueuedClosure|callable|class-string  $callback
      */
-    public static function forceDeleting($callback): void
+    public static function force_deleting($callback): void
     {
-        static::registerModelEvent('forceDeleting', $callback);
+        static::register_model_event('forceDeleting', $callback);
     }
-
     /**
      * Register a "forceDeleted" model event callback with the dispatcher.
      *
      * @param  \Illuminate\Events\QueuedClosure|callable|class-string  $callback
      */
-    public static function forceDeleted($callback): void
+    public static function force_deleted($callback): void
     {
-        static::registerModelEvent('forceDeleted', $callback);
+        static::register_model_event('forceDeleted', $callback);
     }
-
     /**
      * Determine if the model is currently force deleting.
      *
      * @return bool
      */
-    public function isForceDeleting()
+    public function is_force_deleting()
     {
-        return $this->forceDeleting;
+        return $this->force_deleting;
     }
-
     /**
      * Get the name of the "deleted at" column.
      *
      * @return string
      */
-    public function getDeletedAtColumn()
+    public function get_deleted_at_column()
     {
-        return defined(static::class.'::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
+        return defined(static::class . '::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
     }
-
     /**
      * Get the fully-qualified "deleted at" column.
      *
      * @return string
      */
-    public function getQualifiedDeletedAtColumn()
+    public function get_qualified_deleted_at_column()
     {
-        return $this->qualifyColumn($this->getDeletedAtColumn());
+        return $this->qualify_column($this->get_deleted_at_column());
     }
 }

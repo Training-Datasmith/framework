@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Debug;
 
 use Throwable;
-
-interface ExceptionHandler
+interface Exception_Handler
 {
     /**
      * Report or log an exception.
@@ -15,14 +13,12 @@ interface ExceptionHandler
      * @throws \Throwable
      */
     public function report(Throwable $e);
-
     /**
      * Determine if the exception should be reported.
      *
      * @return bool
      */
-    public function shouldReport(Throwable $e);
-
+    public function should_report(Throwable $e);
     /**
      * Render an exception into an HTTP response.
      *
@@ -31,7 +27,6 @@ interface ExceptionHandler
      * @throws \Throwable
      */
     public function render($request, Throwable $e);
-
     /**
      * Render an exception to the console.
      *
@@ -39,5 +34,5 @@ interface ExceptionHandler
      * @return void
      * @internal This method is not meant to be used or overwritten outside the framework.
      */
-    public function renderForConsole($output, Throwable $e);
+    public function render_for_console($output, Throwable $e);
 }

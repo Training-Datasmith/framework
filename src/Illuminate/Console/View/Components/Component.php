@@ -1,17 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components;
 
-use Illuminate\Console\OutputStyle;
-use Illuminate\Console\QuestionHelper;
+use Illuminate\Console\Output_Style;
+use Illuminate\Console\Question_Helper;
 use ReflectionClass;
-use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
-
+use Symfony\Component\Console\Helper\Symfony_Question_Helper;
 use function Termwind\render;
-use function Termwind\renderUsing;
-
+use function Termwind\Render_Using;
 abstract class Component
 {
     /**
@@ -20,7 +17,6 @@ abstract class Component
      * @var array<int, callable(string): string>
      */
     protected $mutators;
-
     /**
      * Creates a new component instance.
      *
@@ -31,9 +27,9 @@ abstract class Component
          * The output style implementation.
          */
         protected $output
-    ) {
+    )
+    {
     }
-
     /**
      * Renders the given view.
      *
@@ -42,13 +38,11 @@ abstract class Component
      * @param  int  $verbosity
      * @return void
      */
-    protected function renderView($view, $data, $verbosity)
+    protected function render_view($view, $data, $verbosity)
     {
-        renderUsing($this->output);
-
+        render_using($this->output);
         render((string) $this->compile($view, $data), $verbosity);
     }
-
     /**
      * Compile the given view contents.
      *
@@ -59,16 +53,12 @@ abstract class Component
     protected function compile($view, $data)
     {
         extract($data);
-
         ob_start();
-
-        include __DIR__."/../../resources/views/components/$view.php";
-
+        include __DIR__ . "/../../resources/views/components/{$view}.php";
         return tap(ob_get_contents(), function (): void {
             ob_end_clean();
         });
     }
-
     /**
      * Mutates the given data with the given set of mutators.
      *
@@ -80,7 +70,6 @@ abstract class Component
     {
         foreach ($mutators as $mutator) {
             $mutator = new $mutator();
-
             if (is_iterable($data)) {
                 foreach ($data as $key => $value) {
                     $data[$key] = $mutator($value);
@@ -89,32 +78,23 @@ abstract class Component
                 $data = $mutator($data);
             }
         }
-
         return $data;
     }
-
     /**
      * Eventually performs a question using the component's question helper.
      *
      * @param  callable  $callable
      * @return mixed
      */
-    protected function usingQuestionHelper($callable)
+    protected function using_question_helper($callable)
     {
-        $property = (new ReflectionClass(OutputStyle::class))
-            ->getParentClass()
-            ->getProperty('questionHelper');
-
-        $currentHelper = $property->isInitialized($this->output)
-            ? $property->getValue($this->output)
-            : new SymfonyQuestionHelper();
-
-        $property->setValue($this->output, new QuestionHelper());
-
+        $property = (new ReflectionClass(Output_Style::class))->get_parent_class()->get_property('questionHelper');
+        $current_helper = $property->is_initialized($this->output) ? $property->get_value($this->output) : new Symfony_Question_Helper();
+        $property->set_value($this->output, new Question_Helper());
         try {
             return $callable();
         } finally {
-            $property->setValue($this->output, $currentHelper);
+            $property->set_value($this->output, $current_helper);
         }
     }
 }

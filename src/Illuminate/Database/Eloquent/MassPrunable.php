@@ -1,44 +1,34 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent;
 
-use Illuminate\Database\Events\ModelsPruned;
+use Illuminate\Database\Events\Models_Pruned;
 use LogicException;
-
-trait MassPrunable
+trait Mass_Prunable
 {
     /**
      * Prune all prunable models in the database.
      *
      * @return int
      */
-    public function pruneAll(int $chunkSize = 1000): int|float
+    public function prune_all(int $chunk_size = 1000): int|float
     {
-        $query = tap($this->prunable(), function ($query) use ($chunkSize): void {
-            $query->when(! $query->getQuery()->limit, function ($query) use ($chunkSize): void {
-                $query->limit($chunkSize);
+        $query = tap($this->prunable(), function ($query) use ($chunk_size): void {
+            $query->when(!$query->get_query()->limit, function ($query) use ($chunk_size): void {
+                $query->limit($chunk_size);
             });
         });
-
         $total = 0;
-
-        $softDeletable = static::isSoftDeletable();
-
+        $soft_deletable = static::is_soft_deletable();
         do {
-            $total += $count = $softDeletable
-                ? $query->forceDelete()
-                : $query->delete();
-
+            $total += $count = $soft_deletable ? $query->force_delete() : $query->delete();
             if ($count > 0) {
-                event(new ModelsPruned(static::class, $total));
+                event(new Models_Pruned(static::class, $total));
             }
         } while ($count > 0);
-
         return $total;
     }
-
     /**
      * Get the prunable model query.
      *

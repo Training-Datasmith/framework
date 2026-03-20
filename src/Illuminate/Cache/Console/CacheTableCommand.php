@@ -1,14 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache\Console;
 
-use Illuminate\Console\MigrationGeneratorCommand;
-use Symfony\Component\Console\Attribute\AsCommand;
-
-#[AsCommand(name: 'make:cache-table', aliases: ['cache:table'])]
-class CacheTableCommand extends MigrationGeneratorCommand
+use Illuminate\Console\Migration_Generator_Command;
+use Symfony\Component\Console\Attribute\As_Command;
+#[As_Command(name: 'make:cache-table', aliases: ['cache:table'])]
+class Cache_Table_Command extends Migration_Generator_Command
 {
     /**
      * The console command name.
@@ -16,34 +14,30 @@ class CacheTableCommand extends MigrationGeneratorCommand
      * @var string
      */
     protected $name = 'make:cache-table';
-
     /**
      * The console command name aliases.
      *
      * @var array
      */
     protected $aliases = ['cache:table'];
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create a migration for the cache database table';
-
     /**
      * Get the migration table name.
      */
-    protected function migrationTableName(): string
+    protected function migration_table_name(): string
     {
         return 'cache';
     }
-
     /**
      * Get the path to the migration stub file.
      */
-    protected function migrationStubFile(): string
+    protected function migration_stub_file(): string
     {
-        return __DIR__.'/stubs/cache.stub';
+        return __DIR__ . '/stubs/cache.stub';
     }
 }

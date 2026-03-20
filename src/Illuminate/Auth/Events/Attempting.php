@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Auth\Events;
 
 class Attempting
@@ -15,8 +14,10 @@ class Attempting
      */
     public function __construct(
         public $guard,
-        #[\SensitiveParameter] public $credentials,
-        public $remember,
-    ) {
+        #[\Sensitive_Parameter]
+        public $credentials,
+        public $remember
+    )
+    {
     }
 }

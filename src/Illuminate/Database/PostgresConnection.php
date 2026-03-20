@@ -1,98 +1,86 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database;
 
 use Exception;
-use Illuminate\Database\Query\Grammars\PostgresGrammar as QueryGrammar;
-use Illuminate\Database\Query\Processors\PostgresProcessor;
-use Illuminate\Database\Schema\Grammars\PostgresGrammar as SchemaGrammar;
-use Illuminate\Database\Schema\PostgresBuilder;
-use Illuminate\Database\Schema\PostgresSchemaState;
+use Illuminate\Database\Query\Grammars\Postgres_Grammar as QueryGrammar;
+use Illuminate\Database\Query\Processors\Postgres_Processor;
+use Illuminate\Database\Schema\Grammars\Postgres_Grammar as SchemaGrammar;
+use Illuminate\Database\Schema\Postgres_Builder;
+use Illuminate\Database\Schema\Postgres_Schema_State;
 use Illuminate\Filesystem\Filesystem;
-
-class PostgresConnection extends Connection
+class Postgres_Connection extends Connection
 {
     /**
      * {@inheritdoc}
      */
-    public function getDriverTitle(): string
+    public function get_driver_title(): string
     {
         return 'PostgreSQL';
     }
-
     /**
      * Escape a binary value for safe SQL embedding.
      *
      * @param  string  $value
      */
-    protected function escapeBinary($value): string
+    protected function escape_binary($value): string
     {
         $hex = bin2hex($value);
-
-        return "'\x{$hex}'::bytea";
+        return "'\\x{$hex}'::bytea";
     }
-
     /**
      * Escape a bool value for safe SQL embedding.
      *
      * @param  bool  $value
      */
-    protected function escapeBool($value): string
+    protected function escape_bool($value): string
     {
         return $value ? 'true' : 'false';
     }
-
     /**
      * Determine if the given database exception was caused by a unique constraint violation.
      */
-    protected function isUniqueConstraintError(Exception $exception): bool
+    protected function is_unique_constraint_error(Exception $exception): bool
     {
-        return '23505' === $exception->getCode();
+        return '23505' === $exception->get_code();
     }
-
     /**
      * Get the default query grammar instance.
      */
-    protected function getDefaultQueryGrammar(): \Illuminate\Database\Query\Grammars\PostgresGrammar
+    protected function get_default_query_grammar(): \Illuminate\Database\Query\Grammars\Postgres_Grammar
     {
-        return new QueryGrammar($this);
+        return new Query_Grammar($this);
     }
-
     /**
      * Get a schema builder instance for the connection.
      */
-    public function getSchemaBuilder(): \Illuminate\Database\Schema\PostgresBuilder
+    public function get_schema_builder(): \Illuminate\Database\Schema\Postgres_Builder
     {
-        if (is_null($this->schemaGrammar)) {
-            $this->useDefaultSchemaGrammar();
+        if (is_null($this->schema_grammar)) {
+            $this->use_default_schema_grammar();
         }
-
-        return new PostgresBuilder($this);
+        return new Postgres_Builder($this);
     }
-
     /**
      * Get the default schema grammar instance.
      */
-    protected function getDefaultSchemaGrammar(): \Illuminate\Database\Schema\Grammars\PostgresGrammar
+    protected function get_default_schema_grammar(): \Illuminate\Database\Schema\Grammars\Postgres_Grammar
     {
-        return new SchemaGrammar($this);
+        return new Schema_Grammar($this);
     }
-
     /**
      * Get the schema state for the connection.
      */
-    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null): \Illuminate\Database\Schema\PostgresSchemaState
+    public function get_schema_state(?Filesystem $files = null, ?callable $process_factory = null): \Illuminate\Database\Schema\Postgres_Schema_State
     {
-        return new PostgresSchemaState($this, $files, $processFactory);
+        return new Postgres_Schema_State($this, $files, $process_factory);
     }
-
     /**
      * Get the default post processor instance.
      */
-    protected function getDefaultPostProcessor(): \Illuminate\Database\Query\Processors\PostgresProcessor
+    protected function get_default_post_processor(): \Illuminate\Database\Query\Processors\Postgres_Processor
     {
-        return new PostgresProcessor();
+        return new Postgres_Processor();
     }
 }

@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache\Events;
 
-class CacheHit extends CacheEvent
+class Cache_Hit extends Cache_Event
 {
     /**
      * Create a new event instance.
@@ -13,11 +12,16 @@ class CacheHit extends CacheEvent
      * @param  string  $key
      * @param  mixed  $value
      */
-    public function __construct($storeName, $key, /**
-     * The value that was retrieved.
-     */
-        public $value, array $tags = [])
+    public function __construct(
+        $store_name,
+        $key,
+        /**
+         * The value that was retrieved.
+         */
+        public $value,
+        array $tags = []
+    )
     {
-        parent::__construct($storeName, $key, $tags);
+        parent::__construct($store_name, $key, $tags);
     }
 }

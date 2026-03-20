@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Illuminate\JsonSchema;
+declare (strict_types=1);
+namespace Illuminate\Json_Schema;
 
 use Closure;
-use Illuminate\JsonSchema\Types\Type;
-
+use Illuminate\Json_Schema\Types\Type;
 /**
  * @method static Types\ObjectType object(Closure|array<string, Types\Type> $properties = [])
  * @method static Types\IntegerType integer()
@@ -15,13 +13,13 @@ use Illuminate\JsonSchema\Types\Type;
  * @method static Types\BooleanType boolean()
  * @method static Types\ArrayType array()
  */
-class JsonSchema
+class Json_Schema
 {
     /**
      * Dynamically pass static methods to the schema instance.
      */
     public static function __callStatic(string $name, mixed $arguments): Type
     {
-        return (new JsonSchemaTypeFactory())->$name(...$arguments);
+        return (new Json_Schema_Type_Factory())->{$name}(...$arguments);
     }
 }

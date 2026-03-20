@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Database\Connection;
 use Illuminate\Support\Collection;
-
-class SqliteSchemaState extends SchemaState
+class Sqlite_Schema_State extends Schema_State
 {
     /**
      * Dump the database's schema into a file.
@@ -16,41 +14,24 @@ class SqliteSchemaState extends SchemaState
      */
     public function dump(Connection $connection, $path): void
     {
-        $process = $this->makeProcess($this->baseCommand().' ".schema --indent"')
-            ->setTimeout(null)
-            ->mustRun(null, array_merge($this->baseVariables($this->connection->getConfig()), [
-
-            ]));
-
-        $migrations = preg_replace('/CREATE TABLE sqlite_.+?\);[\r\n]+/is', '', $process->getOutput());
-
-        $this->files->put($path, $migrations.PHP_EOL);
-
-        if ($this->hasMigrationTable()) {
-            $this->appendMigrationData($path);
+        $process = $this->make_process($this->base_command() . ' ".schema --indent"')->set_timeout(null)->must_run(null, array_merge($this->base_variables($this->connection->get_config()), []));
+        $migrations = preg_replace('/CREATE TABLE sqlite_.+?\);[\r\n]+/is', '', $process->get_output());
+        $this->files->put($path, $migrations . PHP_EOL);
+        if ($this->has_migration_table()) {
+            $this->append_migration_data($path);
         }
     }
-
     /**
      * Append the migration data to the schema dump.
      *
      * @return void
      */
-    protected function appendMigrationData(string $path)
+    protected function append_migration_data(string $path)
     {
-        $process = $this->makeProcess(
-            $this->baseCommand().' ".dump \''.$this->getMigrationTable().'\'"'
-        )->mustRun(null, array_merge($this->baseVariables($this->connection->getConfig()), [
-
-        ]));
-
-        $migrations = (new Collection(preg_split("/\r\n|\n|\r/", $process->getOutput())))
-            ->filter(fn ($line): bool => preg_match('/^\s*(--|INSERT\s)/iu', $line) === 1 && strlen($line) > 0)
-            ->all();
-
-        $this->files->append($path, implode(PHP_EOL, $migrations).PHP_EOL);
+        $process = $this->make_process($this->base_command() . ' ".dump \'' . $this->get_migration_table() . '\'"')->must_run(null, array_merge($this->base_variables($this->connection->get_config()), []));
+        $migrations = (new Collection(preg_split("/\r\n|\n|\r/", $process->get_output())))->filter(fn($line): bool => preg_match('/^\s*(--|INSERT\s)/iu', $line) === 1 && strlen($line) > 0)->all();
+        $this->files->append($path, implode(PHP_EOL, $migrations) . PHP_EOL);
     }
-
     /**
      * Load the given schema file into the database.
      *
@@ -58,39 +39,26 @@ class SqliteSchemaState extends SchemaState
      */
     public function load($path): void
     {
-        $database = $this->connection->getDatabaseName();
-
-        if ($database === ':memory:' ||
-            str_contains($database, '?mode=memory') ||
-            str_contains($database, '&mode=memory')
-        ) {
-            $this->connection->getPdo()->exec($this->files->get($path));
-
+        $database = $this->connection->get_database_name();
+        if ($database === ':memory:' || str_contains($database, '?mode=memory') || str_contains($database, '&mode=memory')) {
+            $this->connection->get_pdo()->exec($this->files->get($path));
             return;
         }
-
-        $process = $this->makeProcess($this->baseCommand().' < "${:LARAVEL_LOAD_PATH}"');
-
-        $process->mustRun(null, array_merge($this->baseVariables($this->connection->getConfig()), [
-            'LARAVEL_LOAD_PATH' => $path,
-        ]));
+        $process = $this->make_process($this->base_command() . ' < "${:LARAVEL_LOAD_PATH}"');
+        $process->must_run(null, array_merge($this->base_variables($this->connection->get_config()), ['LARAVEL_LOAD_PATH' => $path]));
     }
-
     /**
      * Get the base sqlite command arguments as a string.
      */
-    protected function baseCommand(): string
+    protected function base_command(): string
     {
         return 'sqlite3 "${:LARAVEL_LOAD_DATABASE}"';
     }
-
     /**
      * Get the base variables for a dump / load command.
      */
-    protected function baseVariables(array $config): array
+    protected function base_variables(array $config): array
     {
-        return [
-            'LARAVEL_LOAD_DATABASE' => $config['database'],
-        ];
+        return ['LARAVEL_LOAD_DATABASE' => $config['database']];
     }
 }

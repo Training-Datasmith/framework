@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Encryption;
 
 use RuntimeException;
-
-class MissingAppKeyException extends RuntimeException
+class Missing_App_Key_Exception extends RuntimeException
 {
     /**
      * Create a new exception instance.

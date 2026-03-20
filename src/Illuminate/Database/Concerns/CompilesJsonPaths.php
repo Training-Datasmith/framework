@@ -1,62 +1,48 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Concerns;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-
-trait CompilesJsonPaths
+trait Compiles_Json_Paths
 {
     /**
      * Split the given JSON selector into the field and the optional path and wrap them separately.
      *
      * @param  string  $column
      */
-    protected function wrapJsonFieldAndPath($column): array
+    protected function wrap_json_field_and_path($column): array
     {
         $parts = explode('->', $column, 2);
-
         $field = $this->wrap($parts[0]);
-
-        $path = count($parts) > 1 ? ', '.$this->wrapJsonPath($parts[1], '->') : '';
-
+        $path = count($parts) > 1 ? ', ' . $this->wrap_json_path($parts[1], '->') : '';
         return [$field, $path];
     }
-
     /**
      * Wrap the given JSON path.
      *
      * @param  string  $value
      * @param  string  $delimiter
      */
-    protected function wrapJsonPath($value, $delimiter = '->'): string
+    protected function wrap_json_path($value, $delimiter = '->'): string
     {
         $value = preg_replace("/([\\\\]+)?\\'/", "''", $value);
-
-        $jsonPath = (new Collection(explode($delimiter, (string) $value)))
-            ->map(fn ($segment) => $this->wrapJsonPathSegment($segment))
-            ->join('.');
-
-        return "'$".(str_starts_with((string) $jsonPath, '[') ? '' : '.').$jsonPath."'";
+        $json_path = (new Collection(explode($delimiter, (string) $value)))->map(fn($segment) => $this->wrap_json_path_segment($segment))->join('.');
+        return "'\$" . (str_starts_with((string) $json_path, '[') ? '' : '.') . $json_path . "'";
     }
-
     /**
      * Wrap the given JSON path segment.
      */
-    protected function wrapJsonPathSegment(string $segment): string
+    protected function wrap_json_path_segment(string $segment): string
     {
         if (preg_match('/(\[[^\]]+\])+$/', $segment, $parts)) {
-            $key = Str::beforeLast($segment, $parts[0]);
-
-            if (! empty($key)) {
-                return '"'.$key.'"'.$parts[0];
+            $key = Str::before_last($segment, $parts[0]);
+            if (!empty($key)) {
+                return '"' . $key . '"' . $parts[0];
             }
-
             return $parts[0];
         }
-
-        return '"'.$segment.'"';
+        return '"' . $segment . '"';
     }
 }

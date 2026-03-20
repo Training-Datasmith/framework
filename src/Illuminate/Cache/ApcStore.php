@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache;
 
-class ApcStore extends TaggableStore
+class Apc_Store extends Taggable_Store
 {
-    use RetrievesMultipleKeys;
-
+    use Retrieves_Multiple_Keys;
     /**
      * Create a new APC store.
      *
@@ -17,14 +15,14 @@ class ApcStore extends TaggableStore
         /**
          * The APC wrapper instance.
          */
-        protected \Illuminate\Cache\ApcWrapper $apc,
+        protected \Illuminate\Cache\Apc_Wrapper $apc,
         /**
          * A string that should be prepended to keys.
          */
         protected $prefix = ''
-    ) {
+    )
+    {
     }
-
     /**
      * Retrieve an item from the cache by key.
      *
@@ -33,9 +31,8 @@ class ApcStore extends TaggableStore
      */
     public function get($key)
     {
-        return $this->apc->get($this->prefix.$key);
+        return $this->apc->get($this->prefix . $key);
     }
-
     /**
      * Store an item in the cache for a given number of seconds.
      *
@@ -45,9 +42,8 @@ class ApcStore extends TaggableStore
      */
     public function put($key, $value, $seconds): bool
     {
-        return $this->apc->put($this->prefix.$key, $value, $seconds);
+        return $this->apc->put($this->prefix . $key, $value, $seconds);
     }
-
     /**
      * Increment the value of an item in the cache.
      *
@@ -57,9 +53,8 @@ class ApcStore extends TaggableStore
      */
     public function increment($key, $value = 1): int|false
     {
-        return $this->apc->increment($this->prefix.$key, $value);
+        return $this->apc->increment($this->prefix . $key, $value);
     }
-
     /**
      * Decrement the value of an item in the cache.
      *
@@ -69,9 +64,8 @@ class ApcStore extends TaggableStore
      */
     public function decrement($key, $value = 1): int|false
     {
-        return $this->apc->decrement($this->prefix.$key, $value);
+        return $this->apc->decrement($this->prefix . $key, $value);
     }
-
     /**
      * Store an item in the cache indefinitely.
      *
@@ -83,7 +77,6 @@ class ApcStore extends TaggableStore
     {
         return $this->put($key, $value, 0);
     }
-
     /**
      * Remove an item from the cache.
      *
@@ -91,9 +84,8 @@ class ApcStore extends TaggableStore
      */
     public function forget($key): bool
     {
-        return $this->apc->delete($this->prefix.$key);
+        return $this->apc->delete($this->prefix . $key);
     }
-
     /**
      * Remove all items from the cache.
      */
@@ -101,23 +93,21 @@ class ApcStore extends TaggableStore
     {
         return $this->apc->flush();
     }
-
     /**
      * Get the cache key prefix.
      *
      * @return string
      */
-    public function getPrefix()
+    public function get_prefix()
     {
         return $this->prefix;
     }
-
     /**
      * Set the cache key prefix.
      *
      * @param  string  $prefix
      */
-    public function setPrefix($prefix): void
+    public function set_prefix($prefix): void
     {
         $this->prefix = $prefix;
     }

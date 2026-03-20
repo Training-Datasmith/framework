@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Database\Eloquent;
 
-interface SupportsPartialRelations
+interface Supports_Partial_Relations
 {
     /**
      * Indicate that the relation is a single result of a larger one-to-many relationship.
@@ -14,19 +13,17 @@ interface SupportsPartialRelations
      * @param  string|null  $relation
      * @return $this
      */
-    public function ofMany($column = 'id', $aggregate = 'MAX', $relation = null);
-
+    public function of_many($column = 'id', $aggregate = 'MAX', $relation = null);
     /**
      * Determine whether the relationship is a one-of-many relationship.
      *
      * @return bool
      */
-    public function isOneOfMany();
-
+    public function is_one_of_many();
     /**
      * Get the one of many inner join subselect query builder instance.
      *
      * @return \Illuminate\Database\Eloquent\Builder|void
      */
-    public function getOneOfManySubQuery();
+    public function get_one_of_many_sub_query();
 }

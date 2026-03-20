@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Database\Eloquent;
 
 use Illuminate\Database\Eloquent\Model;
-
-interface CastsInboundAttributes
+interface Casts_Inbound_Attributes
 {
     /**
      * Transform the attribute to its underlying model values.

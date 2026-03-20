@@ -1,13 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent;
 
 /**
  * @template TBuilder of \Illuminate\Database\Eloquent\Builder
  */
-trait HasBuilder
+trait Has_Builder
 {
     /**
      * Begin querying the model.
@@ -18,80 +17,72 @@ trait HasBuilder
     {
         return parent::query();
     }
-
     /**
      * Create a new Eloquent query builder for the model.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
      * @return TBuilder
      */
-    public function newEloquentBuilder($query)
+    public function new_eloquent_builder($query)
     {
-        return parent::newEloquentBuilder($query);
+        return parent::new_eloquent_builder($query);
     }
-
     /**
      * Get a new query builder for the model's table.
      *
      * @return TBuilder
      */
-    public function newQuery()
+    public function new_query()
     {
-        return parent::newQuery();
+        return parent::new_query();
     }
-
     /**
      * Get a new query builder that doesn't have any global scopes or eager loading.
      *
      * @return TBuilder
      */
-    public function newModelQuery()
+    public function new_model_query()
     {
-        return parent::newModelQuery();
+        return parent::new_model_query();
     }
-
     /**
      * Get a new query builder with no relationships loaded.
      *
      * @return TBuilder
      */
-    public function newQueryWithoutRelationships()
+    public function new_query_without_relationships()
     {
-        return parent::newQueryWithoutRelationships();
+        return parent::new_query_without_relationships();
     }
-
     /**
      * Get a new query builder that doesn't have any global scopes.
      *
      * @return TBuilder
      */
-    public function newQueryWithoutScopes()
+    public function new_query_without_scopes()
     {
-        return parent::newQueryWithoutScopes();
+        return parent::new_query_without_scopes();
     }
-
     /**
      * Get a new query instance without a given scope.
      *
      * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
      * @return TBuilder
      */
-    public function newQueryWithoutScope($scope)
+    public function new_query_without_scope($scope)
     {
-        return parent::newQueryWithoutScope($scope);
+        return parent::new_query_without_scope($scope);
     }
-
     /**
      * Get a new query to restore one or more models by their queueable IDs.
      *
      * @param  array|int  $ids
      * @return TBuilder
      */
-    public function newQueryForRestoration($ids)
+    public function new_query_for_restoration($ids)
     {
-        return parent::newQueryForRestoration($ids);
+        return parent::new_query_for_restoration($ids);
     }
-
     /**
      * Begin querying the model on a given connection.
      *
@@ -102,17 +93,15 @@ trait HasBuilder
     {
         return parent::on($connection);
     }
-
     /**
      * Begin querying the model on the write connection.
      *
      * @return TBuilder
      */
-    public static function onWriteConnection()
+    public static function on_write_connection()
     {
-        return parent::onWriteConnection();
+        return parent::on_write_connection();
     }
-
     /**
      * Begin querying a model with eager loading.
      *

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Closure;
@@ -9,12 +8,11 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Eloquent\Relations\Concerns\InteractsWithDictionary;
-use Illuminate\Database\Query\Grammars\MySqlGrammar;
-use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Database\Eloquent\Model_Not_Found_Exception;
+use Illuminate\Database\Eloquent\Relations\Concerns\Interacts_With_Dictionary;
+use Illuminate\Database\Query\Grammars\My_Sql_Grammar;
+use Illuminate\Database\Unique_Constraint_Violation_Exception;
 use Illuminate\Support\Arr;
-
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
  * @template TIntermediateModel of \Illuminate\Database\Eloquent\Model
@@ -23,10 +21,9 @@ use Illuminate\Support\Arr;
  *
  * @extends \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, TIntermediateModel, TResult>
  */
-abstract class HasOneOrManyThrough extends Relation
+abstract class Has_One_Or_Many_Through extends Relation
 {
-    use InteractsWithDictionary;
-
+    use Interacts_With_Dictionary;
     /**
      * Create a new has many through relationship instance.
      *
@@ -38,195 +35,173 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  string  $localKey
      * @param  string  $secondLocalKey
      */
-    public function __construct(Builder $query, /**
-     * The far parent model instance.
-     */
-        protected \Illuminate\Database\Eloquent\Model $farParent, /**
-     * The "through" parent model instance.
-     */
-        protected \Illuminate\Database\Eloquent\Model $throughParent, /**
-     * The near key on the relationship.
-     */
-        protected $firstKey, /**
-     * The far key on the relationship.
-     */
-        protected $secondKey, /**
-     * The local key on the relationship.
-     */
-        protected $localKey, /**
-     * The local key on the intermediary model.
-     */
-        protected $secondLocalKey)
+    public function __construct(
+        Builder $query,
+        /**
+         * The far parent model instance.
+         */
+        protected \Illuminate\Database\Eloquent\Model $far_parent,
+        /**
+         * The "through" parent model instance.
+         */
+        protected \Illuminate\Database\Eloquent\Model $through_parent,
+        /**
+         * The near key on the relationship.
+         */
+        protected $first_key,
+        /**
+         * The far key on the relationship.
+         */
+        protected $second_key,
+        /**
+         * The local key on the relationship.
+         */
+        protected $local_key,
+        /**
+         * The local key on the intermediary model.
+         */
+        protected $second_local_key
+    )
     {
-        parent::__construct($query, $this->throughParent);
+        parent::__construct($query, $this->through_parent);
     }
-
     /**
      * Set the base constraints on the relation query.
      */
-    public function addConstraints(): void
+    public function add_constraints(): void
     {
-        $query = $this->getRelationQuery();
-
-        $localValue = $this->farParent[$this->localKey];
-
-        $this->performJoin($query);
-
+        $query = $this->get_relation_query();
+        $local_value = $this->far_parent[$this->local_key];
+        $this->perform_join($query);
         if (static::$constraints) {
-            $query->where($this->getQualifiedFirstKeyName(), '=', $localValue);
+            $query->where($this->get_qualified_first_key_name(), '=', $local_value);
         }
     }
-
     /**
      * Set the join clause on the query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>|null  $query
      * @return void
      */
-    protected function performJoin(?Builder $query = null)
+    protected function perform_join(?Builder $query = null)
     {
         $query ??= $this->query;
-
-        $farKey = $this->getQualifiedFarKeyName();
-
-        $query->join($this->throughParent->getTable(), $this->getQualifiedParentKeyName(), '=', $farKey);
-
-        if ($this->throughParentSoftDeletes()) {
-            $query->withGlobalScope('SoftDeletableHasManyThrough', function ($query): void {
-                $query->whereNull($this->throughParent->getQualifiedDeletedAtColumn());
+        $far_key = $this->get_qualified_far_key_name();
+        $query->join($this->through_parent->get_table(), $this->get_qualified_parent_key_name(), '=', $far_key);
+        if ($this->through_parent_soft_deletes()) {
+            $query->with_global_scope('SoftDeletableHasManyThrough', function ($query): void {
+                $query->where_null($this->through_parent->get_qualified_deleted_at_column());
             });
         }
     }
-
     /**
      * Get the fully-qualified parent key name.
      *
      * @return string
      */
-    public function getQualifiedParentKeyName()
+    public function get_qualified_parent_key_name()
     {
-        return $this->parent->qualifyColumn($this->secondLocalKey);
+        return $this->parent->qualify_column($this->second_local_key);
     }
-
     /**
      * Determine whether "through" parent of the relation uses Soft Deletes.
      *
      * @return bool
      */
-    public function throughParentSoftDeletes()
+    public function through_parent_soft_deletes()
     {
-        return $this->throughParent::isSoftDeletable();
+        return $this->through_parent::is_soft_deletable();
     }
-
     /**
      * Indicate that trashed "through" parents should be included in the query.
      *
      * @return $this
      */
-    public function withTrashedParents()
+    public function with_trashed_parents()
     {
-        $this->query->withoutGlobalScope('SoftDeletableHasManyThrough');
-
+        $this->query->without_global_scope('SoftDeletableHasManyThrough');
         return $this;
     }
-
     /** @inheritDoc */
-    public function addEagerConstraints(array $models): void
+    public function add_eager_constraints(array $models): void
     {
-        $whereIn = $this->whereInMethod($this->farParent, $this->localKey);
-
-        $this->whereInEager(
-            $whereIn,
-            $this->getQualifiedFirstKeyName(),
-            $this->getKeys($models, $this->localKey),
-            $this->getRelationQuery(),
-        );
+        $where_in = $this->where_in_method($this->far_parent, $this->local_key);
+        $this->where_in_eager($where_in, $this->get_qualified_first_key_name(), $this->get_keys($models, $this->local_key), $this->get_relation_query());
     }
-
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
      * @param  \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>  $results
      * @return array<array<array-key, TRelatedModel>>
      */
-    protected function buildDictionary(EloquentCollection $results)
+    protected function build_dictionary(Eloquent_Collection $results)
     {
         $dictionary = [];
-
-        $isAssociative = Arr::isAssoc($results->all());
-
+        $is_associative = Arr::is_assoc($results->all());
         // First we will create a dictionary of models keyed by the foreign key of the
         // relationship as this will allow us to quickly access all of the related
         // models without having to do nested looping which will be quite slow.
         foreach ($results as $key => $result) {
-            if ($isAssociative) {
+            if ($is_associative) {
                 $dictionary[$result->laravel_through_key][$key] = $result;
             } else {
                 $dictionary[$result->laravel_through_key][] = $result;
             }
         }
-
         return $dictionary;
     }
-
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
      * @return TRelatedModel
      */
-    public function firstOrNew(array $attributes = [], array $values = [])
+    public function first_or_new(array $attributes = [], array $values = [])
     {
-        if (! is_null($instance = $this->where($attributes)->first())) {
+        if (!is_null($instance = $this->where($attributes)->first())) {
             return $instance;
         }
-
-        return $this->related->newInstance(array_merge($attributes, $values));
+        return $this->related->new_instance(array_merge($attributes, $values));
     }
-
     /**
      * Get the first record matching the attributes. If the record is not found, create it.
      *
      * @param  (\Closure(): array)|array  $values
      * @return TRelatedModel
      */
-    public function firstOrCreate(array $attributes = [], Closure|array $values = [])
+    public function first_or_create(array $attributes = [], Closure|array $values = [])
     {
-        if (! is_null($instance = (clone $this)->where($attributes)->first())) {
+        if (!is_null($instance = (clone $this)->where($attributes)->first())) {
             return $instance;
         }
-
-        return $this->createOrFirst(array_merge($attributes, value($values)));
+        return $this->create_or_first(array_merge($attributes, value($values)));
     }
-
     /**
      * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
      *
      * @param  (\Closure(): array)|array  $values
      * @return TRelatedModel
      */
-    public function createOrFirst(array $attributes = [], Closure|array $values = [])
+    public function create_or_first(array $attributes = [], Closure|array $values = [])
     {
         try {
-            return $this->getQuery()->withSavepointIfNeeded(fn () => $this->create(array_merge($attributes, value($values))));
-        } catch (UniqueConstraintViolationException $exception) {
+            return $this->get_query()->with_savepoint_if_needed(fn() => $this->create(array_merge($attributes, value($values))));
+        } catch (Unique_Constraint_Violation_Exception $exception) {
             return $this->where($attributes)->first() ?? throw $exception;
         }
     }
-
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
      * @return TRelatedModel
      */
-    public function updateOrCreate(array $attributes, array $values = [])
+    public function update_or_create(array $attributes, array $values = [])
     {
-        return tap($this->firstOrCreate($attributes, $values), function ($instance) use ($values): void {
-            if (! $instance->wasRecentlyCreated) {
+        return tap($this->first_or_create($attributes, $values), function ($instance) use ($values): void {
+            if (!$instance->was_recently_created) {
                 $instance->fill($values)->save();
             }
         });
     }
-
     /**
      * Add a basic where clause to the query, and return the first result.
      *
@@ -236,11 +211,10 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  string  $boolean
      * @return TRelatedModel|null
      */
-    public function firstWhere($column, $operator = null, $value = null, $boolean = 'and')
+    public function first_where($column, $operator = null, $value = null, $boolean = 'and')
     {
         return $this->where($column, $operator, $value, $boolean)->first();
     }
-
     /**
      * Execute the query and get the first related model.
      *
@@ -250,10 +224,8 @@ abstract class HasOneOrManyThrough extends Relation
     public function first($columns = ['*'])
     {
         $results = $this->limit(1)->get($columns);
-
         return count($results) > 0 ? $results->first() : null;
     }
-
     /**
      * Execute the query and get the first result or throw an exception.
      *
@@ -262,15 +234,13 @@ abstract class HasOneOrManyThrough extends Relation
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
      */
-    public function firstOrFail($columns = ['*'])
+    public function first_or_fail($columns = ['*'])
     {
-        if (! is_null($model = $this->first($columns))) {
+        if (!is_null($model = $this->first($columns))) {
             return $model;
         }
-
-        throw (new ModelNotFoundException())->setModel($this->related::class);
+        throw (new Model_Not_Found_Exception())->set_model($this->related::class);
     }
-
     /**
      * Execute the query and get the first result or call a callback.
      *
@@ -280,21 +250,17 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  (\Closure(): TValue)|null  $callback
      * @return TRelatedModel|TValue
      */
-    public function firstOr($columns = ['*'], ?Closure $callback = null)
+    public function first_or($columns = ['*'], ?Closure $callback = null)
     {
         if ($columns instanceof Closure) {
             $callback = $columns;
-
             $columns = ['*'];
         }
-
-        if (! is_null($model = $this->first($columns))) {
+        if (!is_null($model = $this->first($columns))) {
             return $model;
         }
-
         return $callback();
     }
-
     /**
      * Find a related model by its primary key.
      *
@@ -305,16 +271,10 @@ abstract class HasOneOrManyThrough extends Relation
     public function find($id, $columns = ['*'])
     {
         if (is_array($id) || $id instanceof Arrayable) {
-            return $this->findMany($id, $columns);
+            return $this->find_many($id, $columns);
         }
-
-        return $this->where(
-            $this->getRelated()->getQualifiedKeyName(),
-            '=',
-            $id
-        )->first($columns);
+        return $this->where($this->get_related()->get_qualified_key_name(), '=', $id)->first($columns);
     }
-
     /**
      * Find a sole related model by its primary key.
      *
@@ -325,15 +285,10 @@ abstract class HasOneOrManyThrough extends Relation
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
      * @throws \Illuminate\Database\MultipleRecordsFoundException
      */
-    public function findSole($id, $columns = ['*'])
+    public function find_sole($id, $columns = ['*'])
     {
-        return $this->where(
-            $this->getRelated()->getQualifiedKeyName(),
-            '=',
-            $id
-        )->sole($columns);
+        return $this->where($this->get_related()->get_qualified_key_name(), '=', $id)->sole($columns);
     }
-
     /**
      * Find multiple related models by their primary keys.
      *
@@ -341,20 +296,14 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  array  $columns
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
-    public function findMany($ids, $columns = ['*'])
+    public function find_many($ids, $columns = ['*'])
     {
-        $ids = $ids instanceof Arrayable ? $ids->toArray() : $ids;
-
+        $ids = $ids instanceof Arrayable ? $ids->to_array() : $ids;
         if (empty($ids)) {
-            return $this->getRelated()->newCollection();
+            return $this->get_related()->new_collection();
         }
-
-        return $this->whereIn(
-            $this->getRelated()->getQualifiedKeyName(),
-            $ids
-        )->get($columns);
+        return $this->where_in($this->get_related()->get_qualified_key_name(), $ids)->get($columns);
     }
-
     /**
      * Find a related model by its primary key or throw an exception.
      *
@@ -364,23 +313,19 @@ abstract class HasOneOrManyThrough extends Relation
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
      */
-    public function findOrFail($id, $columns = ['*'])
+    public function find_or_fail($id, $columns = ['*'])
     {
         $result = $this->find($id, $columns);
-
-        $id = $id instanceof Arrayable ? $id->toArray() : $id;
-
+        $id = $id instanceof Arrayable ? $id->to_array() : $id;
         if (is_array($id)) {
             if (count($result) === count(array_unique($id))) {
                 return $result;
             }
-        } elseif (! is_null($result)) {
+        } elseif (!is_null($result)) {
             return $result;
         }
-
-        throw (new ModelNotFoundException())->setModel($this->related::class, $id);
+        throw (new Model_Not_Found_Exception())->set_model($this->related::class, $id);
     }
-
     /**
      * Find a related model by its primary key or call a callback.
      *
@@ -395,48 +340,36 @@ abstract class HasOneOrManyThrough extends Relation
      *     : TRelatedModel|TValue
      * )
      */
-    public function findOr($id, $columns = ['*'], ?Closure $callback = null)
+    public function find_or($id, $columns = ['*'], ?Closure $callback = null)
     {
         if ($columns instanceof Closure) {
             $callback = $columns;
-
             $columns = ['*'];
         }
-
         $result = $this->find($id, $columns);
-
-        $id = $id instanceof Arrayable ? $id->toArray() : $id;
-
+        $id = $id instanceof Arrayable ? $id->to_array() : $id;
         if (is_array($id)) {
             if (count($result) === count(array_unique($id))) {
                 return $result;
             }
-        } elseif (! is_null($result)) {
+        } elseif (!is_null($result)) {
             return $result;
         }
-
         return $callback();
     }
-
     /** @inheritDoc */
     public function get($columns = ['*'])
     {
-        $builder = $this->prepareQueryBuilder($columns);
-
-        $models = $builder->getModels();
-
+        $builder = $this->prepare_query_builder($columns);
+        $models = $builder->get_models();
         // If we actually found models we will also eager load any relationships that
         // have been specified as needing to be eager loaded. This will solve the
         // n + 1 query problem for the developer and also increase performance.
         if (count($models) > 0) {
-            $models = $builder->eagerLoadRelations($models);
+            $models = $builder->eager_load_relations($models);
         }
-
-        return $this->query->applyAfterQueryCallbacks(
-            $this->related->newCollection($models)
-        );
+        return $this->query->apply_after_query_callbacks($this->related->new_collection($models));
     }
-
     /**
      * Get a paginator for the "select" statement.
      *
@@ -446,13 +379,11 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  int|null  $page
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    public function paginate($per_page = null, $columns = ['*'], $page_name = 'page', $page = null)
     {
-        $this->query->addSelect($this->shouldSelect($columns));
-
-        return $this->query->paginate($perPage, $columns, $pageName, $page);
+        $this->query->add_select($this->should_select($columns));
+        return $this->query->paginate($per_page, $columns, $page_name, $page);
     }
-
     /**
      * Paginate the given query into a simple paginator.
      *
@@ -462,13 +393,11 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  int|null  $page
      * @return \Illuminate\Contracts\Pagination\Paginator
      */
-    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    public function simple_paginate($per_page = null, $columns = ['*'], $page_name = 'page', $page = null)
     {
-        $this->query->addSelect($this->shouldSelect($columns));
-
-        return $this->query->simplePaginate($perPage, $columns, $pageName, $page);
+        $this->query->add_select($this->should_select($columns));
+        return $this->query->simple_paginate($per_page, $columns, $page_name, $page);
     }
-
     /**
      * Paginate the given query into a cursor paginator.
      *
@@ -478,27 +407,23 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  string|null  $cursor
      * @return \Illuminate\Contracts\Pagination\CursorPaginator
      */
-    public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null)
+    public function cursor_paginate($per_page = null, $columns = ['*'], $cursor_name = 'cursor', $cursor = null)
     {
-        $this->query->addSelect($this->shouldSelect($columns));
-
-        return $this->query->cursorPaginate($perPage, $columns, $cursorName, $cursor);
+        $this->query->add_select($this->should_select($columns));
+        return $this->query->cursor_paginate($per_page, $columns, $cursor_name, $cursor);
     }
-
     /**
      * Set the select clause for the relation query.
      *
      * @return array
      */
-    protected function shouldSelect(array $columns = ['*'])
+    protected function should_select(array $columns = ['*'])
     {
         if ($columns == ['*']) {
-            $columns = [$this->related->qualifyColumn('*')];
+            $columns = [$this->related->qualify_column('*')];
         }
-
-        return array_merge($columns, [$this->getQualifiedFirstKeyName().' as laravel_through_key']);
+        return array_merge($columns, [$this->get_qualified_first_key_name() . ' as laravel_through_key']);
     }
-
     /**
      * Chunk the results of the query.
      *
@@ -507,9 +432,8 @@ abstract class HasOneOrManyThrough extends Relation
      */
     public function chunk($count, callable $callback)
     {
-        return $this->prepareQueryBuilder()->chunk($count, $callback);
+        return $this->prepare_query_builder()->chunk($count, $callback);
     }
-
     /**
      * Chunk the results of a query by comparing numeric IDs.
      *
@@ -518,15 +442,12 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  string|null  $alias
      * @return bool
      */
-    public function chunkById($count, callable $callback, $column = null, $alias = null)
+    public function chunk_by_id($count, callable $callback, $column = null, $alias = null)
     {
-        $column ??= $this->getRelated()->getQualifiedKeyName();
-
-        $alias ??= $this->getRelated()->getKeyName();
-
-        return $this->prepareQueryBuilder()->chunkById($count, $callback, $column, $alias);
+        $column ??= $this->get_related()->get_qualified_key_name();
+        $alias ??= $this->get_related()->get_key_name();
+        return $this->prepare_query_builder()->chunk_by_id($count, $callback, $column, $alias);
     }
-
     /**
      * Chunk the results of a query by comparing IDs in descending order.
      *
@@ -535,15 +456,12 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  string|null  $alias
      * @return bool
      */
-    public function chunkByIdDesc($count, callable $callback, $column = null, $alias = null)
+    public function chunk_by_id_desc($count, callable $callback, $column = null, $alias = null)
     {
-        $column ??= $this->getRelated()->getQualifiedKeyName();
-
-        $alias ??= $this->getRelated()->getKeyName();
-
-        return $this->prepareQueryBuilder()->chunkByIdDesc($count, $callback, $column, $alias);
+        $column ??= $this->get_related()->get_qualified_key_name();
+        $alias ??= $this->get_related()->get_key_name();
+        return $this->prepare_query_builder()->chunk_by_id_desc($count, $callback, $column, $alias);
     }
-
     /**
      * Execute a callback over each item while chunking by ID.
      *
@@ -552,15 +470,12 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  string|null  $alias
      * @return bool
      */
-    public function eachById(callable $callback, $count = 1000, $column = null, $alias = null)
+    public function each_by_id(callable $callback, $count = 1000, $column = null, $alias = null)
     {
-        $column ??= $this->getRelated()->getQualifiedKeyName();
-
-        $alias ??= $this->getRelated()->getKeyName();
-
-        return $this->prepareQueryBuilder()->eachById($callback, $count, $column, $alias);
+        $column ??= $this->get_related()->get_qualified_key_name();
+        $alias ??= $this->get_related()->get_key_name();
+        return $this->prepare_query_builder()->each_by_id($callback, $count, $column, $alias);
     }
-
     /**
      * Get a generator for the given query.
      *
@@ -568,9 +483,8 @@ abstract class HasOneOrManyThrough extends Relation
      */
     public function cursor()
     {
-        return $this->prepareQueryBuilder()->cursor();
+        return $this->prepare_query_builder()->cursor();
     }
-
     /**
      * Execute a callback over each item while chunking.
      *
@@ -587,18 +501,16 @@ abstract class HasOneOrManyThrough extends Relation
             }
         });
     }
-
     /**
      * Query lazily, by chunks of the given size.
      *
      * @param  int  $chunkSize
      * @return \Illuminate\Support\LazyCollection<int, TRelatedModel>
      */
-    public function lazy($chunkSize = 1000)
+    public function lazy($chunk_size = 1000)
     {
-        return $this->prepareQueryBuilder()->lazy($chunkSize);
+        return $this->prepare_query_builder()->lazy($chunk_size);
     }
-
     /**
      * Query lazily, by chunking the results of a query by comparing IDs.
      *
@@ -607,15 +519,12 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  string|null  $alias
      * @return \Illuminate\Support\LazyCollection<int, TRelatedModel>
      */
-    public function lazyById($chunkSize = 1000, $column = null, $alias = null)
+    public function lazy_by_id($chunk_size = 1000, $column = null, $alias = null)
     {
-        $column ??= $this->getRelated()->getQualifiedKeyName();
-
-        $alias ??= $this->getRelated()->getKeyName();
-
-        return $this->prepareQueryBuilder()->lazyById($chunkSize, $column, $alias);
+        $column ??= $this->get_related()->get_qualified_key_name();
+        $alias ??= $this->get_related()->get_key_name();
+        return $this->prepare_query_builder()->lazy_by_id($chunk_size, $column, $alias);
     }
-
     /**
      * Query lazily, by chunking the results of a query by comparing IDs in descending order.
      *
@@ -624,50 +533,35 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  string|null  $alias
      * @return \Illuminate\Support\LazyCollection<int, TRelatedModel>
      */
-    public function lazyByIdDesc($chunkSize = 1000, $column = null, $alias = null)
+    public function lazy_by_id_desc($chunk_size = 1000, $column = null, $alias = null)
     {
-        $column ??= $this->getRelated()->getQualifiedKeyName();
-
-        $alias ??= $this->getRelated()->getKeyName();
-
-        return $this->prepareQueryBuilder()->lazyByIdDesc($chunkSize, $column, $alias);
+        $column ??= $this->get_related()->get_qualified_key_name();
+        $alias ??= $this->get_related()->get_key_name();
+        return $this->prepare_query_builder()->lazy_by_id_desc($chunk_size, $column, $alias);
     }
-
     /**
      * Prepare the query builder for query execution.
      *
      * @param  array  $columns
      * @return \Illuminate\Database\Eloquent\Builder<TRelatedModel>
      */
-    protected function prepareQueryBuilder($columns = ['*'])
+    protected function prepare_query_builder($columns = ['*'])
     {
-        $builder = $this->query->applyScopes();
-
-        return $builder->addSelect(
-            $this->shouldSelect($builder->getQuery()->columns ? [] : $columns)
-        );
+        $builder = $this->query->apply_scopes();
+        return $builder->add_select($this->should_select($builder->get_query()->columns ? [] : $columns));
     }
-
     /** @inheritDoc */
-    public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
+    public function get_relation_existence_query(Builder $query, Builder $parent_query, $columns = ['*'])
     {
-        if ($parentQuery->getQuery()->from === $query->getQuery()->from) {
-            return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
+        if ($parent_query->get_query()->from === $query->get_query()->from) {
+            return $this->get_relation_existence_query_for_self_relation($query, $parent_query, $columns);
         }
-
-        if ($parentQuery->getQuery()->from === $this->throughParent->getTable()) {
-            return $this->getRelationExistenceQueryForThroughSelfRelation($query, $parentQuery, $columns);
+        if ($parent_query->get_query()->from === $this->through_parent->get_table()) {
+            return $this->get_relation_existence_query_for_through_self_relation($query, $parent_query, $columns);
         }
-
-        $this->performJoin($query);
-
-        return $query->select($columns)->whereColumn(
-            $this->getQualifiedLocalKeyName(),
-            '=',
-            $this->getQualifiedFirstKeyName()
-        );
+        $this->perform_join($query);
+        return $query->select($columns)->where_column($this->get_qualified_local_key_name(), '=', $this->get_qualified_first_key_name());
     }
-
     /**
      * Add the constraints for a relationship query on the same table.
      *
@@ -676,25 +570,16 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  mixed  $columns
      * @return \Illuminate\Database\Eloquent\Builder<TRelatedModel>
      */
-    public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
+    public function get_relation_existence_query_for_self_relation(Builder $query, Builder $parent_query, $columns = ['*'])
     {
-        $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
-
-        $query->join($this->throughParent->getTable(), $this->getQualifiedParentKeyName(), '=', $hash.'.'.$this->secondKey);
-
-        if ($this->throughParentSoftDeletes()) {
-            $query->whereNull($this->throughParent->getQualifiedDeletedAtColumn());
+        $query->from($query->get_model()->get_table() . ' as ' . $hash = $this->get_relation_count_hash());
+        $query->join($this->through_parent->get_table(), $this->get_qualified_parent_key_name(), '=', $hash . '.' . $this->second_key);
+        if ($this->through_parent_soft_deletes()) {
+            $query->where_null($this->through_parent->get_qualified_deleted_at_column());
         }
-
-        $query->getModel()->setTable($hash);
-
-        return $query->select($columns)->whereColumn(
-            $parentQuery->getQuery()->from.'.'.$this->localKey,
-            '=',
-            $this->getQualifiedFirstKeyName()
-        );
+        $query->get_model()->set_table($hash);
+        return $query->select($columns)->where_column($parent_query->get_query()->from . '.' . $this->local_key, '=', $this->get_qualified_first_key_name());
     }
-
     /**
      * Add the constraints for a relationship query on the same table as the through parent.
      *
@@ -703,23 +588,15 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  mixed  $columns
      * @return \Illuminate\Database\Eloquent\Builder<TRelatedModel>
      */
-    public function getRelationExistenceQueryForThroughSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
+    public function get_relation_existence_query_for_through_self_relation(Builder $query, Builder $parent_query, $columns = ['*'])
     {
-        $table = $this->throughParent->getTable().' as '.$hash = $this->getRelationCountHash();
-
-        $query->join($table, $hash.'.'.$this->secondLocalKey, '=', $this->getQualifiedFarKeyName());
-
-        if ($this->throughParentSoftDeletes()) {
-            $query->whereNull($hash.'.'.$this->throughParent->getDeletedAtColumn());
+        $table = $this->through_parent->get_table() . ' as ' . $hash = $this->get_relation_count_hash();
+        $query->join($table, $hash . '.' . $this->second_local_key, '=', $this->get_qualified_far_key_name());
+        if ($this->through_parent_soft_deletes()) {
+            $query->where_null($hash . '.' . $this->through_parent->get_deleted_at_column());
         }
-
-        return $query->select($columns)->whereColumn(
-            $parentQuery->getQuery()->from.'.'.$this->localKey,
-            '=',
-            $hash.'.'.$this->firstKey
-        );
+        return $query->select($columns)->where_column($parent_query->get_query()->from . '.' . $this->local_key, '=', $hash . '.' . $this->first_key);
     }
-
     /**
      * Alias to set the "limit" value of the query.
      *
@@ -730,7 +607,6 @@ abstract class HasOneOrManyThrough extends Relation
     {
         return $this->limit($value);
     }
-
     /**
      * Set the "limit" value of the query.
      *
@@ -739,100 +615,88 @@ abstract class HasOneOrManyThrough extends Relation
      */
     public function limit($value)
     {
-        if ($this->farParent->exists) {
+        if ($this->far_parent->exists) {
             $this->query->limit($value);
         } else {
-            $column = $this->getQualifiedFirstKeyName();
-
-            $grammar = $this->query->getQuery()->getGrammar();
-
-            if ($grammar instanceof MySqlGrammar && $grammar->useLegacyGroupLimit($this->query->getQuery())) {
+            $column = $this->get_qualified_first_key_name();
+            $grammar = $this->query->get_query()->get_grammar();
+            if ($grammar instanceof My_Sql_Grammar && $grammar->use_legacy_group_limit($this->query->get_query())) {
                 $column = 'laravel_through_key';
             }
-
-            $this->query->groupLimit($value, $column);
+            $this->query->group_limit($value, $column);
         }
-
         return $this;
     }
-
     /**
      * Get the qualified foreign key on the related model.
      *
      * @return string
      */
-    public function getQualifiedFarKeyName()
+    public function get_qualified_far_key_name()
     {
-        return $this->getQualifiedForeignKeyName();
+        return $this->get_qualified_foreign_key_name();
     }
-
     /**
      * Get the foreign key on the "through" model.
      *
      * @return string
      */
-    public function getFirstKeyName()
+    public function get_first_key_name()
     {
-        return $this->firstKey;
+        return $this->first_key;
     }
-
     /**
      * Get the qualified foreign key on the "through" model.
      *
      * @return string
      */
-    public function getQualifiedFirstKeyName()
+    public function get_qualified_first_key_name()
     {
-        return $this->throughParent->qualifyColumn($this->firstKey);
+        return $this->through_parent->qualify_column($this->first_key);
     }
-
     /**
      * Get the foreign key on the related model.
      *
      * @return string
      */
-    public function getForeignKeyName()
+    public function get_foreign_key_name()
     {
-        return $this->secondKey;
+        return $this->second_key;
     }
-
     /**
      * Get the qualified foreign key on the related model.
      *
      * @return string
      */
-    public function getQualifiedForeignKeyName()
+    public function get_qualified_foreign_key_name()
     {
-        return $this->related->qualifyColumn($this->secondKey);
+        return $this->related->qualify_column($this->second_key);
     }
-
     /**
      * Get the local key on the far parent model.
      *
      * @return string
      */
-    public function getLocalKeyName()
+    public function get_local_key_name()
     {
-        return $this->localKey;
+        return $this->local_key;
     }
-
     /**
      * Get the qualified local key on the far parent model.
      *
      * @return string
      */
-    public function getQualifiedLocalKeyName()
+    public function get_qualified_local_key_name()
     {
-        return $this->farParent->qualifyColumn($this->localKey);
+        return $this->far_parent->qualify_column($this->local_key);
     }
-
     /**
      * Get the local key on the intermediary model.
      *
      * @return string
      */
-    public function getSecondLocalKeyName()
+    public function get_second_local_key_name()
     {
-        return $this->secondLocalKey;
+        return $this->second_local_key;
     }
 }

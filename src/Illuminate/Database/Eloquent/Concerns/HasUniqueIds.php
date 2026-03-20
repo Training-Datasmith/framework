@@ -1,54 +1,49 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Concerns;
 
-trait HasUniqueIds
+trait Has_Unique_Ids
 {
     /**
      * Indicates if the model uses unique ids.
      *
      * @var bool
      */
-    public $usesUniqueIds = false;
-
+    public $uses_unique_ids = false;
     /**
      * Determine if the model uses unique ids.
      *
      * @return bool
      */
-    public function usesUniqueIds()
+    public function uses_unique_ids()
     {
-        return $this->usesUniqueIds;
+        return $this->uses_unique_ids;
     }
-
     /**
      * Generate unique keys for the model.
      */
-    public function setUniqueIds(): void
+    public function set_unique_ids(): void
     {
-        foreach ($this->uniqueIds() as $column) {
+        foreach ($this->unique_ids() as $column) {
             if (empty($this->{$column})) {
-                $this->{$column} = $this->newUniqueId();
+                $this->{$column} = $this->new_unique_id();
             }
         }
     }
-
     /**
      * Generate a new key for the model.
      *
      * @return string
      */
-    public function newUniqueId(): null
+    public function new_unique_id(): null
     {
         return null;
     }
-
     /**
      * Get the columns that should receive a unique identifier.
      */
-    public function uniqueIds(): array
+    public function unique_ids(): array
     {
         return [];
     }

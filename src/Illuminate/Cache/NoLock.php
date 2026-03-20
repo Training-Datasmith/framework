@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache;
 
-class NoLock extends Lock
+class No_Lock extends Lock
 {
     /**
      * Attempt to acquire the lock.
@@ -13,7 +12,6 @@ class NoLock extends Lock
     {
         return true;
     }
-
     /**
      * Release the lock.
      */
@@ -21,21 +19,18 @@ class NoLock extends Lock
     {
         return true;
     }
-
     /**
      * Releases this lock in disregard of ownership.
      */
-    public function forceRelease(): void
+    public function force_release(): void
     {
-
     }
-
     /**
      * Returns the owner value written into the driver for this lock.
      *
      * @return mixed
      */
-    protected function getCurrentOwner()
+    protected function get_current_owner()
     {
         return $this->owner;
     }

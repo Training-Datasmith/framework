@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\View\Components\TwoColumnDetail;
+use Illuminate\Console\View\Components\Two_Column_Detail;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Console\Seeds\Without_Model_Events;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
-
 abstract class Seeder
 {
     /**
@@ -19,21 +17,18 @@ abstract class Seeder
      * @var \Illuminate\Contracts\Container\Container
      */
     protected $container;
-
     /**
      * The console command instance.
      *
      * @var \Illuminate\Console\Command
      */
     protected $command;
-
     /**
      * Seeders that have been called at least one time.
      *
      * @var array
      */
     protected static $called = [];
-
     /**
      * Run the given seeder class.
      *
@@ -44,75 +39,57 @@ abstract class Seeder
     public function call($class, $silent = false, array $parameters = [])
     {
         $classes = Arr::wrap($class);
-
         foreach ($classes as $class) {
             $seeder = $this->resolve($class);
-
             $name = $seeder::class;
-
             if ($silent === false && isset($this->command)) {
-                (new TwoColumnDetail($this->command->getOutput()))
-                    ->render($name, '<fg=yellow;options=bold>RUNNING</>');
+                (new Two_Column_Detail($this->command->get_output()))->render($name, '<fg=yellow;options=bold>RUNNING</>');
             }
-
-            $startTime = microtime(true);
-
+            $start_time = microtime(true);
             $seeder->__invoke($parameters);
-
             if ($silent === false && isset($this->command)) {
-                $runTime = number_format((microtime(true) - $startTime) * 1000);
-
-                (new TwoColumnDetail($this->command->getOutput()))
-                    ->render($name, "<fg=gray>$runTime ms</> <fg=green;options=bold>DONE</>");
-
-                $this->command->getOutput()->writeln('');
+                $run_time = number_format((microtime(true) - $start_time) * 1000);
+                (new Two_Column_Detail($this->command->get_output()))->render($name, "<fg=gray>{$run_time} ms</> <fg=green;options=bold>DONE</>");
+                $this->command->get_output()->writeln('');
             }
-
             static::$called[] = $class;
         }
-
         return $this;
     }
-
     /**
      * Run the given seeder class.
      *
      * @param  array|string  $class
      */
-    public function callWith($class, array $parameters = []): void
+    public function call_with($class, array $parameters = []): void
     {
         $this->call($class, false, $parameters);
     }
-
     /**
      * Silently run the given seeder class.
      *
      * @param  array|string  $class
      */
-    public function callSilent($class, array $parameters = []): void
+    public function call_silent($class, array $parameters = []): void
     {
         $this->call($class, true, $parameters);
     }
-
     /**
      * Run the given seeder class once.
      *
      * @param  array|string  $class
      * @param  bool  $silent
      */
-    public function callOnce($class, $silent = false, array $parameters = []): void
+    public function call_once($class, $silent = false, array $parameters = []): void
     {
         $classes = Arr::wrap($class);
-
         foreach ($classes as $class) {
             if (in_array($class, static::$called)) {
                 continue;
             }
-
             $this->call($class, $silent, $parameters);
         }
     }
-
     /**
      * Resolve an instance of the given seeder class.
      *
@@ -123,43 +100,35 @@ abstract class Seeder
     {
         if (isset($this->container)) {
             $instance = $this->container->make($class);
-
-            $instance->setContainer($this->container);
+            $instance->set_container($this->container);
         } else {
             $instance = new $class();
         }
-
         if (isset($this->command)) {
-            $instance->setCommand($this->command);
+            $instance->set_command($this->command);
         }
-
         return $instance;
     }
-
     /**
      * Set the IoC container instance.
      *
      * @return $this
      */
-    public function setContainer(Container $container)
+    public function set_container(Container $container)
     {
         $this->container = $container;
-
         return $this;
     }
-
     /**
      * Set the console command instance.
      *
      * @return $this
      */
-    public function setCommand(Command $command)
+    public function set_command(Command $command)
     {
         $this->command = $command;
-
         return $this;
     }
-
     /**
      * Run the database seeds.
      *
@@ -168,20 +137,14 @@ abstract class Seeder
      */
     public function __invoke(array $parameters = [])
     {
-        if (! method_exists($this, 'run')) {
-            throw new InvalidArgumentException('Method [run] missing from '.static::class);
+        if (!method_exists($this, 'run')) {
+            throw new InvalidArgumentException('Method [run] missing from ' . static::class);
         }
-
-        $callback = fn () => isset($this->container)
-            ? $this->container->call([$this, 'run'], $parameters)
-            : $this->run(...$parameters);
-
+        $callback = fn() => isset($this->container) ? $this->container->call([$this, 'run'], $parameters) : $this->run(...$parameters);
         $uses = array_flip(class_uses_recursive(static::class));
-
-        if (isset($uses[WithoutModelEvents::class])) {
-            $callback = $this->withoutModelEvents($callback);
+        if (isset($uses[Without_Model_Events::class])) {
+            $callback = $this->without_model_events($callback);
         }
-
         return $callback();
     }
 }

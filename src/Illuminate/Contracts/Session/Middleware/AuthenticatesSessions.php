@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Session\Middleware;
 
-interface AuthenticatesSessions
+interface Authenticates_Sessions
 {
 }

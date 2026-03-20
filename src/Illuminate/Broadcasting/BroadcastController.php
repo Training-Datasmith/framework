@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Broadcasting;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Broadcast;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-
-class BroadcastController extends Controller
+use Symfony\Component\Http_Kernel\Exception\Access_Denied_Http_Exception;
+class Broadcast_Controller extends Controller
 {
     /**
      * Authenticate the request for channel access.
@@ -18,13 +16,11 @@ class BroadcastController extends Controller
      */
     public function authenticate(Request $request)
     {
-        if ($request->hasSession()) {
+        if ($request->has_session()) {
             $request->session()->reflash();
         }
-
         return Broadcast::auth($request);
     }
-
     /**
      * Authenticate the current user.
      *
@@ -33,13 +29,11 @@ class BroadcastController extends Controller
      * @return array|null
      * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      */
-    public function authenticateUser(Request $request)
+    public function authenticate_user(Request $request)
     {
-        if ($request->hasSession()) {
+        if ($request->has_session()) {
             $request->session()->reflash();
         }
-
-        return Broadcast::resolveAuthenticatedUser($request)
-            ?? throw new AccessDeniedHttpException();
+        return Broadcast::resolve_authenticated_user($request) ?? throw new Access_Denied_Http_Exception();
     }
 }

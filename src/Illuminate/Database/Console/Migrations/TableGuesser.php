@@ -1,21 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Console\Migrations;
 
-class TableGuesser
+class Table_Guesser
 {
-    public const CREATE_PATTERNS = [
-        '/^create_(\w+)_table$/',
-        '/^create_(\w+)$/',
-    ];
-
-    public const CHANGE_PATTERNS = [
-        '/.+_(to|from|in)_(\w+)_table$/',
-        '/.+_(to|from|in)_(\w+)$/',
-    ];
-
+    public const CREATE_PATTERNS = ['/^create_(\w+)_table$/', '/^create_(\w+)$/'];
+    public const CHANGE_PATTERNS = ['/.+_(to|from|in)_(\w+)_table$/', '/.+_(to|from|in)_(\w+)$/'];
     /**
      * Attempt to guess the table name and "creation" status of the given migration.
      *
@@ -29,7 +20,6 @@ class TableGuesser
                 return [$matches[1], $create = true];
             }
         }
-
         foreach (self::CHANGE_PATTERNS as $pattern) {
             if (preg_match($pattern, $migration, $matches)) {
                 return [$matches[2], $create = false];

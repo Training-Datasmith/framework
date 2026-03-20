@@ -1,60 +1,51 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Testing;
 
 use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
-
-trait DatabaseMigrations
+use Illuminate\Foundation\Testing\Traits\Can_Configure_Migration_Commands;
+trait Database_Migrations
 {
-    use CanConfigureMigrationCommands;
-
+    use Can_Configure_Migration_Commands;
     /**
      * Define hooks to migrate the database before and after each test.
      */
-    public function runDatabaseMigrations(): void
+    public function run_database_migrations(): void
     {
-        $this->beforeRefreshingDatabase();
-        $this->refreshTestDatabase();
-        $this->afterRefreshingDatabase();
-
-        $this->beforeApplicationDestroyed(function (): void {
+        $this->before_refreshing_database();
+        $this->refresh_test_database();
+        $this->after_refreshing_database();
+        $this->before_application_destroyed(function (): void {
             $this->artisan('migrate:rollback');
-
-            RefreshDatabaseState::$migrated = false;
+            Refresh_Database_State::$migrated = false;
         });
     }
-
     /**
      * Refresh a conventional test database.
      *
      * @return void
      */
-    protected function refreshTestDatabase()
+    protected function refresh_test_database()
     {
-        $this->artisan('migrate:fresh', $this->migrateFreshUsing());
-
-        $this->app[Kernel::class]->setArtisan(null);
+        $this->artisan('migrate:fresh', $this->migrate_fresh_using());
+        $this->app[Kernel::class]->set_artisan(null);
     }
-
     /**
      * Perform any work that should take place before the database has started refreshing.
      *
      * @return void
      */
-    protected function beforeRefreshingDatabase()
+    protected function before_refreshing_database()
     {
         // ...
     }
-
     /**
      * Perform any work that should take place once the database has finished refreshing.
      *
      * @return void
      */
-    protected function afterRefreshingDatabase()
+    protected function after_refreshing_database()
     {
         // ...
     }

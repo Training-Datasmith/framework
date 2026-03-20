@@ -1,17 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Events;
 
 use Closure;
 use Illuminate\Support\Collection;
-
 use function Illuminate\Support\enum_value;
-
-use Laravel\SerializableClosure\SerializableClosure;
-
-class QueuedClosure
+use Laravel\Serializable_Closure\Serializable_Closure;
+class Queued_Closure
 {
     /**
      * The underlying Closure.
@@ -19,49 +15,42 @@ class QueuedClosure
      * @var \Closure
      */
     public $closure;
-
     /**
      * The name of the connection the job should be sent to.
      *
      * @var string|null
      */
     public $connection;
-
     /**
      * The name of the queue the job should be sent to.
      *
      * @var string|null
      */
     public $queue;
-
     /**
      * The job "group" the job should be sent to.
      *
      * @var string|null
      */
-    public $messageGroup;
-
+    public $message_group;
     /**
      * The job deduplicator callback the job should use to generate the deduplication ID.
      *
      * @var \Laravel\SerializableClosure\SerializableClosure|null
      */
     public $deduplicator;
-
     /**
      * The number of seconds before the job should be made available.
      *
      * @var \DateTimeInterface|\DateInterval|int|null
      */
     public $delay;
-
     /**
      * All of the "catch" callbacks for the queued closure.
      *
      * @var array
      */
-    public $catchCallbacks = [];
-
+    public $catch_callbacks = [];
     /**
      * Create a new queued closure event listener resolver.
      */
@@ -69,33 +58,28 @@ class QueuedClosure
     {
         $this->closure = $closure;
     }
-
     /**
      * Set the desired connection for the job.
      *
      * @param  \UnitEnum|string|null  $connection
      * @return $this
      */
-    public function onConnection($connection): static
+    public function on_connection($connection): static
     {
         $this->connection = enum_value($connection);
-
         return $this;
     }
-
     /**
      * Set the desired queue for the job.
      *
      * @param  \UnitEnum|string|null  $queue
      * @return $this
      */
-    public function onQueue($queue): static
+    public function on_queue($queue): static
     {
         $this->queue = enum_value($queue);
-
         return $this;
     }
-
     /**
      * Set the desired job "group".
      *
@@ -104,13 +88,11 @@ class QueuedClosure
      * @param  \UnitEnum|string  $group
      * @return $this
      */
-    public function onGroup($group): static
+    public function on_group($group): static
     {
-        $this->messageGroup = enum_value($group);
-
+        $this->message_group = enum_value($group);
         return $this;
     }
-
     /**
      * Set the desired job deduplicator callback.
      *
@@ -119,15 +101,11 @@ class QueuedClosure
      * @param  callable|null  $deduplicator
      * @return $this
      */
-    public function withDeduplicator($deduplicator): static
+    public function with_deduplicator($deduplicator): static
     {
-        $this->deduplicator = $deduplicator instanceof Closure
-            ? new SerializableClosure($deduplicator)
-            : $deduplicator;
-
+        $this->deduplicator = $deduplicator instanceof Closure ? new Serializable_Closure($deduplicator) : $deduplicator;
         return $this;
     }
-
     /**
      * Set the desired delay in seconds for the job.
      *
@@ -137,10 +115,8 @@ class QueuedClosure
     public function delay($delay): static
     {
         $this->delay = $delay;
-
         return $this;
     }
-
     /**
      * Specify a callback that should be invoked if the queued listener job fails.
      *
@@ -148,11 +124,9 @@ class QueuedClosure
      */
     public function catch(Closure $closure): static
     {
-        $this->catchCallbacks[] = $closure;
-
+        $this->catch_callbacks[] = $closure;
         return $this;
     }
-
     /**
      * Resolve the actual event listener callback.
      *
@@ -161,18 +135,7 @@ class QueuedClosure
     public function resolve()
     {
         return function (...$arguments): void {
-            dispatch(new CallQueuedListener(InvokeQueuedClosure::class, 'handle', [
-                'closure' => new SerializableClosure($this->closure),
-                'arguments' => $arguments,
-                'catch' => (new Collection($this->catchCallbacks))
-                    ->map(fn ($callback): \Laravel\SerializableClosure\SerializableClosure => new SerializableClosure($callback))
-                    ->all(),
-            ]))
-                ->onConnection($this->connection)
-                ->onQueue($this->queue)
-                ->delay($this->delay)
-                ->onGroup($this->messageGroup)
-                ->withDeduplicator($this->deduplicator);
+            dispatch(new Call_Queued_Listener(Invoke_Queued_Closure::class, 'handle', ['closure' => new Serializable_Closure($this->closure), 'arguments' => $arguments, 'catch' => (new Collection($this->catch_callbacks))->map(fn($callback): \Laravel\Serializable_Closure\Serializable_Closure => new Serializable_Closure($callback))->all()]))->on_connection($this->connection)->on_queue($this->queue)->delay($this->delay)->on_group($this->message_group)->with_deduplicator($this->deduplicator);
         };
     }
 }

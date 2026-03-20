@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\Scheduling;
 
-interface EventMutex
+interface Event_Mutex
 {
     /**
      * Attempt to obtain an event mutex for the given event.
@@ -12,14 +11,12 @@ interface EventMutex
      * @return bool
      */
     public function create(Event $event);
-
     /**
      * Determine if an event mutex exists for the given event.
      *
      * @return bool
      */
     public function exists(Event $event);
-
     /**
      * Clear the event mutex for the given event.
      *

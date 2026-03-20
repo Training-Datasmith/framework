@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache\Console;
 
-use Illuminate\Cache\CacheManager;
+use Illuminate\Cache\Cache_Manager;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputArgument;
-
-#[AsCommand(name: 'cache:prune-stale-tags')]
-class PruneStaleTagsCommand extends Command
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Console\Input\Input_Argument;
+#[As_Command(name: 'cache:prune-stale-tags')]
+class Prune_Stale_Tags_Command extends Command
 {
     /**
      * The console command name.
@@ -18,35 +16,28 @@ class PruneStaleTagsCommand extends Command
      * @var string
      */
     protected $name = 'cache:prune-stale-tags';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Prune stale cache tags from the cache (Redis only)';
-
     /**
      * Execute the console command.
      */
-    public function handle(CacheManager $cache): void
+    public function handle(Cache_Manager $cache): void
     {
         $cache = $cache->store($this->argument('store'));
-
-        if (method_exists($cache->getStore(), 'flushStaleTags')) {
-            $cache->flushStaleTags();
+        if (method_exists($cache->get_store(), 'flushStaleTags')) {
+            $cache->flush_stale_tags();
         }
-
         $this->components->info('Stale cache tags pruned successfully.');
     }
-
     /**
      * Get the console command arguments.
      */
-    protected function getArguments(): array
+    protected function get_arguments(): array
     {
-        return [
-            ['store', InputArgument::OPTIONAL, 'The name of the store you would like to prune tags from'],
-        ];
+        return [['store', Input_Argument::OPTIONAL, 'The name of the store you would like to prune tags from']];
     }
 }

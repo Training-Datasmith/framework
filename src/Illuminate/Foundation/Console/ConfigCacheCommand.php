@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
@@ -9,11 +8,10 @@ use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use LogicException;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\As_Command;
 use Throwable;
-
-#[AsCommand(name: 'config:cache')]
-class ConfigCacheCommand extends Command
+#[As_Command(name: 'config:cache')]
+class Config_Cache_Command extends Command
 {
     /**
      * The console command name.
@@ -21,25 +19,24 @@ class ConfigCacheCommand extends Command
      * @var string
      */
     protected $name = 'config:cache';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create a cache file for faster configuration loading';
-
     /**
      * Create a new config cache command instance.
      */
-    public function __construct(/**
-     * The filesystem instance.
-     */
+    public function __construct(
+        /**
+         * The filesystem instance.
+         */
         protected \Illuminate\Filesystem\Filesystem $files
-    ) {
+    )
+    {
         parent::__construct();
     }
-
     /**
      * Execute the console command.
      *
@@ -48,49 +45,35 @@ class ConfigCacheCommand extends Command
      */
     public function handle(): void
     {
-        $this->callSilent('config:clear');
-
-        $config = $this->getFreshConfiguration();
-
-        $configPath = $this->laravel->getCachedConfigPath();
-
-        $this->files->put(
-            $configPath,
-            '<?php return '.var_export($config, true).';'.PHP_EOL
-        );
-
+        $this->call_silent('config:clear');
+        $config = $this->get_fresh_configuration();
+        $config_path = $this->laravel->get_cached_config_path();
+        $this->files->put($config_path, '<?php return ' . var_export($config, true) . ';' . PHP_EOL);
         try {
-            require $configPath;
+            require $config_path;
         } catch (Throwable $e) {
-            $this->files->delete($configPath);
-
+            $this->files->delete($config_path);
             foreach (Arr::dot($config) as $key => $value) {
                 try {
-                    eval(var_export($value, true).';');
+                    eval(var_export($value, true) . ';');
                 } catch (Throwable $e) {
                     throw new LogicException("Your configuration files could not be serialized because the value at \"{$key}\" is non-serializable.", 0, $e);
                 }
             }
-
             throw new LogicException('Your configuration files are not serializable.', 0, $e);
         }
-
         $this->components->info('Configuration cached successfully.');
     }
-
     /**
      * Boot a fresh copy of the application configuration.
      *
      * @return array
      */
-    protected function getFreshConfiguration()
+    protected function get_fresh_configuration()
     {
-        $app = require $this->laravel->bootstrapPath('app.php');
-
-        $app->useStoragePath($this->laravel->storagePath());
-
-        $app->make(ConsoleKernelContract::class)->bootstrap();
-
+        $app = require $this->laravel->bootstrap_path('app.php');
+        $app->use_storage_path($this->laravel->storage_path());
+        $app->make(Console_Kernel_Contract::class)->bootstrap();
         return $app['config']->all();
     }
 }

@@ -1,20 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http;
 
 use Illuminate\Support\Str;
-
-trait FileHelpers
+trait File_Helpers
 {
     /**
      * The cache copy of the file's hash name.
      *
      * @var string|null
      */
-    protected $hashName;
-
+    protected $hash_name;
     /**
      * Get the fully-qualified path to the file.
      *
@@ -22,9 +19,8 @@ trait FileHelpers
      */
     public function path()
     {
-        return $this->getRealPath();
+        return $this->get_real_path();
     }
-
     /**
      * Get the file's extension.
      *
@@ -32,30 +28,25 @@ trait FileHelpers
      */
     public function extension()
     {
-        return $this->guessExtension();
+        return $this->guess_extension();
     }
-
     /**
      * Get a filename for the file.
      *
      * @param  string|null  $path
      * @return string
      */
-    public function hashName($path = null)
+    public function hash_name($path = null)
     {
         if ($path) {
-            $path = rtrim($path, '/').'/';
+            $path = rtrim($path, '/') . '/';
         }
-
-        $hash = $this->hashName ?: $this->hashName = Str::random(40);
-
-        if ($extension = $this->guessExtension()) {
-            $extension = '.'.$extension;
+        $hash = $this->hash_name ?: $this->hash_name = Str::random(40);
+        if ($extension = $this->guess_extension()) {
+            $extension = '.' . $extension;
         }
-
-        return $path.$hash.$extension;
+        return $path . $hash . $extension;
     }
-
     /**
      * Get the dimensions of the image (if applicable).
      *
@@ -63,6 +54,6 @@ trait FileHelpers
      */
     public function dimensions(): array|false
     {
-        return @getimagesize($this->getRealPath());
+        return @getimagesize($this->get_real_path());
     }
 }

@@ -1,18 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Bus;
 
-interface QueueingDispatcher extends Dispatcher
+interface Queueing_Dispatcher extends Dispatcher
 {
     /**
      * Attempt to find the batch with the given ID.
      *
      * @return \Illuminate\Bus\Batch|null
      */
-    public function findBatch(string $batchId);
-
+    public function find_batch(string $batch_id);
     /**
      * Create a new batch of queueable jobs.
      *
@@ -20,12 +18,11 @@ interface QueueingDispatcher extends Dispatcher
      * @return \Illuminate\Bus\PendingBatch
      */
     public function batch($jobs);
-
     /**
      * Dispatch a command to its appropriate handler behind a queue.
      *
      * @param  mixed  $command
      * @return mixed
      */
-    public function dispatchToQueue($command);
+    public function dispatch_to_queue($command);
 }

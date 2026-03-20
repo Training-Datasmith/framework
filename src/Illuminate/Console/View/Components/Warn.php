@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components;
 
-use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Console\Output\Output_Interface;
 class Warn extends Component
 {
     /**
@@ -14,7 +12,7 @@ class Warn extends Component
      * @param  string  $string
      * @param  int  $verbosity
      */
-    public function render($string, $verbosity = OutputInterface::VERBOSITY_NORMAL): void
+    public function render($string, $verbosity = Output_Interface::VERBOSITY_NORMAL): void
     {
         (new Line($this->output))->render('warn', $string, $verbosity);
     }

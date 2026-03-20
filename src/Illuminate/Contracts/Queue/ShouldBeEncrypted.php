@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Queue;
 
-interface ShouldBeEncrypted
+interface Should_Be_Encrypted
 {
 }

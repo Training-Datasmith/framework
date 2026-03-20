@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components;
 
-use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Console\Output\Output_Interface;
 class Alert extends Component
 {
     /**
@@ -14,16 +12,9 @@ class Alert extends Component
      * @param  string  $string
      * @param  int  $verbosity
      */
-    public function render($string, $verbosity = OutputInterface::VERBOSITY_NORMAL): void
+    public function render($string, $verbosity = Output_Interface::VERBOSITY_NORMAL): void
     {
-        $string = $this->mutate($string, [
-            Mutators\EnsureDynamicContentIsHighlighted::class,
-            Mutators\EnsurePunctuation::class,
-            Mutators\EnsureRelativePaths::class,
-        ]);
-
-        $this->renderView('alert', [
-            'content' => $string,
-        ], $verbosity);
+        $string = $this->mutate($string, [Mutators\Ensure_Dynamic_Content_Is_Highlighted::class, Mutators\Ensure_Punctuation::class, Mutators\Ensure_Relative_Paths::class]);
+        $this->render_view('alert', ['content' => $string], $verbosity);
     }
 }

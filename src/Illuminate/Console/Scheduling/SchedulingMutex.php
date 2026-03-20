@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\Scheduling;
 
 use DateTimeInterface;
-
-interface SchedulingMutex
+interface Scheduling_Mutex
 {
     /**
      * Attempt to obtain a scheduling mutex for the given event.
@@ -14,7 +12,6 @@ interface SchedulingMutex
      * @return bool
      */
     public function create(Event $event, DateTimeInterface $time);
-
     /**
      * Determine if a scheduling mutex exists for the given event.
      *

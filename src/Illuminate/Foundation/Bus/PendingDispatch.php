@@ -1,27 +1,23 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Bus;
 
-use Illuminate\Bus\UniqueLock;
+use Illuminate\Bus\Unique_Lock;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Cache\Repository as Cache;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Foundation\Queue\InteractsWithUniqueJobs;
-
-class PendingDispatch
+use Illuminate\Contracts\Queue\Should_Be_Unique;
+use Illuminate\Foundation\Queue\Interacts_With_Unique_Jobs;
+class Pending_Dispatch
 {
-    use InteractsWithUniqueJobs;
-
+    use Interacts_With_Unique_Jobs;
     /**
      * Indicates if the job should be dispatched immediately after sending the response.
      *
      * @var bool
      */
-    protected $afterResponse = false;
-
+    protected $after_response = false;
     /**
      * Create a new pending job dispatch.
      *
@@ -32,35 +28,31 @@ class PendingDispatch
          * The job.
          */
         protected $job
-    ) {
+    )
+    {
     }
-
     /**
      * Set the desired connection for the job.
      *
      * @param  \BackedEnum|string|null  $connection
      * @return $this
      */
-    public function onConnection($connection): static
+    public function on_connection($connection): static
     {
-        $this->job->onConnection($connection);
-
+        $this->job->on_connection($connection);
         return $this;
     }
-
     /**
      * Set the desired queue for the job.
      *
      * @param  \BackedEnum|string|null  $queue
      * @return $this
      */
-    public function onQueue($queue): static
+    public function on_queue($queue): static
     {
-        $this->job->onQueue($queue);
-
+        $this->job->on_queue($queue);
         return $this;
     }
-
     /**
      * Set the desired job "group".
      *
@@ -69,13 +61,11 @@ class PendingDispatch
      * @param  \UnitEnum|string  $group
      * @return $this
      */
-    public function onGroup($group): static
+    public function on_group($group): static
     {
-        $this->job->onGroup($group);
-
+        $this->job->on_group($group);
         return $this;
     }
-
     /**
      * Set the desired job deduplicator callback.
      *
@@ -84,39 +74,33 @@ class PendingDispatch
      * @param  callable|null  $deduplicator
      * @return $this
      */
-    public function withDeduplicator($deduplicator): static
+    public function with_deduplicator($deduplicator): static
     {
-        $this->job->withDeduplicator($deduplicator);
-
+        $this->job->with_deduplicator($deduplicator);
         return $this;
     }
-
     /**
      * Set the desired connection for the chain.
      *
      * @param  \BackedEnum|string|null  $connection
      * @return $this
      */
-    public function allOnConnection($connection): static
+    public function all_on_connection($connection): static
     {
-        $this->job->allOnConnection($connection);
-
+        $this->job->all_on_connection($connection);
         return $this;
     }
-
     /**
      * Set the desired queue for the chain.
      *
      * @param  \BackedEnum|string|null  $queue
      * @return $this
      */
-    public function allOnQueue($queue): static
+    public function all_on_queue($queue): static
     {
-        $this->job->allOnQueue($queue);
-
+        $this->job->all_on_queue($queue);
         return $this;
     }
-
     /**
      * Set the desired delay in seconds for the job.
      *
@@ -126,46 +110,38 @@ class PendingDispatch
     public function delay($delay): static
     {
         $this->job->delay($delay);
-
         return $this;
     }
-
     /**
      * Set the delay for the job to zero seconds.
      *
      * @return $this
      */
-    public function withoutDelay(): static
+    public function without_delay(): static
     {
-        $this->job->withoutDelay();
-
+        $this->job->without_delay();
         return $this;
     }
-
     /**
      * Indicate that the job should be dispatched after all database transactions have committed.
      *
      * @return $this
      */
-    public function afterCommit(): static
+    public function after_commit(): static
     {
-        $this->job->afterCommit();
-
+        $this->job->after_commit();
         return $this;
     }
-
     /**
      * Indicate that the job should not wait until database transactions have been committed before dispatching.
      *
      * @return $this
      */
-    public function beforeCommit(): static
+    public function before_commit(): static
     {
-        $this->job->beforeCommit();
-
+        $this->job->before_commit();
         return $this;
     }
-
     /**
      * Set the jobs that should run if this job is successful.
      *
@@ -175,48 +151,40 @@ class PendingDispatch
     public function chain($chain): static
     {
         $this->job->chain($chain);
-
         return $this;
     }
-
     /**
      * Indicate that the job should be dispatched after the response is sent to the browser.
      *
      * @param  bool  $afterResponse
      * @return $this
      */
-    public function afterResponse($afterResponse = true): static
+    public function after_response($after_response = true): static
     {
-        $this->afterResponse = $afterResponse;
-
+        $this->after_response = $after_response;
         return $this;
     }
-
     /**
      * Determine if the job should be dispatched.
      *
      * @return bool
      */
-    protected function shouldDispatch()
+    protected function should_dispatch()
     {
-        if (! $this->job instanceof ShouldBeUnique) {
+        if (!$this->job instanceof Should_Be_Unique) {
             return true;
         }
-
-        return (new UniqueLock(Container::getInstance()->make(Cache::class)))
-            ->acquire($this->job);
+        return (new Unique_Lock(Container::get_instance()->make(Cache::class)))->acquire($this->job);
     }
-
     /**
      * Get the underlying job instance.
      *
      * @return mixed
      */
-    public function getJob()
+    public function get_job()
     {
         return $this->job;
     }
-
     /**
      * Dynamically proxy methods to the underlying job.
      *
@@ -225,27 +193,23 @@ class PendingDispatch
     public function __call(string $method, array $parameters)
     {
         $this->job->{$method}(...$parameters);
-
         return $this;
     }
-
     /**
      * Handle the object's destruction.
      */
     public function __destruct()
     {
-        $this->addUniqueJobInformationToContext($this->job);
-        if (! $this->shouldDispatch()) {
-            $this->removeUniqueJobInformationFromContext($this->job);
+        $this->add_unique_job_information_to_context($this->job);
+        if (!$this->should_dispatch()) {
+            $this->remove_unique_job_information_from_context($this->job);
             return;
         }
-
-        if ($this->afterResponse) {
-            app(Dispatcher::class)->dispatchAfterResponse($this->job);
+        if ($this->after_response) {
+            app(Dispatcher::class)->dispatch_after_response($this->job);
         } else {
             app(Dispatcher::class)->dispatch($this->job);
         }
-
-        $this->removeUniqueJobInformationFromContext($this->job);
+        $this->remove_unique_job_information_from_context($this->job);
     }
 }

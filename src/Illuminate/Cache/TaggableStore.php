@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache;
 
 use Illuminate\Contracts\Cache\Store;
-
-abstract class TaggableStore implements Store
+abstract class Taggable_Store implements Store
 {
     /**
      * Begin executing a new tags operation.
@@ -16,6 +14,6 @@ abstract class TaggableStore implements Store
      */
     public function tags($names)
     {
-        return new TaggedCache($this, new TagSet($this, is_array($names) ? $names : func_get_args()));
+        return new Tagged_Cache($this, new Tag_Set($this, is_array($names) ? $names : func_get_args()));
     }
 }

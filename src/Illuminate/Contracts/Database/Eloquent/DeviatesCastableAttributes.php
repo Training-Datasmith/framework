@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Database\Eloquent;
 
-interface DeviatesCastableAttributes
+interface Deviates_Castable_Attributes
 {
     /**
      * Increment the attribute.
@@ -14,7 +13,6 @@ interface DeviatesCastableAttributes
      * @return mixed
      */
     public function increment($model, string $key, $value, array $attributes);
-
     /**
      * Decrement the attribute.
      *

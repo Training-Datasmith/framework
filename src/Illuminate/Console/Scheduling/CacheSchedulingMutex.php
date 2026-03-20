@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\Scheduling;
 
 use DateTimeInterface;
-use Illuminate\Cache\DynamoDbStore;
+use Illuminate\Cache\Dynamo_Db_Store;
 use Illuminate\Contracts\Cache\Factory as Cache;
-use Illuminate\Contracts\Cache\LockProvider;
-
-class CacheSchedulingMutex implements SchedulingMutex, CacheAware
+use Illuminate\Contracts\Cache\Lock_Provider;
+class Cache_Scheduling_Mutex implements Scheduling_Mutex, Cache_Aware
 {
     /**
      * The cache factory implementation.
@@ -17,14 +15,12 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
      * @var \Illuminate\Contracts\Cache\Factory
      */
     public $cache;
-
     /**
      * The cache store that should be used.
      *
      * @var string|null
      */
     public $store;
-
     /**
      * Create a new scheduling strategy.
      */
@@ -32,7 +28,6 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
     {
         $this->cache = $cache;
     }
-
     /**
      * Attempt to obtain a scheduling mutex for the given event.
      *
@@ -40,21 +35,12 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
      */
     public function create(Event $event, DateTimeInterface $time)
     {
-        $mutexName = $event->mutexName().$time->format('Hi');
-
-        if ($this->shouldUseLocks($this->cache->store($this->store)->getStore())) {
-            return $this->cache->store($this->store)->getStore()
-                ->lock($mutexName, 3600)
-                ->acquire();
+        $mutex_name = $event->mutex_name() . $time->format('Hi');
+        if ($this->should_use_locks($this->cache->store($this->store)->get_store())) {
+            return $this->cache->store($this->store)->get_store()->lock($mutex_name, 3600)->acquire();
         }
-
-        return $this->cache->store($this->store)->add(
-            $mutexName,
-            true,
-            3600
-        );
+        return $this->cache->store($this->store)->add($mutex_name, true, 3600);
     }
-
     /**
      * Determine if a scheduling mutex exists for the given event.
      *
@@ -62,37 +48,30 @@ class CacheSchedulingMutex implements SchedulingMutex, CacheAware
      */
     public function exists(Event $event, DateTimeInterface $time)
     {
-        $mutexName = $event->mutexName().$time->format('Hi');
-
-        if ($this->shouldUseLocks($this->cache->store($this->store)->getStore())) {
-            return ! $this->cache->store($this->store)->getStore()
-                ->lock($mutexName, 3600)
-                ->get(fn (): true => true);
+        $mutex_name = $event->mutex_name() . $time->format('Hi');
+        if ($this->should_use_locks($this->cache->store($this->store)->get_store())) {
+            return !$this->cache->store($this->store)->get_store()->lock($mutex_name, 3600)->get(fn(): true => true);
         }
-
-        return $this->cache->store($this->store)->has($mutexName);
+        return $this->cache->store($this->store)->has($mutex_name);
     }
-
     /**
      * Determine if the given store should use locks for cache event mutexes.
      *
      * @param  \Illuminate\Contracts\Cache\Store  $store
      */
-    protected function shouldUseLocks($store): bool
+    protected function should_use_locks($store): bool
     {
-        return $store instanceof LockProvider && ! $store instanceof DynamoDbStore;
+        return $store instanceof Lock_Provider && !$store instanceof Dynamo_Db_Store;
     }
-
     /**
      * Specify the cache store that should be used.
      *
      * @param  string  $store
      * @return $this
      */
-    public function useStore($store): static
+    public function use_store($store): static
     {
         $this->store = $store;
-
         return $this;
     }
 }

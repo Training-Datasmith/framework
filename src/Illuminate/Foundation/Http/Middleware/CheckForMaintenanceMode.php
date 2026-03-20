@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Http\Middleware;
 
-class CheckForMaintenanceMode extends PreventRequestsDuringMaintenance
+class Check_For_Maintenance_Mode extends Prevent_Requests_During_Maintenance
 {
 }

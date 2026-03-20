@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Support\Fluent;
-
 /**
  * @method $this algorithm(string $algorithm) Specify an algorithm for the index (MySQL/PostgreSQL)
  * @method $this deferrable(bool $value = true) Specify that the unique index is deferrable (PostgreSQL)
@@ -15,6 +13,6 @@ use Illuminate\Support\Fluent;
  * @method $this nullsNotDistinct(bool $value = true) Specify that the null values should not be treated as distinct (PostgreSQL)
  * @method $this online(bool $value = true) Specify that index creation should not lock the table (PostgreSQL/SqlServer)
  */
-class IndexDefinition extends Fluent
+class Index_Definition extends Fluent
 {
 }

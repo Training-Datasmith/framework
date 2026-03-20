@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent;
 
 use RuntimeException;
-
-class InvalidCastException extends RuntimeException
+class Invalid_Cast_Exception extends RuntimeException
 {
     /**
      * The name of the affected Eloquent model.
@@ -14,21 +12,18 @@ class InvalidCastException extends RuntimeException
      * @var string
      */
     public $model;
-
     /**
      * The name of the column.
      *
      * @var string
      */
     public $column;
-
     /**
      * The name of the cast type.
      *
      * @var string
      */
-    public $castType;
-
+    public $cast_type;
     /**
      * Create a new exception instance.
      *
@@ -36,14 +31,12 @@ class InvalidCastException extends RuntimeException
      * @param  string  $column
      * @param  string  $castType
      */
-    public function __construct($model, $column, $castType)
+    public function __construct($model, $column, $cast_type)
     {
         $class = $model::class;
-
-        parent::__construct("Call to undefined cast [{$castType}] on column [{$column}] in model [{$class}].");
-
+        parent::__construct("Call to undefined cast [{$cast_type}] on column [{$column}] in model [{$class}].");
         $this->model = $class;
         $this->column = $column;
-        $this->castType = $castType;
+        $this->cast_type = $cast_type;
     }
 }

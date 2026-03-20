@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Illuminate\JsonSchema;
+declare (strict_types=1);
+namespace Illuminate\Json_Schema;
 
 use RuntimeException;
-
 class Serializer
 {
     /**
@@ -14,7 +12,6 @@ class Serializer
      * @var array<int, string>
      */
     protected static array $ignore = ['required', 'nullable'];
-
     /**
      * Serialize the given property to an array.
      *
@@ -25,78 +22,58 @@ class Serializer
     public static function serialize(Types\Type $type): array
     {
         /** @var array<string, mixed> $attributes */
-        $attributes = (fn (): array => get_object_vars($type))->call($type);
-
+        $attributes = (fn(): array => get_object_vars($type))->call($type);
         $attributes['type'] = match ($type::class) {
-            Types\ArrayType::class => 'array',
-            Types\BooleanType::class => 'boolean',
-            Types\IntegerType::class => 'integer',
-            Types\NumberType::class => 'number',
-            Types\ObjectType::class => 'object',
-            Types\StringType::class => 'string',
-            default => throw new RuntimeException('Unsupported ['.$type::class.'] type.'),
+            Types\Array_Type::class => 'array',
+            Types\Boolean_Type::class => 'boolean',
+            Types\Integer_Type::class => 'integer',
+            Types\Number_Type::class => 'number',
+            Types\Object_Type::class => 'object',
+            Types\String_Type::class => 'string',
+            default => throw new RuntimeException('Unsupported [' . $type::class . '] type.'),
         };
-
-        $nullable = static::isNullable($type);
-
+        $nullable = static::is_nullable($type);
         if ($nullable) {
             $attributes['type'] = [$attributes['type'], 'null'];
         }
-
         $attributes = array_filter($attributes, static function (mixed $value, string $key): bool {
             if (in_array($key, static::$ignore, true)) {
                 return false;
             }
-
             return $value !== null;
         }, ARRAY_FILTER_USE_BOTH);
-
-        if ($type instanceof Types\ObjectType) {
+        if ($type instanceof Types\Object_Type) {
             if (count($attributes['properties']) === 0) {
                 unset($attributes['properties']);
             } else {
-                $required = array_keys(array_filter(
-                    $attributes['properties'],
-                    static::isRequired(...),
-                ));
-
+                $required = array_keys(array_filter($attributes['properties'], static::is_required(...)));
                 if (count($required) > 0) {
                     $attributes['required'] = $required;
                 }
-
-                $attributes['properties'] = array_map(
-                    static::serialize(...),
-                    $attributes['properties'],
-                );
+                $attributes['properties'] = array_map(static::serialize(...), $attributes['properties']);
             }
         }
-
-        if ($type instanceof Types\ArrayType) {
+        if ($type instanceof Types\Array_Type) {
             if (isset($attributes['items']) && $attributes['items'] instanceof Types\Type) {
                 $attributes['items'] = static::serialize($attributes['items']);
             }
         }
-
         return $attributes;
     }
-
     /**
      * Determine if the given type is required.
      */
-    protected static function isRequired(Types\Type $type): bool
+    protected static function is_required(Types\Type $type): bool
     {
-        $attributes = (fn (): array => get_object_vars($type))->call($type);
-
+        $attributes = (fn(): array => get_object_vars($type))->call($type);
         return isset($attributes['required']) && $attributes['required'] === true;
     }
-
     /**
      * Determine if the given type is nullable.
      */
-    protected static function isNullable(Types\Type $type): bool
+    protected static function is_nullable(Types\Type $type): bool
     {
-        $attributes = (fn (): array => get_object_vars($type))->call($type);
-
+        $attributes = (fn(): array => get_object_vars($type))->call($type);
         return isset($attributes['nullable']) && $attributes['nullable'] === true;
     }
 }

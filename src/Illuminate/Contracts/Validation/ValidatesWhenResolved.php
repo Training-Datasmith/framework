@@ -1,15 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Validation;
 
-interface ValidatesWhenResolved
+interface Validates_When_Resolved
 {
     /**
      * Validate the given class instance.
      *
      * @return void
      */
-    public function validateResolved();
+    public function validate_resolved();
 }

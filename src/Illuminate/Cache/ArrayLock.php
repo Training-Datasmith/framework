@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache;
 
 use Illuminate\Support\Carbon;
-
-class ArrayLock extends Lock
+class Array_Lock extends Lock
 {
     /**
      * Create a new lock instance.
@@ -16,36 +14,30 @@ class ArrayLock extends Lock
      * @param  int  $seconds
      * @param  string|null  $owner
      */
-    public function __construct(/**
-     * The parent array cache store.
-     */
+    public function __construct(
+        /**
+         * The parent array cache store.
+         */
         protected $store,
         $name,
         $seconds,
         $owner = null
-    ) {
+    )
+    {
         parent::__construct($name, $seconds, $owner);
     }
-
     /**
      * Attempt to acquire the lock.
      */
     public function acquire(): bool
     {
-        $expiration = $this->store->locks[$this->name]['expiresAt'] ?? Carbon::now()->addSecond();
-
-        if ($this->exists() && $expiration->isFuture()) {
+        $expiration = $this->store->locks[$this->name]['expiresAt'] ?? Carbon::now()->add_second();
+        if ($this->exists() && $expiration->is_future()) {
             return false;
         }
-
-        $this->store->locks[$this->name] = [
-            'owner' => $this->owner,
-            'expiresAt' => $this->seconds === 0 ? null : Carbon::now()->addSeconds($this->seconds),
-        ];
-
+        $this->store->locks[$this->name] = ['owner' => $this->owner, 'expiresAt' => $this->seconds === 0 ? null : Carbon::now()->add_seconds($this->seconds)];
         return true;
     }
-
     /**
      * Determine if the current lock exists.
      */
@@ -53,43 +45,36 @@ class ArrayLock extends Lock
     {
         return isset($this->store->locks[$this->name]);
     }
-
     /**
      * Release the lock.
      */
     public function release(): bool
     {
-        if (! $this->exists()) {
+        if (!$this->exists()) {
             return false;
         }
-
-        if (! $this->isOwnedByCurrentProcess()) {
+        if (!$this->is_owned_by_current_process()) {
             return false;
         }
-
-        $this->forceRelease();
-
+        $this->force_release();
         return true;
     }
-
     /**
      * Returns the owner value written into the driver for this lock.
      *
      * @return string|null
      */
-    protected function getCurrentOwner()
+    protected function get_current_owner()
     {
-        if (! $this->exists()) {
+        if (!$this->exists()) {
             return null;
         }
-
         return $this->store->locks[$this->name]['owner'];
     }
-
     /**
      * Releases this lock regardless of ownership.
      */
-    public function forceRelease(): void
+    public function force_release(): void
     {
         unset($this->store->locks[$this->name]);
     }

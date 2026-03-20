@@ -1,14 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Container;
 
 use Closure;
-use Illuminate\Contracts\Container\ContextualAttribute;
-use ReflectionAttribute;
+use Illuminate\Contracts\Container\Contextual_Attribute;
+use Reflection_Attribute;
 use ReflectionNamedType;
-
 /**
  * @internal
  */
@@ -21,15 +19,13 @@ class Util
      *
      * @param  mixed  $value
      */
-    public static function arrayWrap($value): array
+    public static function array_wrap($value): array
     {
         if (is_null($value)) {
             return [];
         }
-
         return is_array($value) ? $value : [$value];
     }
-
     /**
      * Return the default value of the given value.
      *
@@ -39,11 +35,10 @@ class Util
      * @param  mixed  ...$args
      * @return mixed
      */
-    public static function unwrapIfClosure($value, ...$args)
+    public static function unwrap_if_closure($value, ...$args)
     {
         return $value instanceof Closure ? $value(...$args) : $value;
     }
-
     /**
      * Get the class name of the given parameter's type, if possible.
      *
@@ -52,37 +47,31 @@ class Util
      * @param  \ReflectionParameter  $parameter
      * @return string|null
      */
-    public static function getParameterClassName($parameter)
+    public static function get_parameter_class_name($parameter)
     {
-        $type = $parameter->getType();
-
-        if (! $type instanceof ReflectionNamedType || $type->isBuiltin()) {
+        $type = $parameter->get_type();
+        if (!$type instanceof ReflectionNamedType || $type->is_builtin()) {
             return null;
         }
-
-        $name = $type->getName();
-
-        if (! is_null($class = $parameter->getDeclaringClass())) {
+        $name = $type->get_name();
+        if (!is_null($class = $parameter->get_declaring_class())) {
             if ($name === 'self') {
-                return $class->getName();
+                return $class->get_name();
             }
-
-            if ($name === 'parent' && $parent = $class->getParentClass()) {
-                return $parent->getName();
+            if ($name === 'parent' && $parent = $class->get_parent_class()) {
+                return $parent->get_name();
             }
         }
-
         return $name;
     }
-
     /**
      * Get a contextual attribute from a dependency.
      *
      * @param  \ReflectionParameter  $dependency
      * @return \ReflectionAttribute|null
      */
-    public static function getContextualAttributeFromDependency($dependency)
+    public static function get_contextual_attribute_from_dependency($dependency)
     {
-        return $dependency->getAttributes(ContextualAttribute::class, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null;
+        return $dependency->get_attributes(Contextual_Attribute::class, Reflection_Attribute::IS_INSTANCEOF)[0] ?? null;
     }
 }

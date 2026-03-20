@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache\Events;
 
-class CacheMissed extends CacheEvent
+class Cache_Missed extends Cache_Event
 {
 }

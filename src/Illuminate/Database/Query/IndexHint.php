@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Query;
 
-class IndexHint
+class Index_Hint
 {
     /**
      * Create a new index hint instance.
@@ -21,6 +20,7 @@ class IndexHint
          * The name of the index.
          */
         public $index
-    ) {
+    )
+    {
     }
 }

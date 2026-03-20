@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Auth;
 
 interface Factory
@@ -13,12 +12,11 @@ interface Factory
      * @return \Illuminate\Contracts\Auth\Guard|\Illuminate\Contracts\Auth\StatefulGuard
      */
     public function guard($name = null);
-
     /**
      * Set the default guard the factory should serve.
      *
      * @param  string  $name
      * @return void
      */
-    public function shouldUse($name);
+    public function should_use($name);
 }

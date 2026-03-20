@@ -1,25 +1,22 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Routing;
 
-interface UrlRoutable
+interface Url_Routable
 {
     /**
      * Get the value of the model's route key.
      *
      * @return mixed
      */
-    public function getRouteKey();
-
+    public function get_route_key();
     /**
      * Get the route key for the model.
      *
      * @return string
      */
-    public function getRouteKeyName();
-
+    public function get_route_key_name();
     /**
      * Retrieve the model for a bound value.
      *
@@ -27,8 +24,7 @@ interface UrlRoutable
      * @param  string|null  $field
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function resolveRouteBinding($value, $field = null);
-
+    public function resolve_route_binding($value, $field = null);
     /**
      * Retrieve the child model for a bound value.
      *
@@ -37,5 +33,5 @@ interface UrlRoutable
      * @param  string|null  $field
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function resolveChildRouteBinding($childType, $value, $field);
+    public function resolve_child_route_binding($child_type, $value, $field);
 }

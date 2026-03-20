@@ -1,105 +1,94 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console;
 
 use Closure;
-use Illuminate\Console\Events\ArtisanStarting;
+use Illuminate\Console\Events\Artisan_Starting;
 use Illuminate\Contracts\Console\Application as ApplicationContract;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
-
 use function Illuminate\Support\artisan_binary;
 use function Illuminate\Support\php_binary;
-
-use Illuminate\Support\ProcessUtils;
+use Illuminate\Support\Process_Utils;
 use ReflectionClass;
 use Symfony\Component\Console\Application as SymfonyApplication;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\As_Command;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputOption;
-
-use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-
-class Application extends SymfonyApplication implements ApplicationContract
+use Symfony\Component\Console\Exception\Command_Not_Found_Exception;
+use Symfony\Component\Console\Input\Array_Input;
+use Symfony\Component\Console\Input\Input_Definition;
+use Symfony\Component\Console\Input\Input_Option;
+use Symfony\Component\Console\Input\String_Input;
+use Symfony\Component\Console\Output\Buffered_Output;
+class Application extends Symfony_Application implements Application_Contract
 {
     /**
      * The output from the previous command.
      *
      * @var \Symfony\Component\Console\Output\BufferedOutput
      */
-    protected $lastOutput;
-
+    protected $last_output;
     /**
      * The console application bootstrappers.
      *
      * @var array<array-key, \Closure($this): void>
      */
     protected static $bootstrappers = [];
-
     /**
      * A map of command names to classes.
      *
      * @var array<string, \Illuminate\Console\Command|string>
      */
-    protected $commandMap = [];
-
+    protected $command_map = [];
     /**
      * Create a new Artisan console application.
      */
-    public function __construct(/**
-     * The Laravel application instance.
-     */
-        protected \Illuminate\Contracts\Container\Container $laravel, /**
-     * The event dispatcher instance.
-     */
+    public function __construct(
+        /**
+         * The Laravel application instance.
+         */
+        protected \Illuminate\Contracts\Container\Container $laravel,
+        /**
+         * The event dispatcher instance.
+         */
         protected \Illuminate\Contracts\Events\Dispatcher $events,
         string $version
-    ) {
+    )
+    {
         parent::__construct('Laravel Framework', $version);
-        $this->setAutoExit(false);
-        $this->setCatchExceptions(false);
-
-        $this->events->dispatch(new ArtisanStarting($this));
-
+        $this->set_auto_exit(false);
+        $this->set_catch_exceptions(false);
+        $this->events->dispatch(new Artisan_Starting($this));
         $this->bootstrap();
     }
-
     /**
      * Determine the proper PHP executable.
      *
      * @return string
      */
-    public static function phpBinary()
+    public static function php_binary()
     {
-        return ProcessUtils::escapeArgument(php_binary());
+        return Process_Utils::escape_argument(php_binary());
     }
-
     /**
      * Determine the proper Artisan executable.
      *
      * @return string
      */
-    public static function artisanBinary()
+    public static function artisan_binary()
     {
-        return ProcessUtils::escapeArgument(artisan_binary());
+        return Process_Utils::escape_argument(artisan_binary());
     }
-
     /**
      * Format the given command as a fully-qualified executable command.
      *
      * @param  string  $string
      */
-    public static function formatCommandString($string): string
+    public static function format_command_string($string): string
     {
-        return sprintf('%s %s %s', static::phpBinary(), static::artisanBinary(), $string);
+        return sprintf('%s %s %s', static::php_binary(), static::artisan_binary(), $string);
     }
-
     /**
      * Register a console "starting" bootstrapper.
      *
@@ -109,7 +98,6 @@ class Application extends SymfonyApplication implements ApplicationContract
     {
         static::$bootstrappers[] = $callback;
     }
-
     /**
      * Bootstrap the console application.
      *
@@ -121,15 +109,13 @@ class Application extends SymfonyApplication implements ApplicationContract
             $bootstrapper($this);
         }
     }
-
     /**
      * Clear the console application bootstrappers.
      */
-    public static function forgetBootstrappers(): void
+    public static function forget_bootstrappers(): void
     {
         static::$bootstrappers = [];
     }
-
     /**
      * Run an Artisan console command by name.
      *
@@ -138,20 +124,14 @@ class Application extends SymfonyApplication implements ApplicationContract
      *
      * @throws \Symfony\Component\Console\Exception\CommandNotFoundException
      */
-    public function call($command, array $parameters = [], $outputBuffer = null): int
+    public function call($command, array $parameters = [], $output_buffer = null): int
     {
-        [$command, $input] = $this->parseCommand($command, $parameters);
-
-        if (! $this->has($command)) {
-            throw new CommandNotFoundException(sprintf('The command "%s" does not exist.', $command));
+        [$command, $input] = $this->parse_command($command, $parameters);
+        if (!$this->has($command)) {
+            throw new Command_Not_Found_Exception(sprintf('The command "%s" does not exist.', $command));
         }
-
-        return $this->run(
-            $input,
-            $this->lastOutput = $outputBuffer ?: new BufferedOutput()
-        );
+        return $this->run($input, $this->last_output = $output_buffer ?: new Buffered_Output());
     }
-
     /**
      * Parse the incoming Artisan command and its input.
      *
@@ -159,29 +139,23 @@ class Application extends SymfonyApplication implements ApplicationContract
      * @param  array  $parameters
      * @return array<string, \Symfony\Component\Console\Input\ArrayInput>
      */
-    protected function parseCommand($command, $parameters): array
+    protected function parse_command($command, $parameters): array
     {
-        if (is_subclass_of($command, SymfonyCommand::class)) {
-            $callingClass = true;
-
+        if (is_subclass_of($command, Symfony_Command::class)) {
+            $calling_class = true;
             if (is_object($command)) {
                 $command = $command::class;
             }
-
-            $command = $this->laravel->make($command)->getName();
+            $command = $this->laravel->make($command)->get_name();
         }
-
-        if (! isset($callingClass) && empty($parameters)) {
-            $command = $this->getCommandName($input = new StringInput($command));
+        if (!isset($calling_class) && empty($parameters)) {
+            $command = $this->get_command_name($input = new String_Input($command));
         } else {
             array_unshift($parameters, $command);
-
-            $input = new ArrayInput($parameters);
+            $input = new Array_Input($parameters);
         }
-
         return [$command, $input];
     }
-
     /**
      * Get the output for the last run command.
      *
@@ -189,59 +163,50 @@ class Application extends SymfonyApplication implements ApplicationContract
      */
     public function output()
     {
-        return $this->lastOutput && method_exists($this->lastOutput, 'fetch')
-            ? $this->lastOutput->fetch()
-            : '';
+        return $this->last_output && method_exists($this->last_output, 'fetch') ? $this->last_output->fetch() : '';
     }
-
     /**
      * Add an array of commands to the console.
      *
      * @param  array<int, \Symfony\Component\Console\Command\Command>  $commands
      */
     #[\Override]
-    public function addCommands(array $commands): void
+    public function add_commands(array $commands): void
     {
         foreach ($commands as $command) {
-            $this->addCommand($command);
+            $this->add_command($command);
         }
     }
-
     /**
      * Add a command to the console.
      */
     #[\Override]
-    public function add(SymfonyCommand $command): ?SymfonyCommand
+    public function add(Symfony_Command $command): ?Symfony_Command
     {
-        return $this->addCommand($command);
+        return $this->add_command($command);
     }
-
     /**
      * Add a command to the console.
      */
-    public function addCommand(SymfonyCommand|callable $command): ?SymfonyCommand
+    public function add_command(Symfony_Command|callable $command): ?Symfony_Command
     {
         if ($command instanceof Command) {
-            $command->setLaravel($this->laravel);
+            $command->set_laravel($this->laravel);
         }
-
-        return $this->addToParent($command);
+        return $this->add_to_parent($command);
     }
-
     /**
      * Add the command to the parent instance.
      *
      * @return \Symfony\Component\Console\Command\Command
      */
-    protected function addToParent(SymfonyCommand $command)
+    protected function add_to_parent(Symfony_Command $command)
     {
-        if (method_exists(SymfonyApplication::class, 'addCommand')) {
-            return parent::addCommand($command);
+        if (method_exists(Symfony_Application::class, 'addCommand')) {
+            return parent::add_command($command);
         }
-
         return parent::add($command);
     }
-
     /**
      * Add a command, resolving through the application.
      *
@@ -249,85 +214,71 @@ class Application extends SymfonyApplication implements ApplicationContract
      */
     public function resolve($command): ?\Symfony\Component\Console\Command\Command
     {
-        if (is_subclass_of($command, SymfonyCommand::class)) {
-            $attribute = (new ReflectionClass($command))->getAttributes(AsCommand::class);
-
-            $commandName = ! empty($attribute) ? $attribute[0]->newInstance()->name : null;
-
-            if (! is_null($commandName)) {
-                foreach (explode('|', $commandName) as $name) {
-                    $this->commandMap[$name] = $command;
+        if (is_subclass_of($command, Symfony_Command::class)) {
+            $attribute = (new ReflectionClass($command))->get_attributes(As_Command::class);
+            $command_name = !empty($attribute) ? $attribute[0]->new_instance()->name : null;
+            if (!is_null($command_name)) {
+                foreach (explode('|', $command_name) as $name) {
+                    $this->command_map[$name] = $command;
                 }
-
                 return null;
             }
         }
-
         if ($command instanceof Command) {
             return $this->add($command);
         }
-
         return $this->add($this->laravel->make($command));
     }
-
     /**
      * Resolve an array of commands through the application.
      *
      * @param  mixed  $commands
      * @return $this
      */
-    public function resolveCommands($commands): static
+    public function resolve_commands($commands): static
     {
         $commands = is_array($commands) ? $commands : func_get_args();
-
         foreach ($commands as $command) {
             $this->resolve($command);
         }
-
         return $this;
     }
-
     /**
      * Set the container command loader for lazy resolution.
      *
      * @return $this
      */
-    public function setContainerCommandLoader(): static
+    public function set_container_command_loader(): static
     {
-        $this->setCommandLoader(new ContainerCommandLoader($this->laravel, $this->commandMap));
-
+        $this->set_command_loader(new Container_Command_Loader($this->laravel, $this->command_map));
         return $this;
     }
-
     /**
      * Get the default input definition for the application.
      *
      * This is used to add the --env option to every available command.
      */
     #[\Override]
-    protected function getDefaultInputDefinition(): InputDefinition
+    protected function get_default_input_definition(): Input_Definition
     {
-        return tap(parent::getDefaultInputDefinition(), function ($definition): void {
-            $definition->addOption($this->getEnvironmentOption());
+        return tap(parent::get_default_input_definition(), function ($definition): void {
+            $definition->add_option($this->get_environment_option());
         });
     }
-
     /**
      * Get the global environment option for the definition.
      */
-    protected function getEnvironmentOption(): \Symfony\Component\Console\Input\InputOption
+    protected function get_environment_option(): \Symfony\Component\Console\Input\Input_Option
     {
         $message = 'The environment the command should run under';
-
-        return new InputOption('--env', null, InputOption::VALUE_OPTIONAL, $message);
+        return new Input_Option('--env', null, Input_Option::VALUE_OPTIONAL, $message);
     }
-
     /**
      * Get the Laravel application instance.
      *
      * @return \Illuminate\Contracts\Foundation\Application
      */
-    public function getLaravel(): \Illuminate\Contracts\Container\Container
+    public function get_laravel(): \Illuminate\Contracts\Container\Container
     {
         return $this->laravel;
     }

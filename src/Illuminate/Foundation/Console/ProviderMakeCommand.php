@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Console;
 
-use Illuminate\Console\GeneratorCommand;
-use Illuminate\Support\ServiceProvider;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputOption;
-
-#[AsCommand(name: 'make:provider')]
-class ProviderMakeCommand extends GeneratorCommand
+use Illuminate\Console\Generator_Command;
+use Illuminate\Support\Service_Provider;
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Console\Input\Input_Option;
+#[As_Command(name: 'make:provider')]
+class Provider_Make_Command extends Generator_Command
 {
     /**
      * The console command name.
@@ -18,21 +16,18 @@ class ProviderMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'make:provider';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create a new service provider class';
-
     /**
      * The type of class being generated.
      *
      * @var string
      */
     protected $type = 'Provider';
-
     /**
      * Execute the console command.
      *
@@ -43,58 +38,44 @@ class ProviderMakeCommand extends GeneratorCommand
     public function handle()
     {
         $result = parent::handle();
-
         if ($result === false) {
             return $result;
         }
-
-        ServiceProvider::addProviderToBootstrapFile(
-            $this->qualifyClass($this->getNameInput()),
-            $this->laravel->getBootstrapProvidersPath(),
-        );
-
+        Service_Provider::add_provider_to_bootstrap_file($this->qualify_class($this->get_name_input()), $this->laravel->get_bootstrap_providers_path());
         return $result;
     }
-
     /**
      * Get the stub file for the generator.
      *
      * @return string
      */
-    protected function getStub()
+    protected function get_stub()
     {
-        return $this->resolveStubPath('/stubs/provider.stub');
+        return $this->resolve_stub_path('/stubs/provider.stub');
     }
-
     /**
      * Resolve the fully-qualified path to the stub.
      *
      * @return string
      */
-    protected function resolveStubPath(string $stub)
+    protected function resolve_stub_path(string $stub)
     {
-        return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
-            ? $customPath
-            : __DIR__.$stub;
+        return file_exists($custom_path = $this->laravel->base_path(trim($stub, '/'))) ? $custom_path : __DIR__ . $stub;
     }
-
     /**
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
      */
-    protected function getDefaultNamespace($rootNamespace): string
+    protected function get_default_namespace($root_namespace): string
     {
-        return $rootNamespace.'\Providers';
+        return $root_namespace . '\Providers';
     }
-
     /**
      * Get the console command arguments.
      */
-    protected function getOptions(): array
+    protected function get_options(): array
     {
-        return [
-            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the provider already exists'],
-        ];
+        return [['force', 'f', Input_Option::VALUE_NONE, 'Create the class even if the provider already exists']];
     }
 }

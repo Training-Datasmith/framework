@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Broadcasting;
 
-class PresenceChannel extends Channel
+class Presence_Channel extends Channel
 {
     /**
      * Create a new channel instance.
@@ -13,6 +12,6 @@ class PresenceChannel extends Channel
      */
     public function __construct($name)
     {
-        parent::__construct('presence-'.$name);
+        parent::__construct('presence-' . $name);
     }
 }

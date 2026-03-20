@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Client\Events;
 
 use Illuminate\Http\Client\Request;
-
-class RequestSending
+class Request_Sending
 {
     /**
      * The request instance.
@@ -14,7 +12,6 @@ class RequestSending
      * @var \Illuminate\Http\Client\Request
      */
     public $request;
-
     /**
      * Create a new event instance.
      */

@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Http\Middleware;
 
 use Closure;
-use Symfony\Component\HttpFoundation\ParameterBag;
-
-class TransformsRequest
+use Symfony\Component\Http_Foundation\Parameter_Bag;
+class Transforms_Request
 {
     /**
      * Handle an incoming request.
@@ -18,10 +16,8 @@ class TransformsRequest
     public function handle($request, Closure $next)
     {
         $this->clean($request);
-
         return $next($request);
     }
-
     /**
      * Clean the request's data.
      *
@@ -30,52 +26,45 @@ class TransformsRequest
      */
     protected function clean($request)
     {
-        $this->cleanParameterBag($request->query);
-
-        if ($request->isJson()) {
-            $this->cleanParameterBag($request->json());
+        $this->clean_parameter_bag($request->query);
+        if ($request->is_json()) {
+            $this->clean_parameter_bag($request->json());
         } elseif ($request->request !== $request->query) {
-            $this->cleanParameterBag($request->request);
+            $this->clean_parameter_bag($request->request);
         }
     }
-
     /**
      * Clean the data in the parameter bag.
      *
      * @return void
      */
-    protected function cleanParameterBag(ParameterBag $bag)
+    protected function clean_parameter_bag(Parameter_Bag $bag)
     {
-        $bag->replace($this->cleanArray($bag->all()));
+        $bag->replace($this->clean_array($bag->all()));
     }
-
     /**
      * Clean the data in the given array.
      */
-    protected function cleanArray(array $data, string $keyPrefix = ''): array
+    protected function clean_array(array $data, string $key_prefix = ''): array
     {
         foreach ($data as $key => $value) {
-            $data[$key] = $this->cleanValue($keyPrefix.$key, $value);
+            $data[$key] = $this->clean_value($key_prefix . $key, $value);
         }
-
         return $data;
     }
-
     /**
      * Clean the given value.
      *
      * @param  mixed  $value
      * @return mixed
      */
-    protected function cleanValue(string $key, $value)
+    protected function clean_value(string $key, $value)
     {
         if (is_array($value)) {
-            return $this->cleanArray($value, $key.'.');
+            return $this->clean_array($value, $key . '.');
         }
-
         return $this->transform($key, $value);
     }
-
     /**
      * Transform the given value.
      *

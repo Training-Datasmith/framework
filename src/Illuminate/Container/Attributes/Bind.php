@@ -1,17 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Container\Attributes;
 
 use Attribute;
-
 use function Illuminate\Support\enum_value;
-
 use InvalidArgumentException;
-
-use UnitEnum;
-
+use Unit_Enum;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 class Bind
 {
@@ -21,7 +16,6 @@ class Bind
      * @var non-empty-array<int, string>
      */
     public array $environments = [];
-
     /**
      * Create a new attribute instance.
      *
@@ -35,17 +29,13 @@ class Bind
          * The concrete class to bind to.
          */
         public string $concrete,
-        string|array|UnitEnum $environments = ['*'],
-    ) {
+        string|array|Unit_Enum $environments = ['*']
+    )
+    {
         $environments = array_filter(is_array($environments) ? $environments : [$environments]);
-
         if ($environments === []) {
             throw new InvalidArgumentException('The environment property must be set and cannot be empty.');
         }
-
-        $this->environments = array_map(
-            fn ($environment) => enum_value($environment),
-            $environments,
-        );
+        $this->environments = array_map(fn($environment) => enum_value($environment), $environments);
     }
 }

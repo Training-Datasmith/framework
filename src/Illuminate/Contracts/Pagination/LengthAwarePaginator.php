@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Pagination;
 
 /**
@@ -11,7 +10,7 @@ namespace Illuminate\Contracts\Pagination;
  *
  * @extends Paginator<TKey, TValue>
  */
-interface LengthAwarePaginator extends Paginator
+interface Length_Aware_Paginator extends Paginator
 {
     /**
      * Create a range of pagination URLs.
@@ -20,19 +19,17 @@ interface LengthAwarePaginator extends Paginator
      * @param  int  $end
      * @return array
      */
-    public function getUrlRange($start, $end);
-
+    public function get_url_range($start, $end);
     /**
      * Determine the total number of items in the data store.
      *
      * @return int
      */
     public function total();
-
     /**
      * Get the page number of the last available page.
      *
      * @return int
      */
-    public function lastPage();
+    public function last_page();
 }

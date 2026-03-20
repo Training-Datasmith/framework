@@ -1,17 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Casts;
 
-use BackedEnum;
+use Backed_Enum;
 use Illuminate\Contracts\Database\Eloquent\Castable;
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Contracts\Database\Eloquent\Casts_Attributes;
 use Illuminate\Support\Collection;
-
 use function Illuminate\Support\enum_value;
-
-class AsEnumArrayObject implements Castable
+class As_Enum_Array_Object implements Castable
 {
     /**
      * Get the caster class to use when casting from / to this cast target.
@@ -21,32 +18,25 @@ class AsEnumArrayObject implements Castable
      * @param  array{class-string<TEnum>}  $arguments
      * @return \Illuminate\Contracts\Database\Eloquent\CastsAttributes<\Illuminate\Database\Eloquent\Casts\ArrayObject<array-key, TEnum>, iterable<TEnum>>
      */
-    public static function castUsing(array $arguments): \Illuminate\Contracts\Database\Eloquent\CastsAttributes
+    public static function cast_using(array $arguments): \Illuminate\Contracts\Database\Eloquent\Casts_Attributes
     {
-        return new class ($arguments) implements CastsAttributes {
+        return new class($arguments) implements Casts_Attributes
+        {
             public function __construct(protected array $arguments)
             {
             }
-
             public function get($model, $key, $value, $attributes)
             {
-                if (! isset($attributes[$key])) {
+                if (!isset($attributes[$key])) {
                     return;
                 }
-
                 $data = Json::decode($attributes[$key]);
-
-                if (! is_array($data)) {
+                if (!is_array($data)) {
                     return;
                 }
-
-                $enumClass = $this->arguments[0];
-
-                return new ArrayObject((new Collection($data))->map(fn ($value): mixed => is_subclass_of($enumClass, BackedEnum::class)
-                    ? $enumClass::from($value)
-                    : constant($enumClass.'::'.$value))->toArray());
+                $enum_class = $this->arguments[0];
+                return new ArrayObject((new Collection($data))->map(fn($value): mixed => is_subclass_of($enum_class, Backed_Enum::class) ? $enum_class::from($value) : constant($enum_class . '::' . $value))->to_array());
             }
-
             /**
              * @return mixed[]
              */
@@ -55,34 +45,25 @@ class AsEnumArrayObject implements Castable
                 if ($value === null) {
                     return [$key => null];
                 }
-
                 $storable = [];
-
                 foreach ($value as $enum) {
-                    $storable[] = $this->getStorableEnumValue($enum);
+                    $storable[] = $this->get_storable_enum_value($enum);
                 }
-
                 return [$key => Json::encode($storable)];
             }
-
             public function serialize($model, string $key, $value, array $attributes)
             {
-                return (new Collection($value->getArrayCopy()))
-                    ->map(fn ($enum) => $this->getStorableEnumValue($enum))
-                    ->toArray();
+                return (new Collection($value->get_array_copy()))->map(fn($enum) => $this->get_storable_enum_value($enum))->to_array();
             }
-
-            protected function getStorableEnumValue($enum)
+            protected function get_storable_enum_value($enum)
             {
                 if (is_string($enum) || is_int($enum)) {
                     return $enum;
                 }
-
                 return enum_value($enum);
             }
         };
     }
-
     /**
      * Specify the Enum for the cast.
      *
@@ -90,6 +71,6 @@ class AsEnumArrayObject implements Castable
      */
     public static function of(string $class): string
     {
-        return static::class.':'.$class;
+        return static::class . ':' . $class;
     }
 }

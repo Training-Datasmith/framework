@@ -1,42 +1,37 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Support\Arr;
-
-class SqlServerBuilder extends Builder
+class Sql_Server_Builder extends Builder
 {
     /**
      * Drop all tables from the database.
      *
      * @return void
      */
-    public function dropAllTables()
+    public function drop_all_tables()
     {
-        $this->connection->statement($this->grammar->compileDropAllForeignKeys());
-
-        $this->connection->statement($this->grammar->compileDropAllTables());
+        $this->connection->statement($this->grammar->compile_drop_all_foreign_keys());
+        $this->connection->statement($this->grammar->compile_drop_all_tables());
     }
-
     /**
      * Drop all views from the database.
      *
      * @return void
      */
-    public function dropAllViews()
+    public function drop_all_views()
     {
-        $this->connection->statement($this->grammar->compileDropAllViews());
+        $this->connection->statement($this->grammar->compile_drop_all_views());
     }
-
     /**
      * Get the default schema name for the connection.
      *
      * @return string|null
      */
-    public function getCurrentSchemaName()
+    public function get_current_schema_name()
     {
-        return Arr::first($this->getSchemas(), fn ($schema): bool => $schema['default'])['name'];
+        return Arr::first($this->get_schemas(), fn($schema): bool => $schema['default'])['name'];
     }
 }

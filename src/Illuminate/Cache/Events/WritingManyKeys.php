@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache\Events;
 
-class WritingManyKeys extends CacheEvent
+class Writing_Many_Keys extends Cache_Event
 {
     /**
      * The keys that are being written.
@@ -12,7 +11,6 @@ class WritingManyKeys extends CacheEvent
      * @var mixed
      */
     public $keys;
-
     /**
      * Create a new event instance.
      *
@@ -21,16 +19,21 @@ class WritingManyKeys extends CacheEvent
      * @param  array  $values
      * @param  int|null  $seconds
      */
-    public function __construct($storeName, $keys, /**
-     * The value that is being written.
-     */
-        public $values, /**
-     * The number of seconds the keys should be valid.
-     */
-        public $seconds = null, array $tags = [])
+    public function __construct(
+        $store_name,
+        $keys,
+        /**
+         * The value that is being written.
+         */
+        public $values,
+        /**
+         * The number of seconds the keys should be valid.
+         */
+        public $seconds = null,
+        array $tags = []
+    )
     {
-        parent::__construct($storeName, $keys[0], $tags);
-
+        parent::__construct($store_name, $keys[0], $tags);
         $this->keys = $keys;
     }
 }

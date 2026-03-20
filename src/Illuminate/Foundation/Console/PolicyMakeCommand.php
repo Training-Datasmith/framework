@@ -1,23 +1,18 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Console;
 
-use Illuminate\Console\GeneratorCommand;
+use Illuminate\Console\Generator_Command;
 use Illuminate\Support\Str;
-
 use function Laravel\Prompts\suggest;
-
 use LogicException;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-
-use Symfony\Component\Console\Output\OutputInterface;
-
-#[AsCommand(name: 'make:policy')]
-class PolicyMakeCommand extends GeneratorCommand
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Input\Input_Option;
+use Symfony\Component\Console\Output\Output_Interface;
+#[As_Command(name: 'make:policy')]
+class Policy_Make_Command extends Generator_Command
 {
     /**
      * The console command name.
@@ -25,59 +20,44 @@ class PolicyMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'make:policy';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create a new policy class';
-
     /**
      * The type of class being generated.
      *
      * @var string
      */
     protected $type = 'Policy';
-
     /**
      * Build the class with the given name.
      *
      * @param  string  $name
      * @return string
      */
-    protected function buildClass($name)
+    protected function build_class($name)
     {
-        $stub = $this->replaceUserNamespace(
-            parent::buildClass($name)
-        );
-
+        $stub = $this->replace_user_namespace(parent::build_class($name));
         $model = $this->option('model');
-
-        return $model ? $this->replaceModel($stub, $model) : $stub;
+        return $model ? $this->replace_model($stub, $model) : $stub;
     }
-
     /**
      * Replace the User model namespace.
      *
      * @param  string  $stub
      * @return string
      */
-    protected function replaceUserNamespace($stub)
+    protected function replace_user_namespace($stub)
     {
-        $model = $this->userProviderModel();
-
-        if (! $model) {
+        $model = $this->user_provider_model();
+        if (!$model) {
             return $stub;
         }
-
-        return str_replace(
-            $this->rootNamespace().'User',
-            $model,
-            $stub
-        );
+        return str_replace($this->root_namespace() . 'User', $model, $stub);
     }
-
     /**
      * Get the model for the guard's user provider.
      *
@@ -85,25 +65,18 @@ class PolicyMakeCommand extends GeneratorCommand
      *
      * @throws \LogicException
      */
-    protected function userProviderModel()
+    protected function user_provider_model()
     {
         $config = $this->laravel['config'];
-
         $guard = $this->option('guard') ?: $config->get('auth.defaults.guard');
-
-        if (is_null($guardProvider = $config->get('auth.guards.'.$guard.'.provider'))) {
-            throw new LogicException('The ['.$guard.'] guard is not defined in your "auth" configuration file.');
+        if (is_null($guard_provider = $config->get('auth.guards.' . $guard . '.provider'))) {
+            throw new LogicException('The [' . $guard . '] guard is not defined in your "auth" configuration file.');
         }
-
-        if (! $config->get('auth.providers.'.$guardProvider.'.model')) {
-            return 'App\\Models\\User';
+        if (!$config->get('auth.providers.' . $guard_provider . '.model')) {
+            return 'App\Models\User';
         }
-
-        return $config->get(
-            'auth.providers.'.$guardProvider.'.model'
-        );
+        return $config->get('auth.providers.' . $guard_provider . '.model');
     }
-
     /**
      * Replace the model for the given stub.
      *
@@ -111,118 +84,68 @@ class PolicyMakeCommand extends GeneratorCommand
      * @param  string  $model
      * @return string
      */
-    protected function replaceModel($stub, $model): ?string
+    protected function replace_model($stub, $model): ?string
     {
         $model = str_replace('/', '\\', $model);
-
         if (str_starts_with($model, '\\')) {
-            $namespacedModel = trim($model, '\\');
+            $namespaced_model = trim($model, '\\');
         } else {
-            $namespacedModel = $this->qualifyModel($model);
+            $namespaced_model = $this->qualify_model($model);
         }
-
         $model = class_basename(trim($model, '\\'));
-
-        $dummyUser = class_basename($this->userProviderModel());
-
-        $dummyModel = Str::camel($model) === 'user' ? 'model' : $model;
-
-        $replace = [
-            'NamespacedDummyModel' => $namespacedModel,
-            '{{ namespacedModel }}' => $namespacedModel,
-            '{{namespacedModel}}' => $namespacedModel,
-            'DummyModel' => $model,
-            '{{ model }}' => $model,
-            '{{model}}' => $model,
-            'dummyModel' => Str::camel($dummyModel),
-            '{{ modelVariable }}' => Str::camel($dummyModel),
-            '{{modelVariable}}' => Str::camel($dummyModel),
-            'DummyUser' => $dummyUser,
-            '{{ user }}' => $dummyUser,
-            '{{user}}' => $dummyUser,
-            '$user' => '$'.Str::camel($dummyUser),
-        ];
-
-        $stub = str_replace(
-            array_keys($replace),
-            array_values($replace),
-            $stub
-        );
-
-        return preg_replace(
-            vsprintf('/use %s;[\r\n]+use %s;/', [
-                preg_quote($namespacedModel, '/'),
-                preg_quote($namespacedModel, '/'),
-            ]),
-            "use {$namespacedModel};",
-            $stub
-        );
+        $dummy_user = class_basename($this->user_provider_model());
+        $dummy_model = Str::camel($model) === 'user' ? 'model' : $model;
+        $replace = ['NamespacedDummyModel' => $namespaced_model, '{{ namespacedModel }}' => $namespaced_model, '{{namespacedModel}}' => $namespaced_model, 'DummyModel' => $model, '{{ model }}' => $model, '{{model}}' => $model, 'dummyModel' => Str::camel($dummy_model), '{{ modelVariable }}' => Str::camel($dummy_model), '{{modelVariable}}' => Str::camel($dummy_model), 'DummyUser' => $dummy_user, '{{ user }}' => $dummy_user, '{{user}}' => $dummy_user, '$user' => '$' . Str::camel($dummy_user)];
+        $stub = str_replace(array_keys($replace), array_values($replace), $stub);
+        return preg_replace(vsprintf('/use %s;[\r\n]+use %s;/', [preg_quote($namespaced_model, '/'), preg_quote($namespaced_model, '/')]), "use {$namespaced_model};", $stub);
     }
-
     /**
      * Get the stub file for the generator.
      *
      * @return string
      */
-    protected function getStub()
+    protected function get_stub()
     {
-        return $this->option('model')
-            ? $this->resolveStubPath('/stubs/policy.stub')
-            : $this->resolveStubPath('/stubs/policy.plain.stub');
+        return $this->option('model') ? $this->resolve_stub_path('/stubs/policy.stub') : $this->resolve_stub_path('/stubs/policy.plain.stub');
     }
-
     /**
      * Resolve the fully-qualified path to the stub.
      *
      * @return string
      */
-    protected function resolveStubPath(string $stub)
+    protected function resolve_stub_path(string $stub)
     {
-        return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
-            ? $customPath
-            : __DIR__.$stub;
+        return file_exists($custom_path = $this->laravel->base_path(trim($stub, '/'))) ? $custom_path : __DIR__ . $stub;
     }
-
     /**
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
      */
-    protected function getDefaultNamespace($rootNamespace): string
+    protected function get_default_namespace($root_namespace): string
     {
-        return $rootNamespace.'\Policies';
+        return $root_namespace . '\Policies';
     }
-
     /**
      * Get the console command arguments.
      */
-    protected function getOptions(): array
+    protected function get_options(): array
     {
-        return [
-            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the policy already exists'],
-            ['model', 'm', InputOption::VALUE_OPTIONAL, 'The model that the policy applies to'],
-            ['guard', 'g', InputOption::VALUE_OPTIONAL, 'The guard that the policy relies on'],
-        ];
+        return [['force', 'f', Input_Option::VALUE_NONE, 'Create the class even if the policy already exists'], ['model', 'm', Input_Option::VALUE_OPTIONAL, 'The model that the policy applies to'], ['guard', 'g', Input_Option::VALUE_OPTIONAL, 'The guard that the policy relies on']];
     }
-
     /**
      * Interact further with the user if they were prompted for missing arguments.
      *
      * @return void
      */
-    protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)
+    protected function after_prompting_for_missing_arguments(Input_Interface $input, Output_Interface $output)
     {
-        if ($this->isReservedName($this->getNameInput()) || $this->didReceiveOptions($input)) {
+        if ($this->is_reserved_name($this->get_name_input()) || $this->did_receive_options($input)) {
             return;
         }
-
-        $model = suggest(
-            'What model should this policy apply to? (Optional)',
-            $this->findAvailableModels(),
-        );
-
+        $model = suggest('What model should this policy apply to? (Optional)', $this->find_available_models());
         if ($model) {
-            $input->setOption('model', $model);
+            $input->set_option('model', $model);
         }
     }
 }

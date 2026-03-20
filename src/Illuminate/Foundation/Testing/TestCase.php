@@ -1,94 +1,79 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Testing;
 
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
-use PHPUnit\Framework\TestCase as BaseTestCase;
-
-abstract class TestCase extends BaseTestCase
+use Php_Unit\Framework\Test_Case as BaseTestCase;
+abstract class Test_Case extends Base_Test_Case
 {
-    use Concerns\InteractsWithContainer;
-    use Concerns\MakesHttpRequests;
-    use Concerns\InteractsWithAuthentication;
-    use Concerns\InteractsWithConsole;
-    use Concerns\InteractsWithDatabase;
-    use Concerns\InteractsWithDeprecationHandling;
-    use Concerns\InteractsWithExceptionHandling;
-    use Concerns\InteractsWithSession;
-    use Concerns\InteractsWithTime;
-    use Concerns\InteractsWithTestCaseLifecycle;
-    use Concerns\InteractsWithViews;
-
+    use Concerns\Interacts_With_Container;
+    use Concerns\Makes_Http_Requests;
+    use Concerns\Interacts_With_Authentication;
+    use Concerns\Interacts_With_Console;
+    use Concerns\Interacts_With_Database;
+    use Concerns\Interacts_With_Deprecation_Handling;
+    use Concerns\Interacts_With_Exception_Handling;
+    use Concerns\Interacts_With_Session;
+    use Concerns\Interacts_With_Time;
+    use Concerns\Interacts_With_Test_Case_Lifecycle;
+    use Concerns\Interacts_With_Views;
     /**
      * The list of trait that this test uses, fetched recursively.
      *
      * @var array<class-string, int>
      */
-    protected array $traitsUsedByTest;
-
+    protected array $traits_used_by_test;
     /**
      * Creates the application.
      *
      * @return \Illuminate\Foundation\Application
      */
-    public function createApplication()
+    public function create_application()
     {
-        $app = require Application::inferBasePath().'/bootstrap/app.php';
-
-        $this->traitsUsedByTest = array_flip(class_uses_recursive(static::class));
-
-        if (isset(CachedState::$cachedConfig) &&
-            isset($this->traitsUsedByTest[WithCachedConfig::class])) {
-            $this->markConfigCached($app);
+        $app = require Application::infer_base_path() . '/bootstrap/app.php';
+        $this->traits_used_by_test = array_flip(class_uses_recursive(static::class));
+        if (isset(Cached_State::$cached_config) && isset($this->traits_used_by_test[With_Cached_Config::class])) {
+            $this->mark_config_cached($app);
         }
-
-        if (isset(CachedState::$cachedRoutes) &&
-            isset($this->traitsUsedByTest[WithCachedRoutes::class])) {
-            $app->booting(fn () => $this->markRoutesCached($app));
+        if (isset(Cached_State::$cached_routes) && isset($this->traits_used_by_test[With_Cached_Routes::class])) {
+            $app->booting(fn() => $this->mark_routes_cached($app));
         }
-
         $app->make(Kernel::class)->bootstrap();
-
         return $app;
     }
-
     /**
      * Setup the test environment.
      */
-    protected function setUp(): void
+    protected function set_up(): void
     {
-        $this->setUpTheTestEnvironment();
+        $this->set_up_the_test_environment();
     }
-
     /**
      * Refresh the application instance.
      *
      * @return void
      */
-    protected function refreshApplication()
+    protected function refresh_application()
     {
-        $this->app = $this->createApplication();
+        $this->app = $this->create_application();
     }
-
     /**
      * Clean up the testing environment before the next test.
      *
      *
      * @throws \Mockery\Exception\InvalidCountException
      */
-    protected function tearDown(): void
+    protected function tear_down(): void
     {
-        $this->tearDownTheTestEnvironment();
+        $this->tear_down_the_test_environment();
     }
-
     /**
      * Clean up the testing environment before the next test case.
      */
-    public static function tearDownAfterClass(): void
+    public static function tear_down_after_class(): void
     {
-        static::tearDownAfterClassUsingTestCase();
+        static::tear_down_after_class_using_test_case();
     }
 }

@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Query;
 
-class JoinLateralClause extends JoinClause
+class Join_Lateral_Clause extends Join_Clause
 {
 }

@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Support;
 
-if (! function_exists('Illuminate\Support\enum_value')) {
+if (!function_exists('Illuminate\Support\enum_value')) {
     /**
      * Return a scalar value for the given value that might be an enum.
      *
@@ -20,9 +19,8 @@ if (! function_exists('Illuminate\Support\enum_value')) {
     function enum_value($value, $default = null)
     {
         return match (true) {
-            $value instanceof \BackedEnum => $value->value,
-            $value instanceof \UnitEnum => $value->name,
-
+            $value instanceof \Backed_Enum => $value->value,
+            $value instanceof \Unit_Enum => $value->name,
             default => $value ?? value($default),
         };
     }

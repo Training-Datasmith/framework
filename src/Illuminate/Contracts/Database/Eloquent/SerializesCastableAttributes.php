@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Database\Eloquent;
 
 use Illuminate\Database\Eloquent\Model;
-
-interface SerializesCastableAttributes
+interface Serializes_Castable_Attributes
 {
     /**
      * Serialize the attribute when converting the model to an array.

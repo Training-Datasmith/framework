@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Illuminate\Cache\Rate_Limiting;
 
-namespace Illuminate\Cache\RateLimiting;
-
-class Unlimited extends GlobalLimit
+class Unlimited extends Global_Limit
 {
     /**
      * Create a new limit instance.

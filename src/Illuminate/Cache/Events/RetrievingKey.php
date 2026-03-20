@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache\Events;
 
-class RetrievingKey extends CacheEvent
+class Retrieving_Key extends Cache_Event
 {
 }

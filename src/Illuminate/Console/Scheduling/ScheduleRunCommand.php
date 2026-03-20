@@ -1,27 +1,25 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\Scheduling;
 
 use Exception;
 use Illuminate\Console\Application;
 use Illuminate\Console\Command;
-use Illuminate\Console\Events\ScheduledTaskFailed;
-use Illuminate\Console\Events\ScheduledTaskFinished;
-use Illuminate\Console\Events\ScheduledTaskSkipped;
-use Illuminate\Console\Events\ScheduledTaskStarting;
+use Illuminate\Console\Events\Scheduled_Task_Failed;
+use Illuminate\Console\Events\Scheduled_Task_Finished;
+use Illuminate\Console\Events\Scheduled_Task_Skipped;
+use Illuminate\Console\Events\Scheduled_Task_Starting;
 use Illuminate\Contracts\Cache\Repository as Cache;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Debug\Exception_Handler;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Sleep;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\As_Command;
 use Throwable;
-
-#[AsCommand(name: 'schedule:run')]
-class ScheduleRunCommand extends Command
+#[As_Command(name: 'schedule:run')]
+class Schedule_Run_Command extends Command
 {
     /**
      * The name and signature of the console command.
@@ -29,257 +27,197 @@ class ScheduleRunCommand extends Command
      * @var string
      */
     protected $signature = 'schedule:run {--whisper : Do not output message indicating that no jobs were ready to run}';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Run the scheduled commands';
-
     /**
      * The schedule instance.
      *
      * @var \Illuminate\Console\Scheduling\Schedule
      */
     protected $schedule;
-
     /**
      * The 24 hour timestamp this scheduler command started running.
      *
      * @var \Illuminate\Support\Carbon
      */
-    protected $startedAt;
-
+    protected $started_at;
     /**
      * Check if any events ran.
      *
      * @var bool
      */
-    protected $eventsRan = false;
-
+    protected $events_ran = false;
     /**
      * The event dispatcher.
      *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected $dispatcher;
-
     /**
      * The exception handler.
      *
      * @var \Illuminate\Contracts\Debug\ExceptionHandler
      */
     protected $handler;
-
     /**
      * The cache store implementation.
      *
      * @var \Illuminate\Contracts\Cache\Repository
      */
     protected $cache;
-
     /**
      * The PHP binary used by the command.
      *
      * @var string
      */
-    protected $phpBinary;
-
+    protected $php_binary;
     /**
      * Create a new command instance.
      */
     public function __construct()
     {
-        $this->startedAt = Date::now();
-
+        $this->started_at = Date::now();
         parent::__construct();
     }
-
     /**
      * Execute the console command.
      */
-    public function handle(Schedule $schedule, Dispatcher $dispatcher, Cache $cache, ExceptionHandler $handler): void
+    public function handle(Schedule $schedule, Dispatcher $dispatcher, Cache $cache, Exception_Handler $handler): void
     {
         $this->schedule = $schedule;
         $this->dispatcher = $dispatcher;
         $this->cache = $cache;
         $this->handler = $handler;
-        $this->phpBinary = Application::phpBinary();
-
-        $events = $this->schedule->dueEvents($this->laravel);
-
-        if ($events->contains->isRepeatable()) {
-            $this->clearInterruptSignal();
+        $this->php_binary = Application::php_binary();
+        $events = $this->schedule->due_events($this->laravel);
+        if ($events->contains->is_repeatable()) {
+            $this->clear_interrupt_signal();
         }
-
         foreach ($events as $event) {
-            if (! $event->filtersPass($this->laravel)) {
-                $this->dispatcher->dispatch(new ScheduledTaskSkipped($event));
-
+            if (!$event->filters_pass($this->laravel)) {
+                $this->dispatcher->dispatch(new Scheduled_Task_Skipped($event));
                 continue;
             }
-
-            if (! $this->eventsRan) {
-                $this->newLine();
+            if (!$this->events_ran) {
+                $this->new_line();
             }
-
-            if ($event->onOneServer) {
-                $this->runSingleServerEvent($event);
+            if ($event->on_one_server) {
+                $this->run_single_server_event($event);
             } else {
-                $this->runEvent($event);
+                $this->run_event($event);
             }
-
-            $this->eventsRan = true;
+            $this->events_ran = true;
         }
-
-        if ($events->contains->isRepeatable()) {
-            $this->repeatEvents($events->filter->isRepeatable());
+        if ($events->contains->is_repeatable()) {
+            $this->repeat_events($events->filter->is_repeatable());
         }
-
-        if (! $this->eventsRan) {
-            if (! $this->option('whisper')) {
+        if (!$this->events_ran) {
+            if (!$this->option('whisper')) {
                 $this->components->info('No scheduled commands are ready to run.');
             }
         } else {
-            $this->newLine();
+            $this->new_line();
         }
     }
-
     /**
      * Run the given single server event.
      *
      * @param  \Illuminate\Console\Scheduling\Event  $event
      * @return void
      */
-    protected function runSingleServerEvent($event)
+    protected function run_single_server_event($event)
     {
-        if ($this->schedule->serverShouldRun($event, $this->startedAt)) {
-            $this->runEvent($event);
+        if ($this->schedule->server_should_run($event, $this->started_at)) {
+            $this->run_event($event);
         } else {
-            $this->components->info(sprintf(
-                'Skipping [%s] because the command already ran on another server.',
-                $event->getSummaryForDisplay()
-            ));
+            $this->components->info(sprintf('Skipping [%s] because the command already ran on another server.', $event->get_summary_for_display()));
         }
     }
-
     /**
      * Run the given event.
      *
      * @param  \Illuminate\Console\Scheduling\Event  $event
      * @return void
      */
-    protected function runEvent($event)
+    protected function run_event($event)
     {
-        $summary = $event->getSummaryForDisplay();
-
-        $command = $event instanceof CallbackEvent
-            ? $summary
-            : trim(str_replace($this->phpBinary, '', $event->command));
-
-        $description = sprintf(
-            '<fg=gray>%s</> Running [%s]%s',
-            Carbon::now()->format('Y-m-d H:i:s'),
-            $command,
-            $event->runInBackground ? ' in background' : '',
-        );
-
+        $summary = $event->get_summary_for_display();
+        $command = $event instanceof Callback_Event ? $summary : trim(str_replace($this->php_binary, '', $event->command));
+        $description = sprintf('<fg=gray>%s</> Running [%s]%s', Carbon::now()->format('Y-m-d H:i:s'), $command, $event->run_in_background ? ' in background' : '');
         $this->components->task($description, function () use ($event): bool {
-            $this->dispatcher->dispatch(new ScheduledTaskStarting($event));
-
+            $this->dispatcher->dispatch(new Scheduled_Task_Starting($event));
             $start = microtime(true);
-
             try {
                 $event->run($this->laravel);
-
-                $this->dispatcher->dispatch(new ScheduledTaskFinished(
-                    $event,
-                    round(microtime(true) - $start, 2)
-                ));
-
-                $this->eventsRan = true;
-
-                if ($event->exitCode != 0 && ! $event->runInBackground) {
-                    throw new Exception("Scheduled command [{$event->command}] failed with exit code [{$event->exitCode}].");
+                $this->dispatcher->dispatch(new Scheduled_Task_Finished($event, round(microtime(true) - $start, 2)));
+                $this->events_ran = true;
+                if ($event->exit_code != 0 && !$event->run_in_background) {
+                    throw new Exception("Scheduled command [{$event->command}] failed with exit code [{$event->exit_code}].");
                 }
             } catch (Throwable $e) {
-                $this->dispatcher->dispatch(new ScheduledTaskFailed($event, $e));
-
+                $this->dispatcher->dispatch(new Scheduled_Task_Failed($event, $e));
                 $this->handler->report($e);
             }
-
-            return $event->exitCode == 0;
+            return $event->exit_code == 0;
         });
-
-        if (! $event instanceof CallbackEvent) {
-            $this->components->bulletList([
-                $event->getSummaryForDisplay(),
-            ]);
+        if (!$event instanceof Callback_Event) {
+            $this->components->bullet_list([$event->get_summary_for_display()]);
         }
     }
-
     /**
      * Run the given repeating events.
      *
      * @param  \Illuminate\Support\Collection<\Illuminate\Console\Scheduling\Event>  $events
      * @return void
      */
-    protected function repeatEvents($events)
+    protected function repeat_events($events)
     {
-        $hasEnteredMaintenanceMode = false;
-
-        while (Date::now()->lte($this->startedAt->endOfMinute())) {
+        $has_entered_maintenance_mode = false;
+        while (Date::now()->lte($this->started_at->end_of_minute())) {
             foreach ($events as $event) {
-                if ($this->shouldInterrupt()) {
+                if ($this->should_interrupt()) {
                     return;
                 }
-
-                if (! $event->shouldRepeatNow()) {
+                if (!$event->should_repeat_now()) {
                     continue;
                 }
-
-                $hasEnteredMaintenanceMode = $hasEnteredMaintenanceMode || $this->laravel->isDownForMaintenance();
-
-                if ($hasEnteredMaintenanceMode && ! $event->runsInMaintenanceMode()) {
+                $has_entered_maintenance_mode = $has_entered_maintenance_mode || $this->laravel->is_down_for_maintenance();
+                if ($has_entered_maintenance_mode && !$event->runs_in_maintenance_mode()) {
                     continue;
                 }
-
-                if (! $event->filtersPass($this->laravel)) {
-                    $this->dispatcher->dispatch(new ScheduledTaskSkipped($event));
-
+                if (!$event->filters_pass($this->laravel)) {
+                    $this->dispatcher->dispatch(new Scheduled_Task_Skipped($event));
                     continue;
                 }
-
-                if ($event->onOneServer) {
-                    $this->runSingleServerEvent($event);
+                if ($event->on_one_server) {
+                    $this->run_single_server_event($event);
                 } else {
-                    $this->runEvent($event);
+                    $this->run_event($event);
                 }
-
-                $this->eventsRan = true;
+                $this->events_ran = true;
             }
-
-            Sleep::usleep(100_000);
+            Sleep::usleep(100000);
         }
     }
-
     /**
      * Determine if the schedule run should be interrupted.
      *
      * @return bool
      */
-    protected function shouldInterrupt()
+    protected function should_interrupt()
     {
         return $this->cache->get('illuminate:schedule:interrupt', false);
     }
-
     /**
      * Ensure the interrupt signal is cleared.
      *
      * @return void
      */
-    protected function clearInterruptSignal()
+    protected function clear_interrupt_signal()
     {
         $this->cache->forget('illuminate:schedule:interrupt');
     }

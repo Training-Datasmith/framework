@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Events;
 
-interface ShouldDispatchAfterCommit
+interface Should_Dispatch_After_Commit
 {
 }

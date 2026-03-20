@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Schema;
 
-class MariaDbBuilder extends MySqlBuilder
+class Maria_Db_Builder extends My_Sql_Builder
 {
 }

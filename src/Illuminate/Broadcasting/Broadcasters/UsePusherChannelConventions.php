@@ -1,37 +1,33 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Broadcasting\Broadcasters;
 
 use Illuminate\Support\Str;
-
-trait UsePusherChannelConventions
+trait Use_Pusher_Channel_Conventions
 {
     /**
      * Return true if the channel is protected by authentication.
      *
      * @param  string  $channel
      */
-    public function isGuardedChannel($channel): bool
+    public function is_guarded_channel($channel): bool
     {
-        return Str::startsWith($channel, ['private-', 'presence-']);
+        return Str::starts_with($channel, ['private-', 'presence-']);
     }
-
     /**
      * Remove prefix from channel name.
      *
      * @param  string  $channel
      * @return string
      */
-    public function normalizeChannelName($channel)
+    public function normalize_channel_name($channel)
     {
         foreach (['private-encrypted-', 'private-', 'presence-'] as $prefix) {
-            if (Str::startsWith($channel, $prefix)) {
-                return Str::replaceFirst($prefix, '', $channel);
+            if (Str::starts_with($channel, $prefix)) {
+                return Str::replace_first($prefix, '', $channel);
             }
         }
-
         return $channel;
     }
 }

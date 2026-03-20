@@ -1,21 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Container\Attributes;
 
 use Attribute;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Container\ContextualAttribute;
-
+use Illuminate\Contracts\Container\Contextual_Attribute;
 #[Attribute(Attribute::TARGET_PARAMETER)]
-final class Tag implements ContextualAttribute
+final class Tag implements Contextual_Attribute
 {
-    public function __construct(
-        public string $tag,
-    ) {
+    public function __construct(public string $tag)
+    {
     }
-
     /**
      * Resolve the tag.
      *

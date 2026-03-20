@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation;
 
 class Precognition
@@ -12,10 +11,10 @@ class Precognition
      * @param  \Illuminate\Http\Request  $request
      * @return \Closure
      */
-    public static function afterValidationHook($request)
+    public static function after_validation_hook($request)
     {
         return function ($validator) use ($request): void {
-            if ($validator->messages()->isEmpty() && $request->headers->has('Precognition-Validate-Only')) {
+            if ($validator->messages()->is_empty() && $request->headers->has('Precognition-Validate-Only')) {
                 abort(204, headers: ['Precognition-Success' => 'true']);
             }
         };

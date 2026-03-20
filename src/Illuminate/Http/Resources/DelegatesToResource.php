@@ -1,39 +1,34 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Resources;
 
 use Exception;
-use Illuminate\Support\Traits\ForwardsCalls;
+use Illuminate\Support\Traits\Forwards_Calls;
 use Illuminate\Support\Traits\Macroable;
-
-trait DelegatesToResource
+trait Delegates_To_Resource
 {
-    use ForwardsCalls, Macroable {
+    use Forwards_Calls, Macroable {
         __call as macroCall;
     }
-
     /**
      * Get the value of the resource's route key.
      *
      * @return mixed
      */
-    public function getRouteKey()
+    public function get_route_key()
     {
-        return $this->resource->getRouteKey();
+        return $this->resource->get_route_key();
     }
-
     /**
      * Get the route key for the resource.
      *
      * @return string
      */
-    public function getRouteKeyName()
+    public function get_route_key_name()
     {
-        return $this->resource->getRouteKeyName();
+        return $this->resource->get_route_key_name();
     }
-
     /**
      * Retrieve the model for a bound value.
      *
@@ -42,11 +37,10 @@ trait DelegatesToResource
      *
      * @throws \Exception
      */
-    public function resolveRouteBinding($value, $field = null): never
+    public function resolve_route_binding($value, $field = null): never
     {
         throw new Exception('Resources may not be implicitly resolved from route bindings.');
     }
-
     /**
      * Retrieve the model for a bound value.
      *
@@ -56,11 +50,10 @@ trait DelegatesToResource
      *
      * @throws \Exception
      */
-    public function resolveChildRouteBinding($childType, $value, $field = null): never
+    public function resolve_child_route_binding($child_type, $value, $field = null): never
     {
         throw new Exception('Resources may not be implicitly resolved from child route bindings.');
     }
-
     /**
      * Determine if the given attribute exists.
      *
@@ -70,7 +63,6 @@ trait DelegatesToResource
     {
         return isset($this->resource[$offset]);
     }
-
     /**
      * Get the value for a given offset.
      *
@@ -80,7 +72,6 @@ trait DelegatesToResource
     {
         return $this->resource[$offset];
     }
-
     /**
      * Set the value for a given offset.
      *
@@ -91,7 +82,6 @@ trait DelegatesToResource
     {
         $this->resource[$offset] = $value;
     }
-
     /**
      * Unset the value for a given offset.
      *
@@ -101,7 +91,6 @@ trait DelegatesToResource
     {
         unset($this->resource[$offset]);
     }
-
     /**
      * Determine if an attribute exists on the resource.
      *
@@ -112,7 +101,6 @@ trait DelegatesToResource
     {
         return isset($this->resource->{$key});
     }
-
     /**
      * Unset an attribute on the resource.
      *
@@ -123,7 +111,6 @@ trait DelegatesToResource
     {
         unset($this->resource->{$key});
     }
-
     /**
      * Dynamically get properties from the underlying resource.
      *
@@ -134,7 +121,6 @@ trait DelegatesToResource
     {
         return $this->resource->{$key};
     }
-
     /**
      * Dynamically pass method calls to the underlying resource.
      *
@@ -144,10 +130,9 @@ trait DelegatesToResource
      */
     public function __call($method, $parameters)
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::has_macro($method)) {
+            return $this->macro_call($method, $parameters);
         }
-
-        return $this->forwardCallTo($this->resource, $method, $parameters);
+        return $this->forward_call_to($this->resource, $method, $parameters);
     }
 }

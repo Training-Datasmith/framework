@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\Concerns;
 
 use Illuminate\Console\Signals;
 use Illuminate\Support\Collection;
-
-trait InteractsWithSignals
+trait Interacts_With_Signals
 {
     /**
      * The signal registrar instance.
@@ -15,7 +13,6 @@ trait InteractsWithSignals
      * @var \Illuminate\Console\Signals|null
      */
     protected $signals;
-
     /**
      * Define a callback to be run when the given signal(s) occurs.
      *
@@ -26,16 +23,11 @@ trait InteractsWithSignals
      */
     public function trap($signals, $callback): void
     {
-        Signals::whenAvailable(function () use ($signals, $callback): void {
-            $this->signals ??= new Signals(
-                $this->getApplication()->getSignalRegistry(),
-            );
-
-            Collection::wrap(value($signals))
-                ->each(fn ($signal) => $this->signals->register($signal, $callback));
+        Signals::when_available(function () use ($signals, $callback): void {
+            $this->signals ??= new Signals($this->get_application()->get_signal_registry());
+            Collection::wrap(value($signals))->each(fn($signal) => $this->signals->register($signal, $callback));
         });
     }
-
     /**
      * Untrap signal handlers set within the command's handler.
      *
@@ -44,9 +36,8 @@ trait InteractsWithSignals
      */
     public function untrap(): void
     {
-        if (! is_null($this->signals)) {
+        if (!is_null($this->signals)) {
             $this->signals->unregister();
-
             $this->signals = null;
         }
     }

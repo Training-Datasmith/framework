@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components;
 
 use Symfony\Component\Console\Question\Question;
-
 class Secret extends Component
 {
     /**
@@ -17,9 +15,7 @@ class Secret extends Component
     public function render($question, bool $fallback = true)
     {
         $question = new Question($question);
-
-        $question->setHidden(true)->setHiddenFallback($fallback);
-
-        return $this->usingQuestionHelper(fn () => $this->output->askQuestion($question));
+        $question->set_hidden(true)->set_hidden_fallback($fallback);
+        return $this->using_question_helper(fn() => $this->output->ask_question($question));
     }
 }

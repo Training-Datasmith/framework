@@ -1,19 +1,15 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Events;
 
-use Illuminate\Contracts\Database\Events\MigrationEvent as MigrationEventContract;
-
-class DatabaseRefreshed implements MigrationEventContract
+use Illuminate\Contracts\Database\Events\Migration_Event as MigrationEventContract;
+class Database_Refreshed implements Migration_Event_Contract
 {
     /**
      * Create a new event instance.
      */
-    public function __construct(
-        public ?string $database = null,
-        public bool $seeding = false,
-    ) {
+    public function __construct(public ?string $database = null, public bool $seeding = false)
+    {
     }
 }

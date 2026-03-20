@@ -1,44 +1,40 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\Concerns;
 
-use Symfony\Component\Console\Completion\CompletionInput;
-use Symfony\Component\Console\Completion\CompletionSuggestions;
+use Symfony\Component\Console\Completion\Completion_Input;
+use Symfony\Component\Console\Completion\Completion_Suggestions;
 use Symfony\Component\Console\Completion\Suggestion;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
-
-trait HasParameters
+use Symfony\Component\Console\Input\Input_Argument;
+use Symfony\Component\Console\Input\Input_Option;
+trait Has_Parameters
 {
     /**
      * Specify the arguments and options on the command.
      *
      * @return void
      */
-    protected function specifyParameters()
+    protected function specify_parameters()
     {
         // We will loop through all of the arguments and options for the command and
         // set them all on the base command instance. This specifies what can get
         // passed into these commands as "parameters" to control the execution.
-        foreach ($this->getArguments() as $arguments) {
-            if ($arguments instanceof InputArgument) {
-                $this->getDefinition()->addArgument($arguments);
+        foreach ($this->get_arguments() as $arguments) {
+            if ($arguments instanceof Input_Argument) {
+                $this->get_definition()->add_argument($arguments);
             } else {
-                $this->addArgument(...$arguments);
+                $this->add_argument(...$arguments);
             }
         }
-
-        foreach ($this->getOptions() as $options) {
-            if ($options instanceof InputOption) {
-                $this->getDefinition()->addOption($options);
+        foreach ($this->get_options() as $options) {
+            if ($options instanceof Input_Option) {
+                $this->get_definition()->add_option($options);
             } else {
-                $this->addOption(...$options);
+                $this->add_option(...$options);
             }
         }
     }
-
     /**
      * Get the console command arguments.
      *
@@ -50,11 +46,10 @@ trait HasParameters
      *    4?: list<string|Suggestion>|\Closure(CompletionInput, CompletionSuggestions): list<string|Suggestion>
      * })[]
      */
-    protected function getArguments(): array
+    protected function get_arguments(): array
     {
         return [];
     }
-
     /**
      * Get the console command options.
      *
@@ -67,7 +62,7 @@ trait HasParameters
      *    5?: list<string|Suggestion>|\Closure(CompletionInput, CompletionSuggestions): list<string|Suggestion>
      * })[]
      */
-    protected function getOptions(): array
+    protected function get_options(): array
     {
         return [];
     }

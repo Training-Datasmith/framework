@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache\Events;
 
-class KeyForgetFailed extends CacheEvent
+class Key_Forget_Failed extends Cache_Event
 {
 }

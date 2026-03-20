@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Migrations;
 
-enum MigrationResult: int
+enum Migration_Result : int
 {
     case Success = 1;
     case Failure = 2;

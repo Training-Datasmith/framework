@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Events;
 
-class LocaleUpdated
+class Locale_Updated
 {
     /**
      * Create a new event instance.
@@ -20,7 +19,8 @@ class LocaleUpdated
         /**
          * The previous locale.
          */
-        public $previousLocale = null
-    ) {
+        public $previous_locale = null
+    )
+    {
     }
 }

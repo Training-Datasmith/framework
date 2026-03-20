@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Events;
 
-class MigrationsEnded extends MigrationsEvent
+class Migrations_Ended extends Migrations_Event
 {
 }

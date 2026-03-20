@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components\Mutators;
 
 use Illuminate\Support\Stringable;
-
-class EnsureNoPunctuation
+class Ensure_No_Punctuation
 {
     /**
      * Ensures the given string does not end with punctuation.
@@ -16,10 +14,9 @@ class EnsureNoPunctuation
      */
     public function __invoke($string)
     {
-        if ((new Stringable($string))->endsWith(['.', '?', '!', ':'])) {
+        if ((new Stringable($string))->ends_with(['.', '?', '!', ':'])) {
             return substr_replace($string, '', -1);
         }
-
         return $string;
     }
 }

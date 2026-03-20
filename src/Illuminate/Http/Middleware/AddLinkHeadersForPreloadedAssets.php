@@ -1,14 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Middleware;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Vite;
-
-class AddLinkHeadersForPreloadedAssets
+class Add_Link_Headers_For_Preloaded_Assets
 {
     /**
      * Configure the middleware.
@@ -17,9 +15,8 @@ class AddLinkHeadersForPreloadedAssets
      */
     public static function using($limit): string
     {
-        return static::class.':'.$limit;
+        return static::class . ':' . $limit;
     }
-
     /**
      * Handle the incoming request.
      *
@@ -31,11 +28,8 @@ class AddLinkHeadersForPreloadedAssets
     public function handle($request, $next, $limit = null)
     {
         return tap($next($request), function ($response) use ($limit): void {
-            if ($response instanceof Response && Vite::preloadedAssets() !== []) {
-                $response->header('Link', (new Collection(Vite::preloadedAssets()))
-                    ->when($limit, fn ($assets, $limit): \Illuminate\Support\Collection => $assets->take($limit))
-                    ->map(fn ($attributes, $url): string => "<{$url}>; ".implode('; ', $attributes))
-                    ->join(', '), false);
+            if ($response instanceof Response && Vite::preloaded_assets() !== []) {
+                $response->header('Link', (new Collection(Vite::preloaded_assets()))->when($limit, fn($assets, $limit): \Illuminate\Support\Collection => $assets->take($limit))->map(fn($attributes, $url): string => "<{$url}>; " . implode('; ', $attributes))->join(', '), false);
             }
         });
     }

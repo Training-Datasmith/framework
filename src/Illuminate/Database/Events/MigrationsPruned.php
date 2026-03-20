@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Events;
 
 use Illuminate\Database\Connection;
-
-class MigrationsPruned
+class Migrations_Pruned
 {
     /**
      * The database connection instance.
@@ -14,28 +12,25 @@ class MigrationsPruned
      * @var \Illuminate\Database\Connection
      */
     public $connection;
-
     /**
      * The database connection name.
      *
      * @var string|null
      */
-    public $connectionName;
-
+    public $connection_name;
     /**
      * The path to the directory where migrations were pruned.
      *
      * @var string
      */
     public $path;
-
     /**
      * Create a new event instance.
      */
     public function __construct(Connection $connection, string $path)
     {
         $this->connection = $connection;
-        $this->connectionName = $connection->getName();
+        $this->connection_name = $connection->get_name();
         $this->path = $path;
     }
 }

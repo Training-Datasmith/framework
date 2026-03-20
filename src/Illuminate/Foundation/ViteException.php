@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation;
 
 use Exception;
-
-class ViteException extends Exception
+class Vite_Exception extends Exception
 {
 }

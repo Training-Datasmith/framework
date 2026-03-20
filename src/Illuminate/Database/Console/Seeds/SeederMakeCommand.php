@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Console\Seeds;
 
-use Illuminate\Console\GeneratorCommand;
+use Illuminate\Console\Generator_Command;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Attribute\AsCommand;
-
-#[AsCommand(name: 'make:seeder')]
-class SeederMakeCommand extends GeneratorCommand
+use Symfony\Component\Console\Attribute\As_Command;
+#[As_Command(name: 'make:seeder')]
+class Seeder_Make_Command extends Generator_Command
 {
     /**
      * The console command name.
@@ -17,21 +15,18 @@ class SeederMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'make:seeder';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create a new seeder class';
-
     /**
      * The type of class being generated.
      *
      * @var string
      */
     protected $type = 'Seeder';
-
     /**
      * Execute the console command.
      */
@@ -39,49 +34,41 @@ class SeederMakeCommand extends GeneratorCommand
     {
         parent::handle();
     }
-
     /**
      * Get the stub file for the generator.
      *
      * @return string
      */
-    protected function getStub()
+    protected function get_stub()
     {
-        return $this->resolveStubPath('/stubs/seeder.stub');
+        return $this->resolve_stub_path('/stubs/seeder.stub');
     }
-
     /**
      * Resolve the fully-qualified path to the stub.
      *
      * @return string
      */
-    protected function resolveStubPath(string $stub)
+    protected function resolve_stub_path(string $stub)
     {
-        return is_file($customPath = $this->laravel->basePath(trim($stub, '/')))
-            ? $customPath
-            : __DIR__.$stub;
+        return is_file($custom_path = $this->laravel->base_path(trim($stub, '/'))) ? $custom_path : __DIR__ . $stub;
     }
-
     /**
      * Get the destination class path.
      *
      * @param  string  $name
      */
-    protected function getPath($name): string
+    protected function get_path($name): string
     {
-        $name = str_replace('\\', '/', Str::replaceFirst($this->rootNamespace(), '', $name));
-
-        if (is_dir($this->laravel->databasePath().'/seeds')) {
-            return $this->laravel->databasePath().'/seeds/'.$name.'.php';
+        $name = str_replace('\\', '/', Str::replace_first($this->root_namespace(), '', $name));
+        if (is_dir($this->laravel->database_path() . '/seeds')) {
+            return $this->laravel->database_path() . '/seeds/' . $name . '.php';
         }
-
-        return $this->laravel->databasePath().'/seeders/'.$name.'.php';
+        return $this->laravel->database_path() . '/seeders/' . $name . '.php';
     }
-
     /**
      * Get the root namespace for the class.
      */
-    protected function rootNamespace(): string
+    protected function root_namespace(): string
     {
         return 'Database\Seeders\\';
     }

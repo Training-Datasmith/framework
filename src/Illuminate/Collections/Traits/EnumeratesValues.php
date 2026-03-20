@@ -1,27 +1,22 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Support\Traits;
 
-use BackedEnum;
-use CachingIterator;
+use Backed_Enum;
+use Caching_Iterator;
 use Closure;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-
 use function Illuminate\Support\enum_value;
-
 use Illuminate\Support\Enumerable;
-use Illuminate\Support\HigherOrderCollectionProxy;
+use Illuminate\Support\Higher_Order_Collection_Proxy;
 use JsonSerializable;
 use UnexpectedValueException;
-
-use UnitEnum;
-
+use Unit_Enum;
 /**
  * @template TKey of array-key
  *
@@ -60,57 +55,21 @@ use UnitEnum;
  * @property-read HigherOrderCollectionProxy<TKey, TValue> $until
  * @property-read HigherOrderCollectionProxy<TKey, TValue> $when
  */
-trait EnumeratesValues
+trait Enumerates_Values
 {
     use Conditionable;
-
     /**
      * Indicates that the object's string representation should be escaped when __toString is invoked.
      *
      * @var bool
      */
-    protected $escapeWhenCastingToString = false;
-
+    protected $escape_when_casting_to_string = false;
     /**
      * The methods that can be proxied.
      *
      * @var array<int, string>
      */
-    protected static $proxies = [
-        'average',
-        'avg',
-        'contains',
-        'doesntContain',
-        'each',
-        'every',
-        'filter',
-        'first',
-        'flatMap',
-        'groupBy',
-        'hasMany',
-        'hasSole',
-        'keyBy',
-        'last',
-        'map',
-        'max',
-        'min',
-        'partition',
-        'percentage',
-        'reject',
-        'skipUntil',
-        'skipWhile',
-        'some',
-        'sortBy',
-        'sortByDesc',
-        'sum',
-        'takeUntil',
-        'takeWhile',
-        'unique',
-        'unless',
-        'until',
-        'when',
-    ];
-
+    protected static $proxies = ['average', 'avg', 'contains', 'doesntContain', 'each', 'every', 'filter', 'first', 'flatMap', 'groupBy', 'hasMany', 'hasSole', 'keyBy', 'last', 'map', 'max', 'min', 'partition', 'percentage', 'reject', 'skipUntil', 'skipWhile', 'some', 'sortBy', 'sortByDesc', 'sum', 'takeUntil', 'takeWhile', 'unique', 'unless', 'until', 'when'];
     /**
      * Create a new collection instance if the value isn't one already.
      *
@@ -124,7 +83,6 @@ trait EnumeratesValues
     {
         return new static($items);
     }
-
     /**
      * Wrap the given value in a collection if applicable.
      *
@@ -135,11 +93,8 @@ trait EnumeratesValues
      */
     public static function wrap($value): static
     {
-        return $value instanceof Enumerable
-            ? new static($value)
-            : new static(Arr::wrap($value));
+        return $value instanceof Enumerable ? new static($value) : new static(Arr::wrap($value));
     }
-
     /**
      * Get the underlying items from the given collection if applicable.
      *
@@ -153,7 +108,6 @@ trait EnumeratesValues
     {
         return $value instanceof Enumerable ? $value->all() : $value;
     }
-
     /**
      * Create a new instance with no items.
      */
@@ -161,7 +115,6 @@ trait EnumeratesValues
     {
         return new static([]);
     }
-
     /**
      * Create a new collection by invoking the callback a given amount of times.
      *
@@ -176,12 +129,8 @@ trait EnumeratesValues
         if ($number < 1) {
             return new static();
         }
-
-        return static::range(1, $number)
-            ->unless($callback == null)
-            ->map($callback);
+        return static::range(1, $number)->unless($callback == null)->map($callback);
     }
-
     /**
      * Create a new collection by decoding a JSON string.
      *
@@ -190,11 +139,10 @@ trait EnumeratesValues
      * @param  int  $flags
      * @return static<TKey, TValue>
      */
-    public static function fromJson($json, $depth = 512, $flags = 0): static
+    public static function from_json($json, $depth = 512, $flags = 0): static
     {
         return new static(json_decode($json, true, $depth, $flags));
     }
-
     /**
      * Get the average value of a given key.
      *
@@ -202,20 +150,16 @@ trait EnumeratesValues
      */
     public function avg($callback = null): int|float|null
     {
-        $callback = $this->valueRetriever($callback);
-
+        $callback = $this->value_retriever($callback);
         $reduced = $this->reduce(static function (&$reduce, $value) use ($callback) {
-            if (! is_null($resolved = $callback($value))) {
+            if (!is_null($resolved = $callback($value))) {
                 $reduce[0] += $resolved;
                 $reduce[1]++;
             }
-
             return $reduce;
         }, [0, 0]);
-
         return $reduced[1] ? $reduced[0] / $reduced[1] : null;
     }
-
     /**
      * Alias for the "avg" method.
      *
@@ -226,7 +170,6 @@ trait EnumeratesValues
     {
         return $this->avg($callback);
     }
-
     /**
      * Alias for the "contains" method.
      *
@@ -239,7 +182,6 @@ trait EnumeratesValues
     {
         return $this->contains(...func_get_args());
     }
-
     /**
      * Dump the given arguments and terminate execution.
      *
@@ -250,7 +192,6 @@ trait EnumeratesValues
     {
         dd($this->all(), ...$args);
     }
-
     /**
      * Dump the items.
      *
@@ -260,10 +201,8 @@ trait EnumeratesValues
     public function dump(...$args)
     {
         dump($this->all(), ...$args);
-
         return $this;
     }
-
     /**
      * Execute a callback over each item.
      *
@@ -277,25 +216,21 @@ trait EnumeratesValues
                 break;
             }
         }
-
         return $this;
     }
-
     /**
      * Execute a callback over each nested chunk of items.
      *
      * @param  callable(...mixed): mixed  $callback
      * @return static
      */
-    public function eachSpread(callable $callback)
+    public function each_spread(callable $callback)
     {
         return $this->each(function ($chunk, $key) use ($callback) {
             $chunk[] = $key;
-
             return $callback(...$chunk);
         });
     }
-
     /**
      * Determine if all items pass the given truth test.
      *
@@ -307,20 +242,16 @@ trait EnumeratesValues
     public function every($key, $operator = null, $value = null)
     {
         if (func_num_args() === 1) {
-            $callback = $this->valueRetriever($key);
-
+            $callback = $this->value_retriever($key);
             foreach ($this as $k => $v) {
-                if (! $callback($v, $k)) {
+                if (!$callback($v, $k)) {
                     return false;
                 }
             }
-
             return true;
         }
-
-        return $this->every($this->operatorForWhere(...func_get_args()));
+        return $this->every($this->operator_for_where(...func_get_args()));
     }
-
     /**
      * Get the first item by the given key value pair.
      *
@@ -329,11 +260,10 @@ trait EnumeratesValues
      * @param  mixed  $value
      * @return TValue|null
      */
-    public function firstWhere($key, $operator = null, $value = null)
+    public function first_where($key, $operator = null, $value = null)
     {
-        return $this->first($this->operatorForWhere(...func_get_args()));
+        return $this->first($this->operator_for_where(...func_get_args()));
     }
-
     /**
      * Determine if the collection contains multiple items, optionally matching the given criteria.
      *
@@ -341,19 +271,11 @@ trait EnumeratesValues
      * @param  mixed  $operator
      * @param  mixed  $value
      */
-    public function hasMany($key = null, $operator = null, $value = null): bool
+    public function has_many($key = null, $operator = null, $value = null): bool
     {
-        $filter = func_num_args() > 1
-            ? $this->operatorForWhere(...func_get_args())
-            : $key;
-
-        return $this
-            ->unless($filter == null)
-            ->filter($filter)
-            ->take(2)
-            ->count() === 2;
+        $filter = func_num_args() > 1 ? $this->operator_for_where(...func_get_args()) : $key;
+        return $this->unless($filter == null)->filter($filter)->take(2)->count() === 2;
     }
-
     /**
      * Get a single key's value from the first matching item in the collection.
      *
@@ -365,11 +287,9 @@ trait EnumeratesValues
      */
     public function value($key, $default = null)
     {
-        $value = $this->first(fn (array $target): bool => data_has($target, $key));
-
+        $value = $this->first(fn(array $target): bool => data_has($target, $key));
         return data_get($value, $key, $default);
     }
-
     /**
      * Ensure that every item in the collection is of the expected type.
      *
@@ -382,23 +302,17 @@ trait EnumeratesValues
      */
     public function ensure($type)
     {
-        $allowedTypes = is_array($type) ? $type : [$type];
-
-        return $this->each(function ($item, $index) use ($allowedTypes): true {
-            $itemType = get_debug_type($item);
-
-            foreach ($allowedTypes as $allowedType) {
-                if ($itemType === $allowedType || $item instanceof $allowedType) {
+        $allowed_types = is_array($type) ? $type : [$type];
+        return $this->each(function ($item, $index) use ($allowed_types): true {
+            $item_type = get_debug_type($item);
+            foreach ($allowed_types as $allowed_type) {
+                if ($item_type === $allowed_type || $item instanceof $allowed_type) {
                     return true;
                 }
             }
-
-            throw new UnexpectedValueException(
-                sprintf("Collection should only include [%s] items, but '%s' found at position %d.", implode(', ', $allowedTypes), $itemType, $index)
-            );
+            throw new UnexpectedValueException(sprintf("Collection should only include [%s] items, but '%s' found at position %d.", implode(', ', $allowed_types), $item_type, $index));
         });
     }
-
     /**
      * Determine if the collection is not empty.
      *
@@ -408,11 +322,10 @@ trait EnumeratesValues
      * @phpstan-assert-if-false null $this->first()
      * @phpstan-assert-if-false null $this->last()
      */
-    public function isNotEmpty(): bool
+    public function is_not_empty(): bool
     {
-        return ! $this->isEmpty();
+        return !$this->is_empty();
     }
-
     /**
      * Run a map over each nested chunk of items.
      *
@@ -421,15 +334,13 @@ trait EnumeratesValues
      * @param  callable(mixed...): TMapSpreadValue  $callback
      * @return static<TKey, TMapSpreadValue>
      */
-    public function mapSpread(callable $callback)
+    public function map_spread(callable $callback)
     {
         return $this->map(function ($chunk, $key) use ($callback) {
             $chunk[] = $key;
-
             return $callback(...$chunk);
         });
     }
-
     /**
      * Run a grouping map over the items.
      *
@@ -441,13 +352,11 @@ trait EnumeratesValues
      * @param  callable(TValue, TKey): array<TMapToGroupsKey, TMapToGroupsValue>  $callback
      * @return static<TMapToGroupsKey, static<int, TMapToGroupsValue>>
      */
-    public function mapToGroups(callable $callback)
+    public function map_to_groups(callable $callback)
     {
-        $groups = $this->mapToDictionary($callback);
-
+        $groups = $this->map_to_dictionary($callback);
         return $groups->map($this->make(...));
     }
-
     /**
      * Map a collection and flatten the result by a single level.
      *
@@ -457,11 +366,10 @@ trait EnumeratesValues
      * @param  callable(TValue, TKey): (\Illuminate\Support\Collection<TFlatMapKey, TFlatMapValue>|array<TFlatMapKey, TFlatMapValue>)  $callback
      * @return static<TFlatMapKey, TFlatMapValue>
      */
-    public function flatMap(callable $callback)
+    public function flat_map(callable $callback)
     {
         return $this->map($callback)->collapse();
     }
-
     /**
      * Map the values into a new class.
      *
@@ -470,15 +378,13 @@ trait EnumeratesValues
      * @param  class-string<TMapIntoValue>  $class
      * @return static<TKey, TMapIntoValue>
      */
-    public function mapInto($class)
+    public function map_into($class)
     {
-        if (is_subclass_of($class, BackedEnum::class)) {
-            return $this->map(fn ($value, $key): \BackedEnum => $class::from($value));
+        if (is_subclass_of($class, Backed_Enum::class)) {
+            return $this->map(fn($value, $key): \Backed_Enum => $class::from($value));
         }
-
-        return $this->map(fn ($value, $key): object => new $class($value, $key));
+        return $this->map(fn($value, $key): object => new $class($value, $key));
     }
-
     /**
      * Get the min value of a given key.
      *
@@ -487,13 +393,9 @@ trait EnumeratesValues
      */
     public function min($callback = null)
     {
-        $callback = $this->valueRetriever($callback);
-
-        return $this->map(fn ($value) => $callback($value))
-            ->reject(fn ($value): bool => is_null($value))
-            ->reduce(fn ($result, $value) => is_null($result) || $value < $result ? $value : $result);
+        $callback = $this->value_retriever($callback);
+        return $this->map(fn($value) => $callback($value))->reject(fn($value): bool => is_null($value))->reduce(fn($result, $value) => is_null($result) || $value < $result ? $value : $result);
     }
-
     /**
      * Get the max value of a given key.
      *
@@ -502,15 +404,12 @@ trait EnumeratesValues
      */
     public function max($callback = null)
     {
-        $callback = $this->valueRetriever($callback);
-
-        return $this->reject(fn ($value): bool => is_null($value))->reduce(function ($result, $item) use ($callback) {
+        $callback = $this->value_retriever($callback);
+        return $this->reject(fn($value): bool => is_null($value))->reduce(function ($result, $item) use ($callback) {
             $value = $callback($item);
-
             return is_null($result) || $value > $result ? $value : $result;
         });
     }
-
     /**
      * "Paginate" the collection by slicing it into a smaller collection.
      *
@@ -518,13 +417,11 @@ trait EnumeratesValues
      * @param  int  $perPage
      * @return static
      */
-    public function forPage($page, $perPage)
+    public function for_page($page, $per_page)
     {
-        $offset = max(0, ($page - 1) * $perPage);
-
-        return $this->slice($offset, $perPage);
+        $offset = max(0, ($page - 1) * $per_page);
+        return $this->slice($offset, $per_page);
     }
-
     /**
      * Partition the collection into two arrays using the given callback or key.
      *
@@ -535,15 +432,10 @@ trait EnumeratesValues
      */
     public function partition($key, $operator = null, $value = null): static
     {
-        $callback = func_num_args() === 1
-            ? $this->valueRetriever($key)
-            : $this->operatorForWhere(...func_get_args());
-
+        $callback = func_num_args() === 1 ? $this->value_retriever($key) : $this->operator_for_where(...func_get_args());
         [$passed, $failed] = Arr::partition($this->getIterator(), $callback);
-
         return new static([new static($passed), new static($failed)]);
     }
-
     /**
      * Calculate the percentage of items that pass a given truth test.
      *
@@ -551,16 +443,11 @@ trait EnumeratesValues
      */
     public function percentage(callable $callback, int $precision = 2): ?float
     {
-        if ($this->isEmpty()) {
+        if ($this->is_empty()) {
             return null;
         }
-
-        return round(
-            $this->filter($callback)->count() / $this->count() * 100,
-            $precision
-        );
+        return round($this->filter($callback)->count() / $this->count() * 100, $precision);
     }
-
     /**
      * Get the sum of the given values.
      *
@@ -571,13 +458,9 @@ trait EnumeratesValues
      */
     public function sum($callback = null)
     {
-        $callback = is_null($callback)
-            ? $this->identity()
-            : $this->valueRetriever($callback);
-
-        return $this->reduce(fn ($result, $item): float|int|array => $result + $callback($item), 0);
+        $callback = is_null($callback) ? $this->identity() : $this->value_retriever($callback);
+        return $this->reduce(fn($result, $item): float|int|array => $result + $callback($item), 0);
     }
-
     /**
      * Apply the callback if the collection is empty.
      *
@@ -587,11 +470,10 @@ trait EnumeratesValues
      * @param  (callable($this): TWhenEmptyReturnType)|null  $default
      * @return $this|TWhenEmptyReturnType
      */
-    public function whenEmpty(callable $callback, ?callable $default = null)
+    public function when_empty(callable $callback, ?callable $default = null)
     {
-        return $this->when($this->isEmpty(), $callback, $default);
+        return $this->when($this->is_empty(), $callback, $default);
     }
-
     /**
      * Apply the callback if the collection is not empty.
      *
@@ -601,11 +483,10 @@ trait EnumeratesValues
      * @param  (callable($this): TWhenNotEmptyReturnType)|null  $default
      * @return $this|TWhenNotEmptyReturnType
      */
-    public function whenNotEmpty(callable $callback, ?callable $default = null)
+    public function when_not_empty(callable $callback, ?callable $default = null)
     {
-        return $this->when($this->isNotEmpty(), $callback, $default);
+        return $this->when($this->is_not_empty(), $callback, $default);
     }
-
     /**
      * Apply the callback unless the collection is empty.
      *
@@ -615,11 +496,10 @@ trait EnumeratesValues
      * @param  (callable($this): TUnlessEmptyReturnType)|null  $default
      * @return $this|TUnlessEmptyReturnType
      */
-    public function unlessEmpty(callable $callback, ?callable $default = null)
+    public function unless_empty(callable $callback, ?callable $default = null)
     {
-        return $this->whenNotEmpty($callback, $default);
+        return $this->when_not_empty($callback, $default);
     }
-
     /**
      * Apply the callback unless the collection is not empty.
      *
@@ -629,11 +509,10 @@ trait EnumeratesValues
      * @param  (callable($this): TUnlessNotEmptyReturnType)|null  $default
      * @return $this|TUnlessNotEmptyReturnType
      */
-    public function unlessNotEmpty(callable $callback, ?callable $default = null)
+    public function unless_not_empty(callable $callback, ?callable $default = null)
     {
-        return $this->whenEmpty($callback, $default);
+        return $this->when_empty($callback, $default);
     }
-
     /**
      * Filter items by the given key value pair.
      *
@@ -644,31 +523,28 @@ trait EnumeratesValues
      */
     public function where($key, $operator = null, $value = null)
     {
-        return $this->filter($this->operatorForWhere(...func_get_args()));
+        return $this->filter($this->operator_for_where(...func_get_args()));
     }
-
     /**
      * Filter items where the value for the given key is null.
      *
      * @param  string|null  $key
      * @return static
      */
-    public function whereNull($key = null)
+    public function where_null($key = null)
     {
-        return $this->whereStrict($key, null);
+        return $this->where_strict($key, null);
     }
-
     /**
      * Filter items where the value for the given key is not null.
      *
      * @param  string|null  $key
      * @return static
      */
-    public function whereNotNull($key = null)
+    public function where_not_null($key = null)
     {
         return $this->where($key, '!==', null);
     }
-
     /**
      * Filter items by the given key value pair using strict comparison.
      *
@@ -676,11 +552,10 @@ trait EnumeratesValues
      * @param  mixed  $value
      * @return static
      */
-    public function whereStrict($key, $value)
+    public function where_strict($key, $value)
     {
         return $this->where($key, '===', $value);
     }
-
     /**
      * Filter items by the given key value pair.
      *
@@ -689,13 +564,11 @@ trait EnumeratesValues
      * @param  bool  $strict
      * @return static
      */
-    public function whereIn($key, $values, $strict = false)
+    public function where_in($key, $values, $strict = false)
     {
-        $values = $this->getArrayableItems($values);
-
-        return $this->filter(fn (array $item): bool => in_array(data_get($item, $key), $values, $strict));
+        $values = $this->get_arrayable_items($values);
+        return $this->filter(fn(array $item): bool => in_array(data_get($item, $key), $values, $strict));
     }
-
     /**
      * Filter items by the given key value pair using strict comparison.
      *
@@ -703,11 +576,10 @@ trait EnumeratesValues
      * @param  \Illuminate\Contracts\Support\Arrayable|iterable  $values
      * @return static
      */
-    public function whereInStrict($key, $values)
+    public function where_in_strict($key, $values)
     {
-        return $this->whereIn($key, $values, true);
+        return $this->where_in($key, $values, true);
     }
-
     /**
      * Filter items such that the value of the given key is between the given values.
      *
@@ -715,11 +587,10 @@ trait EnumeratesValues
      * @param  \Illuminate\Contracts\Support\Arrayable|iterable  $values
      * @return static
      */
-    public function whereBetween($key, $values)
+    public function where_between($key, $values)
     {
         return $this->where($key, '>=', reset($values))->where($key, '<=', end($values));
     }
-
     /**
      * Filter items such that the value of the given key is not between the given values.
      *
@@ -727,13 +598,10 @@ trait EnumeratesValues
      * @param  \Illuminate\Contracts\Support\Arrayable|iterable  $values
      * @return static
      */
-    public function whereNotBetween($key, $values)
+    public function where_not_between($key, $values)
     {
-        return $this->filter(
-            fn (array $item): bool => data_get($item, $key) < reset($values) || data_get($item, $key) > end($values)
-        );
+        return $this->filter(fn(array $item): bool => data_get($item, $key) < reset($values) || data_get($item, $key) > end($values));
     }
-
     /**
      * Filter items by the given key value pair.
      *
@@ -742,13 +610,11 @@ trait EnumeratesValues
      * @param  bool  $strict
      * @return static
      */
-    public function whereNotIn($key, $values, $strict = false)
+    public function where_not_in($key, $values, $strict = false)
     {
-        $values = $this->getArrayableItems($values);
-
-        return $this->reject(fn (array $item): bool => in_array(data_get($item, $key), $values, $strict));
+        $values = $this->get_arrayable_items($values);
+        return $this->reject(fn(array $item): bool => in_array(data_get($item, $key), $values, $strict));
     }
-
     /**
      * Filter items by the given key value pair using strict comparison.
      *
@@ -756,11 +622,10 @@ trait EnumeratesValues
      * @param  \Illuminate\Contracts\Support\Arrayable|iterable  $values
      * @return static
      */
-    public function whereNotInStrict($key, $values)
+    public function where_not_in_strict($key, $values)
     {
-        return $this->whereNotIn($key, $values, true);
+        return $this->where_not_in($key, $values, true);
     }
-
     /**
      * Filter the items, removing any items that don't match the given type(s).
      *
@@ -769,23 +634,20 @@ trait EnumeratesValues
      * @param  class-string<TWhereInstanceOf>|array<array-key, class-string<TWhereInstanceOf>>  $type
      * @return static<TKey, TWhereInstanceOf>
      */
-    public function whereInstanceOf($type)
+    public function where_instance_of($type)
     {
         return $this->filter(function ($value) use ($type): bool {
             if (is_array($type)) {
-                foreach ($type as $classType) {
-                    if ($value instanceof $classType) {
+                foreach ($type as $class_type) {
+                    if ($value instanceof $class_type) {
                         return true;
                     }
                 }
-
                 return false;
             }
-
             return $value instanceof $type;
         });
     }
-
     /**
      * Pass the collection to the given callback and return the result.
      *
@@ -798,7 +660,6 @@ trait EnumeratesValues
     {
         return $callback($this);
     }
-
     /**
      * Pass the collection into a new class.
      *
@@ -807,25 +668,20 @@ trait EnumeratesValues
      * @param  class-string<TPipeIntoValue>  $class
      * @return TPipeIntoValue
      */
-    public function pipeInto($class)
+    public function pipe_into($class)
     {
         return new $class($this);
     }
-
     /**
      * Pass the collection through a series of callable pipes and return the result.
      *
      * @param  array<callable>  $callbacks
      * @return mixed
      */
-    public function pipeThrough($callbacks)
+    public function pipe_through($callbacks)
     {
-        return (new Collection($callbacks))->reduce(
-            fn ($carry, $callback) => $callback($carry),
-            $this,
-        );
+        return (new Collection($callbacks))->reduce(fn($carry, $callback) => $callback($carry), $this);
     }
-
     /**
      * Reduce the collection to a single value.
      *
@@ -839,14 +695,11 @@ trait EnumeratesValues
     public function reduce(callable $callback, $initial = null)
     {
         $result = $initial;
-
         foreach ($this as $key => $value) {
             $result = $callback($result, $value, $key);
         }
-
         return $result;
     }
-
     /**
      * Reduce the collection to multiple aggregate values.
      *
@@ -854,25 +707,17 @@ trait EnumeratesValues
      * @return array
      * @throws \UnexpectedValueException
      */
-    public function reduceSpread(callable $callback, ...$initial)
+    public function reduce_spread(callable $callback, ...$initial)
     {
         $result = $initial;
-
         foreach ($this as $key => $value) {
             $result = call_user_func_array($callback, array_merge($result, [$value, $key]));
-
-            if (! is_array($result)) {
-                throw new UnexpectedValueException(sprintf(
-                    "%s::reduceSpread expects reducer to return an array, but got a '%s' instead.",
-                    class_basename(static::class),
-                    gettype($result)
-                ));
+            if (!is_array($result)) {
+                throw new UnexpectedValueException(sprintf("%s::reduceSpread expects reducer to return an array, but got a '%s' instead.", class_basename(static::class), gettype($result)));
             }
         }
-
         return $result;
     }
-
     /**
      * Reduce an associative collection to a single value.
      *
@@ -883,11 +728,10 @@ trait EnumeratesValues
      * @param  TReduceWithKeysInitial  $initial
      * @return TReduceWithKeysReturnType
      */
-    public function reduceWithKeys(callable $callback, $initial = null)
+    public function reduce_with_keys(callable $callback, $initial = null)
     {
         return $this->reduce($callback, $initial);
     }
-
     /**
      * Create a collection of all elements that do not pass a given truth test.
      *
@@ -896,13 +740,9 @@ trait EnumeratesValues
      */
     public function reject($callback = true)
     {
-        $useAsCallable = $this->useAsCallable($callback);
-
-        return $this->filter(fn ($value, $key): bool => $useAsCallable
-            ? ! $callback($value, $key)
-            : $value != $callback);
+        $use_as_callable = $this->use_as_callable($callback);
+        return $this->filter(fn($value, $key): bool => $use_as_callable ? !$callback($value, $key) : $value != $callback);
     }
-
     /**
      * Pass the collection to the given callback and then return it.
      *
@@ -912,10 +752,8 @@ trait EnumeratesValues
     public function tap(callable $callback)
     {
         $callback($this);
-
         return $this;
     }
-
     /**
      * Return only unique items from the collection array.
      *
@@ -925,30 +763,25 @@ trait EnumeratesValues
      */
     public function unique($key = null, $strict = false)
     {
-        $callback = $this->valueRetriever($key);
-
+        $callback = $this->value_retriever($key);
         $exists = [];
-
         return $this->reject(function ($item, $key) use ($callback, $strict, &$exists) {
             if (in_array($id = $callback($item, $key), $exists, $strict)) {
                 return true;
             }
-
             $exists[] = $id;
         });
     }
-
     /**
      * Return only unique items from the collection array using strict comparison.
      *
      * @param  (callable(TValue, TKey): mixed)|string|null  $key
      * @return static
      */
-    public function uniqueStrict($key = null)
+    public function unique_strict($key = null)
     {
         return $this->unique($key, true);
     }
-
     /**
      * Collect the values into a collection.
      *
@@ -958,17 +791,15 @@ trait EnumeratesValues
     {
         return new Collection($this->all());
     }
-
     /**
      * Get the collection of items as a plain array.
      *
      * @return array<TKey, mixed>
      */
-    public function toArray()
+    public function to_array()
     {
-        return $this->map(fn ($value) => $value instanceof Arrayable ? $value->toArray() : $value)->all();
+        return $this->map(fn($value) => $value instanceof Arrayable ? $value->to_array() : $value)->all();
     }
-
     /**
      * Convert the object into something JSON serializable.
      *
@@ -976,45 +807,41 @@ trait EnumeratesValues
      */
     public function jsonSerialize(): array
     {
-        return array_map(fn ($value) => match (true) {
+        return array_map(fn($value) => match (true) {
             $value instanceof JsonSerializable => $value->jsonSerialize(),
-            $value instanceof Jsonable => json_decode($value->toJson(), true),
-            $value instanceof Arrayable => $value->toArray(),
+            $value instanceof Jsonable => json_decode($value->to_json(), true),
+            $value instanceof Arrayable => $value->to_array(),
             default => $value,
         }, $this->all());
     }
-
     /**
      * Get the collection of items as JSON.
      *
      * @param  int  $options
      * @return string
      */
-    public function toJson($options = 0)
+    public function to_json($options = 0)
     {
         return json_encode($this->jsonSerialize(), $options);
     }
-
     /**
      * Get the collection of items as pretty print formatted JSON.
      *
      * @return string
      */
-    public function toPrettyJson(int $options = 0)
+    public function to_pretty_json(int $options = 0)
     {
-        return $this->toJson(JSON_PRETTY_PRINT | $options);
+        return $this->to_json(JSON_PRETTY_PRINT | $options);
     }
-
     /**
      * Get a CachingIterator instance.
      *
      * @param  int  $flags
      */
-    public function getCachingIterator($flags = CachingIterator::CALL_TOSTRING): \CachingIterator
+    public function get_caching_iterator($flags = Caching_Iterator::CALL_TOSTRING): \Caching_Iterator
     {
-        return new CachingIterator($this->getIterator(), $flags);
+        return new Caching_Iterator($this->getIterator(), $flags);
     }
-
     /**
      * Convert the collection to its string representation.
      *
@@ -1022,24 +849,19 @@ trait EnumeratesValues
      */
     public function __toString()
     {
-        return $this->escapeWhenCastingToString
-            ? e($this->toJson())
-            : $this->toJson();
+        return $this->escape_when_casting_to_string ? e($this->to_json()) : $this->to_json();
     }
-
     /**
      * Indicate that the model's string representation should be escaped when __toString is invoked.
      *
      * @param  bool  $escape
      * @return $this
      */
-    public function escapeWhenCastingToString($escape = true)
+    public function escape_when_casting_to_string($escape = true)
     {
-        $this->escapeWhenCastingToString = $escape;
-
+        $this->escape_when_casting_to_string = $escape;
         return $this;
     }
-
     /**
      * Add a method to the list of proxied methods.
      *
@@ -1049,7 +871,6 @@ trait EnumeratesValues
     {
         static::$proxies[] = $method;
     }
-
     /**
      * Dynamically access collection proxies.
      *
@@ -1060,26 +881,21 @@ trait EnumeratesValues
      */
     public function __get($key)
     {
-        if (! in_array($key, static::$proxies)) {
+        if (!in_array($key, static::$proxies)) {
             throw new Exception("Property [{$key}] does not exist on this collection instance.");
         }
-
-        return new HigherOrderCollectionProxy($this, $key);
+        return new Higher_Order_Collection_Proxy($this, $key);
     }
-
     /**
      * Results array of items from Collection or Arrayable.
      *
      * @param  mixed  $items
      * @return array<TKey, TValue>
      */
-    protected function getArrayableItems($items)
+    protected function get_arrayable_items($items)
     {
-        return is_null($items) || is_scalar($items) || $items instanceof UnitEnum
-            ? Arr::wrap($items)
-            : Arr::from($items);
+        return is_null($items) || is_scalar($items) || $items instanceof Unit_Enum ? Arr::wrap($items) : Arr::from($items);
     }
-
     /**
      * Get an operator checker callback.
      *
@@ -1088,80 +904,77 @@ trait EnumeratesValues
      * @param  mixed  $value
      * @return \Closure
      */
-    protected function operatorForWhere($key, $operator = null, $value = null)
+    protected function operator_for_where($key, $operator = null, $value = null)
     {
-        if ($this->useAsCallable($key)) {
+        if ($this->use_as_callable($key)) {
             return $key;
         }
-
         if (func_num_args() === 1) {
             $value = true;
-
             $operator = '=';
         }
-
         if (func_num_args() === 2) {
             $value = $operator;
-
             $operator = '=';
         }
-
         return function (array $item) use ($key, $operator, $value) {
             $retrieved = enum_value(data_get($item, $key));
             $value = enum_value($value);
-
-            $strings = array_filter([$retrieved, $value], fn ($value): bool => match (true) {
+            $strings = array_filter([$retrieved, $value], fn($value): bool => match (true) {
                 is_string($value) => true,
                 $value instanceof \Stringable => true,
                 default => false,
             });
-
             if (count($strings) < 2 && count(array_filter([$retrieved, $value], is_object(...))) == 1) {
                 return in_array($operator, ['!=', '<>', '!==']);
             }
-
             switch ($operator) {
                 default:
                 case '=':
-                case '==':  return $retrieved == $value;
+                case '==':
+                    return $retrieved == $value;
                 case '!=':
-                case '<>':  return $retrieved != $value;
-                case '<':   return $retrieved < $value;
-                case '>':   return $retrieved > $value;
-                case '<=':  return $retrieved <= $value;
-                case '>=':  return $retrieved >= $value;
-                case '===': return $retrieved === $value;
-                case '!==': return $retrieved !== $value;
-                case '<=>': return $retrieved <=> $value;
+                case '<>':
+                    return $retrieved != $value;
+                case '<':
+                    return $retrieved < $value;
+                case '>':
+                    return $retrieved > $value;
+                case '<=':
+                    return $retrieved <= $value;
+                case '>=':
+                    return $retrieved >= $value;
+                case '===':
+                    return $retrieved === $value;
+                case '!==':
+                    return $retrieved !== $value;
+                case '<=>':
+                    return $retrieved <=> $value;
             }
         };
     }
-
     /**
      * Determine if the given value is callable, but not a string.
      *
      * @param  mixed  $value
      */
-    protected function useAsCallable($value): bool
+    protected function use_as_callable($value): bool
     {
-        return ! is_string($value) && is_callable($value);
+        return !is_string($value) && is_callable($value);
     }
-
     /**
      * Get a value retrieving callback.
      *
      * @param  callable|string|null  $value
      * @return callable
      */
-    protected function valueRetriever($value)
+    protected function value_retriever($value)
     {
-        if ($this->useAsCallable($value)) {
+        if ($this->use_as_callable($value)) {
             return $value;
         }
-
-        return fn (array $item) => data_get($item, $value);
+        return fn(array $item) => data_get($item, $value);
     }
-
     /**
      * Make a function to check an item's equality.
      *
@@ -1170,9 +983,8 @@ trait EnumeratesValues
      */
     protected function equality($value)
     {
-        return fn ($item): bool => $item === $value;
+        return fn($item): bool => $item === $value;
     }
-
     /**
      * Make a function using another function, by negating its result.
      *
@@ -1180,9 +992,8 @@ trait EnumeratesValues
      */
     protected function negate(Closure $callback)
     {
-        return fn (...$params): bool => ! $callback(...$params);
+        return fn(...$params): bool => !$callback(...$params);
     }
-
     /**
      * Make a function that returns what's passed to it.
      *
@@ -1190,6 +1001,6 @@ trait EnumeratesValues
      */
     protected function identity()
     {
-        return fn ($value) => $value;
+        return fn($value) => $value;
     }
 }

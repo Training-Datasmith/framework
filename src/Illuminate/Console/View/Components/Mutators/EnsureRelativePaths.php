@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components\Mutators;
 
-class EnsureRelativePaths
+class Ensure_Relative_Paths
 {
     /**
      * Ensures the given string only contains relative paths.
@@ -15,9 +14,8 @@ class EnsureRelativePaths
     public function __invoke($string)
     {
         if (function_exists('app') && app()->has('path.base')) {
-            return str_replace(base_path().'/', '', $string);
+            return str_replace(base_path() . '/', '', $string);
         }
-
         return $string;
     }
 }

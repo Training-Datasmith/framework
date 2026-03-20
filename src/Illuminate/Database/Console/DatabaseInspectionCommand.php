@@ -1,14 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Connection_Interface;
 use Illuminate\Support\Arr;
-
-abstract class DatabaseInspectionCommand extends Command
+abstract class Database_Inspection_Command extends Command
 {
     /**
      * Get a human-readable name for the given connection.
@@ -17,32 +15,29 @@ abstract class DatabaseInspectionCommand extends Command
      * @return string
      * @deprecated
      */
-    protected function getConnectionName(ConnectionInterface $connection, $database)
+    protected function get_connection_name(Connection_Interface $connection, $database)
     {
-        return $connection->getDriverTitle();
+        return $connection->get_driver_title();
     }
-
     /**
      * Get the number of open connections for a database.
      *
      * @return int|null
      * @deprecated
      */
-    protected function getConnectionCount(ConnectionInterface $connection)
+    protected function get_connection_count(Connection_Interface $connection)
     {
-        return $connection->threadCount();
+        return $connection->thread_count();
     }
-
     /**
      * Get the connection configuration details for the given connection.
      *
      * @param  string|null  $database
      * @return array
      */
-    protected function getConfigFromDatabase($database)
+    protected function get_config_from_database($database)
     {
         $database ??= config('database.default');
-
-        return Arr::except(config('database.connections.'.$database), ['password']);
+        return Arr::except(config('database.connections.' . $database), ['password']);
     }
 }

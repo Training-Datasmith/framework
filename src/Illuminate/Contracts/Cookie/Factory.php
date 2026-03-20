@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Cookie;
 
 interface Factory
@@ -20,8 +19,7 @@ interface Factory
      * @param  string|null  $sameSite
      * @return \Symfony\Component\HttpFoundation\Cookie
      */
-    public function make($name, $value, $minutes = 0, $path = null, $domain = null, $secure = null, $httpOnly = true, $raw = false, $sameSite = null);
-
+    public function make($name, $value, $minutes = 0, $path = null, $domain = null, $secure = null, $http_only = true, $raw = false, $same_site = null);
     /**
      * Create a cookie that lasts "forever" (400 days).
      *
@@ -35,8 +33,7 @@ interface Factory
      * @param  string|null  $sameSite
      * @return \Symfony\Component\HttpFoundation\Cookie
      */
-    public function forever($name, $value, $path = null, $domain = null, $secure = null, $httpOnly = true, $raw = false, $sameSite = null);
-
+    public function forever($name, $value, $path = null, $domain = null, $secure = null, $http_only = true, $raw = false, $same_site = null);
     /**
      * Expire the given cookie.
      *

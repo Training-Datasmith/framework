@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Client;
 
 use Exception;
-
-class HttpClientException extends Exception
+class Http_Client_Exception extends Exception
 {
 }

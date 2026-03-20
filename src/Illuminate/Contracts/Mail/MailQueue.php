@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Mail;
 
-interface MailQueue
+interface Mail_Queue
 {
     /**
      * Queue a new e-mail message for sending.
@@ -14,7 +13,6 @@ interface MailQueue
      * @return mixed
      */
     public function queue($view, $queue = null);
-
     /**
      * Queue a new e-mail message for sending after (n) seconds.
      *

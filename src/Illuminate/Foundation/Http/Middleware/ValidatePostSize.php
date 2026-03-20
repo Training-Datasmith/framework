@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Http\Middleware;
 
-use Illuminate\Http\Middleware\ValidatePostSize as Middleware;
-
-class ValidatePostSize extends Middleware
+use Illuminate\Http\Middleware\Validate_Post_Size as Middleware;
+class Validate_Post_Size extends Middleware
 {
 }

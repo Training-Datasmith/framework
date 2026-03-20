@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console;
 
-use Symfony\Component\Console\Output\ConsoleOutput;
-
-class BufferedConsoleOutput extends ConsoleOutput
+use Symfony\Component\Console\Output\Console_Output;
+class Buffered_Console_Output extends Console_Output
 {
     /**
      * The current buffer.
@@ -14,7 +12,6 @@ class BufferedConsoleOutput extends ConsoleOutput
      * @var string
      */
     protected $buffer = '';
-
     /**
      * Empties the buffer and returns its content.
      *
@@ -26,19 +23,16 @@ class BufferedConsoleOutput extends ConsoleOutput
             $this->buffer = '';
         });
     }
-
     /**
      * {@inheritdoc}
      */
     #[\Override]
-    protected function doWrite(string $message, bool $newline): void
+    protected function do_write(string $message, bool $newline): void
     {
         $this->buffer .= $message;
-
         if ($newline) {
             $this->buffer .= \PHP_EOL;
         }
-
-        parent::doWrite($message, $newline);
+        parent::do_write($message, $newline);
     }
 }

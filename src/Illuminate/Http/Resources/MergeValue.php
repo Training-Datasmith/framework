@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Resources;
 
 use Illuminate\Support\Collection;
 use JsonSerializable;
-
-class MergeValue
+class Merge_Value
 {
     /**
      * The data to be merged.
@@ -15,7 +13,6 @@ class MergeValue
      * @var array
      */
     public $data;
-
     /**
      * Create a new merge value instance.
      *

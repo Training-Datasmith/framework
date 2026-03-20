@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Testing;
 
 use Faker\Factory;
 use Faker\Generator;
-
-trait WithFaker
+trait With_Faker
 {
     /**
      * The Faker instance.
@@ -15,17 +13,15 @@ trait WithFaker
      * @var \Faker\Generator
      */
     protected $faker;
-
     /**
      * Setup up the Faker instance.
      *
      * @return void
      */
-    protected function setUpFaker()
+    protected function set_up_faker()
     {
-        $this->faker = $this->makeFaker();
+        $this->faker = $this->make_faker();
     }
-
     /**
      * Get the default Faker instance for a given locale.
      *
@@ -34,25 +30,22 @@ trait WithFaker
      */
     protected function faker($locale = null)
     {
-        return is_null($locale) ? $this->faker : $this->makeFaker($locale);
+        return is_null($locale) ? $this->faker : $this->make_faker($locale);
     }
-
     /**
      * Create a Faker instance for the given locale.
      *
      * @param  string|null  $locale
      * @return \Faker\Generator
      */
-    protected function makeFaker($locale = null)
+    protected function make_faker($locale = null)
     {
         if (isset($this->app)) {
             $locale ??= $this->app->make('config')->get('app.faker_locale', Factory::DEFAULT_LOCALE);
-
             if ($this->app->bound(Generator::class)) {
                 return $this->app->make(Generator::class, ['locale' => $locale]);
             }
         }
-
         return Factory::create($locale ?? Factory::DEFAULT_LOCALE);
     }
 }

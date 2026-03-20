@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Container\Attributes;
 
 use Attribute;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Container\ContextualAttribute;
-
+use Illuminate\Contracts\Container\Contextual_Attribute;
 #[Attribute(Attribute::TARGET_PARAMETER)]
-class Config implements ContextualAttribute
+class Config implements Contextual_Attribute
 {
     /**
      * Create a new class instance.
@@ -17,7 +15,6 @@ class Config implements ContextualAttribute
     public function __construct(public string $key, public mixed $default = null)
     {
     }
-
     /**
      * Resolve the configuration value.
      *

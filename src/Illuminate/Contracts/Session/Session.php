@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Session;
 
 interface Session
@@ -11,52 +10,45 @@ interface Session
      *
      * @return string
      */
-    public function getName();
-
+    public function get_name();
     /**
      * Set the name of the session.
      *
      * @param  string  $name
      * @return void
      */
-    public function setName($name);
-
+    public function set_name($name);
     /**
      * Get the current session ID.
      *
      * @return string
      */
-    public function getId();
-
+    public function get_id();
     /**
      * Set the session ID.
      *
      * @param  string  $id
      * @return void
      */
-    public function setId($id);
-
+    public function set_id($id);
     /**
      * Start the session, reading the data from a handler.
      *
      * @return bool
      */
     public function start();
-
     /**
      * Save the session data to storage.
      *
      * @return void
      */
     public function save();
-
     /**
      * Get all of the session data.
      *
      * @return array
      */
     public function all();
-
     /**
      * Checks if a key exists.
      *
@@ -64,7 +56,6 @@ interface Session
      * @return bool
      */
     public function exists($key);
-
     /**
      * Checks if a key is present and not null.
      *
@@ -72,7 +63,6 @@ interface Session
      * @return bool
      */
     public function has($key);
-
     /**
      * Get an item from the session.
      *
@@ -81,7 +71,6 @@ interface Session
      * @return mixed
      */
     public function get($key, $default = null);
-
     /**
      * Get the value of a given key and then forget it.
      *
@@ -90,7 +79,6 @@ interface Session
      * @return mixed
      */
     public function pull($key, $default = null);
-
     /**
      * Put a key / value pair or array of key / value pairs in the session.
      *
@@ -99,7 +87,6 @@ interface Session
      * @return void
      */
     public function put($key, $value = null);
-
     /**
      * Flash a key / value pair to the session.
      *
@@ -107,21 +94,18 @@ interface Session
      * @return void
      */
     public function flash(string $key, $value = true);
-
     /**
      * Get the CSRF token value.
      *
      * @return string
      */
     public function token();
-
     /**
      * Regenerate the CSRF token value.
      *
      * @return void
      */
-    public function regenerateToken();
-
+    public function regenerate_token();
     /**
      * Remove an item from the session, returning its value.
      *
@@ -129,7 +113,6 @@ interface Session
      * @return mixed
      */
     public function remove($key);
-
     /**
      * Remove one or many items from the session.
      *
@@ -137,21 +120,18 @@ interface Session
      * @return void
      */
     public function forget($keys);
-
     /**
      * Remove all of the items from the session.
      *
      * @return void
      */
     public function flush();
-
     /**
      * Flush the session data and regenerate the ID.
      *
      * @return bool
      */
     public function invalidate();
-
     /**
      * Generate a new session identifier.
      *
@@ -159,7 +139,6 @@ interface Session
      * @return bool
      */
     public function regenerate($destroy = false);
-
     /**
      * Generate a new session ID for the session.
      *
@@ -167,48 +146,42 @@ interface Session
      * @return bool
      */
     public function migrate($destroy = false);
-
     /**
      * Determine if the session has been started.
      *
      * @return bool
      */
-    public function isStarted();
-
+    public function is_started();
     /**
      * Get the previous URL from the session.
      *
      * @return string|null
      */
-    public function previousUrl();
-
+    public function previous_url();
     /**
      * Set the "previous" URL in the session.
      *
      * @param  string  $url
      * @return void
      */
-    public function setPreviousUrl($url);
-
+    public function set_previous_url($url);
     /**
      * Get the session handler instance.
      *
      * @return \SessionHandlerInterface
      */
-    public function getHandler();
-
+    public function get_handler();
     /**
      * Determine if the session handler needs a request.
      *
      * @return bool
      */
-    public function handlerNeedsRequest();
-
+    public function handler_needs_request();
     /**
      * Set the request on the handler instance.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return void
      */
-    public function setRequestOnHandler($request);
+    public function set_request_on_handler($request);
 }

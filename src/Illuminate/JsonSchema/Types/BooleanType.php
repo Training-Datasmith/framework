@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Illuminate\Json_Schema\Types;
 
-namespace Illuminate\JsonSchema\Types;
-
-class BooleanType extends Type
+class Boolean_Type extends Type
 {
     /**
      * Set the type's default value.
@@ -12,7 +11,6 @@ class BooleanType extends Type
     public function default(bool $value): static
     {
         $this->default = $value;
-
         return $this;
     }
 }

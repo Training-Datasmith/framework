@@ -1,58 +1,46 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Filesystem;
 
 use Closure;
 use Illuminate\Support\Traits\Conditionable;
 use RuntimeException;
-
-class LocalFilesystemAdapter extends FilesystemAdapter
+class Local_Filesystem_Adapter extends Filesystem_Adapter
 {
     use Conditionable;
-
     /**
      * The name of the filesystem disk.
      *
      * @var string
      */
     protected $disk;
-
     /**
      * Indicates if signed URLs should serve corresponding files.
      *
      * @var bool
      */
-    protected $shouldServeSignedUrls = false;
-
+    protected $should_serve_signed_urls = false;
     /**
      * The Closure that should be used to resolve the URL generator.
      *
      * @var \Closure
      */
-    protected $urlGeneratorResolver;
-
+    protected $url_generator_resolver;
     /**
      * Determine if temporary URLs can be generated.
      */
-    public function providesTemporaryUrls(): bool
+    public function provides_temporary_urls(): bool
     {
-        return $this->temporaryUrlCallback || (
-            $this->shouldServeSignedUrls && $this->urlGeneratorResolver instanceof Closure
-        );
+        return $this->temporary_url_callback || $this->should_serve_signed_urls && $this->url_generator_resolver instanceof Closure;
     }
-
     /**
      * Determine if temporary upload URLs can be generated.
      */
-    public function providesTemporaryUploadUrls(): bool
+    public function provides_temporary_upload_urls(): bool
     {
-        return $this->temporaryUploadUrlCallback || (
-            $this->shouldServeSignedUrls && $this->urlGeneratorResolver instanceof Closure
-        );
+        return $this->temporary_upload_url_callback || $this->should_serve_signed_urls && $this->url_generator_resolver instanceof Closure;
     }
-
     /**
      * Get a temporary URL for the file at the given path.
      *
@@ -60,30 +48,17 @@ class LocalFilesystemAdapter extends FilesystemAdapter
      * @param  \DateTimeInterface  $expiration
      * @return string
      */
-    public function temporaryUrl($path, $expiration, array $options = [])
+    public function temporary_url($path, $expiration, array $options = [])
     {
-        if ($this->temporaryUrlCallback) {
-            return $this->temporaryUrlCallback->bindTo($this, static::class)(
-                $path,
-                $expiration,
-                $options
-            );
+        if ($this->temporary_url_callback) {
+            return $this->temporary_url_callback->bind_to($this, static::class)($path, $expiration, $options);
         }
-
-        if (! $this->providesTemporaryUrls()) {
+        if (!$this->provides_temporary_urls()) {
             throw new RuntimeException('This driver does not support creating temporary URLs.');
         }
-
-        $url = call_user_func($this->urlGeneratorResolver);
-
-        return $url->to($url->temporarySignedRoute(
-            'storage.'.$this->disk,
-            $expiration,
-            ['path' => $path],
-            absolute: false
-        ));
+        $url = call_user_func($this->url_generator_resolver);
+        return $url->to($url->temporary_signed_route('storage.' . $this->disk, $expiration, ['path' => $path], absolute: false));
     }
-
     /**
      * Get a temporary upload URL for the file at the given path.
      *
@@ -91,55 +66,36 @@ class LocalFilesystemAdapter extends FilesystemAdapter
      * @param  \DateTimeInterface  $expiration
      * @return array
      */
-    public function temporaryUploadUrl($path, $expiration, array $options = [])
+    public function temporary_upload_url($path, $expiration, array $options = [])
     {
-        if ($this->temporaryUploadUrlCallback) {
-            return $this->temporaryUploadUrlCallback->bindTo($this, static::class)(
-                $path,
-                $expiration,
-                $options
-            );
+        if ($this->temporary_upload_url_callback) {
+            return $this->temporary_upload_url_callback->bind_to($this, static::class)($path, $expiration, $options);
         }
-
-        if (! $this->providesTemporaryUploadUrls()) {
+        if (!$this->provides_temporary_upload_urls()) {
             throw new RuntimeException('This driver does not support creating temporary upload URLs.');
         }
-
-        $url = call_user_func($this->urlGeneratorResolver);
-
-        return [
-            'url' => $url->to($url->temporarySignedRoute(
-                'storage.'.$this->disk.'.upload',
-                $expiration,
-                ['path' => $path, 'upload' => true],
-                absolute: false
-            )),
-            'headers' => [],
-        ];
+        $url = call_user_func($this->url_generator_resolver);
+        return ['url' => $url->to($url->temporary_signed_route('storage.' . $this->disk . '.upload', $expiration, ['path' => $path, 'upload' => true], absolute: false)), 'headers' => []];
     }
-
     /**
      * Specify the name of the disk the adapter is managing.
      *
      * @return $this
      */
-    public function diskName(string $disk): static
+    public function disk_name(string $disk): static
     {
         $this->disk = $disk;
-
         return $this;
     }
-
     /**
      * Indicate that signed URLs should serve the corresponding files.
      *
      * @return $this
      */
-    public function shouldServeSignedUrls(bool $serve = true, ?Closure $urlGeneratorResolver = null): static
+    public function should_serve_signed_urls(bool $serve = true, ?Closure $url_generator_resolver = null): static
     {
-        $this->shouldServeSignedUrls = $serve;
-        $this->urlGeneratorResolver = $urlGeneratorResolver;
-
+        $this->should_serve_signed_urls = $serve;
+        $this->url_generator_resolver = $url_generator_resolver;
         return $this;
     }
 }

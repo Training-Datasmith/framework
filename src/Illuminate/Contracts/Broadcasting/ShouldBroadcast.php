@@ -1,15 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Broadcasting;
 
-interface ShouldBroadcast
+interface Should_Broadcast
 {
     /**
      * Get the channels the event should broadcast on.
      *
      * @return \Illuminate\Broadcasting\Channel|\Illuminate\Broadcasting\Channel[]|string[]|string
      */
-    public function broadcastOn();
+    public function broadcast_on();
 }

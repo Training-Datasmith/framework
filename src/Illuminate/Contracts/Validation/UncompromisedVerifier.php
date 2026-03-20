@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Validation;
 
-interface UncompromisedVerifier
+interface Uncompromised_Verifier
 {
     /**
      * Verify that the given data has not been compromised in data leaks.

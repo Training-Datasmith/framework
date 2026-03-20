@@ -1,22 +1,18 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Auth\Events;
 
-use Illuminate\Queue\SerializesModels;
-
+use Illuminate\Queue\Serializes_Models;
 class Registered
 {
-    use SerializesModels;
-
+    use Serializes_Models;
     /**
      * Create a new event instance.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user  The authenticated user.
      */
-    public function __construct(
-        public $user,
-    ) {
+    public function __construct(public $user)
+    {
     }
 }

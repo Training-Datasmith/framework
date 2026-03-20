@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Events;
 
-class TransactionCommitting extends ConnectionEvent
+class Transaction_Committing extends Connection_Event
 {
 }

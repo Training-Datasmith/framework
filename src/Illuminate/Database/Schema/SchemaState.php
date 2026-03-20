@@ -1,60 +1,52 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Database\Connection;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
-
-abstract class SchemaState
+abstract class Schema_State
 {
     /**
      * The filesystem instance.
      */
     protected \Illuminate\Filesystem\Filesystem $files;
-
     /**
      * The name of the application's migration table.
      *
      * @var string
      */
-    protected $migrationTable = 'migrations';
-
+    protected $migration_table = 'migrations';
     /**
      * The process factory callback.
      *
      * @var callable
      */
-    protected $processFactory;
-
+    protected $process_factory;
     /**
      * The output callable instance.
      *
      * @var callable
      */
     protected $output;
-
     /**
      * Create a new dumper instance.
      */
-    public function __construct(/**
-     * The connection instance.
-     */
+    public function __construct(
+        /**
+         * The connection instance.
+         */
         protected \Illuminate\Database\Connection $connection,
         ?Filesystem $files = null,
-        ?callable $processFactory = null
-    ) {
+        ?callable $process_factory = null
+    )
+    {
         $this->files = $files ?: new Filesystem();
-
-        $this->processFactory = $processFactory ?: (fn (...$arguments): \Symfony\Component\Process\Process => Process::fromShellCommandline(...$arguments)->setTimeout(null));
-
-        $this->handleOutputUsing(function (): void {
-
+        $this->process_factory = $process_factory ?: fn(...$arguments): \Symfony\Component\Process\Process => Process::from_shell_commandline(...$arguments)->set_timeout(null);
+        $this->handle_output_using(function (): void {
         });
     }
-
     /**
      * Dump the database's schema into a file.
      *
@@ -62,7 +54,6 @@ abstract class SchemaState
      * @return void
      */
     abstract public function dump(Connection $connection, $path);
-
     /**
      * Load the given schema file into the database.
      *
@@ -70,55 +61,48 @@ abstract class SchemaState
      * @return void
      */
     abstract public function load($path);
-
     /**
      * Create a new process instance.
      *
      * @param  mixed  ...$arguments
      * @return \Symfony\Component\Process\Process
      */
-    public function makeProcess(...$arguments)
+    public function make_process(...$arguments)
     {
-        return call_user_func($this->processFactory, ...$arguments);
+        return call_user_func($this->process_factory, ...$arguments);
     }
-
     /**
      * Determine if the current connection has a migration table.
      */
-    public function hasMigrationTable(): bool
+    public function has_migration_table(): bool
     {
-        return $this->connection->getSchemaBuilder()->hasTable($this->migrationTable);
+        return $this->connection->get_schema_builder()->has_table($this->migration_table);
     }
-
     /**
      * Get the name of the application's migration table.
      */
-    protected function getMigrationTable(): string
+    protected function get_migration_table(): string
     {
-        return $this->connection->getTablePrefix().$this->migrationTable;
+        return $this->connection->get_table_prefix() . $this->migration_table;
     }
-
     /**
      * Specify the name of the application's migration table.
      *
      * @return $this
      */
-    public function withMigrationTable(string $table)
+    public function with_migration_table(string $table)
     {
-        $this->migrationTable = $table;
-
+        $this->migration_table = $table;
         return $this;
     }
-
     /**
      * Specify the callback that should be used to handle process output.
      *
      * @return $this
      */
-    public function handleOutputUsing(callable $output)
+    public function handle_output_using(callable $output)
     {
         $this->output = $output;
-
         return $this;
     }
 }

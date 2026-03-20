@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Console;
 
-use Illuminate\Console\GeneratorCommand;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputOption;
-
-#[AsCommand(name: 'make:event')]
-class EventMakeCommand extends GeneratorCommand
+use Illuminate\Console\Generator_Command;
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Console\Input\Input_Option;
+#[As_Command(name: 'make:event')]
+class Event_Make_Command extends Generator_Command
 {
     /**
      * The console command name.
@@ -17,71 +15,59 @@ class EventMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'make:event';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create a new event class';
-
     /**
      * The type of class being generated.
      *
      * @var string
      */
     protected $type = 'Event';
-
     /**
      * Determine if the class already exists.
      *
      * @param  string  $rawName
      */
-    protected function alreadyExists($rawName): bool
+    protected function already_exists($raw_name): bool
     {
-        return class_exists($rawName) ||
-               $this->files->exists($this->getPath($this->qualifyClass($rawName)));
+        return class_exists($raw_name) || $this->files->exists($this->get_path($this->qualify_class($raw_name)));
     }
-
     /**
      * Get the stub file for the generator.
      *
      * @return string
      */
-    protected function getStub()
+    protected function get_stub()
     {
-        return $this->resolveStubPath('/stubs/event.stub');
+        return $this->resolve_stub_path('/stubs/event.stub');
     }
-
     /**
      * Resolve the fully-qualified path to the stub.
      *
      * @return string
      */
-    protected function resolveStubPath(string $stub)
+    protected function resolve_stub_path(string $stub)
     {
-        return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
-            ? $customPath
-            : __DIR__.$stub;
+        return file_exists($custom_path = $this->laravel->base_path(trim($stub, '/'))) ? $custom_path : __DIR__ . $stub;
     }
-
     /**
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
      */
-    protected function getDefaultNamespace($rootNamespace): string
+    protected function get_default_namespace($root_namespace): string
     {
-        return $rootNamespace.'\Events';
+        return $root_namespace . '\Events';
     }
-
     /**
      * Get the console command options.
      */
-    protected function getOptions(): array
+    protected function get_options(): array
     {
-        return [
-            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the event already exists'],
-        ];
+        return [['force', 'f', Input_Option::VALUE_NONE, 'Create the class even if the event already exists']];
     }
 }

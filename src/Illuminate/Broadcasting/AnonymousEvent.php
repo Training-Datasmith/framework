@@ -1,46 +1,38 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Broadcasting;
 
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\Should_Broadcast;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-
-class AnonymousEvent implements ShouldBroadcast
+class Anonymous_Event implements Should_Broadcast
 {
     use Dispatchable;
-    use InteractsWithBroadcasting;
-    use InteractsWithSockets;
-
+    use Interacts_With_Broadcasting;
+    use Interacts_With_Sockets;
     /**
      * The connection the event should be broadcast on.
      */
     protected ?string $connection = null;
-
     /**
      * The name the event should be broadcast as.
      */
     protected ?string $name = null;
-
     /**
      * The payload the event should be broadcast with.
      */
     protected array $payload = [];
-
     /**
      * Should the broadcast include the current user.
      */
-    protected bool $includeCurrentUser = true;
-
+    protected bool $include_current_user = true;
     /**
      * Indicates if the event should be broadcast synchronously.
      */
-    protected bool $shouldBroadcastNow = false;
-
+    protected bool $should_broadcast_now = false;
     /**
      * Create a new anonymous broadcastable event instance.
      */
@@ -48,106 +40,86 @@ class AnonymousEvent implements ShouldBroadcast
     {
         $this->channels = Arr::wrap($channels);
     }
-
     /**
      * Set the connection the event should be broadcast on.
      */
     public function via(string $connection): static
     {
         $this->connection = $connection;
-
         return $this;
     }
-
     /**
      * Set the name the event should be broadcast as.
      */
     public function as(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
-
     /**
      * Set the payload the event should be broadcast with.
      */
     public function with(Arrayable|array $payload): static
     {
-        $this->payload = $payload instanceof Arrayable
-            ? $payload->toArray()
-            : (new Collection($payload))->map(
-                fn ($p) => $p instanceof Arrayable ? $p->toArray() : $p
-            )->all();
-
+        $this->payload = $payload instanceof Arrayable ? $payload->to_array() : (new Collection($payload))->map(fn($p) => $p instanceof Arrayable ? $p->to_array() : $p)->all();
         return $this;
     }
-
     /**
      * Broadcast the event to everyone except the current user.
      */
-    public function toOthers(): static
+    public function to_others(): static
     {
-        $this->includeCurrentUser = false;
-
+        $this->include_current_user = false;
         return $this;
     }
-
     /**
      * Broadcast the event.
      */
-    public function sendNow(): void
+    public function send_now(): void
     {
-        $this->shouldBroadcastNow = true;
-
+        $this->should_broadcast_now = true;
         $this->send();
     }
-
     /**
      * Broadcast the event.
      */
     public function send(): void
     {
         $broadcast = broadcast($this)->via($this->connection);
-
-        if (! $this->includeCurrentUser) {
-            $broadcast->toOthers();
+        if (!$this->include_current_user) {
+            $broadcast->to_others();
         }
     }
-
     /**
      * Get the name the event should broadcast as.
      */
-    public function broadcastAs(): string
+    public function broadcast_as(): string
     {
         return $this->name ?: class_basename($this);
     }
-
     /**
      * Get the payload the event should broadcast with.
      *
      * @return array<string, mixed>
      */
-    public function broadcastWith(): array
+    public function broadcast_with(): array
     {
         return $this->payload;
     }
-
     /**
      * Get the channels the event should broadcast on.
      *
      * @return \Illuminate\Broadcasting\Channel|\Illuminate\Broadcasting\Channel[]|string[]|string
      */
-    public function broadcastOn(): Channel|array
+    public function broadcast_on(): Channel|array
     {
         return $this->channels;
     }
-
     /**
      * Determine if the event should be broadcast synchronously.
      */
-    public function shouldBroadcastNow(): bool
+    public function should_broadcast_now(): bool
     {
-        return $this->shouldBroadcastNow;
+        return $this->should_broadcast_now;
     }
 }

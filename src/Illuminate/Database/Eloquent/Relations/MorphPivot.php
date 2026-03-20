@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Relations;
 
-class MorphPivot extends Pivot
+class Morph_Pivot extends Pivot
 {
     /**
      * The type of the polymorphic relation.
@@ -13,8 +12,7 @@ class MorphPivot extends Pivot
      *
      * @var string
      */
-    protected $morphType;
-
+    protected $morph_type;
     /**
      * The value of the polymorphic relation.
      *
@@ -22,34 +20,29 @@ class MorphPivot extends Pivot
      *
      * @var class-string
      */
-    protected $morphClass;
-
+    protected $morph_class;
     /**
      * Set the keys for a save update query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
-    protected function setKeysForSaveQuery($query)
+    protected function set_keys_for_save_query($query)
     {
-        $query->where($this->morphType, $this->morphClass);
-
-        return parent::setKeysForSaveQuery($query);
+        $query->where($this->morph_type, $this->morph_class);
+        return parent::set_keys_for_save_query($query);
     }
-
     /**
      * Set the keys for a select query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
-    protected function setKeysForSelectQuery($query)
+    protected function set_keys_for_select_query($query)
     {
-        $query->where($this->morphType, $this->morphClass);
-
-        return parent::setKeysForSelectQuery($query);
+        $query->where($this->morph_type, $this->morph_class);
+        return parent::set_keys_for_select_query($query);
     }
-
     /**
      * Delete the pivot model record from the database.
      *
@@ -57,129 +50,94 @@ class MorphPivot extends Pivot
      */
     public function delete()
     {
-        if (isset($this->attributes[$this->getKeyName()])) {
+        if (isset($this->attributes[$this->get_key_name()])) {
             return (int) parent::delete();
         }
-
-        if ($this->fireModelEvent('deleting') === false) {
+        if ($this->fire_model_event('deleting') === false) {
             return 0;
         }
-
-        $query = $this->getDeleteQuery();
-
-        $query->where($this->morphType, $this->morphClass);
-
+        $query = $this->get_delete_query();
+        $query->where($this->morph_type, $this->morph_class);
         return tap($query->delete(), function (): void {
             $this->exists = false;
-
-            $this->fireModelEvent('deleted', false);
+            $this->fire_model_event('deleted', false);
         });
     }
-
     /**
      * Get the morph type for the pivot.
      *
      * @return string
      */
-    public function getMorphType()
+    public function get_morph_type()
     {
-        return $this->morphType;
+        return $this->morph_type;
     }
-
     /**
      * Set the morph type for the pivot.
      *
      * @param  string  $morphType
      * @return $this
      */
-    public function setMorphType($morphType): static
+    public function set_morph_type($morph_type): static
     {
-        $this->morphType = $morphType;
-
+        $this->morph_type = $morph_type;
         return $this;
     }
-
     /**
      * Set the morph class for the pivot.
      *
      * @param  class-string  $morphClass
      */
-    public function setMorphClass($morphClass): static
+    public function set_morph_class($morph_class): static
     {
-        $this->morphClass = $morphClass;
-
+        $this->morph_class = $morph_class;
         return $this;
     }
-
     /**
      * Get the queueable identity for the entity.
      *
      * @return mixed
      */
-    public function getQueueableId()
+    public function get_queueable_id()
     {
-        if (isset($this->attributes[$this->getKeyName()])) {
-            return $this->getKey();
+        if (isset($this->attributes[$this->get_key_name()])) {
+            return $this->get_key();
         }
-
-        return sprintf(
-            '%s:%s:%s:%s:%s:%s',
-            $this->foreignKey,
-            $this->getAttribute($this->foreignKey),
-            $this->relatedKey,
-            $this->getAttribute($this->relatedKey),
-            $this->morphType,
-            $this->morphClass
-        );
+        return sprintf('%s:%s:%s:%s:%s:%s', $this->foreign_key, $this->get_attribute($this->foreign_key), $this->related_key, $this->get_attribute($this->related_key), $this->morph_type, $this->morph_class);
     }
-
     /**
      * Get a new query to restore one or more models by their queueable IDs.
      *
      * @param  array|int  $ids
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
-    public function newQueryForRestoration($ids)
+    public function new_query_for_restoration($ids)
     {
         if (is_array($ids)) {
-            return $this->newQueryForCollectionRestoration($ids);
+            return $this->new_query_for_collection_restoration($ids);
         }
-
-        if (! str_contains($ids, ':')) {
-            return parent::newQueryForRestoration($ids);
+        if (!str_contains($ids, ':')) {
+            return parent::new_query_for_restoration($ids);
         }
-
         $segments = explode(':', $ids);
-
-        return $this->newQueryWithoutScopes()
-            ->where($segments[0], $segments[1])
-            ->where($segments[2], $segments[3])
-            ->where($segments[4], $segments[5]);
+        return $this->new_query_without_scopes()->where($segments[0], $segments[1])->where($segments[2], $segments[3])->where($segments[4], $segments[5]);
     }
-
     /**
      * Get a new query to restore multiple models by their queueable IDs.
      *
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
-    protected function newQueryForCollectionRestoration(array $ids)
+    protected function new_query_for_collection_restoration(array $ids)
     {
         $ids = array_values($ids);
-
-        if (! str_contains((string) $ids[0], ':')) {
-            return parent::newQueryForRestoration($ids);
+        if (!str_contains((string) $ids[0], ':')) {
+            return parent::new_query_for_restoration($ids);
         }
-
-        $query = $this->newQueryWithoutScopes();
-
+        $query = $this->new_query_without_scopes();
         foreach ($ids as $id) {
             $segments = explode(':', (string) $id);
-
-            $query->orWhere(fn ($query): \Illuminate\Database\Eloquent\Builder => $query->where($segments[0], $segments[1])
-                ->where($segments[2], $segments[3])
-                ->where($segments[4], $segments[5]));
+            $query->or_where(fn($query): \Illuminate\Database\Eloquent\Builder => $query->where($segments[0], $segments[1])->where($segments[2], $segments[3])->where($segments[4], $segments[5]));
         }
-
         return $query;
     }
 }

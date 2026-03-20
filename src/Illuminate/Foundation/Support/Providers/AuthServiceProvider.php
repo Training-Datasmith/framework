@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Support\Providers;
 
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\ServiceProvider;
-
-class AuthServiceProvider extends ServiceProvider
+use Illuminate\Support\Service_Provider;
+class Auth_Service_Provider extends Service_Provider
 {
     /**
      * The policy mappings for the application.
@@ -15,27 +13,24 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [];
-
     /**
      * Register the application's policies.
      */
     public function register(): void
     {
         $this->booting(function (): void {
-            $this->registerPolicies();
+            $this->register_policies();
         });
     }
-
     /**
      * Register the application's policies.
      */
-    public function registerPolicies(): void
+    public function register_policies(): void
     {
         foreach ($this->policies() as $model => $policy) {
             Gate::policy($model, $policy);
         }
     }
-
     /**
      * Get the policies defined on the provider.
      *

@@ -1,33 +1,28 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console;
 
-use Carbon\CarbonInterval;
-use Illuminate\Cache\DynamoDbStore;
+use Carbon\Carbon_Interval;
+use Illuminate\Cache\Dynamo_Db_Store;
 use Illuminate\Contracts\Cache\Factory as Cache;
-use Illuminate\Contracts\Cache\LockProvider;
-use Illuminate\Support\InteractsWithTime;
-
-class CacheCommandMutex implements CommandMutex
+use Illuminate\Contracts\Cache\Lock_Provider;
+use Illuminate\Support\Interacts_With_Time;
+class Cache_Command_Mutex implements Command_Mutex
 {
-    use InteractsWithTime;
-
+    use Interacts_With_Time;
     /**
      * The cache factory implementation.
      *
      * @var \Illuminate\Contracts\Cache\Factory
      */
     public $cache;
-
     /**
      * The cache store that should be used.
      *
      * @var string|null
      */
     public $store;
-
     /**
      * Create a new command mutex.
      */
@@ -35,7 +30,6 @@ class CacheCommandMutex implements CommandMutex
     {
         $this->cache = $cache;
     }
-
     /**
      * Attempt to obtain a command mutex for the given command.
      *
@@ -45,21 +39,12 @@ class CacheCommandMutex implements CommandMutex
     public function create($command)
     {
         $store = $this->cache->store($this->store);
-
-        $expiresAt = method_exists($command, 'isolationLockExpiresAt')
-            ? $command->isolationLockExpiresAt()
-            : CarbonInterval::hour();
-
-        if ($this->shouldUseLocks($store->getStore())) {
-            return $store->getStore()->lock(
-                $this->commandMutexName($command),
-                $this->secondsUntil($expiresAt)
-            )->get();
+        $expires_at = method_exists($command, 'isolationLockExpiresAt') ? $command->isolation_lock_expires_at() : Carbon_Interval::hour();
+        if ($this->should_use_locks($store->get_store())) {
+            return $store->get_store()->lock($this->command_mutex_name($command), $this->seconds_until($expires_at))->get();
         }
-
-        return $store->add($this->commandMutexName($command), true, $expiresAt);
+        return $store->add($this->command_mutex_name($command), true, $expires_at);
     }
-
     /**
      * Determine if a command mutex exists for the given command.
      *
@@ -69,20 +54,16 @@ class CacheCommandMutex implements CommandMutex
     public function exists($command)
     {
         $store = $this->cache->store($this->store);
-
-        if ($this->shouldUseLocks($store->getStore())) {
-            $lock = $store->getStore()->lock($this->commandMutexName($command));
-
-            return tap(! $lock->get(), function ($exists) use ($lock): void {
+        if ($this->should_use_locks($store->get_store())) {
+            $lock = $store->get_store()->lock($this->command_mutex_name($command));
+            return tap(!$lock->get(), function ($exists) use ($lock): void {
                 if ($exists) {
                     $lock->release();
                 }
             });
         }
-
-        return $this->cache->store($this->store)->has($this->commandMutexName($command));
+        return $this->cache->store($this->store)->has($this->command_mutex_name($command));
     }
-
     /**
      * Release the mutex for the given command.
      *
@@ -92,48 +73,39 @@ class CacheCommandMutex implements CommandMutex
     public function forget($command)
     {
         $store = $this->cache->store($this->store);
-
-        if ($this->shouldUseLocks($store->getStore())) {
-            return $store->getStore()->lock($this->commandMutexName($command))->forceRelease();
+        if ($this->should_use_locks($store->get_store())) {
+            return $store->get_store()->lock($this->command_mutex_name($command))->force_release();
         }
-
-        return $this->cache->store($this->store)->forget($this->commandMutexName($command));
+        return $this->cache->store($this->store)->forget($this->command_mutex_name($command));
     }
-
     /**
      * Get the isolatable command mutex name.
      *
      * @param  \Illuminate\Console\Command  $command
      */
-    protected function commandMutexName($command): string
+    protected function command_mutex_name($command): string
     {
-        $baseName = 'framework'.DIRECTORY_SEPARATOR.'command-'.$command->getName();
-
-        return method_exists($command, 'isolatableId')
-            ? $baseName.'-'.$command->isolatableId()
-            : $baseName;
+        $base_name = 'framework' . DIRECTORY_SEPARATOR . 'command-' . $command->get_name();
+        return method_exists($command, 'isolatableId') ? $base_name . '-' . $command->isolatable_id() : $base_name;
     }
-
     /**
      * Specify the cache store that should be used.
      *
      * @param  string|null  $store
      * @return $this
      */
-    public function useStore($store): static
+    public function use_store($store): static
     {
         $this->store = $store;
-
         return $this;
     }
-
     /**
      * Determine if the given store should use locks for command mutexes.
      *
      * @param  \Illuminate\Contracts\Cache\Store  $store
      */
-    protected function shouldUseLocks($store): bool
+    protected function should_use_locks($store): bool
     {
-        return $store instanceof LockProvider && ! $store instanceof DynamoDbStore;
+        return $store instanceof Lock_Provider && !$store instanceof Dynamo_Db_Store;
     }
 }

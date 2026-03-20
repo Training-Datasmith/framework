@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Queue;
 
 use InvalidArgumentException;
-
-class EntityNotFoundException extends InvalidArgumentException
+class Entity_Not_Found_Exception extends InvalidArgumentException
 {
     /**
      * Create a new exception instance.
@@ -17,7 +15,6 @@ class EntityNotFoundException extends InvalidArgumentException
     public function __construct($type, $id)
     {
         $id = (string) $id;
-
         parent::__construct("Queueable entity [{$type}] not found for ID [{$id}].");
     }
 }

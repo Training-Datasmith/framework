@@ -1,24 +1,21 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Container\Attributes;
 
 use Attribute;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Container\ContextualAttribute;
-use UnitEnum;
-
+use Illuminate\Contracts\Container\Contextual_Attribute;
+use Unit_Enum;
 #[Attribute(Attribute::TARGET_PARAMETER)]
-class Database implements ContextualAttribute
+class Database implements Contextual_Attribute
 {
     /**
      * Create a new class instance.
      */
-    public function __construct(public UnitEnum|string|null $connection = null)
+    public function __construct(public Unit_Enum|string|null $connection = null)
     {
     }
-
     /**
      * Resolve the database connection.
      *

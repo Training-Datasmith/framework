@@ -1,18 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
  * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
  *
  * @extends \Illuminate\Database\Eloquent\Relations\MorphOneOrMany<TRelatedModel, TDeclaringModel, \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>>
  */
-class MorphMany extends MorphOneOrMany
+class Morph_Many extends Morph_One_Or_Many
 {
     /**
      * Convert the relationship to a "morph one" relationship.
@@ -21,51 +19,34 @@ class MorphMany extends MorphOneOrMany
      */
     public function one()
     {
-        return MorphOne::noConstraints(fn () => tap(
-            new MorphOne(
-                $this->getQuery(),
-                $this->getParent(),
-                $this->morphType,
-                $this->foreignKey,
-                $this->localKey
-            ),
-            function ($morphOne): void {
-                if ($inverse = $this->getInverseRelationship()) {
-                    $morphOne->inverse($inverse);
-                }
+        return Morph_One::no_constraints(fn() => tap(new Morph_One($this->get_query(), $this->get_parent(), $this->morph_type, $this->foreign_key, $this->local_key), function ($morph_one): void {
+            if ($inverse = $this->get_inverse_relationship()) {
+                $morph_one->inverse($inverse);
             }
-        ));
+        }));
     }
-
     /** @inheritDoc */
-    public function getResults()
+    public function get_results()
     {
-        return ! is_null($this->getParentKey())
-            ? $this->query->get()
-            : $this->related->newCollection();
+        return !is_null($this->get_parent_key()) ? $this->query->get() : $this->related->new_collection();
     }
-
     /** @inheritDoc */
-    public function initRelation(array $models, $relation): array
+    public function init_relation(array $models, $relation): array
     {
         foreach ($models as $model) {
-            $model->setRelation($relation, $this->related->newCollection());
+            $model->set_relation($relation, $this->related->new_collection());
         }
-
         return $models;
     }
-
     /** @inheritDoc */
-    public function match(array $models, EloquentCollection $results, $relation)
+    public function match(array $models, Eloquent_Collection $results, $relation)
     {
-        return $this->matchMany($models, $results, $relation);
+        return $this->match_many($models, $results, $relation);
     }
-
     /** @inheritDoc */
-    public function forceCreate(array $attributes = [])
+    public function force_create(array $attributes = [])
     {
-        $attributes[$this->getMorphType()] = $this->morphClass;
-
-        return parent::forceCreate($attributes);
+        $attributes[$this->get_morph_type()] = $this->morph_class;
+        return parent::force_create($attributes);
     }
 }

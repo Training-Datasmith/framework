@@ -1,15 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Validation;
 
-interface DataAwareRule
+interface Data_Aware_Rule
 {
     /**
      * Set the data under validation.
      *
      * @return $this
      */
-    public function setData(array $data);
+    public function set_data(array $data);
 }

@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Validation;
 
 use Closure;
-
-interface ValidationRule
+interface Validation_Rule
 {
     /**
      * Run the validation rule.

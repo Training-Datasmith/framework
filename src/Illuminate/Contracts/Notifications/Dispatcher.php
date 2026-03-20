@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Notifications;
 
 interface Dispatcher
@@ -14,7 +13,6 @@ interface Dispatcher
      * @return void
      */
     public function send($notifiables, $notification);
-
     /**
      * Send the given notification immediately.
      *
@@ -22,5 +20,5 @@ interface Dispatcher
      * @param  mixed  $notification
      * @return void
      */
-    public function sendNow($notifiables, $notification, ?array $channels = null);
+    public function send_now($notifiables, $notification, ?array $channels = null);
 }

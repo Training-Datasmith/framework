@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Mail;
 
 interface Attachable
@@ -11,5 +10,5 @@ interface Attachable
      *
      * @return \Illuminate\Mail\Attachment
      */
-    public function toMailAttachment();
+    public function to_mail_attachment();
 }

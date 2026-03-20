@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Client;
 
 use ArrayAccess;
@@ -9,32 +8,27 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use LogicException;
-
 class Request implements ArrayAccess
 {
     use Macroable;
-
     /**
      * The underlying PSR request.
      *
      * @var \Psr\Http\Message\RequestInterface
      */
     protected $request;
-
     /**
      * The decoded payload for the request.
      *
      * @var array
      */
     protected $data;
-
     /**
      * The attribute data passed when building the PendingRequest.
      *
      * @var array<array-key, mixed>
      */
     protected $attributes = [];
-
     /**
      * Create a new request instance.
      *
@@ -44,7 +38,6 @@ class Request implements ArrayAccess
     {
         $this->request = $request;
     }
-
     /**
      * Get the request method.
      *
@@ -52,17 +45,15 @@ class Request implements ArrayAccess
      */
     public function method()
     {
-        return $this->request->getMethod();
+        return $this->request->get_method();
     }
-
     /**
      * Get the URL of the request.
      */
     public function url(): string
     {
-        return (string) $this->request->getUri();
+        return (string) $this->request->get_uri();
     }
-
     /**
      * Determine if the request has a given header.
      *
@@ -70,43 +61,35 @@ class Request implements ArrayAccess
      * @param  mixed  $value
      * @return bool
      */
-    public function hasHeader($key, $value = null)
+    public function has_header($key, $value = null)
     {
         if (is_null($value)) {
-            return ! empty($this->request->getHeaders()[$key]);
+            return !empty($this->request->get_headers()[$key]);
         }
-
         $headers = $this->headers();
-
-        if (! Arr::has($headers, $key)) {
+        if (!Arr::has($headers, $key)) {
             return false;
         }
-
         $value = is_array($value) ? $value : [$value];
-
         return empty(array_diff($value, $headers[$key]));
     }
-
     /**
      * Determine if the request has the given headers.
      *
      * @param  array|string  $headers
      */
-    public function hasHeaders($headers): bool
+    public function has_headers($headers): bool
     {
         if (is_string($headers)) {
             $headers = [$headers => null];
         }
-
         foreach ($headers as $key => $value) {
-            if (! $this->hasHeader($key, $value)) {
+            if (!$this->has_header($key, $value)) {
                 return false;
             }
         }
-
         return true;
     }
-
     /**
      * Get the values for the header with the given name.
      *
@@ -117,7 +100,6 @@ class Request implements ArrayAccess
     {
         return Arr::get($this->headers(), $key, []);
     }
-
     /**
      * Get the request headers.
      *
@@ -125,17 +107,15 @@ class Request implements ArrayAccess
      */
     public function headers()
     {
-        return $this->request->getHeaders();
+        return $this->request->get_headers();
     }
-
     /**
      * Get the body of the request.
      */
     public function body(): string
     {
-        return (string) $this->request->getBody();
+        return (string) $this->request->get_body();
     }
-
     /**
      * Determine if the request contains the given file.
      *
@@ -144,17 +124,13 @@ class Request implements ArrayAccess
      * @param  string|null  $filename
      * @return bool
      */
-    public function hasFile($name, $value = null, $filename = null)
+    public function has_file($name, $value = null, $filename = null)
     {
-        if (! $this->isMultipart()) {
+        if (!$this->is_multipart()) {
             return false;
         }
-
-        return (new Collection($this->data))->reject(fn ($file): bool => $file['name'] != $name ||
-            ($value && $file['contents'] != $value) ||
-            ($filename && $file['filename'] != $filename))->count() > 0;
+        return (new Collection($this->data))->reject(fn($file): bool => $file['name'] != $name || $value && $file['contents'] != $value || $filename && $file['filename'] != $filename)->count() > 0;
     }
-
     /**
      * Get the request's data (form parameters or JSON).
      *
@@ -162,16 +138,14 @@ class Request implements ArrayAccess
      */
     public function data()
     {
-        if ($this->isForm()) {
+        if ($this->is_form()) {
             return $this->parameters();
         }
-        if ($this->isJson()) {
+        if ($this->is_json()) {
             return $this->json();
         }
-
         return $this->data ?? [];
     }
-
     /**
      * Get the request's form parameters.
      *
@@ -179,15 +153,12 @@ class Request implements ArrayAccess
      */
     protected function parameters()
     {
-        if (! $this->data) {
+        if (!$this->data) {
             parse_str($this->body(), $parameters);
-
             $this->data = $parameters;
         }
-
         return $this->data;
     }
-
     /**
      * Get the decoded JSON body of the request.
      *
@@ -195,53 +166,44 @@ class Request implements ArrayAccess
      */
     protected function json()
     {
-        if (! $this->data) {
+        if (!$this->data) {
             $this->data = json_decode($this->body(), true) ?? [];
         }
-
         return $this->data;
     }
-
     /**
      * Determine if the request is simple form data.
      *
      * @return bool
      */
-    public function isForm()
+    public function is_form()
     {
-        return $this->hasHeader('Content-Type', 'application/x-www-form-urlencoded');
+        return $this->has_header('Content-Type', 'application/x-www-form-urlencoded');
     }
-
     /**
      * Determine if the request is JSON.
      */
-    public function isJson(): bool
+    public function is_json(): bool
     {
-        return $this->hasHeader('Content-Type') &&
-               str_contains((string) $this->header('Content-Type')[0], 'json');
+        return $this->has_header('Content-Type') && str_contains((string) $this->header('Content-Type')[0], 'json');
     }
-
     /**
      * Determine if the request is multipart.
      */
-    public function isMultipart(): bool
+    public function is_multipart(): bool
     {
-        return $this->hasHeader('Content-Type') &&
-               str_contains((string) $this->header('Content-Type')[0], 'multipart');
+        return $this->has_header('Content-Type') && str_contains((string) $this->header('Content-Type')[0], 'multipart');
     }
-
     /**
      * Set the decoded data on the request.
      *
      * @return $this
      */
-    public function withData(array $data): static
+    public function with_data(array $data): static
     {
         $this->data = $data;
-
         return $this;
     }
-
     /**
      * Get the attribute data from the request.
      *
@@ -251,30 +213,26 @@ class Request implements ArrayAccess
     {
         return $this->attributes;
     }
-
     /**
      * Set the request's attribute data.
      *
      * @param  array<array-key, mixed>  $attributes
      * @return $this
      */
-    public function setRequestAttributes($attributes): static
+    public function set_request_attributes($attributes): static
     {
         $this->attributes = $attributes;
-
         return $this;
     }
-
     /**
      * Get the underlying PSR compliant request instance.
      *
      * @return \Psr\Http\Message\RequestInterface
      */
-    public function toPsrRequest()
+    public function to_psr_request()
     {
         return $this->request;
     }
-
     /**
      * Determine if the given offset exists.
      *
@@ -284,7 +242,6 @@ class Request implements ArrayAccess
     {
         return isset($this->data()[$offset]);
     }
-
     /**
      * Get the value for a given offset.
      *
@@ -294,7 +251,6 @@ class Request implements ArrayAccess
     {
         return $this->data()[$offset];
     }
-
     /**
      * Set the value at the given offset.
      *
@@ -307,7 +263,6 @@ class Request implements ArrayAccess
     {
         throw new LogicException('Request data may not be mutated using array access.');
     }
-
     /**
      * Unset the value at the given offset.
      *

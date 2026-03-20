@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Events;
 
 interface Dispatcher
@@ -14,15 +13,13 @@ interface Dispatcher
      * @return void
      */
     public function listen($events, $listener = null);
-
     /**
      * Determine if a given event has listeners.
      *
      * @param  string  $eventName
      * @return bool
      */
-    public function hasListeners($eventName);
-
+    public function has_listeners($event_name);
     /**
      * Register an event subscriber with the dispatcher.
      *
@@ -30,7 +27,6 @@ interface Dispatcher
      * @return void
      */
     public function subscribe($subscriber);
-
     /**
      * Dispatch an event until the first non-null response is returned.
      *
@@ -39,7 +35,6 @@ interface Dispatcher
      * @return mixed
      */
     public function until($event, $payload = []);
-
     /**
      * Dispatch an event and call the listeners.
      *
@@ -49,7 +44,6 @@ interface Dispatcher
      * @return array|null
      */
     public function dispatch($event, $payload = [], $halt = false);
-
     /**
      * Register an event and payload to be fired later.
      *
@@ -58,7 +52,6 @@ interface Dispatcher
      * @return void
      */
     public function push($event, $payload = []);
-
     /**
      * Flush a set of pushed events.
      *
@@ -66,7 +59,6 @@ interface Dispatcher
      * @return void
      */
     public function flush($event);
-
     /**
      * Remove a set of listeners from the dispatcher.
      *
@@ -74,11 +66,10 @@ interface Dispatcher
      * @return void
      */
     public function forget($event);
-
     /**
      * Forget all of the queued listeners.
      *
      * @return void
      */
-    public function forgetPushed();
+    public function forget_pushed();
 }

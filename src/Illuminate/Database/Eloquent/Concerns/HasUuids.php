@@ -1,30 +1,26 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Concerns;
 
 use Illuminate\Support\Str;
-
-trait HasUuids
+trait Has_Uuids
 {
-    use HasUniqueStringIds;
-
+    use Has_Unique_String_Ids;
     /**
      * Generate a new unique key for the model.
      */
-    public function newUniqueId(): string
+    public function new_unique_id(): string
     {
         return (string) Str::uuid7();
     }
-
     /**
      * Determine if given key is valid.
      *
      * @param  mixed  $value
      */
-    protected function isValidUniqueId($value): bool
+    protected function is_valid_unique_id($value): bool
     {
-        return Str::isUuid($value);
+        return Str::is_uuid($value);
     }
 }

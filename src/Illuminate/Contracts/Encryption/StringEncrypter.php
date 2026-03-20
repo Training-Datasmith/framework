@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Encryption;
 
-interface StringEncrypter
+interface String_Encrypter
 {
     /**
      * Encrypt a string without serialization.
@@ -14,8 +13,10 @@ interface StringEncrypter
      *
      * @throws \Illuminate\Contracts\Encryption\EncryptException
      */
-    public function encryptString(#[\SensitiveParameter] $value);
-
+    public function encrypt_string(
+        #[\Sensitive_Parameter]
+        $value
+    );
     /**
      * Decrypt the given string without unserialization.
      *
@@ -24,5 +25,5 @@ interface StringEncrypter
      *
      * @throws \Illuminate\Contracts\Encryption\DecryptException
      */
-    public function decryptString($payload);
+    public function decrypt_string($payload);
 }

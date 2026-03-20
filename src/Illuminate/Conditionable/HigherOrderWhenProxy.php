@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Support;
 
-class HigherOrderWhenProxy
+class Higher_Order_When_Proxy
 {
     /**
      * The condition for proxying.
@@ -12,21 +11,18 @@ class HigherOrderWhenProxy
      * @var bool
      */
     protected $condition;
-
     /**
      * Indicates whether the proxy has a condition.
      *
      * @var bool
      */
-    protected $hasCondition = false;
-
+    protected $has_condition = false;
     /**
      * Determine whether the condition should be negated.
      *
      * @var bool
      */
-    protected $negateConditionOnCapture;
-
+    protected $negate_condition_on_capture;
     /**
      * Create a new proxy instance.
      *
@@ -37,9 +33,9 @@ class HigherOrderWhenProxy
          * The target being conditionally operated on.
          */
         protected $target
-    ) {
+    )
+    {
     }
-
     /**
      * Set the condition on the proxy.
      *
@@ -48,39 +44,30 @@ class HigherOrderWhenProxy
      */
     public function condition($condition): static
     {
-        [$this->condition, $this->hasCondition] = [$condition, true];
-
+        [$this->condition, $this->has_condition] = [$condition, true];
         return $this;
     }
-
     /**
      * Indicate that the condition should be negated.
      *
      * @return $this
      */
-    public function negateConditionOnCapture(): static
+    public function negate_condition_on_capture(): static
     {
-        $this->negateConditionOnCapture = true;
-
+        $this->negate_condition_on_capture = true;
         return $this;
     }
-
     /**
      * Proxy accessing an attribute onto the target.
      */
     public function __get(string $key): mixed
     {
-        if (! $this->hasCondition) {
+        if (!$this->has_condition) {
             $condition = $this->target->{$key};
-
-            return $this->condition($this->negateConditionOnCapture ? ! $condition : $condition);
+            return $this->condition($this->negate_condition_on_capture ? !$condition : $condition);
         }
-
-        return $this->condition
-            ? $this->target->{$key}
-            : $this->target;
+        return $this->condition ? $this->target->{$key} : $this->target;
     }
-
     /**
      * Proxy a method call on the target.
      *
@@ -88,14 +75,10 @@ class HigherOrderWhenProxy
      */
     public function __call(string $method, array $parameters)
     {
-        if (! $this->hasCondition) {
+        if (!$this->has_condition) {
             $condition = $this->target->{$method}(...$parameters);
-
-            return $this->condition($this->negateConditionOnCapture ? ! $condition : $condition);
+            return $this->condition($this->negate_condition_on_capture ? !$condition : $condition);
         }
-
-        return $this->condition
-            ? $this->target->{$method}(...$parameters)
-            : $this->target;
+        return $this->condition ? $this->target->{$method}(...$parameters) : $this->target;
     }
 }

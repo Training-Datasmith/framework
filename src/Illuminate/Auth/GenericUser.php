@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
-
-class GenericUser implements UserContract
+class Generic_User implements User_Contract
 {
     /**
      * Create a new generic User object.
@@ -16,73 +14,66 @@ class GenericUser implements UserContract
          * All of the user's attributes.
          */
         protected array $attributes
-    ) {
+    )
+    {
     }
-
     /**
      * Get the name of the unique identifier for the user.
      */
-    public function getAuthIdentifierName(): string
+    public function get_auth_identifier_name(): string
     {
         return 'id';
     }
-
     /**
      * Get the unique identifier for the user.
      *
      * @return mixed
      */
-    public function getAuthIdentifier()
+    public function get_auth_identifier()
     {
-        return $this->attributes[$this->getAuthIdentifierName()];
+        return $this->attributes[$this->get_auth_identifier_name()];
     }
-
     /**
      * Get the name of the password attribute for the user.
      */
-    public function getAuthPasswordName(): string
+    public function get_auth_password_name(): string
     {
         return 'password';
     }
-
     /**
      * Get the password for the user.
      *
      * @return string
      */
-    public function getAuthPassword()
+    public function get_auth_password()
     {
-        return $this->attributes[$this->getAuthPasswordName()];
+        return $this->attributes[$this->get_auth_password_name()];
     }
-
     /**
      * Get the "remember me" token value.
      *
      * @return string
      */
-    public function getRememberToken()
+    public function get_remember_token()
     {
-        return $this->attributes[$this->getRememberTokenName()];
+        return $this->attributes[$this->get_remember_token_name()];
     }
-
     /**
      * Set the "remember me" token value.
      *
      * @param  string  $value
      */
-    public function setRememberToken($value): void
+    public function set_remember_token($value): void
     {
-        $this->attributes[$this->getRememberTokenName()] = $value;
+        $this->attributes[$this->get_remember_token_name()] = $value;
     }
-
     /**
      * Get the column name for the "remember me" token.
      */
-    public function getRememberTokenName(): string
+    public function get_remember_token_name(): string
     {
         return 'remember_token';
     }
-
     /**
      * Dynamically access the user's attributes.
      */
@@ -90,7 +81,6 @@ class GenericUser implements UserContract
     {
         return $this->attributes[$key];
     }
-
     /**
      * Dynamically set an attribute on the user.
      *
@@ -100,7 +90,6 @@ class GenericUser implements UserContract
     {
         $this->attributes[$key] = $value;
     }
-
     /**
      * Dynamically check if a value is set on the user.
      *
@@ -110,7 +99,6 @@ class GenericUser implements UserContract
     {
         return isset($this->attributes[$key]);
     }
-
     /**
      * Dynamically unset a value on the user.
      *

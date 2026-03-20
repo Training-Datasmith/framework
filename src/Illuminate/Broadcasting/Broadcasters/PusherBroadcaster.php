@@ -1,20 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Broadcasting\Broadcasters;
 
-use Illuminate\Broadcasting\BroadcastException;
+use Illuminate\Broadcasting\Broadcast_Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Pusher\ApiErrorException;
+use Pusher\Api_Error_Exception;
 use Pusher\Pusher;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-
-class PusherBroadcaster extends Broadcaster
+use Symfony\Component\Http_Kernel\Exception\Access_Denied_Http_Exception;
+class Pusher_Broadcaster extends Broadcaster
 {
-    use UsePusherChannelConventions;
-
+    use Use_Pusher_Channel_Conventions;
     /**
      * Create a new broadcaster instance.
      *
@@ -28,10 +25,10 @@ class PusherBroadcaster extends Broadcaster
         /**
          * Indicates if JSONP callbacks are allowed on authorization.
          */
-        protected bool $allowJsonp = false
-    ) {
+        protected bool $allow_jsonp = false
+    )
+    {
     }
-
     /**
      * Resolve the authenticated user payload for an incoming connection request.
      *
@@ -41,32 +38,20 @@ class PusherBroadcaster extends Broadcaster
      * @param  \Illuminate\Http\Request  $request
      * @return array|null
      */
-    public function resolveAuthenticatedUser($request)
+    public function resolve_authenticated_user($request)
     {
-        if (! $user = parent::resolveAuthenticatedUser($request)) {
+        if (!$user = parent::resolve_authenticated_user($request)) {
             return;
         }
-
         if (method_exists($this->pusher, 'authenticateUser')) {
-            return $this->pusher->authenticateUser($request->socket_id, $user);
+            return $this->pusher->authenticate_user($request->socket_id, $user);
         }
-
-        $settings = $this->pusher->getSettings();
-        $encodedUser = json_encode($user);
-        $decodedString = "{$request->socket_id}::user::{$encodedUser}";
-
-        $auth = $settings['auth_key'].':'.hash_hmac(
-            'sha256',
-            $decodedString,
-            (string) $settings['secret']
-        );
-
-        return [
-            'auth' => $auth,
-            'user_data' => $encodedUser,
-        ];
+        $settings = $this->pusher->get_settings();
+        $encoded_user = json_encode($user);
+        $decoded_string = "{$request->socket_id}::user::{$encoded_user}";
+        $auth = $settings['auth_key'] . ':' . hash_hmac('sha256', $decoded_string, (string) $settings['secret']);
+        return ['auth' => $auth, 'user_data' => $encoded_user];
     }
-
     /**
      * Authenticate the incoming request for a given channel.
      *
@@ -77,20 +62,12 @@ class PusherBroadcaster extends Broadcaster
      */
     public function auth($request)
     {
-        $channelName = $this->normalizeChannelName($request->channel_name);
-
-        if (empty($request->channel_name) ||
-            ($this->isGuardedChannel($request->channel_name) &&
-            ! $this->retrieveUser($request, $channelName))) {
-            throw new AccessDeniedHttpException();
+        $channel_name = $this->normalize_channel_name($request->channel_name);
+        if (empty($request->channel_name) || $this->is_guarded_channel($request->channel_name) && !$this->retrieve_user($request, $channel_name)) {
+            throw new Access_Denied_Http_Exception();
         }
-
-        return parent::verifyUserCanAccessChannel(
-            $request,
-            $channelName
-        );
+        return parent::verify_user_can_access_channel($request, $channel_name);
     }
-
     /**
      * Return the valid authentication response.
      *
@@ -98,33 +75,16 @@ class PusherBroadcaster extends Broadcaster
      * @param  mixed  $result
      * @return mixed
      */
-    public function validAuthenticationResponse($request, $result)
+    public function valid_authentication_response($request, $result)
     {
         if (str_starts_with((string) $request->channel_name, 'private')) {
-            return $this->decodePusherResponse(
-                $request,
-                method_exists($this->pusher, 'authorizeChannel')
-                    ? $this->pusher->authorizeChannel($request->channel_name, $request->socket_id)
-                    : $this->pusher->socket_auth($request->channel_name, $request->socket_id)
-            );
+            return $this->decode_pusher_response($request, method_exists($this->pusher, 'authorizeChannel') ? $this->pusher->authorize_channel($request->channel_name, $request->socket_id) : $this->pusher->socket_auth($request->channel_name, $request->socket_id));
         }
-
-        $channelName = $this->normalizeChannelName($request->channel_name);
-
-        $user = $this->retrieveUser($request, $channelName);
-
-        $broadcastIdentifier = method_exists($user, 'getAuthIdentifierForBroadcasting')
-            ? $user->getAuthIdentifierForBroadcasting()
-            : $user->getAuthIdentifier();
-
-        return $this->decodePusherResponse(
-            $request,
-            method_exists($this->pusher, 'authorizePresenceChannel')
-                ? $this->pusher->authorizePresenceChannel($request->channel_name, $request->socket_id, $broadcastIdentifier, $result)
-                : $this->pusher->presence_auth($request->channel_name, $request->socket_id, $broadcastIdentifier, $result)
-        );
+        $channel_name = $this->normalize_channel_name($request->channel_name);
+        $user = $this->retrieve_user($request, $channel_name);
+        $broadcast_identifier = method_exists($user, 'getAuthIdentifierForBroadcasting') ? $user->get_auth_identifier_for_broadcasting() : $user->get_auth_identifier();
+        return $this->decode_pusher_response($request, method_exists($this->pusher, 'authorizePresenceChannel') ? $this->pusher->authorize_presence_channel($request->channel_name, $request->socket_id, $broadcast_identifier, $result) : $this->pusher->presence_auth($request->channel_name, $request->socket_id, $broadcast_identifier, $result));
     }
-
     /**
      * Decode the given Pusher response.
      *
@@ -132,16 +92,13 @@ class PusherBroadcaster extends Broadcaster
      * @param  mixed  $response
      * @return array
      */
-    protected function decodePusherResponse($request, $response)
+    protected function decode_pusher_response($request, $response)
     {
-        if (! $request->input('callback', false) || ! $this->allowJsonp) {
+        if (!$request->input('callback', false) || !$this->allow_jsonp) {
             return json_decode((string) $response, true);
         }
-
-        return response()->json(json_decode((string) $response, true))
-            ->withCallback($request->callback);
+        return response()->json(json_decode((string) $response, true))->with_callback($request->callback);
     }
-
     /**
      * Broadcast the given event.
      *
@@ -152,38 +109,31 @@ class PusherBroadcaster extends Broadcaster
     public function broadcast(array $channels, $event, array $payload = []): void
     {
         $socket = Arr::pull($payload, 'socket');
-
         $parameters = $socket !== null ? ['socket_id' => $socket] : [];
-
-        $channels = new Collection($this->formatChannels($channels));
-
+        $channels = new Collection($this->format_channels($channels));
         try {
             $channels->chunk(100)->each(function ($channels) use ($event, $payload, $parameters): void {
-                $this->pusher->trigger($channels->toArray(), $event, $payload, $parameters);
+                $this->pusher->trigger($channels->to_array(), $event, $payload, $parameters);
             });
-        } catch (ApiErrorException $e) {
-            throw new BroadcastException(
-                sprintf('Pusher error: %s.', $e->getMessage())
-            );
+        } catch (Api_Error_Exception $e) {
+            throw new Broadcast_Exception(sprintf('Pusher error: %s.', $e->get_message()));
         }
     }
-
     /**
      * Get the Pusher SDK instance.
      *
      * @return \Pusher\Pusher
      */
-    public function getPusher(): \Pusher\Pusher
+    public function get_pusher(): \Pusher\Pusher
     {
         return $this->pusher;
     }
-
     /**
      * Set the Pusher SDK instance.
      *
      * @param  \Pusher\Pusher  $pusher
      */
-    public function setPusher(\Pusher\Pusher $pusher): void
+    public function set_pusher(\Pusher\Pusher $pusher): void
     {
         $this->pusher = $pusher;
     }

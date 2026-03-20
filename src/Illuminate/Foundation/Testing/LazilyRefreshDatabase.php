@@ -1,47 +1,37 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Testing;
 
-trait LazilyRefreshDatabase
+trait Lazily_Refresh_Database
 {
-    use RefreshDatabase {
+    use Refresh_Database {
         refreshDatabase as baseRefreshDatabase;
     }
-
     /**
      * Define hooks to migrate the database before and after each test.
      */
-    public function refreshDatabase(): void
+    public function refresh_database(): void
     {
         $database = $this->app->make('db');
-
         $callback = function (): void {
-            if (RefreshDatabaseState::$lazilyRefreshed) {
+            if (Refresh_Database_State::$lazily_refreshed) {
                 return;
             }
-
-            RefreshDatabaseState::$lazilyRefreshed = true;
-
+            Refresh_Database_State::$lazily_refreshed = true;
             if (property_exists($this, 'mockConsoleOutput')) {
-                $shouldMockOutput = $this->mockConsoleOutput;
-
-                $this->mockConsoleOutput = false;
+                $should_mock_output = $this->mock_console_output;
+                $this->mock_console_output = false;
             }
-
-            $this->baseRefreshDatabase();
-
+            $this->base_refresh_database();
             if (property_exists($this, 'mockConsoleOutput')) {
-                $this->mockConsoleOutput = $shouldMockOutput;
+                $this->mock_console_output = $should_mock_output;
             }
         };
-
-        $database->beforeStartingTransaction($callback);
-        $database->beforeExecuting($callback);
-
-        $this->beforeApplicationDestroyed(function (): void {
-            RefreshDatabaseState::$lazilyRefreshed = false;
+        $database->before_starting_transaction($callback);
+        $database->before_executing($callback);
+        $this->before_application_destroyed(function (): void {
+            Refresh_Database_State::$lazily_refreshed = false;
         });
     }
 }

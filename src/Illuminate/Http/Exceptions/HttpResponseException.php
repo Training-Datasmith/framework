@@ -1,14 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Exceptions;
 
 use RuntimeException;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Http_Foundation\Response;
 use Throwable;
-
-class HttpResponseException extends RuntimeException
+class Http_Response_Exception extends RuntimeException
 {
     /**
      * The underlying response instance.
@@ -16,23 +14,20 @@ class HttpResponseException extends RuntimeException
      * @var \Symfony\Component\HttpFoundation\Response
      */
     protected $response;
-
     /**
      * Create a new HTTP response exception instance.
      */
     public function __construct(Response $response, ?Throwable $previous = null)
     {
-        parent::__construct($previous?->getMessage() ?? '', $previous?->getCode() ?? 0, $previous);
-
+        parent::__construct($previous?->get_message() ?? '', $previous?->get_code() ?? 0, $previous);
         $this->response = $response;
     }
-
     /**
      * Get the underlying response instance.
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getResponse()
+    public function get_response()
     {
         return $this->response;
     }

@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\View;
 
 use Illuminate\Contracts\Support\Renderable;
-
 interface View extends Renderable
 {
     /**
@@ -14,7 +12,6 @@ interface View extends Renderable
      * @return string
      */
     public function name();
-
     /**
      * Add a piece of data to the view.
      *
@@ -23,11 +20,10 @@ interface View extends Renderable
      * @return $this
      */
     public function with($key, $value = null);
-
     /**
      * Get the array of view data.
      *
      * @return array
      */
-    public function getData();
+    public function get_data();
 }

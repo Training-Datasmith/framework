@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Foundation;
 
 use Illuminate\Contracts\Container\Container;
-
 interface Application extends Container
 {
     /**
@@ -14,71 +12,62 @@ interface Application extends Container
      * @return string
      */
     public function version();
-
     /**
      * Get the base path of the Laravel installation.
      *
      * @param  string  $path
      * @return string
      */
-    public function basePath($path = '');
-
+    public function base_path($path = '');
     /**
      * Get the path to the bootstrap directory.
      *
      * @param  string  $path
      * @return string
      */
-    public function bootstrapPath($path = '');
-
+    public function bootstrap_path($path = '');
     /**
      * Get the path to the application configuration files.
      *
      * @param  string  $path
      * @return string
      */
-    public function configPath($path = '');
-
+    public function config_path($path = '');
     /**
      * Get the path to the database directory.
      *
      * @param  string  $path
      * @return string
      */
-    public function databasePath($path = '');
-
+    public function database_path($path = '');
     /**
      * Get the path to the language files.
      *
      * @param  string  $path
      * @return string
      */
-    public function langPath($path = '');
-
+    public function lang_path($path = '');
     /**
      * Get the path to the public directory.
      *
      * @param  string  $path
      * @return string
      */
-    public function publicPath($path = '');
-
+    public function public_path($path = '');
     /**
      * Get the path to the resources directory.
      *
      * @param  string  $path
      * @return string
      */
-    public function resourcePath($path = '');
-
+    public function resource_path($path = '');
     /**
      * Get the path to the storage directory.
      *
      * @param  string  $path
      * @return string
      */
-    public function storagePath($path = '');
-
+    public function storage_path($path = '');
     /**
      * Get or check the current application environment.
      *
@@ -86,49 +75,42 @@ interface Application extends Container
      * @return string|bool
      */
     public function environment(...$environments);
-
     /**
      * Determine if the application is running in the console.
      *
      * @return bool
      */
-    public function runningInConsole();
-
+    public function running_in_console();
     /**
      * Determine if the application is running unit tests.
      *
      * @return bool
      */
-    public function runningUnitTests();
-
+    public function running_unit_tests();
     /**
      * Determine if the application is running with debug mode enabled.
      *
      * @return bool
      */
-    public function hasDebugModeEnabled();
-
+    public function has_debug_mode_enabled();
     /**
      * Get an instance of the maintenance mode manager implementation.
      *
      * @return \Illuminate\Contracts\Foundation\MaintenanceMode
      */
-    public function maintenanceMode();
-
+    public function maintenance_mode();
     /**
      * Determine if the application is currently down for maintenance.
      *
      * @return bool
      */
-    public function isDownForMaintenance();
-
+    public function is_down_for_maintenance();
     /**
      * Register all of the configured providers.
      *
      * @return void
      */
-    public function registerConfiguredProviders();
-
+    public function register_configured_providers();
     /**
      * Register a service provider with the application.
      *
@@ -137,7 +119,6 @@ interface Application extends Container
      * @return \Illuminate\Support\ServiceProvider
      */
     public function register($provider, $force = false);
-
     /**
      * Register a deferred provider and service.
      *
@@ -145,23 +126,20 @@ interface Application extends Container
      * @param  string|null  $service
      * @return void
      */
-    public function registerDeferredProvider($provider, $service = null);
-
+    public function register_deferred_provider($provider, $service = null);
     /**
      * Resolve a service provider instance from the class name.
      *
      * @param  string  $provider
      * @return \Illuminate\Support\ServiceProvider
      */
-    public function resolveProvider($provider);
-
+    public function resolve_provider($provider);
     /**
      * Boot the application's service providers.
      *
      * @return void
      */
     public function boot();
-
     /**
      * Register a new boot listener.
      *
@@ -169,7 +147,6 @@ interface Application extends Container
      * @return void
      */
     public function booting($callback);
-
     /**
      * Register a new "booted" listener.
      *
@@ -177,21 +154,18 @@ interface Application extends Container
      * @return void
      */
     public function booted($callback);
-
     /**
      * Run the given array of bootstrap classes.
      *
      * @return void
      */
-    public function bootstrapWith(array $bootstrappers);
-
+    public function bootstrap_with(array $bootstrappers);
     /**
      * Get the current application locale.
      *
      * @return string
      */
-    public function getLocale();
-
+    public function get_locale();
     /**
      * Get the application namespace.
      *
@@ -199,45 +173,39 @@ interface Application extends Container
      *
      * @throws \RuntimeException
      */
-    public function getNamespace();
-
+    public function get_namespace();
     /**
      * Get the registered service provider instances if any exist.
      *
      * @param  \Illuminate\Support\ServiceProvider|string  $provider
      * @return array
      */
-    public function getProviders($provider);
-
+    public function get_providers($provider);
     /**
      * Determine if the application has been bootstrapped before.
      *
      * @return bool
      */
-    public function hasBeenBootstrapped();
-
+    public function has_been_bootstrapped();
     /**
      * Load and boot all of the remaining deferred providers.
      *
      * @return void
      */
-    public function loadDeferredProviders();
-
+    public function load_deferred_providers();
     /**
      * Set the current application locale.
      *
      * @param  string  $locale
      * @return void
      */
-    public function setLocale($locale);
-
+    public function set_locale($locale);
     /**
      * Determine if middleware has been disabled for the application.
      *
      * @return bool
      */
-    public function shouldSkipMiddleware();
-
+    public function should_skip_middleware();
     /**
      * Register a terminating callback with the application.
      *
@@ -245,7 +213,6 @@ interface Application extends Container
      * @return \Illuminate\Contracts\Foundation\Application
      */
     public function terminating($callback);
-
     /**
      * Terminate the application.
      *

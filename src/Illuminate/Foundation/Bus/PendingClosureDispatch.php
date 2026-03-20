@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Bus;
 
 use Closure;
-
-class PendingClosureDispatch extends PendingDispatch
+class Pending_Closure_Dispatch extends Pending_Dispatch
 {
     /**
      * Add a callback to be executed if the job fails.
@@ -15,8 +13,7 @@ class PendingClosureDispatch extends PendingDispatch
      */
     public function catch(Closure $callback): static
     {
-        $this->job->onFailure($callback);
-
+        $this->job->on_failure($callback);
         return $this;
     }
 }

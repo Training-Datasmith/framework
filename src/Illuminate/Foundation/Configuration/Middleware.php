@@ -1,25 +1,23 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Configuration;
 
 use Closure;
-use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Authentication_Exception;
 use Illuminate\Auth\Middleware\Authenticate;
-use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
-use Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance;
-use Illuminate\Foundation\Http\Middleware\TrimStrings;
-use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
-use Illuminate\Http\Middleware\TrustHosts;
-use Illuminate\Http\Middleware\TrustProxies;
-use Illuminate\Routing\Middleware\ValidateSignature;
-use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Auth\Middleware\Redirect_If_Authenticated;
+use Illuminate\Cookie\Middleware\Encrypt_Cookies;
+use Illuminate\Foundation\Http\Middleware\Convert_Empty_Strings_To_Null;
+use Illuminate\Foundation\Http\Middleware\Prevent_Requests_During_Maintenance;
+use Illuminate\Foundation\Http\Middleware\Trim_Strings;
+use Illuminate\Foundation\Http\Middleware\Validate_Csrf_Token;
+use Illuminate\Http\Middleware\Trust_Hosts;
+use Illuminate\Http\Middleware\Trust_Proxies;
+use Illuminate\Routing\Middleware\Validate_Signature;
+use Illuminate\Session\Middleware\Authenticate_Session;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-
 class Middleware
 {
     /**
@@ -28,140 +26,120 @@ class Middleware
      * @var array
      */
     protected $global = [];
-
     /**
      * The middleware that should be prepended to the global middleware stack.
      *
      * @var array
      */
     protected $prepends = [];
-
     /**
      * The middleware that should be appended to the global middleware stack.
      *
      * @var array
      */
     protected $appends = [];
-
     /**
      * The middleware that should be removed from the global middleware stack.
      *
      * @var array
      */
     protected $removals = [];
-
     /**
      * The middleware that should be replaced in the global middleware stack.
      *
      * @var array
      */
     protected $replacements = [];
-
     /**
      * The user defined middleware groups.
      *
      * @var array
      */
     protected $groups = [];
-
     /**
      * The middleware that should be prepended to the specified groups.
      *
      * @var array
      */
-    protected $groupPrepends = [];
-
+    protected $group_prepends = [];
     /**
      * The middleware that should be appended to the specified groups.
      *
      * @var array
      */
-    protected $groupAppends = [];
-
+    protected $group_appends = [];
     /**
      * The middleware that should be removed from the specified groups.
      *
      * @var array
      */
-    protected $groupRemovals = [];
-
+    protected $group_removals = [];
     /**
      * The middleware that should be replaced in the specified groups.
      *
      * @var array
      */
-    protected $groupReplacements = [];
-
+    protected $group_replacements = [];
     /**
      * The Folio / page middleware for the application.
      *
      * @var array
      */
-    protected $pageMiddleware = [];
-
+    protected $page_middleware = [];
     /**
      * Indicates if the "trust hosts" middleware is enabled.
      *
      * @var bool
      */
-    protected $trustHosts = false;
-
+    protected $trust_hosts = false;
     /**
      * Indicates if Sanctum's frontend state middleware is enabled.
      *
      * @var bool
      */
-    protected $statefulApi = false;
-
+    protected $stateful_api = false;
     /**
      * Indicates the API middleware group's rate limiter.
      *
      * @var string
      */
-    protected $apiLimiter;
-
+    protected $api_limiter;
     /**
      * Indicates if Redis throttling should be applied.
      *
      * @var bool
      */
-    protected $throttleWithRedis = false;
-
+    protected $throttle_with_redis = false;
     /**
      * Indicates if sessions should be authenticated for the "web" middleware group.
      *
      * @var bool
      */
-    protected $authenticatedSessions = false;
-
+    protected $authenticated_sessions = false;
     /**
      * The custom middleware aliases.
      *
      * @var array
      */
-    protected $customAliases = [];
-
+    protected $custom_aliases = [];
     /**
      * The custom middleware priority definition.
      *
      * @var array
      */
     protected $priority = [];
-
     /**
      * The middleware to prepend to the middleware priority definition.
      *
      * @var array
      */
-    protected $prependPriority = [];
-
+    protected $prepend_priority = [];
     /**
      * The middleware to append to the middleware priority definition.
      *
      * @var array
      */
-    protected $appendPriority = [];
-
+    protected $append_priority = [];
     /**
      * Prepend middleware to the application's global middleware stack.
      *
@@ -169,14 +147,9 @@ class Middleware
      */
     public function prepend(array|string $middleware): static
     {
-        $this->prepends = array_merge(
-            Arr::wrap($middleware),
-            $this->prepends
-        );
-
+        $this->prepends = array_merge(Arr::wrap($middleware), $this->prepends);
         return $this;
     }
-
     /**
      * Append middleware to the application's global middleware stack.
      *
@@ -184,14 +157,9 @@ class Middleware
      */
     public function append(array|string $middleware): static
     {
-        $this->appends = array_merge(
-            $this->appends,
-            Arr::wrap($middleware)
-        );
-
+        $this->appends = array_merge($this->appends, Arr::wrap($middleware));
         return $this;
     }
-
     /**
      * Remove middleware from the application's global middleware stack.
      *
@@ -199,14 +167,9 @@ class Middleware
      */
     public function remove(array|string $middleware): static
     {
-        $this->removals = array_merge(
-            $this->removals,
-            Arr::wrap($middleware)
-        );
-
+        $this->removals = array_merge($this->removals, Arr::wrap($middleware));
         return $this;
     }
-
     /**
      * Specify a middleware that should be replaced with another middleware.
      *
@@ -215,10 +178,8 @@ class Middleware
     public function replace(string $search, string $replace): static
     {
         $this->replacements[$search] = $replace;
-
         return $this;
     }
-
     /**
      * Define the global middleware for the application.
      *
@@ -227,10 +188,8 @@ class Middleware
     public function use(array $middleware): static
     {
         $this->global = $middleware;
-
         return $this;
     }
-
     /**
      * Define a middleware group.
      *
@@ -239,67 +198,48 @@ class Middleware
     public function group(string $group, array $middleware): static
     {
         $this->groups[$group] = $middleware;
-
         return $this;
     }
-
     /**
      * Prepend the given middleware to the specified group.
      *
      * @return $this
      */
-    public function prependToGroup(string $group, array|string $middleware): static
+    public function prepend_to_group(string $group, array|string $middleware): static
     {
-        $this->groupPrepends[$group] = array_merge(
-            Arr::wrap($middleware),
-            $this->groupPrepends[$group] ?? []
-        );
-
+        $this->group_prepends[$group] = array_merge(Arr::wrap($middleware), $this->group_prepends[$group] ?? []);
         return $this;
     }
-
     /**
      * Append the given middleware to the specified group.
      *
      * @return $this
      */
-    public function appendToGroup(string $group, array|string $middleware): static
+    public function append_to_group(string $group, array|string $middleware): static
     {
-        $this->groupAppends[$group] = array_merge(
-            $this->groupAppends[$group] ?? [],
-            Arr::wrap($middleware)
-        );
-
+        $this->group_appends[$group] = array_merge($this->group_appends[$group] ?? [], Arr::wrap($middleware));
         return $this;
     }
-
     /**
      * Remove the given middleware from the specified group.
      *
      * @return $this
      */
-    public function removeFromGroup(string $group, array|string $middleware): static
+    public function remove_from_group(string $group, array|string $middleware): static
     {
-        $this->groupRemovals[$group] = array_merge(
-            Arr::wrap($middleware),
-            $this->groupRemovals[$group] ?? []
-        );
-
+        $this->group_removals[$group] = array_merge(Arr::wrap($middleware), $this->group_removals[$group] ?? []);
         return $this;
     }
-
     /**
      * Replace the given middleware in the specified group with another middleware.
      *
      * @return $this
      */
-    public function replaceInGroup(string $group, string $search, string $replace): static
+    public function replace_in_group(string $group, string $search, string $replace): static
     {
-        $this->groupReplacements[$group][$search] = $replace;
-
+        $this->group_replacements[$group][$search] = $replace;
         return $this;
     }
-
     /**
      * Modify the middleware in the "web" group.
      *
@@ -307,9 +247,8 @@ class Middleware
      */
     public function web(array|string $append = [], array|string $prepend = [], array|string $remove = [], array $replace = []): static
     {
-        return $this->modifyGroup('web', $append, $prepend, $remove, $replace);
+        return $this->modify_group('web', $append, $prepend, $remove, $replace);
     }
-
     /**
      * Modify the middleware in the "api" group.
      *
@@ -317,35 +256,29 @@ class Middleware
      */
     public function api(array|string $append = [], array|string $prepend = [], array|string $remove = [], array $replace = []): static
     {
-        return $this->modifyGroup('api', $append, $prepend, $remove, $replace);
+        return $this->modify_group('api', $append, $prepend, $remove, $replace);
     }
-
     /**
      * Modify the middleware in the given group.
      *
      * @return $this
      */
-    protected function modifyGroup(string $group, array|string $append, array|string $prepend, array|string $remove, array $replace): static
+    protected function modify_group(string $group, array|string $append, array|string $prepend, array|string $remove, array $replace): static
     {
-        if (! empty($append)) {
-            $this->appendToGroup($group, $append);
+        if (!empty($append)) {
+            $this->append_to_group($group, $append);
         }
-
-        if (! empty($prepend)) {
-            $this->prependToGroup($group, $prepend);
+        if (!empty($prepend)) {
+            $this->prepend_to_group($group, $prepend);
         }
-
-        if (! empty($remove)) {
-            $this->removeFromGroup($group, $remove);
+        if (!empty($remove)) {
+            $this->remove_from_group($group, $remove);
         }
-
         foreach ($replace as $search => $replace) {
-            $this->replaceInGroup($group, $search, $replace);
+            $this->replace_in_group($group, $search, $replace);
         }
-
         return $this;
     }
-
     /**
      * Register the Folio / page middleware for the application.
      *
@@ -353,11 +286,9 @@ class Middleware
      */
     public function pages(array $middleware): static
     {
-        $this->pageMiddleware = $middleware;
-
+        $this->page_middleware = $middleware;
         return $this;
     }
-
     /**
      * Register additional middleware aliases.
      *
@@ -365,11 +296,9 @@ class Middleware
      */
     public function alias(array $aliases): static
     {
-        $this->customAliases = $aliases;
-
+        $this->custom_aliases = $aliases;
         return $this;
     }
-
     /**
      * Define the middleware priority for the application.
      *
@@ -378,10 +307,8 @@ class Middleware
     public function priority(array $priority): static
     {
         $this->priority = $priority;
-
         return $this;
     }
-
     /**
      * Prepend middleware to the priority middleware.
      *
@@ -389,13 +316,11 @@ class Middleware
      * @param  string  $prepend
      * @return $this
      */
-    public function prependToPriorityList($before, $prepend): static
+    public function prepend_to_priority_list($before, $prepend): static
     {
-        $this->prependPriority[$prepend] = $before;
-
+        $this->prepend_priority[$prepend] = $before;
         return $this;
     }
-
     /**
      * Append middleware to the priority middleware.
      *
@@ -403,265 +328,188 @@ class Middleware
      * @param  string  $append
      * @return $this
      */
-    public function appendToPriorityList($after, $append): static
+    public function append_to_priority_list($after, $append): static
     {
-        $this->appendPriority[$append] = $after;
-
+        $this->append_priority[$append] = $after;
         return $this;
     }
-
     /**
      * Get the global middleware.
      */
-    public function getGlobalMiddleware(): array
+    public function get_global_middleware(): array
     {
-        $middleware = $this->global ?: array_values(array_filter([
-            \Illuminate\Http\Middleware\ValidatePathEncoding::class,
-            \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class,
-            $this->trustHosts ? \Illuminate\Http\Middleware\TrustHosts::class : null,
-            \Illuminate\Http\Middleware\TrustProxies::class,
-            \Illuminate\Http\Middleware\HandleCors::class,
-            \Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class,
-            \Illuminate\Http\Middleware\ValidatePostSize::class,
-            \Illuminate\Foundation\Http\Middleware\TrimStrings::class,
-            \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        ]));
-
-        $middleware = array_map(fn ($middleware) => $this->replacements[$middleware] ?? $middleware, $middleware);
-
-        return array_values(array_filter(
-            array_diff(
-                array_unique(array_merge($this->prepends, $middleware, $this->appends)),
-                $this->removals
-            )
-        ));
+        $middleware = $this->global ?: array_values(array_filter([\Illuminate\Http\Middleware\Validate_Path_Encoding::class, \Illuminate\Foundation\Http\Middleware\Invoke_Deferred_Callbacks::class, $this->trust_hosts ? \Illuminate\Http\Middleware\Trust_Hosts::class : null, \Illuminate\Http\Middleware\Trust_Proxies::class, \Illuminate\Http\Middleware\Handle_Cors::class, \Illuminate\Foundation\Http\Middleware\Prevent_Requests_During_Maintenance::class, \Illuminate\Http\Middleware\Validate_Post_Size::class, \Illuminate\Foundation\Http\Middleware\Trim_Strings::class, \Illuminate\Foundation\Http\Middleware\Convert_Empty_Strings_To_Null::class]));
+        $middleware = array_map(fn($middleware) => $this->replacements[$middleware] ?? $middleware, $middleware);
+        return array_values(array_filter(array_diff(array_unique(array_merge($this->prepends, $middleware, $this->appends)), $this->removals)));
     }
-
     /**
      * Get the middleware groups.
      */
-    public function getMiddlewareGroups(): array
+    public function get_middleware_groups(): array
     {
-        $middleware = [
-            'web' => array_values(array_filter([
-                \Illuminate\Cookie\Middleware\EncryptCookies::class,
-                \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-                \Illuminate\Session\Middleware\StartSession::class,
-                \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-                \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
-                \Illuminate\Routing\Middleware\SubstituteBindings::class,
-                $this->authenticatedSessions ? 'auth.session' : null,
-            ])),
-
-            'api' => array_values(array_filter([
-                $this->statefulApi ? \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class : null,
-                $this->apiLimiter ? 'throttle:'.$this->apiLimiter : null,
-                \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            ])),
-        ];
-
+        $middleware = ['web' => array_values(array_filter([\Illuminate\Cookie\Middleware\Encrypt_Cookies::class, \Illuminate\Cookie\Middleware\Add_Queued_Cookies_To_Response::class, \Illuminate\Session\Middleware\Start_Session::class, \Illuminate\View\Middleware\Share_Errors_From_Session::class, \Illuminate\Foundation\Http\Middleware\Validate_Csrf_Token::class, \Illuminate\Routing\Middleware\Substitute_Bindings::class, $this->authenticated_sessions ? 'auth.session' : null])), 'api' => array_values(array_filter([$this->stateful_api ? \Laravel\Sanctum\Http\Middleware\Ensure_Frontend_Requests_Are_Stateful::class : null, $this->api_limiter ? 'throttle:' . $this->api_limiter : null, \Illuminate\Routing\Middleware\Substitute_Bindings::class]))];
         $middleware = array_merge($middleware, $this->groups);
-
-        foreach ($middleware as $group => $groupedMiddleware) {
-            foreach ($groupedMiddleware as $index => $groupMiddleware) {
-                if (isset($this->groupReplacements[$group][$groupMiddleware])) {
-                    $middleware[$group][$index] = $this->groupReplacements[$group][$groupMiddleware];
+        foreach ($middleware as $group => $grouped_middleware) {
+            foreach ($grouped_middleware as $index => $group_middleware) {
+                if (isset($this->group_replacements[$group][$group_middleware])) {
+                    $middleware[$group][$index] = $this->group_replacements[$group][$group_middleware];
                 }
             }
         }
-
-        foreach ($this->groupRemovals as $group => $removals) {
-            $middleware[$group] = array_values(array_filter(
-                array_diff($middleware[$group] ?? [], $removals)
-            ));
+        foreach ($this->group_removals as $group => $removals) {
+            $middleware[$group] = array_values(array_filter(array_diff($middleware[$group] ?? [], $removals)));
         }
-
-        foreach ($this->groupPrepends as $group => $prepends) {
-            $middleware[$group] = array_values(array_filter(
-                array_unique(array_merge($prepends, $middleware[$group] ?? []))
-            ));
+        foreach ($this->group_prepends as $group => $prepends) {
+            $middleware[$group] = array_values(array_filter(array_unique(array_merge($prepends, $middleware[$group] ?? []))));
         }
-
-        foreach ($this->groupAppends as $group => $appends) {
-            $middleware[$group] = array_values(array_filter(
-                array_unique(array_merge($middleware[$group] ?? [], $appends))
-            ));
+        foreach ($this->group_appends as $group => $appends) {
+            $middleware[$group] = array_values(array_filter(array_unique(array_merge($middleware[$group] ?? [], $appends))));
         }
-
         return $middleware;
     }
-
     /**
      * Configure where guests are redirected by the "auth" middleware.
      *
      * @return $this
      */
-    public function redirectGuestsTo(callable|string $redirect): static
+    public function redirect_guests_to(callable|string $redirect): static
     {
-        return $this->redirectTo(guests: $redirect);
+        return $this->redirect_to(guests: $redirect);
     }
-
     /**
      * Configure where users are redirected by the "guest" middleware.
      *
      * @return $this
      */
-    public function redirectUsersTo(callable|string $redirect): static
+    public function redirect_users_to(callable|string $redirect): static
     {
-        return $this->redirectTo(users: $redirect);
+        return $this->redirect_to(users: $redirect);
     }
-
     /**
      * Configure where users are redirected by the authentication and guest middleware.
      *
      * @return $this
      */
-    public function redirectTo(callable|string|null $guests = null, callable|string|null $users = null): static
+    public function redirect_to(callable|string|null $guests = null, callable|string|null $users = null): static
     {
-        $guests = is_string($guests) ? fn (): string => $guests : $guests;
-        $users = is_string($users) ? fn (): string => $users : $users;
-
+        $guests = is_string($guests) ? fn(): string => $guests : $guests;
+        $users = is_string($users) ? fn(): string => $users : $users;
         if ($guests) {
-            Authenticate::redirectUsing($guests);
-            AuthenticateSession::redirectUsing($guests);
-            AuthenticationException::redirectUsing($guests);
+            Authenticate::redirect_using($guests);
+            Authenticate_Session::redirect_using($guests);
+            Authentication_Exception::redirect_using($guests);
         }
-
         if ($users) {
-            RedirectIfAuthenticated::redirectUsing($users);
+            Redirect_If_Authenticated::redirect_using($users);
         }
-
         return $this;
     }
-
     /**
      * Configure the cookie encryption middleware.
      *
      * @param  array<int, string>  $except
      * @return $this
      */
-    public function encryptCookies(array $except = []): static
+    public function encrypt_cookies(array $except = []): static
     {
-        EncryptCookies::except($except);
-
+        Encrypt_Cookies::except($except);
         return $this;
     }
-
     /**
      * Configure the CSRF token validation middleware.
      *
      * @return $this
      */
-    public function validateCsrfTokens(array $except = []): static
+    public function validate_csrf_tokens(array $except = []): static
     {
-        ValidateCsrfToken::except($except);
-
+        Validate_Csrf_Token::except($except);
         return $this;
     }
-
     /**
      * Configure the URL signature validation middleware.
      *
      * @return $this
      */
-    public function validateSignatures(array $except = []): static
+    public function validate_signatures(array $except = []): static
     {
-        ValidateSignature::except($except);
-
+        Validate_Signature::except($except);
         return $this;
     }
-
     /**
      * Configure the empty string conversion middleware.
      *
      * @param  array<int, (\Closure(\Illuminate\Http\Request): bool)>  $except
      * @return $this
      */
-    public function convertEmptyStringsToNull(array $except = []): static
+    public function convert_empty_strings_to_null(array $except = []): static
     {
-        (new Collection($except))->each(fn (Closure $callback) => ConvertEmptyStringsToNull::skipWhen($callback));
-
+        (new Collection($except))->each(fn(Closure $callback) => Convert_Empty_Strings_To_Null::skip_when($callback));
         return $this;
     }
-
     /**
      * Configure the string trimming middleware.
      *
      * @param  array<int, (\Closure(\Illuminate\Http\Request): bool)|string>  $except
      * @return $this
      */
-    public function trimStrings(array $except = []): static
+    public function trim_strings(array $except = []): static
     {
-        [$skipWhen, $except] = (new Collection($except))->partition(fn ($value): bool => $value instanceof Closure);
-
-        $skipWhen->each(fn (Closure $callback) => TrimStrings::skipWhen($callback));
-
-        TrimStrings::except($except->all());
-
+        [$skip_when, $except] = (new Collection($except))->partition(fn($value): bool => $value instanceof Closure);
+        $skip_when->each(fn(Closure $callback) => Trim_Strings::skip_when($callback));
+        Trim_Strings::except($except->all());
         return $this;
     }
-
     /**
      * Indicate that the trusted host middleware should be enabled.
      *
      * @param  array<int, string>|(callable(): array<int, string>)|null  $at
      * @return $this
      */
-    public function trustHosts(array|callable|null $at = null, bool $subdomains = true): static
+    public function trust_hosts(array|callable|null $at = null, bool $subdomains = true): static
     {
-        $this->trustHosts = true;
-
-        if (! is_null($at)) {
-            TrustHosts::at($at, $subdomains);
+        $this->trust_hosts = true;
+        if (!is_null($at)) {
+            Trust_Hosts::at($at, $subdomains);
         }
-
         return $this;
     }
-
     /**
      * Configure the trusted proxies for the application.
      *
      * @param  array<int, string>|string|null  $at
      * @return $this
      */
-    public function trustProxies(array|string|null $at = null, ?int $headers = null): static
+    public function trust_proxies(array|string|null $at = null, ?int $headers = null): static
     {
-        if (! is_null($at)) {
-            TrustProxies::at($at);
+        if (!is_null($at)) {
+            Trust_Proxies::at($at);
         }
-
-        if (! is_null($headers)) {
-            TrustProxies::withHeaders($headers);
+        if (!is_null($headers)) {
+            Trust_Proxies::with_headers($headers);
         }
-
         return $this;
     }
-
     /**
      * Configure the middleware that prevents requests during maintenance mode.
      *
      * @param  array<int, string>  $except
      * @return $this
      */
-    public function preventRequestsDuringMaintenance(array $except = []): static
+    public function prevent_requests_during_maintenance(array $except = []): static
     {
-        PreventRequestsDuringMaintenance::except($except);
-
+        Prevent_Requests_During_Maintenance::except($except);
         return $this;
     }
-
     /**
      * Indicate that Sanctum's frontend state middleware should be enabled.
      *
      * @return $this
      */
-    public function statefulApi(): static
+    public function stateful_api(): static
     {
-        $this->statefulApi = true;
-
+        $this->stateful_api = true;
         return $this;
     }
-
     /**
      * Indicate that the API middleware group's throttling middleware should be enabled.
      *
@@ -669,114 +517,86 @@ class Middleware
      * @param  bool  $redis
      * @return $this
      */
-    public function throttleApi($limiter = 'api', $redis = false): static
+    public function throttle_api($limiter = 'api', $redis = false): static
     {
-        $this->apiLimiter = $limiter;
-
+        $this->api_limiter = $limiter;
         if ($redis) {
-            $this->throttleWithRedis();
+            $this->throttle_with_redis();
         }
-
         return $this;
     }
-
     /**
      * Indicate that Laravel's throttling middleware should use Redis.
      *
      * @return $this
      */
-    public function throttleWithRedis(): static
+    public function throttle_with_redis(): static
     {
-        $this->throttleWithRedis = true;
-
+        $this->throttle_with_redis = true;
         return $this;
     }
-
     /**
      * Indicate that sessions should be authenticated for the "web" middleware group.
      *
      * @return $this
      */
-    public function authenticateSessions(): static
+    public function authenticate_sessions(): static
     {
-        $this->authenticatedSessions = true;
-
+        $this->authenticated_sessions = true;
         return $this;
     }
-
     /**
      * Get the Folio / page middleware for the application.
      *
      * @return array
      */
-    public function getPageMiddleware()
+    public function get_page_middleware()
     {
-        return $this->pageMiddleware;
+        return $this->page_middleware;
     }
-
     /**
      * Get the middleware aliases.
      */
-    public function getMiddlewareAliases(): array
+    public function get_middleware_aliases(): array
     {
-        return array_merge($this->defaultAliases(), $this->customAliases);
+        return array_merge($this->default_aliases(), $this->custom_aliases);
     }
-
     /**
      * Get the default middleware aliases.
      */
-    protected function defaultAliases(): array
+    protected function default_aliases(): array
     {
-        $aliases = [
-            'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
-            'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-            'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
-            'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-            'can' => \Illuminate\Auth\Middleware\Authorize::class,
-            'guest' => \Illuminate\Auth\Middleware\RedirectIfAuthenticated::class,
-            'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-            'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
-            'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-            'throttle' => $this->throttleWithRedis
-                ? \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class
-                : \Illuminate\Routing\Middleware\ThrottleRequests::class,
-            'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        ];
-
-        if (class_exists(\Spark\Http\Middleware\VerifyBillableIsSubscribed::class)) {
-            $aliases['subscribed'] = \Spark\Http\Middleware\VerifyBillableIsSubscribed::class;
+        $aliases = ['auth' => \Illuminate\Auth\Middleware\Authenticate::class, 'auth.basic' => \Illuminate\Auth\Middleware\Authenticate_With_Basic_Auth::class, 'auth.session' => \Illuminate\Session\Middleware\Authenticate_Session::class, 'cache.headers' => \Illuminate\Http\Middleware\Set_Cache_Headers::class, 'can' => \Illuminate\Auth\Middleware\Authorize::class, 'guest' => \Illuminate\Auth\Middleware\Redirect_If_Authenticated::class, 'password.confirm' => \Illuminate\Auth\Middleware\Require_Password::class, 'precognitive' => \Illuminate\Foundation\Http\Middleware\Handle_Precognitive_Requests::class, 'signed' => \Illuminate\Routing\Middleware\Validate_Signature::class, 'throttle' => $this->throttle_with_redis ? \Illuminate\Routing\Middleware\Throttle_Requests_With_Redis::class : \Illuminate\Routing\Middleware\Throttle_Requests::class, 'verified' => \Illuminate\Auth\Middleware\Ensure_Email_Is_Verified::class];
+        if (class_exists(\Spark\Http\Middleware\Verify_Billable_Is_Subscribed::class)) {
+            $aliases['subscribed'] = \Spark\Http\Middleware\Verify_Billable_Is_Subscribed::class;
         }
-
         return $aliases;
     }
-
     /**
      * Get the middleware priority for the application.
      *
      * @return array
      */
-    public function getMiddlewarePriority()
+    public function get_middleware_priority()
     {
         return $this->priority;
     }
-
     /**
      * Get the middleware to prepend to the middleware priority definition.
      *
      * @return array
      */
-    public function getMiddlewarePriorityPrepends()
+    public function get_middleware_priority_prepends()
     {
-        return $this->prependPriority;
+        return $this->prepend_priority;
     }
-
     /**
      * Get the middleware to append to the middleware priority definition.
      *
      * @return array
      */
-    public function getMiddlewarePriorityAppends()
+    public function get_middleware_priority_appends()
     {
-        return $this->appendPriority;
+        return $this->append_priority;
     }
 }

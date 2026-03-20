@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Translation;
 
 interface Loader
@@ -15,7 +14,6 @@ interface Loader
      * @return array
      */
     public function load($locale, $group, $namespace = null);
-
     /**
      * Add a new namespace to the loader.
      *
@@ -23,16 +21,14 @@ interface Loader
      * @param  string  $hint
      * @return void
      */
-    public function addNamespace($namespace, $hint);
-
+    public function add_namespace($namespace, $hint);
     /**
      * Add a new JSON path to the loader.
      *
      * @param  string  $path
      * @return void
      */
-    public function addJsonPath($path);
-
+    public function add_json_path($path);
     /**
      * Get an array of all the registered namespaces.
      *

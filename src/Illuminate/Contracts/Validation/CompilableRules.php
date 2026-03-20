@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Validation;
 
-interface CompilableRules
+interface Compilable_Rules
 {
     /**
      * Compile the object into usable rules.

@@ -1,76 +1,64 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Client\Promises;
 
-use GuzzleHttp\Promise\PromiseInterface;
-use Illuminate\Support\Traits\ForwardsCalls;
-
+use Guzzle_Http\Promise\Promise_Interface;
+use Illuminate\Support\Traits\Forwards_Calls;
 /**
  * A decorated Promise which allows for chaining callbacks.
  */
-class FluentPromise implements PromiseInterface
+class Fluent_Promise implements Promise_Interface
 {
-    use ForwardsCalls;
-
+    use Forwards_Calls;
     /**
      * Create a new fluent promise instance.
      */
-    public function __construct(protected PromiseInterface $guzzlePromise)
+    public function __construct(protected Promise_Interface $guzzle_promise)
     {
     }
-
     #[\Override]
-    public function then(?callable $onFulfilled = null, ?callable $onRejected = null): PromiseInterface
+    public function then(?callable $on_fulfilled = null, ?callable $on_rejected = null): Promise_Interface
     {
-        return $this->__call('then', [$onFulfilled, $onRejected]);
+        return $this->__call('then', [$on_fulfilled, $on_rejected]);
     }
-
     #[\Override]
-    public function otherwise(callable $onRejected): PromiseInterface
+    public function otherwise(callable $on_rejected): Promise_Interface
     {
-        return $this->__call('otherwise', [$onRejected]);
+        return $this->__call('otherwise', [$on_rejected]);
     }
-
     #[\Override]
     public function resolve($value): void
     {
-        $this->guzzlePromise->resolve($value);
+        $this->guzzle_promise->resolve($value);
     }
-
     #[\Override]
     public function reject($reason): void
     {
-        $this->guzzlePromise->reject($reason);
+        $this->guzzle_promise->reject($reason);
     }
-
     #[\Override]
     public function cancel(): void
     {
-        $this->guzzlePromise->cancel();
+        $this->guzzle_promise->cancel();
     }
-
     #[\Override]
     public function wait(bool $unwrap = true)
     {
         return $this->__call('wait', [$unwrap]);
     }
-
     #[\Override]
-    public function getState(): string
+    public function get_state(): string
     {
-        return $this->guzzlePromise->getState();
+        return $this->guzzle_promise->get_state();
     }
-
     /**
      * Get the underlying Guzzle promise.
      */
-    public function getGuzzlePromise(): PromiseInterface
+    public function get_guzzle_promise(): Promise_Interface
     {
-        return $this->guzzlePromise;
+        return $this->guzzle_promise;
     }
-
     /**
      * Proxy requests to the underlying promise interface and update the local promise.
      *
@@ -78,14 +66,11 @@ class FluentPromise implements PromiseInterface
      */
     public function __call(string $method, array $parameters)
     {
-        $result = $this->forwardCallTo($this->guzzlePromise, $method, $parameters);
-
-        if (! $result instanceof PromiseInterface) {
+        $result = $this->forward_call_to($this->guzzle_promise, $method, $parameters);
+        if (!$result instanceof Promise_Interface) {
             return $result;
         }
-
-        $this->guzzlePromise = $result;
-
+        $this->guzzle_promise = $result;
         return $this;
     }
 }

@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Client;
 
-class BatchInProgressException extends HttpClientException
+class Batch_In_Progress_Exception extends Http_Client_Exception
 {
     public function __construct()
     {

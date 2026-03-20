@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Notifications;
 
 interface Factory
@@ -13,7 +12,6 @@ interface Factory
      * @return mixed
      */
     public function channel($name = null);
-
     /**
      * Send the given notification to the given notifiable entities.
      *
@@ -22,7 +20,6 @@ interface Factory
      * @return void
      */
     public function send($notifiables, $notification);
-
     /**
      * Send the given notification immediately.
      *
@@ -30,5 +27,5 @@ interface Factory
      * @param  mixed  $notification
      * @return void
      */
-    public function sendNow($notifiables, $notification);
+    public function send_now($notifiables, $notification);
 }

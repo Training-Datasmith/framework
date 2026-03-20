@@ -1,41 +1,36 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Resources\Json;
 
 use ArrayAccess;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Routing\UrlRoutable;
+use Illuminate\Contracts\Routing\Url_Routable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Database\Eloquent\JsonEncodingException;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\Json_Encoding_Exception;
+use Illuminate\Http\Json_Response;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\ConditionallyLoadsAttributes;
-use Illuminate\Http\Resources\DelegatesToResource;
-use JsonException;
+use Illuminate\Http\Resources\Conditionally_Loads_Attributes;
+use Illuminate\Http\Resources\Delegates_To_Resource;
+use Json_Exception;
 use JsonSerializable;
-
-class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRoutable
+class Json_Resource implements ArrayAccess, JsonSerializable, Responsable, Url_Routable
 {
-    use ConditionallyLoadsAttributes;
-    use DelegatesToResource;
-
+    use Conditionally_Loads_Attributes;
+    use Delegates_To_Resource;
     /**
      * The resource instance.
      *
      * @var mixed
      */
     public $resource;
-
     /**
      * The additional data that should be added to the top-level resource array.
      *
      * @var array
      */
     public $with = [];
-
     /**
      * The additional metadata that should be added to the resource response.
      *
@@ -44,19 +39,16 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
      * @var array
      */
     public $additional = [];
-
     /**
      * The "data" wrapper that should be applied.
      *
      * @var string|null
      */
     public static $wrap = 'data';
-
     /**
      * Whether to force wrapping even if the $wrap key exists in underlying resource data.
      */
-    public static bool $forceWrapping = false;
-
+    public static bool $force_wrapping = false;
     /**
      * Create a new resource instance.
      *
@@ -66,7 +58,6 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
     {
         $this->resource = $resource;
     }
-
     /**
      * Create a new resource instance.
      *
@@ -76,7 +67,6 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
     {
         return new static(...$parameters);
     }
-
     /**
      * Create a new anonymous resource collection.
      *
@@ -85,23 +75,21 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
      */
     public static function collection($resource)
     {
-        return tap(static::newCollection($resource), function ($collection): void {
+        return tap(static::new_collection($resource), function ($collection): void {
             if (property_exists(static::class, 'preserveKeys')) {
-                $collection->preserveKeys = (new static([]))->preserveKeys === true;
+                $collection->preserve_keys = (new static([]))->preserve_keys === true;
             }
         });
     }
-
     /**
      * Create a new resource collection instance.
      *
      * @param  mixed  $resource
      */
-    protected static function newCollection($resource): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    protected static function new_collection($resource): \Illuminate\Http\Resources\Json\Anonymous_Resource_Collection
     {
-        return new AnonymousResourceCollection($resource, static::class);
+        return new Anonymous_Resource_Collection($resource, static::class);
     }
-
     /**
      * Resolve the resource to an array.
      *
@@ -110,59 +98,47 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
      */
     public function resolve($request = null)
     {
-        $data = $this->resolveResourceData(
-            $request ?: $this->resolveRequestFromContainer()
-        );
-
+        $data = $this->resolve_resource_data($request ?: $this->resolve_request_from_container());
         if ($data instanceof Arrayable) {
-            $data = $data->toArray();
+            $data = $data->to_array();
         } elseif ($data instanceof JsonSerializable) {
             $data = $data->jsonSerialize();
         }
-
         return $this->filter((array) $data);
     }
-
     /**
      * Transform the resource into an array.
      *
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
-    public function toAttributes(Request $request)
+    public function to_attributes(Request $request)
     {
         if (property_exists($this, 'attributes')) {
             return $this->attributes;
         }
-
-        return $this->toArray($request);
+        return $this->to_array($request);
     }
-
     /**
      * Resolve the resource data to an array.
      *
      * @return array
      */
-    public function resolveResourceData(Request $request)
+    public function resolve_resource_data(Request $request)
     {
-        return $this->toAttributes($request);
+        return $this->to_attributes($request);
     }
-
     /**
      * Transform the resource into an array.
      *
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
-    public function toArray(Request $request)
+    public function to_array(Request $request)
     {
         if (is_null($this->resource)) {
             return [];
         }
-
-        return is_array($this->resource)
-            ? $this->resource
-            : $this->resource->toArray();
+        return is_array($this->resource) ? $this->resource : $this->resource->to_array();
     }
-
     /**
      * Convert the resource to JSON.
      *
@@ -171,28 +147,25 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
      *
      * @throws \Illuminate\Database\Eloquent\JsonEncodingException
      */
-    public function toJson($options = 0)
+    public function to_json($options = 0)
     {
         try {
             $json = json_encode($this->jsonSerialize(), $options | JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            throw JsonEncodingException::forResource($this, $e->getMessage());
+        } catch (Json_Exception $e) {
+            throw Json_Encoding_Exception::for_resource($this, $e->get_message());
         }
-
         return $json;
     }
-
     /**
      * Convert the resource to pretty print formatted JSON.
      *
      * @return string
      * @throws \Illuminate\Database\Eloquent\JsonEncodingException
      */
-    public function toPrettyJson(int $options = 0)
+    public function to_pretty_json(int $options = 0)
     {
-        return $this->toJson(JSON_PRETTY_PRINT | $options);
+        return $this->to_json(JSON_PRETTY_PRINT | $options);
     }
-
     /**
      * Get any additional data that should be returned with the resource array.
      *
@@ -202,7 +175,6 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
     {
         return $this->with;
     }
-
     /**
      * Add additional metadata to the resource response.
      *
@@ -211,36 +183,30 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
     public function additional(array $data): static
     {
         $this->additional = $data;
-
         return $this;
     }
-
     /**
      * Get the JSON serialization options that should be applied to the resource response.
      */
-    public function jsonOptions(): int
+    public function json_options(): int
     {
         return 0;
     }
-
     /**
      * Customize the response for a request.
      */
-    public function withResponse(Request $request, JsonResponse $response): void
+    public function with_response(Request $request, Json_Response $response): void
     {
-
     }
-
     /**
      * Resolve the HTTP request instance from container.
      *
      * @return \Illuminate\Http\Request
      */
-    protected function resolveRequestFromContainer()
+    protected function resolve_request_from_container()
     {
-        return Container::getInstance()->make('request');
+        return Container::get_instance()->make('request');
     }
-
     /**
      * Set the string that should wrap the outer-most resource array.
      *
@@ -250,15 +216,13 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
     {
         static::$wrap = $value;
     }
-
     /**
      * Disable wrapping of the outer-most resource array.
      */
-    public static function withoutWrapping(): void
+    public static function without_wrapping(): void
     {
         static::$wrap = null;
     }
-
     /**
      * Transform the resource into an HTTP response.
      *
@@ -267,36 +231,31 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
      */
     public function response($request = null)
     {
-        return $this->toResponse(
-            $request ?: $this->resolveRequestFromContainer()
-        );
+        return $this->to_response($request ?: $this->resolve_request_from_container());
     }
-
     /**
      * Create an HTTP response that represents the object.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function toResponse($request)
+    public function to_response($request)
     {
-        return (new ResourceResponse($this))->toResponse($request);
+        return (new Resource_Response($this))->to_response($request);
     }
-
     /**
      * Prepare the resource for JSON serialization.
      */
     public function jsonSerialize(): array
     {
-        return $this->resolve($this->resolveRequestFromContainer());
+        return $this->resolve($this->resolve_request_from_container());
     }
-
     /**
      * Flush the resource's global state.
      */
-    public static function flushState(): void
+    public static function flush_state(): void
     {
         static::$wrap = 'data';
-        static::$forceWrapping = false;
+        static::$force_wrapping = false;
     }
 }

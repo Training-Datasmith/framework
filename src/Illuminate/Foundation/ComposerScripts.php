@@ -1,106 +1,84 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation;
 
-use Composer\Installer\PackageEvent;
-use Composer\IO\IOInterface;
+use Composer\Installer\Package_Event;
+use Composer\IO\Io_Interface;
 use Composer\Script\Event;
-use Illuminate\Concurrency\ProcessDriver;
-use Illuminate\Encryption\EncryptionServiceProvider;
-use Illuminate\Foundation\Bootstrap\LoadConfiguration;
-use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
+use Illuminate\Concurrency\Process_Driver;
+use Illuminate\Encryption\Encryption_Service_Provider;
+use Illuminate\Foundation\Bootstrap\Load_Configuration;
+use Illuminate\Foundation\Bootstrap\Load_Environment_Variables;
 use Throwable;
-
-class ComposerScripts
+class Composer_Scripts
 {
     /**
      * Handle the post-install Composer event.
      */
-    public static function postInstall(Event $event): void
+    public static function post_install(Event $event): void
     {
-        require_once $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
-
-        static::clearCompiled();
+        require_once $event->get_composer()->get_config()->get('vendor-dir') . '/autoload.php';
+        static::clear_compiled();
     }
-
     /**
      * Handle the post-update Composer event.
      */
-    public static function postUpdate(Event $event): void
+    public static function post_update(Event $event): void
     {
-        require_once $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
-
-        static::clearCompiled();
+        require_once $event->get_composer()->get_config()->get('vendor-dir') . '/autoload.php';
+        static::clear_compiled();
     }
-
     /**
      * Handle the post-autoload-dump Composer event.
      */
-    public static function postAutoloadDump(Event $event): void
+    public static function post_autoload_dump(Event $event): void
     {
-        require_once $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
-
-        static::clearCompiled();
+        require_once $event->get_composer()->get_config()->get('vendor-dir') . '/autoload.php';
+        static::clear_compiled();
     }
-
     /**
      * Handle the pre-package-uninstall Composer event.
      */
-    public static function prePackageUninstall(PackageEvent $event): void
+    public static function pre_package_uninstall(Package_Event $event): void
     {
         // Package uninstall events are only applicable when uninstalling packages in dev environments...
-        if (! $event->isDevMode()) {
+        if (!$event->is_dev_mode()) {
             return;
         }
-
-        $eventName = null;
+        $event_name = null;
         try {
-            require_once $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
-
+            require_once $event->get_composer()->get_config()->get('vendor-dir') . '/autoload.php';
             $laravel = new Application(getcwd());
-
-            $laravel->bootstrapWith([
-                LoadEnvironmentVariables::class,
-                LoadConfiguration::class,
-            ]);
-
+            $laravel->bootstrap_with([Load_Environment_Variables::class, Load_Configuration::class]);
             // Ensure we can encrypt our serializable closure...
-            (new EncryptionServiceProvider($laravel))->register();
-
-            $name = $event->getOperation()->getPackage()->getName();
-            $eventName = "composer_package.{$name}:pre_uninstall";
-
-            $laravel->make(ProcessDriver::class)->run(
-                static fn () => app()['events']->dispatch($eventName)
-            );
+            (new Encryption_Service_Provider($laravel))->register();
+            $name = $event->get_operation()->get_package()->get_name();
+            $event_name = "composer_package.{$name}:pre_uninstall";
+            $laravel->make(Process_Driver::class)->run(static fn() => app()['events']->dispatch($event_name));
         } catch (Throwable $e) {
             // Ignore any errors to allow the package removal to complete...
-            $event->getIO()->write('There was an error dispatching or handling the ['.($eventName ?? 'unknown').'] event. Continuing with package removal...');
-            $event->getIO()->writeError('Exception message: '.$e->getMessage(), verbosity: IOInterface::VERBOSE); // @phpstan-ignore class.notFound (Composer exists if this is running)
+            $event->get_io()->write('There was an error dispatching or handling the [' . ($event_name ?? 'unknown') . '] event. Continuing with package removal...');
+            $event->get_io()->write_error('Exception message: ' . $e->get_message(), verbosity: Io_Interface::VERBOSE);
+            // @phpstan-ignore class.notFound (Composer exists if this is running)
         }
     }
-
     /**
      * Clear the cached Laravel bootstrapping files.
      *
      * @return void
      */
-    protected static function clearCompiled()
+    protected static function clear_compiled()
     {
         $laravel = new Application(getcwd());
-
-        if (is_file($configPath = $laravel->getCachedConfigPath())) {
-            @unlink($configPath);
+        if (is_file($config_path = $laravel->get_cached_config_path())) {
+            @unlink($config_path);
         }
-
-        if (is_file($servicesPath = $laravel->getCachedServicesPath())) {
-            @unlink($servicesPath);
+        if (is_file($services_path = $laravel->get_cached_services_path())) {
+            @unlink($services_path);
         }
-
-        if (is_file($packagesPath = $laravel->getCachedPackagesPath())) {
-            @unlink($packagesPath);
+        if (is_file($packages_path = $laravel->get_cached_packages_path())) {
+            @unlink($packages_path);
         }
     }
 }

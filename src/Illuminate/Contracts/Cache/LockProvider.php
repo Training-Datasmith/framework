@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Cache;
 
-interface LockProvider
+interface Lock_Provider
 {
     /**
      * Get a lock instance.
@@ -15,7 +14,6 @@ interface LockProvider
      * @return \Illuminate\Contracts\Cache\Lock
      */
     public function lock($name, $seconds = 0, $owner = null);
-
     /**
      * Restore a lock instance using the owner identifier.
      *
@@ -23,5 +21,5 @@ interface LockProvider
      * @param  string  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function restoreLock($name, $owner);
+    public function restore_lock($name, $owner);
 }

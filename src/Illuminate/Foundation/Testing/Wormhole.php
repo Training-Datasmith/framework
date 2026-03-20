@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Testing;
 
 use Illuminate\Support\Carbon;
-
 class Wormhole
 {
     /**
@@ -18,9 +16,9 @@ class Wormhole
          * The amount of time to travel.
          */
         public $value
-    ) {
+    )
+    {
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -33,7 +31,6 @@ class Wormhole
     {
         return $this->microseconds($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -44,11 +41,9 @@ class Wormhole
      */
     public function microseconds($callback = null)
     {
-        Carbon::setTestNow(Carbon::now()->addMicroseconds($this->value));
-
-        return $this->handleCallback($callback);
+        Carbon::set_test_now(Carbon::now()->add_microseconds($this->value));
+        return $this->handle_callback($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -61,7 +56,6 @@ class Wormhole
     {
         return $this->milliseconds($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -72,11 +66,9 @@ class Wormhole
      */
     public function milliseconds($callback = null)
     {
-        Carbon::setTestNow(Carbon::now()->addMilliseconds($this->value));
-
-        return $this->handleCallback($callback);
+        Carbon::set_test_now(Carbon::now()->add_milliseconds($this->value));
+        return $this->handle_callback($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -89,7 +81,6 @@ class Wormhole
     {
         return $this->seconds($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -100,11 +91,9 @@ class Wormhole
      */
     public function seconds($callback = null)
     {
-        Carbon::setTestNow(Carbon::now()->addSeconds($this->value));
-
-        return $this->handleCallback($callback);
+        Carbon::set_test_now(Carbon::now()->add_seconds($this->value));
+        return $this->handle_callback($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -117,7 +106,6 @@ class Wormhole
     {
         return $this->minutes($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -128,11 +116,9 @@ class Wormhole
      */
     public function minutes($callback = null)
     {
-        Carbon::setTestNow(Carbon::now()->addMinutes($this->value));
-
-        return $this->handleCallback($callback);
+        Carbon::set_test_now(Carbon::now()->add_minutes($this->value));
+        return $this->handle_callback($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -145,7 +131,6 @@ class Wormhole
     {
         return $this->hours($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -156,11 +141,9 @@ class Wormhole
      */
     public function hours($callback = null)
     {
-        Carbon::setTestNow(Carbon::now()->addHours($this->value));
-
-        return $this->handleCallback($callback);
+        Carbon::set_test_now(Carbon::now()->add_hours($this->value));
+        return $this->handle_callback($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -173,7 +156,6 @@ class Wormhole
     {
         return $this->days($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -184,11 +166,9 @@ class Wormhole
      */
     public function days($callback = null)
     {
-        Carbon::setTestNow(Carbon::now()->addDays($this->value));
-
-        return $this->handleCallback($callback);
+        Carbon::set_test_now(Carbon::now()->add_days($this->value));
+        return $this->handle_callback($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -201,7 +181,6 @@ class Wormhole
     {
         return $this->weeks($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -212,11 +191,9 @@ class Wormhole
      */
     public function weeks($callback = null)
     {
-        Carbon::setTestNow(Carbon::now()->addWeeks($this->value));
-
-        return $this->handleCallback($callback);
+        Carbon::set_test_now(Carbon::now()->add_weeks($this->value));
+        return $this->handle_callback($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -229,7 +206,6 @@ class Wormhole
     {
         return $this->months($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -240,11 +216,9 @@ class Wormhole
      */
     public function months($callback = null)
     {
-        Carbon::setTestNow(Carbon::now()->addMonths($this->value));
-
-        return $this->handleCallback($callback);
+        Carbon::set_test_now(Carbon::now()->add_months($this->value));
+        return $this->handle_callback($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -257,7 +231,6 @@ class Wormhole
     {
         return $this->years($callback);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -268,11 +241,9 @@ class Wormhole
      */
     public function years($callback = null)
     {
-        Carbon::setTestNow(Carbon::now()->addYears($this->value));
-
-        return $this->handleCallback($callback);
+        Carbon::set_test_now(Carbon::now()->add_years($this->value));
+        return $this->handle_callback($callback);
     }
-
     /**
      * Travel back to the current time.
      *
@@ -280,11 +251,9 @@ class Wormhole
      */
     public static function back()
     {
-        Carbon::setTestNow();
-
+        Carbon::set_test_now();
         return Carbon::now();
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -293,11 +262,11 @@ class Wormhole
      * @param  (callable(): TReturn)|null  $callback
      * @return ($callback is null ? void : TReturn)
      */
-    protected function handleCallback($callback)
+    protected function handle_callback($callback)
     {
         if ($callback) {
             return tap($callback(), function (): void {
-                Carbon::setTestNow();
+                Carbon::set_test_now();
             });
         }
     }

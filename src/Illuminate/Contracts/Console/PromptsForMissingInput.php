@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Console;
 
-interface PromptsForMissingInput
+interface Prompts_For_Missing_Input
 {
 }

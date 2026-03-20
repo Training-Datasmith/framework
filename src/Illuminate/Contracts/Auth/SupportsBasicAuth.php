@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Auth;
 
-interface SupportsBasicAuth
+interface Supports_Basic_Auth
 {
     /**
      * Attempt to authenticate using HTTP Basic Auth.
@@ -13,8 +12,7 @@ interface SupportsBasicAuth
      * @param  array  $extraConditions
      * @return \Symfony\Component\HttpFoundation\Response|null
      */
-    public function basic($field = 'email', $extraConditions = []);
-
+    public function basic($field = 'email', $extra_conditions = []);
     /**
      * Perform a stateless HTTP Basic login attempt.
      *
@@ -22,5 +20,5 @@ interface SupportsBasicAuth
      * @param  array  $extraConditions
      * @return \Symfony\Component\HttpFoundation\Response|null
      */
-    public function onceBasic($field = 'email', $extraConditions = []);
+    public function once_basic($field = 'email', $extra_conditions = []);
 }

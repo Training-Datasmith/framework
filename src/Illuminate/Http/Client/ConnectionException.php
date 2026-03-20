@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Client;
 
-class ConnectionException extends HttpClientException
+class Connection_Exception extends Http_Client_Exception
 {
 }

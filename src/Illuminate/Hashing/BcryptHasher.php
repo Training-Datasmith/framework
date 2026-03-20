@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Hashing;
 
 use Error;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use InvalidArgumentException;
 use RuntimeException;
-
-class BcryptHasher extends AbstractHasher implements HasherContract
+class Bcrypt_Hasher extends Abstract_Hasher implements Hasher_Contract
 {
     /**
      * The default cost factor.
@@ -17,31 +15,27 @@ class BcryptHasher extends AbstractHasher implements HasherContract
      * @var int
      */
     protected $rounds = 12;
-
     /**
      * Indicates whether to perform an algorithm check.
      *
      * @var bool
      */
-    protected $verifyAlgorithm = false;
-
+    protected $verify_algorithm = false;
     /**
      * The maximum allowed length of strings that can be hashed.
      *
      * @var int|null
      */
     protected $limit;
-
     /**
      * Create a new hasher instance.
      */
     public function __construct(array $options = [])
     {
         $this->rounds = $options['rounds'] ?? $this->rounds;
-        $this->verifyAlgorithm = $options['verify'] ?? $this->verifyAlgorithm;
+        $this->verify_algorithm = $options['verify'] ?? $this->verify_algorithm;
         $this->limit = $options['limit'] ?? $this->limit;
     }
-
     /**
      * Hash the given value.
      *
@@ -50,23 +44,22 @@ class BcryptHasher extends AbstractHasher implements HasherContract
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
-    public function make(#[\SensitiveParameter] $value, array $options = []): string
+    public function make(
+        #[\Sensitive_Parameter]
+        $value,
+        array $options = []
+    ): string
     {
         try {
             if ($this->limit && strlen($value) > $this->limit) {
-                throw new InvalidArgumentException('Value is too long to hash. Value must be less than '.$this->limit.' bytes.');
+                throw new InvalidArgumentException('Value is too long to hash. Value must be less than ' . $this->limit . ' bytes.');
             }
-
-            $hash = password_hash($value, PASSWORD_BCRYPT, [
-                'cost' => $this->cost($options),
-            ]);
+            $hash = password_hash($value, PASSWORD_BCRYPT, ['cost' => $this->cost($options)]);
         } catch (Error) {
             throw new RuntimeException('Bcrypt hashing not supported.');
         }
-
         return $hash;
     }
-
     /**
      * Check the given plain value against a hash.
      *
@@ -75,84 +68,75 @@ class BcryptHasher extends AbstractHasher implements HasherContract
      * @return bool
      * @throws \RuntimeException
      */
-    public function check(#[\SensitiveParameter] $value, $hashedValue, array $options = [])
+    public function check(
+        #[\Sensitive_Parameter]
+        $value,
+        $hashed_value,
+        array $options = []
+    )
     {
-        if (is_null($hashedValue) || strlen($hashedValue) === 0) {
+        if (is_null($hashed_value) || strlen($hashed_value) === 0) {
             return false;
         }
-
-        if ($this->verifyAlgorithm && ! $this->isUsingCorrectAlgorithm($hashedValue)) {
+        if ($this->verify_algorithm && !$this->is_using_correct_algorithm($hashed_value)) {
             throw new RuntimeException('This password does not use the Bcrypt algorithm.');
         }
-
-        return parent::check($value, $hashedValue, $options);
+        return parent::check($value, $hashed_value, $options);
     }
-
     /**
      * Check if the given hash has been hashed using the given options.
      *
      * @param  string  $hashedValue
      */
-    public function needsRehash($hashedValue, array $options = []): bool
+    public function needs_rehash($hashed_value, array $options = []): bool
     {
-        return password_needs_rehash($hashedValue, PASSWORD_BCRYPT, [
-            'cost' => $this->cost($options),
-        ]);
+        return password_needs_rehash($hashed_value, PASSWORD_BCRYPT, ['cost' => $this->cost($options)]);
     }
-
     /**
      * Verifies that the configuration is less than or equal to what is configured.
      *
      * @internal
      */
-    public function verifyConfiguration($value): bool
+    public function verify_configuration($value): bool
     {
-        return $this->isUsingCorrectAlgorithm($value) && $this->isUsingValidOptions($value);
+        return $this->is_using_correct_algorithm($value) && $this->is_using_valid_options($value);
     }
-
     /**
      * Verify the hashed value's algorithm.
      *
      * @param  string  $hashedValue
      */
-    protected function isUsingCorrectAlgorithm($hashedValue): bool
+    protected function is_using_correct_algorithm($hashed_value): bool
     {
-        return $this->info($hashedValue)['algoName'] === 'bcrypt';
+        return $this->info($hashed_value)['algoName'] === 'bcrypt';
     }
-
     /**
      * Verify the hashed value's options.
      *
      * @param  string  $hashedValue
      */
-    protected function isUsingValidOptions($hashedValue): bool
+    protected function is_using_valid_options($hashed_value): bool
     {
-        ['options' => $options] = $this->info($hashedValue);
-
-        if (! is_int($options['cost'] ?? null)) {
+        ['options' => $options] = $this->info($hashed_value);
+        if (!is_int($options['cost'] ?? null)) {
             return false;
         }
-
         if ($options['cost'] > $this->rounds) {
             return false;
         }
-
         return true;
     }
-
     /**
      * Set the default password work factor.
      *
      * @param  int  $rounds
      * @return $this
      */
-    public function setRounds($rounds): static
+    public function set_rounds($rounds): static
     {
         $this->rounds = (int) $rounds;
-
         return $this;
     }
-
     /**
      * Extract the cost value from the options array.
      *

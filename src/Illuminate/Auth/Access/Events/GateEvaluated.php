@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Auth\Access\Events;
 
-class GateEvaluated
+class Gate_Evaluated
 {
     /**
      * Create a new event instance.
@@ -31,6 +30,7 @@ class GateEvaluated
          * The arguments given during evaluation.
          */
         public $arguments
-    ) {
+    )
+    {
     }
 }

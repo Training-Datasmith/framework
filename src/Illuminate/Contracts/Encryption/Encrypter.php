@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Encryption;
 
 interface Encrypter
@@ -15,8 +14,11 @@ interface Encrypter
      *
      * @throws \Illuminate\Contracts\Encryption\EncryptException
      */
-    public function encrypt(#[\SensitiveParameter] $value, $serialize = true);
-
+    public function encrypt(
+        #[\Sensitive_Parameter]
+        $value,
+        $serialize = true
+    );
     /**
      * Decrypt the given value.
      *
@@ -27,25 +29,22 @@ interface Encrypter
      * @throws \Illuminate\Contracts\Encryption\DecryptException
      */
     public function decrypt($payload, $unserialize = true);
-
     /**
      * Get the encryption key that the encrypter is currently using.
      *
      * @return string
      */
-    public function getKey();
-
+    public function get_key();
     /**
      * Get the current encryption key and all previous encryption keys.
      *
      * @return array
      */
-    public function getAllKeys();
-
+    public function get_all_keys();
     /**
      * Get the previous encryption keys.
      *
      * @return array
      */
-    public function getPreviousKeys();
+    public function get_previous_keys();
 }

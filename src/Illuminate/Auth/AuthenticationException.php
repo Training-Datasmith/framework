@@ -1,38 +1,38 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Auth;
 
 use Exception;
 use Illuminate\Http\Request;
-
-class AuthenticationException extends Exception
+class Authentication_Exception extends Exception
 {
     /**
      * The callback that should be used to generate the authentication redirect path.
      *
      * @var callable
      */
-    protected static $redirectToCallback;
-
+    protected static $redirect_to_callback;
     /**
      * Create a new authentication exception.
      *
      * @param  string  $message
      * @param  string|null  $redirectTo
      */
-    public function __construct($message = 'Unauthenticated.', /**
-     * All of the guards that were checked.
-     */
-        protected array $guards = [], /**
-     * The path the user should be redirected to.
-     */
-        protected $redirectTo = null)
+    public function __construct(
+        $message = 'Unauthenticated.',
+        /**
+         * All of the guards that were checked.
+         */
+        protected array $guards = [],
+        /**
+         * The path the user should be redirected to.
+         */
+        protected $redirect_to = null
+    )
     {
         parent::__construct($message);
     }
-
     /**
      * Get the guards that were checked.
      */
@@ -40,28 +40,25 @@ class AuthenticationException extends Exception
     {
         return $this->guards;
     }
-
     /**
      * Get the path the user should be redirected to.
      *
      * @return string|null
      */
-    public function redirectTo(Request $request)
+    public function redirect_to(Request $request)
     {
-        if ($this->redirectTo) {
-            return $this->redirectTo;
+        if ($this->redirect_to) {
+            return $this->redirect_to;
         }
-
-        if (static::$redirectToCallback) {
-            return call_user_func(static::$redirectToCallback, $request);
+        if (static::$redirect_to_callback) {
+            return call_user_func(static::$redirect_to_callback, $request);
         }
     }
-
     /**
      * Specify the callback that should be used to generate the redirect path.
      */
-    public static function redirectUsing(callable $redirectToCallback): void
+    public static function redirect_using(callable $redirect_to_callback): void
     {
-        static::$redirectToCallback = $redirectToCallback;
+        static::$redirect_to_callback = $redirect_to_callback;
     }
 }

@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Query\Processors;
 
 use Illuminate\Database\Query\Builder;
-
-class MySqlProcessor extends Processor
+class My_Sql_Processor extends Processor
 {
     /**
      * Process the results of a column listing query.
@@ -15,11 +13,10 @@ class MySqlProcessor extends Processor
      *
      * @param  array  $results
      */
-    public function processColumnListing($results): array
+    public function process_column_listing($results): array
     {
-        return array_map(fn ($result) => ((object) $result)->column_name, $results);
+        return array_map(fn($result) => ((object) $result)->column_name, $results);
     }
-
     /**
      * Process an  "insert get ID" query.
      *
@@ -28,73 +25,38 @@ class MySqlProcessor extends Processor
      * @param  string|null  $sequence
      * @return int
      */
-    public function processInsertGetId(Builder $query, $sql, $values, $sequence = null)
+    public function process_insert_get_id(Builder $query, $sql, $values, $sequence = null)
     {
-        $query->getConnection()->insert($sql, $values, $sequence);
-
-        $id = $query->getConnection()->getLastInsertId();
-
+        $query->get_connection()->insert($sql, $values, $sequence);
+        $id = $query->get_connection()->get_last_insert_id();
         return is_numeric($id) ? (int) $id : $id;
     }
-
     /** @inheritDoc */
-    public function processColumns($results): array
+    public function process_columns($results): array
     {
         return array_map(function (array $result): array {
             $result = (object) $result;
-
-            return [
-                'name' => $result->name,
-                'type_name' => $result->type_name,
-                'type' => $result->type,
-                'collation' => $result->collation,
-                'nullable' => $result->nullable === 'YES',
-                'default' => $result->default,
-                'auto_increment' => $result->extra === 'auto_increment',
-                'comment' => $result->comment ?: null,
-                'generation' => $result->expression ? [
-                    'type' => match ($result->extra) {
-                        'STORED GENERATED' => 'stored',
-                        'VIRTUAL GENERATED' => 'virtual',
-                        default => null,
-                    },
-                    'expression' => $result->expression,
-                ] : null,
-            ];
+            return ['name' => $result->name, 'type_name' => $result->type_name, 'type' => $result->type, 'collation' => $result->collation, 'nullable' => $result->nullable === 'YES', 'default' => $result->default, 'auto_increment' => $result->extra === 'auto_increment', 'comment' => $result->comment ?: null, 'generation' => $result->expression ? ['type' => match ($result->extra) {
+                'STORED GENERATED' => 'stored',
+                'VIRTUAL GENERATED' => 'virtual',
+                default => null,
+            }, 'expression' => $result->expression] : null];
         }, $results);
     }
-
     /** @inheritDoc */
-    public function processIndexes($results): array
+    public function process_indexes($results): array
     {
         return array_map(function (array $result): array {
             $result = (object) $result;
-
-            return [
-                'name' => $name = strtolower((string) $result->name),
-                'columns' => $result->columns ? explode(',', (string) $result->columns) : [],
-                'type' => strtolower((string) $result->type),
-                'unique' => (bool) $result->unique,
-                'primary' => $name === 'primary',
-            ];
+            return ['name' => $name = strtolower((string) $result->name), 'columns' => $result->columns ? explode(',', (string) $result->columns) : [], 'type' => strtolower((string) $result->type), 'unique' => (bool) $result->unique, 'primary' => $name === 'primary'];
         }, $results);
     }
-
     /** @inheritDoc */
-    public function processForeignKeys($results): array
+    public function process_foreign_keys($results): array
     {
         return array_map(function (array $result): array {
             $result = (object) $result;
-
-            return [
-                'name' => $result->name,
-                'columns' => explode(',', (string) $result->columns),
-                'foreign_schema' => $result->foreign_schema,
-                'foreign_table' => $result->foreign_table,
-                'foreign_columns' => explode(',', (string) $result->foreign_columns),
-                'on_update' => strtolower((string) $result->on_update),
-                'on_delete' => strtolower((string) $result->on_delete),
-            ];
+            return ['name' => $result->name, 'columns' => explode(',', (string) $result->columns), 'foreign_schema' => $result->foreign_schema, 'foreign_table' => $result->foreign_table, 'foreign_columns' => explode(',', (string) $result->foreign_columns), 'on_update' => strtolower((string) $result->on_update), 'on_delete' => strtolower((string) $result->on_delete)];
         }, $results);
     }
 }

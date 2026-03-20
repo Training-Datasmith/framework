@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Illuminate\Json_Schema\Types;
 
-namespace Illuminate\JsonSchema\Types;
-
-class ObjectType extends Type
+class Object_Type extends Type
 {
     /**
      * Whether additional properties are allowed.
      */
-    protected ?bool $additionalProperties = null;
-
+    protected ?bool $additional_properties = null;
     /**
      * Create a new object type instance.
      *
@@ -18,19 +16,15 @@ class ObjectType extends Type
      */
     public function __construct(protected array $properties = [])
     {
-
     }
-
     /**
      * Disallow additional properties.
      */
-    public function withoutAdditionalProperties(): static
+    public function without_additional_properties(): static
     {
-        $this->additionalProperties = false;
-
+        $this->additional_properties = false;
         return $this;
     }
-
     /**
      * Set the type's default value.
      *
@@ -39,7 +33,6 @@ class ObjectType extends Type
     public function default(array $value): static
     {
         $this->default = $value;
-
         return $this;
     }
 }

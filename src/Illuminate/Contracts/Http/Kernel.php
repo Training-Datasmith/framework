@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Http;
 
 interface Kernel
@@ -12,7 +11,6 @@ interface Kernel
      * @return void
      */
     public function bootstrap();
-
     /**
      * Handle an incoming HTTP request.
      *
@@ -20,7 +18,6 @@ interface Kernel
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle($request);
-
     /**
      * Perform any final actions for the request lifecycle.
      *
@@ -29,11 +26,10 @@ interface Kernel
      * @return void
      */
     public function terminate($request, $response);
-
     /**
      * Get the Laravel application instance.
      *
      * @return \Illuminate\Contracts\Foundation\Application
      */
-    public function getApplication();
+    public function get_application();
 }

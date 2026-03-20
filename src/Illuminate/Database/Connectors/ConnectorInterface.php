@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Connectors;
 
-interface ConnectorInterface
+interface Connector_Interface
 {
     /**
      * Establish a database connection.

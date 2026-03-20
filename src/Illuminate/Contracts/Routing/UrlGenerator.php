@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Routing;
 
-interface UrlGenerator
+interface Url_Generator
 {
     /**
      * Get the current URL for the request.
@@ -12,7 +11,6 @@ interface UrlGenerator
      * @return string
      */
     public function current();
-
     /**
      * Get the URL for the previous request.
      *
@@ -20,7 +18,6 @@ interface UrlGenerator
      * @return string
      */
     public function previous($fallback = false);
-
     /**
      * Generate an absolute URL to the given path.
      *
@@ -30,7 +27,6 @@ interface UrlGenerator
      * @return string
      */
     public function to($path, $extra = [], $secure = null);
-
     /**
      * Generate a secure, absolute URL to the given path.
      *
@@ -39,7 +35,6 @@ interface UrlGenerator
      * @return string
      */
     public function secure($path, $parameters = []);
-
     /**
      * Generate the URL to an application asset.
      *
@@ -48,7 +43,6 @@ interface UrlGenerator
      * @return string
      */
     public function asset($path, $secure = null);
-
     /**
      * Get the URL to a named route.
      *
@@ -60,7 +54,6 @@ interface UrlGenerator
      * @throws \InvalidArgumentException
      */
     public function route($name, $parameters = [], $absolute = true);
-
     /**
      * Create a signed route URL for a named route.
      *
@@ -72,8 +65,7 @@ interface UrlGenerator
      *
      * @throws \InvalidArgumentException
      */
-    public function signedRoute($name, $parameters = [], $expiration = null, $absolute = true);
-
+    public function signed_route($name, $parameters = [], $expiration = null, $absolute = true);
     /**
      * Create a temporary signed route URL for a named route.
      *
@@ -83,8 +75,7 @@ interface UrlGenerator
      * @param  bool  $absolute
      * @return string
      */
-    public function temporarySignedRoute($name, $expiration, $parameters = [], $absolute = true);
-
+    public function temporary_signed_route($name, $expiration, $parameters = [], $absolute = true);
     /**
      * Generate an absolute URL with the given query parameters.
      *
@@ -95,7 +86,6 @@ interface UrlGenerator
      * @return string
      */
     public function query($path, $query = [], $extra = [], $secure = null);
-
     /**
      * Get the URL to a controller action.
      *
@@ -105,19 +95,17 @@ interface UrlGenerator
      * @return string
      */
     public function action($action, $parameters = [], $absolute = true);
-
     /**
      * Get the root controller namespace.
      *
      * @return string
      */
-    public function getRootControllerNamespace();
-
+    public function get_root_controller_namespace();
     /**
      * Set the root controller namespace.
      *
      * @param  string  $rootNamespace
      * @return $this
      */
-    public function setRootControllerNamespace($rootNamespace);
+    public function set_root_controller_namespace($root_namespace);
 }

@@ -1,18 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Exceptions\Renderer;
 
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\Events\QueryExecuted;
-use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Queue\Events\JobProcessing;
-use Laravel\Octane\Events\RequestReceived;
-use Laravel\Octane\Events\RequestTerminated;
-use Laravel\Octane\Events\TaskReceived;
-use Laravel\Octane\Events\TickReceived;
-
+use Illuminate\Database\Events\Query_Executed;
+use Illuminate\Queue\Events\Job_Processed;
+use Illuminate\Queue\Events\Job_Processing;
+use Laravel\Octane\Events\Request_Received;
+use Laravel\Octane\Events\Request_Terminated;
+use Laravel\Octane\Events\Task_Received;
+use Laravel\Octane\Events\Tick_Received;
 class Listener
 {
     /**
@@ -21,25 +19,21 @@ class Listener
      * @var array<int, array{connectionName: string, time: float, sql: string, bindings: array}>
      */
     protected $queries = [];
-
     /**
      * Register the appropriate listeners on the given event dispatcher.
      */
-    public function registerListeners(Dispatcher $events): void
+    public function register_listeners(Dispatcher $events): void
     {
-        $events->listen(QueryExecuted::class, $this->onQueryExecuted(...));
-
-        $events->listen([JobProcessing::class, JobProcessed::class], function (): void {
+        $events->listen(Query_Executed::class, $this->on_query_executed(...));
+        $events->listen([Job_Processing::class, Job_Processed::class], function (): void {
             $this->queries = [];
         });
-
         if (isset($_SERVER['LARAVEL_OCTANE'])) {
-            $events->listen([RequestReceived::class, TaskReceived::class, TickReceived::class, RequestTerminated::class], function (): void {
+            $events->listen([Request_Received::class, Task_Received::class, Tick_Received::class, Request_Terminated::class], function (): void {
                 $this->queries = [];
             });
         }
     }
-
     /**
      * Returns the queries that have been executed.
      *
@@ -49,21 +43,14 @@ class Listener
     {
         return $this->queries;
     }
-
     /**
      * Listens for the query executed event.
      */
-    public function onQueryExecuted(QueryExecuted $event): void
+    public function on_query_executed(Query_Executed $event): void
     {
         if (count($this->queries) === 101) {
             return;
         }
-
-        $this->queries[] = [
-            'connectionName' => $event->connectionName,
-            'time' => $event->time,
-            'sql' => $event->sql,
-            'bindings' => $event->connection->prepareBindings($event->bindings),
-        ];
+        $this->queries[] = ['connectionName' => $event->connection_name, 'time' => $event->time, 'sql' => $event->sql, 'bindings' => $event->connection->prepare_bindings($event->bindings)];
     }
 }

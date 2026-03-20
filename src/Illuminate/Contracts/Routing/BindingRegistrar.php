@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Routing;
 
-interface BindingRegistrar
+interface Binding_Registrar
 {
     /**
      * Add a new route parameter binder.
@@ -14,12 +13,11 @@ interface BindingRegistrar
      * @return void
      */
     public function bind($key, $binder);
-
     /**
      * Get the binding callback for a given binding.
      *
      * @param  string  $key
      * @return \Closure
      */
-    public function getBindingCallback($key);
+    public function get_binding_callback($key);
 }

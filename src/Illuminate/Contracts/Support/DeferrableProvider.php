@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Support;
 
-interface DeferrableProvider
+interface Deferrable_Provider
 {
     /**
      * Get the services provided by the provider.

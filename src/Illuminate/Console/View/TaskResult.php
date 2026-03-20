@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View;
 
-enum TaskResult: int
+enum Task_Result : int
 {
     case Success = 1;
     case Failure = 2;

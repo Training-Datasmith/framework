@@ -1,14 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Exceptions\Renderer;
 
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
-use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
+use Symfony\Component\Error_Handler\Error_Renderer\Html_Error_Renderer;
 use Throwable;
-
 class Renderer
 {
     /**
@@ -16,15 +14,13 @@ class Renderer
      *
      * @var string
      */
-    protected const DIST = __DIR__.'/../../resources/exceptions/renderer/dist/';
-
+    protected const DIST = __DIR__ . '/../../resources/exceptions/renderer/dist/';
     /**
      * The HTML error renderer instance.
      *
      * @var \Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer
      */
-    protected $htmlErrorRenderer;
-
+    protected $html_error_renderer;
     /**
      * Creates a new exception renderer instance.
      */
@@ -32,24 +28,24 @@ class Renderer
         /**
          * The view factory instance.
          */
-        protected \Illuminate\Contracts\View\Factory $viewFactory,
+        protected \Illuminate\Contracts\View\Factory $view_factory,
         /**
          * The exception listener instance.
          */
         protected \Illuminate\Foundation\Exceptions\Renderer\Listener $listener,
-        HtmlErrorRenderer $htmlErrorRenderer,
+        Html_Error_Renderer $html_error_renderer,
         /**
          * The Blade mapper instance.
          */
-        protected \Illuminate\Foundation\Exceptions\Renderer\Mappers\BladeMapper $bladeMapper,
+        protected \Illuminate\Foundation\Exceptions\Renderer\Mappers\Blade_Mapper $blade_mapper,
         /**
          * The application's base path.
          */
-        protected string $basePath,
-    ) {
-        $this->htmlErrorRenderer = $htmlErrorRenderer;
+        protected string $base_path
+    )
+    {
+        $this->html_error_renderer = $html_error_renderer;
     }
-
     /**
      * Render the given exception as an HTML string.
      *
@@ -57,45 +53,28 @@ class Renderer
      */
     public function render(Request $request, Throwable $throwable)
     {
-        $flattenException = $this->bladeMapper->map(
-            $this->htmlErrorRenderer->render($throwable),
-        );
-
-        $exception = new Exception($flattenException, $request, $this->listener, $this->basePath);
-
-        $exceptionAsMarkdown = $this->viewFactory->make('laravel-exceptions-renderer::markdown', [
-            'exception' => $exception,
-        ])->render();
-
-        return $this->viewFactory->make('laravel-exceptions-renderer::show', [
-            'exception' => $exception,
-            'exceptionAsMarkdown' => $exceptionAsMarkdown,
-        ])->render();
+        $flatten_exception = $this->blade_mapper->map($this->html_error_renderer->render($throwable));
+        $exception = new Exception($flatten_exception, $request, $this->listener, $this->base_path);
+        $exception_as_markdown = $this->view_factory->make('laravel-exceptions-renderer::markdown', ['exception' => $exception])->render();
+        return $this->view_factory->make('laravel-exceptions-renderer::show', ['exception' => $exception, 'exceptionAsMarkdown' => $exception_as_markdown])->render();
     }
-
     /**
      * Get the renderer's CSS content.
      */
     public static function css(): string
     {
-        return '<style>'.file_get_contents(static::DIST.'styles.css').'</style>';
+        return '<style>' . file_get_contents(static::DIST . 'styles.css') . '</style>';
     }
-
     /**
      * Get the renderer's JavaScript content.
      */
     public static function js(): string
     {
-        $viteJsAutoRefresh = '';
-
+        $vite_js_auto_refresh = '';
         $vite = app(\Illuminate\Foundation\Vite::class);
-
-        if (is_file($vite->hotFile())) {
-            $viteJsAutoRefresh = $vite->__invoke([]);
+        if (is_file($vite->hot_file())) {
+            $vite_js_auto_refresh = $vite->__invoke([]);
         }
-
-        return '<script>'
-            .file_get_contents(static::DIST.'scripts.js')
-            .'</script>'.$viteJsAutoRefresh;
+        return '<script>' . file_get_contents(static::DIST . 'scripts.js') . '</script>' . $vite_js_auto_refresh;
     }
 }

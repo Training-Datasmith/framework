@@ -1,21 +1,19 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Bus;
 
-trait DispatchesJobs
+trait Dispatches_Jobs
 {
     /**
      * Dispatch a job to its appropriate handler.
      *
      * @param  mixed  $job
      */
-    protected function dispatch($job): \Illuminate\Foundation\Bus\PendingDispatch
+    protected function dispatch($job): \Illuminate\Foundation\Bus\Pending_Dispatch
     {
         return dispatch($job);
     }
-
     /**
      * Dispatch a job to its appropriate handler in the current process.
      *
@@ -24,7 +22,7 @@ trait DispatchesJobs
      * @param  mixed  $job
      * @return mixed
      */
-    public function dispatchSync($job)
+    public function dispatch_sync($job)
     {
         return dispatch_sync($job);
     }

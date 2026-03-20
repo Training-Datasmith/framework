@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache;
 
-class ApcWrapper
+class Apc_Wrapper
 {
     /**
      * Get an item from the cache.
@@ -14,11 +13,9 @@ class ApcWrapper
      */
     public function get($key)
     {
-        $fetchedValue = apcu_fetch($key, $success);
-
-        return $success ? $fetchedValue : null;
+        $fetched_value = apcu_fetch($key, $success);
+        return $success ? $fetched_value : null;
     }
-
     /**
      * Store an item in the cache.
      *
@@ -30,7 +27,6 @@ class ApcWrapper
     {
         return apcu_store($key, $value, $seconds);
     }
-
     /**
      * Increment the value of an item in the cache.
      *
@@ -42,7 +38,6 @@ class ApcWrapper
     {
         return apcu_inc($key, $value);
     }
-
     /**
      * Decrement the value of an item in the cache.
      *
@@ -54,7 +49,6 @@ class ApcWrapper
     {
         return apcu_dec($key, $value);
     }
-
     /**
      * Remove an item from the cache.
      *
@@ -64,7 +58,6 @@ class ApcWrapper
     {
         return apcu_delete($key);
     }
-
     /**
      * Remove all items from the cache.
      */

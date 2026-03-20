@@ -1,24 +1,21 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Concerns;
 
-trait ParsesSearchPath
+trait Parses_Search_Path
 {
     /**
      * Parse the Postgres "search_path" configuration value into an array.
      *
      * @param  string|array|null  $searchPath
      */
-    protected function parseSearchPath($searchPath): array
+    protected function parse_search_path($search_path): array
     {
-        if (is_string($searchPath)) {
-            preg_match_all('/[^\s,"\']+/', $searchPath, $matches);
-
-            $searchPath = $matches[0];
+        if (is_string($search_path)) {
+            preg_match_all('/[^\s,"\']+/', $search_path, $matches);
+            $search_path = $matches[0];
         }
-
-        return array_map(fn ($schema): string => trim((string) $schema, '\'"'), $searchPath ?? []);
+        return array_map(fn($schema): string => trim((string) $schema, '\'"'), $search_path ?? []);
     }
 }

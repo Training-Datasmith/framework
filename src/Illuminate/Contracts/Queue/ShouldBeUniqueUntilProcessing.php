@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Queue;
 
-interface ShouldBeUniqueUntilProcessing extends ShouldBeUnique
+interface Should_Be_Unique_Until_Processing extends Should_Be_Unique
 {
 }

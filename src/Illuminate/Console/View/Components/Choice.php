@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components;
 
-use Symfony\Component\Console\Question\ChoiceQuestion;
-
+use Symfony\Component\Console\Question\Choice_Question;
 class Choice extends Component
 {
     /**
@@ -18,15 +16,8 @@ class Choice extends Component
      */
     public function render($question, $choices, $default = null, ?int $attempts = null, bool $multiple = false)
     {
-        return $this->usingQuestionHelper(
-            fn () => $this->output->askQuestion(
-                $this->getChoiceQuestion($question, $choices, $default)
-                    ->setMaxAttempts($attempts)
-                    ->setMultiselect($multiple)
-            ),
-        );
+        return $this->using_question_helper(fn() => $this->output->ask_question($this->get_choice_question($question, $choices, $default)->set_max_attempts($attempts)->set_multiselect($multiple)));
     }
-
     /**
      * Get a ChoiceQuestion instance that handles array keys like Prompts.
      *
@@ -34,12 +25,13 @@ class Choice extends Component
      * @param  array  $choices
      * @param  mixed  $default
      */
-    protected function getChoiceQuestion($question, $choices, $default): \Symfony\Component\Console\Question\ChoiceQuestion
+    protected function get_choice_question($question, $choices, $default): \Symfony\Component\Console\Question\Choice_Question
     {
-        return new class ($question, $choices, $default) extends ChoiceQuestion {
-            protected function isAssoc(array $array): bool
+        return new class($question, $choices, $default) extends Choice_Question
+        {
+            protected function is_assoc(array $array): bool
             {
-                return ! array_is_list($array);
+                return !array_is_list($array);
             }
         };
     }

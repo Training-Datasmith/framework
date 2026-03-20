@@ -1,71 +1,55 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Schema;
 
-use Illuminate\Database\Concerns\ParsesSearchPath;
-
-class PostgresBuilder extends Builder
+use Illuminate\Database\Concerns\Parses_Search_Path;
+class Postgres_Builder extends Builder
 {
-    use ParsesSearchPath;
-
+    use Parses_Search_Path;
     /**
      * Drop all tables from the database.
      *
      * @return void
      */
-    public function dropAllTables()
+    public function drop_all_tables()
     {
         $tables = [];
-
-        $excludedTables = $this->connection->getConfig('dont_drop') ?? ['spatial_ref_sys'];
-
-        foreach ($this->getTables($this->getCurrentSchemaListing()) as $table) {
-            if (empty(array_intersect([$table['name'], $table['schema_qualified_name']], $excludedTables))) {
+        $excluded_tables = $this->connection->get_config('dont_drop') ?? ['spatial_ref_sys'];
+        foreach ($this->get_tables($this->get_current_schema_listing()) as $table) {
+            if (empty(array_intersect([$table['name'], $table['schema_qualified_name']], $excluded_tables))) {
                 $tables[] = $table['schema_qualified_name'];
             }
         }
-
         if (empty($tables)) {
             return;
         }
-
-        $this->connection->statement(
-            $this->grammar->compileDropAllTables($tables)
-        );
+        $this->connection->statement($this->grammar->compile_drop_all_tables($tables));
     }
-
     /**
      * Drop all views from the database.
      *
      * @return void
      */
-    public function dropAllViews()
+    public function drop_all_views()
     {
-        $views = array_column($this->getViews($this->getCurrentSchemaListing()), 'schema_qualified_name');
-
+        $views = array_column($this->get_views($this->get_current_schema_listing()), 'schema_qualified_name');
         if (empty($views)) {
             return;
         }
-
-        $this->connection->statement(
-            $this->grammar->compileDropAllViews($views)
-        );
+        $this->connection->statement($this->grammar->compile_drop_all_views($views));
     }
-
     /**
      * Drop all types from the database.
      *
      * @return void
      */
-    public function dropAllTypes()
+    public function drop_all_types()
     {
         $types = [];
         $domains = [];
-
-        foreach ($this->getTypes($this->getCurrentSchemaListing()) as $type) {
-            if (! $type['implicit']) {
+        foreach ($this->get_types($this->get_current_schema_listing()) as $type) {
+            if (!$type['implicit']) {
                 if ($type['type'] === 'domain') {
                     $domains[] = $type['schema_qualified_name'];
                 } else {
@@ -73,30 +57,20 @@ class PostgresBuilder extends Builder
                 }
             }
         }
-
-        if (! empty($types)) {
-            $this->connection->statement($this->grammar->compileDropAllTypes($types));
+        if (!empty($types)) {
+            $this->connection->statement($this->grammar->compile_drop_all_types($types));
         }
-
-        if (! empty($domains)) {
-            $this->connection->statement($this->grammar->compileDropAllDomains($domains));
+        if (!empty($domains)) {
+            $this->connection->statement($this->grammar->compile_drop_all_domains($domains));
         }
     }
-
     /**
      * Get the current schemas for the connection.
      *
      * @return string[]
      */
-    public function getCurrentSchemaListing(): null
+    public function get_current_schema_listing(): null
     {
-        return array_map(
-            fn ($schema) => $schema === '$user' ? $this->connection->getConfig('username') : $schema,
-            $this->parseSearchPath(
-                $this->connection->getConfig('search_path')
-                    ?: $this->connection->getConfig('schema')
-                    ?: 'public'
-            )
-        );
+        return array_map(fn($schema) => $schema === '$user' ? $this->connection->get_config('username') : $schema, $this->parse_search_path(($this->connection->get_config('search_path') ?: $this->connection->get_config('schema')) ?: 'public'));
     }
 }

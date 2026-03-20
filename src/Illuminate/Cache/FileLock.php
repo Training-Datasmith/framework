@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache;
 
-class FileLock extends CacheLock
+class File_Lock extends Cache_Lock
 {
     /**
      * Attempt to acquire the lock.

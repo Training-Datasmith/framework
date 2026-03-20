@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Middleware;
 
 use Closure;
-use Fruitcake\Cors\CorsService;
+use Fruitcake\Cors\Cors_Service;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
-
-class HandleCors
+class Handle_Cors
 {
     /**
      * The CORS service instance.
@@ -17,26 +15,25 @@ class HandleCors
      * @var \Fruitcake\Cors\CorsService
      */
     protected $cors;
-
     /**
      * All of the registered skip callbacks.
      *
      * @var array<int, \Closure(\Illuminate\Http\Request): bool>
      */
-    protected static $skipCallbacks = [];
-
+    protected static $skip_callbacks = [];
     /**
      * Create a new middleware instance.
      */
-    public function __construct(/**
-     * The container instance.
-     */
+    public function __construct(
+        /**
+         * The container instance.
+         */
         protected \Illuminate\Contracts\Container\Container $container,
-        CorsService $cors
-    ) {
+        Cors_Service $cors
+    )
+    {
         $this->cors = $cors;
     }
-
     /**
      * Handle the incoming request.
      *
@@ -45,80 +42,64 @@ class HandleCors
      */
     public function handle($request, Closure $next)
     {
-        foreach (static::$skipCallbacks as $callback) {
+        foreach (static::$skip_callbacks as $callback) {
             if ($callback($request)) {
                 return $next($request);
             }
         }
-
-        if (! $this->hasMatchingPath($request)) {
+        if (!$this->has_matching_path($request)) {
             return $next($request);
         }
-
-        $this->cors->setOptions($this->container['config']->get('cors', []));
-
-        if ($this->cors->isPreflightRequest($request)) {
-            $response = $this->cors->handlePreflightRequest($request);
-
-            $this->cors->varyHeader($response, 'Access-Control-Request-Method');
-
+        $this->cors->set_options($this->container['config']->get('cors', []));
+        if ($this->cors->is_preflight_request($request)) {
+            $response = $this->cors->handle_preflight_request($request);
+            $this->cors->vary_header($response, 'Access-Control-Request-Method');
             return $response;
         }
-
         $response = $next($request);
-
-        if ($request->getMethod() === 'OPTIONS') {
-            $this->cors->varyHeader($response, 'Access-Control-Request-Method');
+        if ($request->get_method() === 'OPTIONS') {
+            $this->cors->vary_header($response, 'Access-Control-Request-Method');
         }
-
-        return $this->cors->addActualRequestHeaders($response, $request);
+        return $this->cors->add_actual_request_headers($response, $request);
     }
-
     /**
      * Get the path from the configuration to determine if the CORS service should run.
      */
-    protected function hasMatchingPath(Request $request): bool
+    protected function has_matching_path(Request $request): bool
     {
-        $paths = $this->getPathsByHost($request->getHost());
-
+        $paths = $this->get_paths_by_host($request->get_host());
         foreach ($paths as $path) {
             if ($path !== '/') {
                 $path = trim((string) $path, '/');
             }
-
-            if ($request->fullUrlIs($path) || $request->is($path)) {
+            if ($request->full_url_is($path) || $request->is($path)) {
                 return true;
             }
         }
-
         return false;
     }
-
     /**
      * Get the CORS paths for the given host.
      *
      * @return array
      */
-    protected function getPathsByHost(string $host)
+    protected function get_paths_by_host(string $host)
     {
         $paths = $this->container['config']->get('cors.paths', []);
-
         return $paths[$host] ?? array_filter($paths, is_string(...));
     }
-
     /**
      * Register a callback that instructs the middleware to be skipped.
      */
-    public static function skipWhen(Closure $callback): void
+    public static function skip_when(Closure $callback): void
     {
-        static::$skipCallbacks[] = $callback;
+        static::$skip_callbacks[] = $callback;
     }
-
     /**
      * Flush the middleware's global state.
      */
-    public static function flushState(): void
+    public static function flush_state(): void
     {
-        static::$skipCallbacks = [];
+        static::$skip_callbacks = [];
     }
 }

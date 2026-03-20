@@ -1,17 +1,15 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Support\Traits;
 
-use Illuminate\Database\Eloquent\Attributes\UseResource;
-use Illuminate\Database\Eloquent\Attributes\UseResourceCollection;
+use Illuminate\Database\Eloquent\Attributes\Use_Resource;
+use Illuminate\Database\Eloquent\Attributes\Use_Resource_Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Resources\Json\Resource_Collection;
 use LogicException;
 use ReflectionClass;
-
-trait TransformsToResourceCollection
+trait Transforms_To_Resource_Collection
 {
     /**
      * Create a new resource collection instance for the given resource.
@@ -20,102 +18,77 @@ trait TransformsToResourceCollection
      *
      * @throws \Throwable
      */
-    public function toResourceCollection(?string $resourceClass = null): ResourceCollection
+    public function to_resource_collection(?string $resource_class = null): Resource_Collection
     {
-        if ($resourceClass === null) {
-            return $this->guessResourceCollection();
+        if ($resource_class === null) {
+            return $this->guess_resource_collection();
         }
-
-        return $resourceClass::collection($this);
+        return $resource_class::collection($this);
     }
-
     /**
      * Guess the resource collection for the items.
      *
      *
      * @throws \Throwable
      */
-    protected function guessResourceCollection(): ResourceCollection
+    protected function guess_resource_collection(): Resource_Collection
     {
-        if ($this->isEmpty()) {
-            return new ResourceCollection($this);
+        if ($this->is_empty()) {
+            return new Resource_Collection($this);
         }
-
         $model = $this->items[0] ?? null;
-
         throw_unless(is_object($model), LogicException::class, 'Resource collection guesser expects the collection to contain objects.');
-
         /** @var class-string<Model> $className */
-        $className = $model::class;
-
-        throw_unless(method_exists($className, 'guessResourceName'), LogicException::class, sprintf('Expected class %s to implement guessResourceName method. Make sure the model uses the TransformsToResource trait.', $className));
-
-        $useResourceCollection = $this->resolveResourceCollectionFromAttribute($className);
-
-        if ($useResourceCollection !== null && class_exists($useResourceCollection)) {
-            return new $useResourceCollection($this);
+        $class_name = $model::class;
+        throw_unless(method_exists($class_name, 'guessResourceName'), LogicException::class, sprintf('Expected class %s to implement guessResourceName method. Make sure the model uses the TransformsToResource trait.', $class_name));
+        $use_resource_collection = $this->resolve_resource_collection_from_attribute($class_name);
+        if ($use_resource_collection !== null && class_exists($use_resource_collection)) {
+            return new $use_resource_collection($this);
         }
-
-        $useResource = $this->resolveResourceFromAttribute($className);
-
-        if ($useResource !== null && class_exists($useResource)) {
-            return $useResource::collection($this);
+        $use_resource = $this->resolve_resource_from_attribute($class_name);
+        if ($use_resource !== null && class_exists($use_resource)) {
+            return $use_resource::collection($this);
         }
-
-        $resourceClasses = $className::guessResourceName();
-
-        foreach ($resourceClasses as $resourceClass) {
-            $resourceCollection = $resourceClass.'Collection';
-
-            if (class_exists($resourceCollection)) {
-                return new $resourceCollection($this);
+        $resource_classes = $class_name::guess_resource_name();
+        foreach ($resource_classes as $resource_class) {
+            $resource_collection = $resource_class . 'Collection';
+            if (class_exists($resource_collection)) {
+                return new $resource_collection($this);
             }
         }
-
-        foreach ($resourceClasses as $resourceClass) {
-            if (is_string($resourceClass) && class_exists($resourceClass)) {
-                return $resourceClass::collection($this);
+        foreach ($resource_classes as $resource_class) {
+            if (is_string($resource_class) && class_exists($resource_class)) {
+                return $resource_class::collection($this);
             }
         }
-
-        throw new LogicException(sprintf('Failed to find resource class for model [%s].', $className));
+        throw new LogicException(sprintf('Failed to find resource class for model [%s].', $class_name));
     }
-
     /**
      * Get the resource class from the class attribute.
      *
      * @param  class-string<\Illuminate\Http\Resources\Json\JsonResource>  $class
      * @return class-string<*>|null
      */
-    protected function resolveResourceFromAttribute(string $class): ?string
+    protected function resolve_resource_from_attribute(string $class): ?string
     {
-        if (! class_exists($class)) {
+        if (!class_exists($class)) {
             return null;
         }
-
-        $attributes = (new ReflectionClass($class))->getAttributes(UseResource::class);
-
-        return $attributes !== []
-            ? $attributes[0]->newInstance()->class
-            : null;
+        $attributes = (new ReflectionClass($class))->get_attributes(Use_Resource::class);
+        return $attributes !== [] ? $attributes[0]->new_instance()->class : null;
     }
-
     /**
      * Get the resource collection class from the class attribute.
      *
      * @param  class-string<\Illuminate\Http\Resources\Json\ResourceCollection>  $class
      * @return class-string<*>|null
      */
-    protected function resolveResourceCollectionFromAttribute(string $class): ?string
+    protected function resolve_resource_collection_from_attribute(string $class): ?string
     {
-        if (! class_exists($class)) {
+        if (!class_exists($class)) {
             return null;
         }
-
-        $attributes = (new ReflectionClass($class))->getAttributes(UseResourceCollection::class);
-
-        return $attributes !== []
-            ? $attributes[0]->newInstance()->class
-            : null;
+        $attributes = (new ReflectionClass($class))->get_attributes(Use_Resource_Collection::class);
+        return $attributes !== [] ? $attributes[0]->new_instance()->class : null;
     }
 }

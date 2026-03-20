@@ -1,13 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent;
 
 /**
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class HigherOrderBuilderProxy
+class Higher_Order_Builder_Proxy
 {
     /**
      * Create a new proxy instance.
@@ -24,9 +23,9 @@ class HigherOrderBuilderProxy
          * The method being proxied.
          */
         protected $method
-    ) {
+    )
+    {
     }
-
     /**
      * Proxy a scope call onto the query builder.
      *
@@ -34,6 +33,6 @@ class HigherOrderBuilderProxy
      */
     public function __call(string $method, array $parameters)
     {
-        return $this->builder->{$this->method}(fn ($value) => $value->{$method}(...$parameters));
+        return $this->builder->{$this->method}(fn($value) => $value->{$method}(...$parameters));
     }
 }

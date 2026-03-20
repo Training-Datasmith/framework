@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Log\Context\Events;
 
-class ContextHydrated
+class Context_Hydrated
 {
     /**
      * Create a new event instance.
@@ -16,6 +15,7 @@ class ContextHydrated
          * The context instance.
          */
         public $context
-    ) {
+    )
+    {
     }
 }

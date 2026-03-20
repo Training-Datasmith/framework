@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Exceptions\PostTooLargeException;
-
-class ValidatePostSize
+use Illuminate\Http\Exceptions\Post_Too_Large_Exception;
+class Validate_Post_Size
 {
     /**
      * Handle an incoming request.
@@ -18,33 +16,27 @@ class ValidatePostSize
      */
     public function handle($request, Closure $next)
     {
-        $max = $this->getPostMaxSize();
-
+        $max = $this->get_post_max_size();
         if ($max > 0 && $request->server('CONTENT_LENGTH') > $max) {
-            throw new PostTooLargeException('The POST data is too large.');
+            throw new Post_Too_Large_Exception('The POST data is too large.');
         }
-
         return $next($request);
     }
-
     /**
      * Determine the server 'post_max_size' as bytes.
      */
-    protected function getPostMaxSize(): int
+    protected function get_post_max_size(): int
     {
-        if (is_numeric($postMaxSize = ini_get('post_max_size'))) {
-            return (int) $postMaxSize;
+        if (is_numeric($post_max_size = ini_get('post_max_size'))) {
+            return (int) $post_max_size;
         }
-
-        $metric = strtoupper(substr($postMaxSize, -1));
-
-        $postMaxSize = (int) $postMaxSize;
-
+        $metric = strtoupper(substr($post_max_size, -1));
+        $post_max_size = (int) $post_max_size;
         return match ($metric) {
-            'K' => $postMaxSize * 1024,
-            'M' => $postMaxSize * 1048576,
-            'G' => $postMaxSize * 1073741824,
-            default => $postMaxSize,
+            'K' => $post_max_size * 1024,
+            'M' => $post_max_size * 1048576,
+            'G' => $post_max_size * 1073741824,
+            default => $post_max_size,
         };
     }
 }

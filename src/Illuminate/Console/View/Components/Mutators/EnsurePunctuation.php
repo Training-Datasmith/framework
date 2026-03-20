@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components\Mutators;
 
 use Illuminate\Support\Stringable;
-
-class EnsurePunctuation
+class Ensure_Punctuation
 {
     /**
      * Ensures the given string ends with punctuation.
@@ -16,10 +14,9 @@ class EnsurePunctuation
      */
     public function __invoke($string)
     {
-        if (! (new Stringable($string))->endsWith(['.', '?', '!', ':'])) {
-            return "$string.";
+        if (!(new Stringable($string))->ends_with(['.', '?', '!', ':'])) {
+            return "{$string}.";
         }
-
         return $string;
     }
 }

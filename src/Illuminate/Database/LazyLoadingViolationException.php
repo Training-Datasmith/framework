@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database;
 
 use RuntimeException;
-
-class LazyLoadingViolationException extends RuntimeException
+class Lazy_Loading_Violation_Exception extends RuntimeException
 {
     /**
      * The name of the affected Eloquent model.
@@ -14,14 +12,12 @@ class LazyLoadingViolationException extends RuntimeException
      * @var string
      */
     public $model;
-
     /**
      * The name of the relation.
      *
      * @var string
      */
     public $relation;
-
     /**
      * Create a new exception instance.
      *
@@ -31,9 +27,7 @@ class LazyLoadingViolationException extends RuntimeException
     public function __construct($model, $relation)
     {
         $class = $model::class;
-
         parent::__construct("Attempted to lazy load [{$relation}] on model [{$class}] but lazy loading is disabled.");
-
         $this->model = $class;
         $this->relation = $relation;
     }

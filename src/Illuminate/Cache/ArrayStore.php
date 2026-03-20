@@ -1,32 +1,27 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache;
 
-use Illuminate\Contracts\Cache\LockProvider;
+use Illuminate\Contracts\Cache\Lock_Provider;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\InteractsWithTime;
-
-class ArrayStore extends TaggableStore implements LockProvider
+use Illuminate\Support\Interacts_With_Time;
+class Array_Store extends Taggable_Store implements Lock_Provider
 {
-    use InteractsWithTime;
-    use RetrievesMultipleKeys;
-
+    use Interacts_With_Time;
+    use Retrieves_Multiple_Keys;
     /**
      * The array of stored values.
      *
      * @var array<string, array{value: mixed, expiresAt: float}>
      */
     protected $storage = [];
-
     /**
      * The array of locks.
      *
      * @var array<string, array{owner: ?string, expiresAt: ?\Illuminate\Support\Carbon}>
      */
     public $locks = [];
-
     /**
      * Create a new Array store.
      *
@@ -37,14 +32,14 @@ class ArrayStore extends TaggableStore implements LockProvider
         /**
          * Indicates if values are serialized within the store.
          */
-        protected $serializesValues = false,
+        protected $serializes_values = false,
         /**
          * The classes that should be allowed during unserialization.
          */
-        protected $serializableClasses = null
-    ) {
+        protected $serializable_classes = null
+    )
+    {
     }
-
     /**
      * Get all of the cached values and their expiration times.
      *
@@ -53,22 +48,15 @@ class ArrayStore extends TaggableStore implements LockProvider
      */
     public function all($unserialize = true)
     {
-        if ($unserialize === false || $this->serializesValues === false) {
+        if ($unserialize === false || $this->serializes_values === false) {
             return $this->storage;
         }
-
         $storage = [];
-
         foreach ($this->storage as $key => $data) {
-            $storage[$key] = [
-                'value' => $this->unserialize($data['value']),
-                'expiresAt' => $data['expiresAt'],
-            ];
+            $storage[$key] = ['value' => $this->unserialize($data['value']), 'expiresAt' => $data['expiresAt']];
         }
-
         return $storage;
     }
-
     /**
      * Retrieve an item from the cache by key.
      *
@@ -77,23 +65,17 @@ class ArrayStore extends TaggableStore implements LockProvider
      */
     public function get($key)
     {
-        if (! isset($this->storage[$key])) {
+        if (!isset($this->storage[$key])) {
             return;
         }
-
         $item = $this->storage[$key];
-
-        $expiresAt = $item['expiresAt'] ?? 0;
-
-        if ($expiresAt !== 0 && (Carbon::now()->getPreciseTimestamp(3) / 1000) >= $expiresAt) {
+        $expires_at = $item['expiresAt'] ?? 0;
+        if ($expires_at !== 0 && Carbon::now()->get_precise_timestamp(3) / 1000 >= $expires_at) {
             $this->forget($key);
-
             return;
         }
-
-        return $this->serializesValues ? $this->unserialize($item['value']) : $item['value'];
+        return $this->serializes_values ? $this->unserialize($item['value']) : $item['value'];
     }
-
     /**
      * Store an item in the cache for a given number of seconds.
      *
@@ -103,14 +85,9 @@ class ArrayStore extends TaggableStore implements LockProvider
      */
     public function put($key, $value, $seconds): bool
     {
-        $this->storage[$key] = [
-            'value' => $this->serializesValues ? serialize($value) : $value,
-            'expiresAt' => $this->calculateExpiration($seconds),
-        ];
-
+        $this->storage[$key] = ['value' => $this->serializes_values ? serialize($value) : $value, 'expiresAt' => $this->calculate_expiration($seconds)];
         return true;
     }
-
     /**
      * Increment the value of an item in the cache.
      *
@@ -120,19 +97,15 @@ class ArrayStore extends TaggableStore implements LockProvider
      */
     public function increment($key, $value = 1)
     {
-        if (! is_null($existing = $this->get($key))) {
-            return tap(((int) $existing) + $value, function ($incremented) use ($key): void {
-                $value = $this->serializesValues ? serialize($incremented) : $incremented;
-
+        if (!is_null($existing = $this->get($key))) {
+            return tap((int) $existing + $value, function ($incremented) use ($key): void {
+                $value = $this->serializes_values ? serialize($incremented) : $incremented;
                 $this->storage[$key]['value'] = $value;
             });
         }
-
         $this->forever($key, $value);
-
         return $value;
     }
-
     /**
      * Decrement the value of an item in the cache.
      *
@@ -144,7 +117,6 @@ class ArrayStore extends TaggableStore implements LockProvider
     {
         return $this->increment($key, $value * -1);
     }
-
     /**
      * Store an item in the cache indefinitely.
      *
@@ -155,7 +127,6 @@ class ArrayStore extends TaggableStore implements LockProvider
     {
         return $this->put($key, $value, 0);
     }
-
     /**
      * Remove an item from the cache.
      *
@@ -165,53 +136,45 @@ class ArrayStore extends TaggableStore implements LockProvider
     {
         if (array_key_exists($key, $this->storage)) {
             unset($this->storage[$key]);
-
             return true;
         }
-
         return false;
     }
-
     /**
      * Remove all items from the cache.
      */
     public function flush(): bool
     {
         $this->storage = [];
-
         return true;
     }
-
     /**
      * Get the cache key prefix.
      */
-    public function getPrefix(): string
+    public function get_prefix(): string
     {
         return '';
     }
-
     /**
      * Get the expiration time of the key.
      *
      * @param  int  $seconds
      * @return float
      */
-    protected function calculateExpiration($seconds): int|float
+    protected function calculate_expiration($seconds): int|float
     {
-        return $this->toTimestamp($seconds);
+        return $this->to_timestamp($seconds);
     }
-
     /**
      * Get the UNIX timestamp, with milliseconds, for the given number of seconds in the future.
      *
      * @param  int  $seconds
      * @return float
      */
-    protected function toTimestamp($seconds): int|float
+    protected function to_timestamp($seconds): int|float
     {
-        return $seconds > 0 ? (Carbon::now()->getPreciseTimestamp(3) / 1000) + $seconds : 0;
+        return $seconds > 0 ? Carbon::now()->get_precise_timestamp(3) / 1000 + $seconds : 0;
     }
-
     /**
      * Get a lock instance.
      *
@@ -220,11 +183,10 @@ class ArrayStore extends TaggableStore implements LockProvider
      * @param  string|null  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function lock($name, $seconds = 0, $owner = null): \Illuminate\Cache\ArrayLock
+    public function lock($name, $seconds = 0, $owner = null): \Illuminate\Cache\Array_Lock
     {
-        return new ArrayLock($this, $name, $seconds, $owner);
+        return new Array_Lock($this, $name, $seconds, $owner);
     }
-
     /**
      * Restore a lock instance using the owner identifier.
      *
@@ -232,11 +194,10 @@ class ArrayStore extends TaggableStore implements LockProvider
      * @param  string  $owner
      * @return \Illuminate\Contracts\Cache\Lock
      */
-    public function restoreLock($name, $owner): \Illuminate\Cache\ArrayLock
+    public function restore_lock($name, $owner): \Illuminate\Cache\Array_Lock
     {
         return $this->lock($name, 0, $owner);
     }
-
     /**
      * Unserialize the given value.
      *
@@ -244,10 +205,9 @@ class ArrayStore extends TaggableStore implements LockProvider
      */
     protected function unserialize($value): mixed
     {
-        if ($this->serializableClasses !== null) {
-            return unserialize($value, ['allowed_classes' => $this->serializableClasses]);
+        if ($this->serializable_classes !== null) {
+            return unserialize($value, ['allowed_classes' => $this->serializable_classes]);
         }
-
         return unserialize($value);
     }
 }

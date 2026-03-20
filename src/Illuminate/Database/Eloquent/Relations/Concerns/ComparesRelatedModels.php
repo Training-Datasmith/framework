@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Relations\Concerns;
 
-use Illuminate\Contracts\Database\Eloquent\SupportsPartialRelations;
+use Illuminate\Contracts\Database\Eloquent\Supports_Partial_Relations;
 use Illuminate\Database\Eloquent\Model;
-
-trait ComparesRelatedModels
+trait Compares_Related_Models
 {
     /**
      * Determine if the model is the related instance of the relationship.
@@ -17,44 +15,33 @@ trait ComparesRelatedModels
      */
     public function is($model)
     {
-        $match = ! is_null($model) &&
-               $this->compareKeys($this->getParentKey(), $this->getRelatedKeyFrom($model)) &&
-               $this->related->getTable() === $model->getTable() &&
-               $this->related->getConnectionName() === $model->getConnectionName();
-
-        if ($match && $this instanceof SupportsPartialRelations && $this->isOneOfMany()) {
-            return $this->query
-                ->whereKey($model->getKey())
-                ->exists();
+        $match = !is_null($model) && $this->compare_keys($this->get_parent_key(), $this->get_related_key_from($model)) && $this->related->get_table() === $model->get_table() && $this->related->get_connection_name() === $model->get_connection_name();
+        if ($match && $this instanceof Supports_Partial_Relations && $this->is_one_of_many()) {
+            return $this->query->where_key($model->get_key())->exists();
         }
-
         return $match;
     }
-
     /**
      * Determine if the model is not the related instance of the relationship.
      *
      * @param  \Illuminate\Database\Eloquent\Model|null  $model
      */
-    public function isNot($model): bool
+    public function is_not($model): bool
     {
-        return ! $this->is($model);
+        return !$this->is($model);
     }
-
     /**
      * Get the value of the parent model's key.
      *
      * @return mixed
      */
-    abstract public function getParentKey();
-
+    abstract public function get_parent_key();
     /**
      * Get the value of the model's related key.
      *
      * @return mixed
      */
-    abstract protected function getRelatedKeyFrom(Model $model);
-
+    abstract protected function get_related_key_from(Model $model);
     /**
      * Compare the parent key with the related key.
      *
@@ -62,16 +49,14 @@ trait ComparesRelatedModels
      * @param  mixed  $relatedKey
      * @return bool
      */
-    protected function compareKeys($parentKey, $relatedKey)
+    protected function compare_keys($parent_key, $related_key)
     {
-        if (empty($parentKey) || empty($relatedKey)) {
+        if (empty($parent_key) || empty($related_key)) {
             return false;
         }
-
-        if (is_int($parentKey) || is_int($relatedKey)) {
-            return (int) $parentKey === (int) $relatedKey;
+        if (is_int($parent_key) || is_int($related_key)) {
+            return (int) $parent_key === (int) $related_key;
         }
-
-        return $parentKey === $relatedKey;
+        return $parent_key === $related_key;
     }
 }

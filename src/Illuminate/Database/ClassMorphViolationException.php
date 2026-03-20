@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database;
 
 use RuntimeException;
-
-class ClassMorphViolationException extends RuntimeException
+class Class_Morph_Violation_Exception extends RuntimeException
 {
     /**
      * The name of the affected Eloquent model.
@@ -14,7 +12,6 @@ class ClassMorphViolationException extends RuntimeException
      * @var string
      */
     public $model;
-
     /**
      * Create a new exception instance.
      *
@@ -23,9 +20,7 @@ class ClassMorphViolationException extends RuntimeException
     public function __construct($model)
     {
         $class = $model::class;
-
         parent::__construct("No morph map defined for model [{$class}].");
-
         $this->model = $class;
     }
 }

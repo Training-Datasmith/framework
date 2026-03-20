@@ -1,45 +1,39 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Concerns;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-
-trait HasUniqueStringIds
+use Illuminate\Database\Eloquent\Model_Not_Found_Exception;
+trait Has_Unique_String_Ids
 {
     /**
      * Generate a new unique key for the model.
      *
      * @return mixed
      */
-    abstract public function newUniqueId();
-
+    abstract public function new_unique_id();
     /**
      * Determine if given key is valid.
      *
      * @param  mixed  $value
      */
-    abstract protected function isValidUniqueId($value): bool;
-
+    abstract protected function is_valid_unique_id($value): bool;
     /**
      * Initialize the trait.
      */
-    public function initializeHasUniqueStringIds(): void
+    public function initialize_has_unique_string_ids(): void
     {
-        $this->usesUniqueIds = true;
+        $this->uses_unique_ids = true;
     }
-
     /**
      * Get the columns that should receive a unique identifier.
      *
      * @return array
      */
-    public function uniqueIds()
+    public function unique_ids()
     {
-        return $this->usesUniqueIds() ? [$this->getKeyName()] : parent::uniqueIds();
+        return $this->uses_unique_ids() ? [$this->get_key_name()] : parent::unique_ids();
     }
-
     /**
      * Retrieve the model for a bound value.
      *
@@ -50,47 +44,40 @@ trait HasUniqueStringIds
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function resolveRouteBindingQuery($query, $value, $field = null)
+    public function resolve_route_binding_query($query, $value, $field = null)
     {
-        if ($field && in_array($field, $this->uniqueIds()) && ! $this->isValidUniqueId($value)) {
-            $this->handleInvalidUniqueId($value, $field);
+        if ($field && in_array($field, $this->unique_ids()) && !$this->is_valid_unique_id($value)) {
+            $this->handle_invalid_unique_id($value, $field);
         }
-
-        if (! $field && in_array($this->getRouteKeyName(), $this->uniqueIds()) && ! $this->isValidUniqueId($value)) {
-            $this->handleInvalidUniqueId($value, $field);
+        if (!$field && in_array($this->get_route_key_name(), $this->unique_ids()) && !$this->is_valid_unique_id($value)) {
+            $this->handle_invalid_unique_id($value, $field);
         }
-
-        return parent::resolveRouteBindingQuery($query, $value, $field);
+        return parent::resolve_route_binding_query($query, $value, $field);
     }
-
     /**
      * Get the auto-incrementing key type.
      *
      * @return string
      */
-    public function getKeyType()
+    public function get_key_type()
     {
-        if (in_array($this->getKeyName(), $this->uniqueIds())) {
+        if (in_array($this->get_key_name(), $this->unique_ids())) {
             return 'string';
         }
-
-        return parent::getKeyType();
+        return parent::get_key_type();
     }
-
     /**
      * Get the value indicating whether the IDs are incrementing.
      *
      * @return bool
      */
-    public function getIncrementing()
+    public function get_incrementing()
     {
-        if (in_array($this->getKeyName(), $this->uniqueIds())) {
+        if (in_array($this->get_key_name(), $this->unique_ids())) {
             return false;
         }
-
-        return parent::getIncrementing();
+        return parent::get_incrementing();
     }
-
     /**
      * Throw an exception for the given invalid unique ID.
      *
@@ -99,8 +86,8 @@ trait HasUniqueStringIds
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    protected function handleInvalidUniqueId($value, $field): never
+    protected function handle_invalid_unique_id($value, $field): never
     {
-        throw (new ModelNotFoundException())->setModel($this::class, $value);
+        throw (new Model_Not_Found_Exception())->set_model($this::class, $value);
     }
 }

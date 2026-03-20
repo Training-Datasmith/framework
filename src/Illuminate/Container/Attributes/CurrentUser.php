@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Container\Attributes;
 
 use Attribute;
-
 #[Attribute(Attribute::TARGET_PARAMETER)]
-class CurrentUser extends Authenticated
+class Current_User extends Authenticated
 {
 }

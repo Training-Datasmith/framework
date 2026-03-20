@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console;
 
-interface CommandMutex
+interface Command_Mutex
 {
     /**
      * Attempt to obtain a command mutex for the given command.
@@ -13,7 +12,6 @@ interface CommandMutex
      * @return bool
      */
     public function create($command);
-
     /**
      * Determine if a command mutex exists for the given command.
      *
@@ -21,7 +19,6 @@ interface CommandMutex
      * @return bool
      */
     public function exists($command);
-
     /**
      * Release the mutex for the given command.
      *

@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Testing;
 
 use LogicException;
-
-class FileFactory
+class File_Factory
 {
     /**
      * Create a new fake file.
@@ -16,18 +14,16 @@ class FileFactory
      * @param  string|null  $mimeType
      * @return \Illuminate\Http\Testing\File
      */
-    public function create($name, $kilobytes = 0, $mimeType = null)
+    public function create($name, $kilobytes = 0, $mime_type = null)
     {
         if (is_string($kilobytes)) {
-            return $this->createWithContent($name, $kilobytes);
+            return $this->create_with_content($name, $kilobytes);
         }
-
-        return tap(new File($name, tmpfile()), function ($file) use ($kilobytes, $mimeType): void {
-            $file->sizeToReport = $kilobytes * 1024;
-            $file->mimeTypeToReport = $mimeType;
+        return tap(new File($name, tmpfile()), function ($file) use ($kilobytes, $mime_type): void {
+            $file->size_to_report = $kilobytes * 1024;
+            $file->mime_type_to_report = $mime_type;
         });
     }
-
     /**
      * Create a new fake file with content.
      *
@@ -35,17 +31,14 @@ class FileFactory
      * @param  string  $content
      * @return \Illuminate\Http\Testing\File
      */
-    public function createWithContent($name, $content)
+    public function create_with_content($name, $content)
     {
         $tmpfile = tmpfile();
-
         fwrite($tmpfile, $content);
-
         return tap(new File($name, $tmpfile), function ($file) use ($tmpfile): void {
-            $file->sizeToReport = fstat($tmpfile)['size'];
+            $file->size_to_report = fstat($tmpfile)['size'];
         });
     }
-
     /**
      * Create a new fake image.
      *
@@ -57,13 +50,8 @@ class FileFactory
      */
     public function image($name, $width = 10, $height = 10): \Illuminate\Http\Testing\File
     {
-        return new File($name, $this->generateImage(
-            $width,
-            $height,
-            pathinfo($name, PATHINFO_EXTENSION)
-        ));
+        return new File($name, $this->generate_image($width, $height, pathinfo($name, PATHINFO_EXTENSION)));
     }
-
     /**
      * Generate a dummy image of the given width and height.
      *
@@ -74,29 +62,20 @@ class FileFactory
      *
      * @throws \LogicException
      */
-    protected function generateImage($width, $height, $extension)
+    protected function generate_image($width, $height, $extension)
     {
-        if (! function_exists('imagecreatetruecolor')) {
+        if (!function_exists('imagecreatetruecolor')) {
             throw new LogicException('GD extension is not installed.');
         }
-
         return tap(tmpfile(), function ($temp) use ($width, $height, $extension): void {
             ob_start();
-
-            $extension = in_array($extension, ['jpeg', 'png', 'gif', 'webp', 'wbmp', 'bmp'])
-                ? strtolower($extension)
-                : 'jpeg';
-
+            $extension = in_array($extension, ['jpeg', 'png', 'gif', 'webp', 'wbmp', 'bmp']) ? strtolower($extension) : 'jpeg';
             $image = imagecreatetruecolor($width, $height);
-
-            if (! function_exists($functionName = "image{$extension}")) {
+            if (!function_exists($function_name = "image{$extension}")) {
                 ob_get_clean();
-
-                throw new LogicException("{$functionName} function is not defined and image cannot be generated.");
+                throw new LogicException("{$function_name} function is not defined and image cannot be generated.");
             }
-
-            call_user_func($functionName, $image);
-
+            call_user_func($function_name, $image);
             fwrite($temp, ob_get_clean());
         });
     }

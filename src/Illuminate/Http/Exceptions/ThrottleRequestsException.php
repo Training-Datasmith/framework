@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Exceptions;
 
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use Symfony\Component\Http_Kernel\Exception\Too_Many_Requests_Http_Exception;
 use Throwable;
-
-class ThrottleRequestsException extends TooManyRequestsHttpException
+class Throttle_Requests_Exception extends Too_Many_Requests_Http_Exception
 {
     /**
      * Create a new throttle requests exception instance.

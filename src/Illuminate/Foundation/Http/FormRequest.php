@@ -1,196 +1,155 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Http;
 
-use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Access\Authorization_Exception;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
-use Illuminate\Contracts\Validation\ValidatesWhenResolved;
+use Illuminate\Contracts\Validation\Validates_When_Resolved;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-use Illuminate\Validation\ValidatesWhenResolvedTrait;
-
-class FormRequest extends Request implements ValidatesWhenResolved
+use Illuminate\Validation\Validates_When_Resolved_Trait;
+class Form_Request extends Request implements Validates_When_Resolved
 {
-    use ValidatesWhenResolvedTrait;
-
+    use Validates_When_Resolved_Trait;
     /**
      * The container instance.
      *
      * @var \Illuminate\Contracts\Container\Container
      */
     protected $container;
-
     /**
      * The redirector instance.
      *
      * @var \Illuminate\Routing\Redirector
      */
     protected $redirector;
-
     /**
      * The URI to redirect to if validation fails.
      *
      * @var string
      */
     protected $redirect;
-
     /**
      * The route to redirect to if validation fails.
      *
      * @var string
      */
-    protected $redirectRoute;
-
+    protected $redirect_route;
     /**
      * The controller action to redirect to if validation fails.
      *
      * @var string
      */
-    protected $redirectAction;
-
+    protected $redirect_action;
     /**
      * The key to be used for the view error bag.
      *
      * @var string
      */
-    protected $errorBag = 'default';
-
+    protected $error_bag = 'default';
     /**
      * Indicates whether validation should stop after the first rule failure.
      *
      * @var bool
      */
-    protected $stopOnFirstFailure = false;
-
+    protected $stop_on_first_failure = false;
     /**
      * The validator instance.
      *
      * @var \Illuminate\Contracts\Validation\Validator
      */
     protected $validator;
-
     /**
      * Get the validator instance for the request.
      *
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function getValidatorInstance()
+    protected function get_validator_instance()
     {
         if ($this->validator) {
             return $this->validator;
         }
-
-        $factory = $this->container->make(ValidationFactory::class);
-
+        $factory = $this->container->make(Validation_Factory::class);
         if (method_exists($this, 'validator')) {
             $validator = $this->container->call($this->validator(...), compact('factory'));
         } else {
-            $validator = $this->createDefaultValidator($factory);
+            $validator = $this->create_default_validator($factory);
         }
-
         if (method_exists($this, 'withValidator')) {
-            $this->withValidator($validator);
+            $this->with_validator($validator);
         }
-
         if (method_exists($this, 'after')) {
-            $validator->after($this->container->call(
-                $this->after(...),
-                ['validator' => $validator]
-            ));
+            $validator->after($this->container->call($this->after(...), ['validator' => $validator]));
         }
-
-        $this->setValidator($validator);
-
+        $this->set_validator($validator);
         return $this->validator;
     }
-
     /**
      * Create the default validator instance.
      *
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function createDefaultValidator(ValidationFactory $factory)
+    protected function create_default_validator(Validation_Factory $factory)
     {
-        $rules = $this->validationRules();
-
-        $validator = $factory->make(
-            $this->validationData(),
-            $rules,
-            $this->messages(),
-            $this->attributes(),
-        )->stopOnFirstFailure($this->stopOnFirstFailure);
-
-        if ($this->isPrecognitive()) {
-            $validator->setRules(
-                $this->filterPrecognitiveRules($validator->getRulesWithoutPlaceholders())
-            );
+        $rules = $this->validation_rules();
+        $validator = $factory->make($this->validation_data(), $rules, $this->messages(), $this->attributes())->stop_on_first_failure($this->stop_on_first_failure);
+        if ($this->is_precognitive()) {
+            $validator->set_rules($this->filter_precognitive_rules($validator->get_rules_without_placeholders()));
         }
-
         return $validator;
     }
-
     /**
      * Get data to be validated from the request.
      *
      * @return array
      */
-    public function validationData()
+    public function validation_data()
     {
         return $this->all();
     }
-
     /**
      * Get the validation rules for this form request.
      *
      * @return array
      */
-    protected function validationRules()
+    protected function validation_rules()
     {
         return method_exists($this, 'rules') ? $this->container->call([$this, 'rules']) : [];
     }
-
     /**
      * Handle a failed validation attempt.
      *
      * @return void
      * @throws \Illuminate\Validation\ValidationException
      */
-    protected function failedValidation(Validator $validator)
+    protected function failed_validation(Validator $validator)
     {
-        $exception = $validator->getException();
-
-        throw (new $exception($validator))
-            ->errorBag($this->errorBag)
-            ->redirectTo($this->getRedirectUrl());
+        $exception = $validator->get_exception();
+        throw (new $exception($validator))->error_bag($this->error_bag)->redirect_to($this->get_redirect_url());
     }
-
     /**
      * Get the URL to redirect to on a validation error.
      *
      * @return string
      */
-    protected function getRedirectUrl()
+    protected function get_redirect_url()
     {
-        $url = $this->redirector->getUrlGenerator();
+        $url = $this->redirector->get_url_generator();
         if ($this->redirect) {
             return $url->to($this->redirect);
         }
-        if ($this->redirectRoute) {
-            return $url->route($this->redirectRoute);
+        if ($this->redirect_route) {
+            return $url->route($this->redirect_route);
         }
-
-        if ($this->redirectAction) {
-            return $url->action($this->redirectAction);
+        if ($this->redirect_action) {
+            return $url->action($this->redirect_action);
         }
-
         return $url->previous();
     }
-
     /**
      * Determine if the request passes the authorization check.
      *
@@ -198,17 +157,14 @@ class FormRequest extends Request implements ValidatesWhenResolved
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    protected function passesAuthorization()
+    protected function passes_authorization()
     {
         if (method_exists($this, 'authorize')) {
             $result = $this->container->call([$this, 'authorize']);
-
             return $result instanceof Response ? $result->authorize() : $result;
         }
-
         return true;
     }
-
     /**
      * Handle a failed authorization attempt.
      *
@@ -216,11 +172,10 @@ class FormRequest extends Request implements ValidatesWhenResolved
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    protected function failedAuthorization()
+    protected function failed_authorization()
     {
-        throw new AuthorizationException();
+        throw new Authorization_Exception();
     }
-
     /**
      * Get a validated input container for the validated input.
      *
@@ -228,11 +183,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     public function safe(?array $keys = null)
     {
-        return is_array($keys)
-            ? $this->validator->safe()->only($keys)
-            : $this->validator->safe();
+        return is_array($keys) ? $this->validator->safe()->only($keys) : $this->validator->safe();
     }
-
     /**
      * Get the validated data from the request.
      *
@@ -244,7 +196,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     {
         return data_get($this->validator->validated(), $key, $default);
     }
-
     /**
      * Get custom messages for validator errors.
      *
@@ -254,7 +205,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     {
         return [];
     }
-
     /**
      * Get custom attributes for validator errors.
      *
@@ -264,40 +214,34 @@ class FormRequest extends Request implements ValidatesWhenResolved
     {
         return [];
     }
-
     /**
      * Set the Validator instance.
      *
      * @return $this
      */
-    public function setValidator(Validator $validator)
+    public function set_validator(Validator $validator)
     {
         $this->validator = $validator;
-
         return $this;
     }
-
     /**
      * Set the Redirector instance.
      *
      * @return $this
      */
-    public function setRedirector(Redirector $redirector)
+    public function set_redirector(Redirector $redirector)
     {
         $this->redirector = $redirector;
-
         return $this;
     }
-
     /**
      * Set the container implementation.
      *
      * @return $this
      */
-    public function setContainer(Container $container)
+    public function set_container(Container $container)
     {
         $this->container = $container;
-
         return $this;
     }
 }

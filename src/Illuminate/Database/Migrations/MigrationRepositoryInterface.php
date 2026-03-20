@@ -1,48 +1,42 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Migrations;
 
-interface MigrationRepositoryInterface
+interface Migration_Repository_Interface
 {
     /**
      * Get the completed migrations.
      *
      * @return string[]
      */
-    public function getRan();
-
+    public function get_ran();
     /**
      * Get the list of migrations.
      *
      * @param  int  $steps
      * @return array{id: int, migration: string, batch: int}[]
      */
-    public function getMigrations($steps);
-
+    public function get_migrations($steps);
     /**
      * Get the list of the migrations by batch.
      *
      * @param  int  $batch
      * @return array{id: int, migration: string, batch: int}[]
      */
-    public function getMigrationsByBatch($batch);
-
+    public function get_migrations_by_batch($batch);
     /**
      * Get the last migration batch.
      *
      * @return array{id: int, migration: string, batch: int}[]
      */
-    public function getLast();
-
+    public function get_last();
     /**
      * Get the completed migrations with their batch numbers.
      *
      * @return array<int, string>[]
      */
-    public function getMigrationBatches();
-
+    public function get_migration_batches();
     /**
      * Log that a migration was run.
      *
@@ -51,7 +45,6 @@ interface MigrationRepositoryInterface
      * @return void
      */
     public function log($file, $batch);
-
     /**
      * Remove a migration from the log.
      *
@@ -59,40 +52,35 @@ interface MigrationRepositoryInterface
      * @return void
      */
     public function delete($migration);
-
     /**
      * Get the next migration batch number.
      *
      * @return int
      */
-    public function getNextBatchNumber();
-
+    public function get_next_batch_number();
     /**
      * Create the migration repository data store.
      *
      * @return void
      */
-    public function createRepository();
-
+    public function create_repository();
     /**
      * Determine if the migration repository exists.
      *
      * @return bool
      */
-    public function repositoryExists();
-
+    public function repository_exists();
     /**
      * Delete the migration repository data store.
      *
      * @return void
      */
-    public function deleteRepository();
-
+    public function delete_repository();
     /**
      * Set the information source to gather data.
      *
      * @param  string  $name
      * @return void
      */
-    public function setSource($name);
+    public function set_source($name);
 }

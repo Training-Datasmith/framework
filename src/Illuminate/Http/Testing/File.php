@@ -1,50 +1,42 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Testing;
 
-use Illuminate\Http\UploadedFile;
-
-class File extends UploadedFile
+use Illuminate\Http\Uploaded_File;
+class File extends Uploaded_File
 {
     /**
      * The "size" to report.
      *
      * @var int
      */
-    public $sizeToReport;
-
+    public $size_to_report;
     /**
      * The MIME type to report.
      *
      * @var string|null
      */
-    public $mimeTypeToReport;
-
+    public $mime_type_to_report;
     /**
      * Create a new file instance.
      *
      * @param  string  $name
      * @param  resource  $tempFile
      */
-    public function __construct(/**
-     * The name of the file.
-     */
-        public $name, /**
-     * The temporary file resource.
-     */
-        public $tempFile
-    ) {
-        parent::__construct(
-            $this->tempFilePath(),
-            $this->name,
-            $this->getMimeType(),
-            null,
-            true
-        );
+    public function __construct(
+        /**
+         * The name of the file.
+         */
+        public $name,
+        /**
+         * The temporary file resource.
+         */
+        public $temp_file
+    )
+    {
+        parent::__construct($this->temp_file_path(), $this->name, $this->get_mime_type(), null, true);
     }
-
     /**
      * Create a new fake file.
      *
@@ -54,9 +46,8 @@ class File extends UploadedFile
      */
     public static function create($name, $kilobytes = 0)
     {
-        return (new FileFactory())->create($name, $kilobytes);
+        return (new File_Factory())->create($name, $kilobytes);
     }
-
     /**
      * Create a new fake file with content.
      *
@@ -64,11 +55,10 @@ class File extends UploadedFile
      * @param  string  $content
      * @return \Illuminate\Http\Testing\File
      */
-    public static function createWithContent($name, $content)
+    public static function create_with_content($name, $content)
     {
-        return (new FileFactory())->createWithContent($name, $content);
+        return (new File_Factory())->create_with_content($name, $content);
     }
-
     /**
      * Create a new fake image.
      *
@@ -79,9 +69,8 @@ class File extends UploadedFile
      */
     public static function image($name, $width = 10, $height = 10)
     {
-        return (new FileFactory())->image($name, $width, $height);
+        return (new File_Factory())->image($name, $width, $height);
     }
-
     /**
      * Set the "size" of the file in kilobytes.
      *
@@ -90,47 +79,41 @@ class File extends UploadedFile
      */
     public function size($kilobytes)
     {
-        $this->sizeToReport = $kilobytes * 1024;
-
+        $this->size_to_report = $kilobytes * 1024;
         return $this;
     }
-
     /**
      * Get the size of the file.
      */
-    public function getSize(): int
+    public function get_size(): int
     {
-        return $this->sizeToReport ?: parent::getSize();
+        return $this->size_to_report ?: parent::get_size();
     }
-
     /**
      * Set the MIME type for the file.
      *
      * @param  string  $mimeType
      * @return $this
      */
-    public function mimeType($mimeType)
+    public function mime_type($mime_type)
     {
-        $this->mimeTypeToReport = $mimeType;
-
+        $this->mime_type_to_report = $mime_type;
         return $this;
     }
-
     /**
      * Get the MIME type of the file.
      */
-    public function getMimeType(): string
+    public function get_mime_type(): string
     {
-        return $this->mimeTypeToReport ?: MimeType::from($this->name);
+        return $this->mime_type_to_report ?: Mime_Type::from($this->name);
     }
-
     /**
      * Get the path to the temporary file.
      *
      * @return string
      */
-    protected function tempFilePath()
+    protected function temp_file_path()
     {
-        return stream_get_meta_data($this->tempFile)['uri'];
+        return stream_get_meta_data($this->temp_file)['uri'];
     }
 }

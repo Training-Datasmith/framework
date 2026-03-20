@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache\Events;
 
-class RetrievingManyKeys extends CacheEvent
+class Retrieving_Many_Keys extends Cache_Event
 {
     /**
      * The keys that are being retrieved.
@@ -12,17 +11,15 @@ class RetrievingManyKeys extends CacheEvent
      * @var array
      */
     public $keys;
-
     /**
      * Create a new event instance.
      *
      * @param  string|null  $storeName
      * @param  array  $keys
      */
-    public function __construct($storeName, $keys, array $tags = [])
+    public function __construct($store_name, $keys, array $tags = [])
     {
-        parent::__construct($storeName, $keys[0] ?? '', $tags);
-
+        parent::__construct($store_name, $keys[0] ?? '', $tags);
         $this->keys = $keys;
     }
 }

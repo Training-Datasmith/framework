@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Migrations;
 
-use Illuminate\Database\ConnectionResolverInterface as Resolver;
-
-class DatabaseMigrationRepository implements MigrationRepositoryInterface
+use Illuminate\Database\Connection_Resolver_Interface as Resolver;
+class Database_Migration_Repository implements Migration_Repository_Interface
 {
     /**
      * The name of the database connection to use.
@@ -14,7 +12,6 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
      * @var string
      */
     protected $connection;
-
     /**
      * Create a new database migration repository instance.
      *
@@ -24,84 +21,63 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
         /**
          * The database connection resolver instance.
          */
-        protected \Illuminate\Database\ConnectionResolverInterface $resolver,
+        protected \Illuminate\Database\Connection_Resolver_Interface $resolver,
         /**
          * The name of the migration table.
          */
         protected $table
-    ) {
+    )
+    {
     }
-
     /**
      * Get the completed migrations.
      *
      * @return string[]
      */
-    public function getRan()
+    public function get_ran()
     {
-        return $this->table()
-            ->orderBy('batch', 'asc')
-            ->orderBy('migration', 'asc')
-            ->pluck('migration')->all();
+        return $this->table()->order_by('batch', 'asc')->order_by('migration', 'asc')->pluck('migration')->all();
     }
-
     /**
      * Get the list of migrations.
      *
      * @param  int  $steps
      * @return array{id: int, migration: string, batch: int}[]
      */
-    public function getMigrations($steps)
+    public function get_migrations($steps)
     {
         $query = $this->table()->where('batch', '>=', '1');
-
-        return $query->orderBy('batch', 'desc')
-            ->orderBy('migration', 'desc')
-            ->limit($steps)
-            ->get()
-            ->all();
+        return $query->order_by('batch', 'desc')->order_by('migration', 'desc')->limit($steps)->get()->all();
     }
-
     /**
      * Get the list of the migrations by batch number.
      *
      * @param  int  $batch
      * @return array{id: int, migration: string, batch: int}[]
      */
-    public function getMigrationsByBatch($batch)
+    public function get_migrations_by_batch($batch)
     {
-        return $this->table()
-            ->where('batch', $batch)
-            ->orderBy('migration', 'desc')
-            ->get()
-            ->all();
+        return $this->table()->where('batch', $batch)->order_by('migration', 'desc')->get()->all();
     }
-
     /**
      * Get the last migration batch.
      *
      * @return array{id: int, migration: string, batch: int}[]
      */
-    public function getLast()
+    public function get_last()
     {
-        $query = $this->table()->where('batch', $this->getLastBatchNumber());
-
-        return $query->orderBy('migration', 'desc')->get()->all();
+        $query = $this->table()->where('batch', $this->get_last_batch_number());
+        return $query->order_by('migration', 'desc')->get()->all();
     }
-
     /**
      * Get the completed migrations with their batch numbers.
      *
      * @return array<int, string>[]
      */
-    public function getMigrationBatches()
+    public function get_migration_batches()
     {
-        return $this->table()
-            ->orderBy('batch', 'asc')
-            ->orderBy('migration', 'asc')
-            ->pluck('batch', 'migration')->all();
+        return $this->table()->order_by('batch', 'asc')->order_by('migration', 'asc')->pluck('batch', 'migration')->all();
     }
-
     /**
      * Log that a migration was run.
      *
@@ -111,10 +87,8 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     public function log($file, $batch): void
     {
         $record = ['migration' => $file, 'batch' => $batch];
-
         $this->table()->insert($record);
     }
-
     /**
      * Remove a migration from the log.
      *
@@ -124,34 +98,30 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     {
         $this->table()->where('migration', $migration->migration)->delete();
     }
-
     /**
      * Get the next migration batch number.
      *
      * @return int
      */
-    public function getNextBatchNumber(): int|float
+    public function get_next_batch_number(): int|float
     {
-        return $this->getLastBatchNumber() + 1;
+        return $this->get_last_batch_number() + 1;
     }
-
     /**
      * Get the last migration batch number.
      *
      * @return int
      */
-    public function getLastBatchNumber()
+    public function get_last_batch_number()
     {
         return $this->table()->max('batch');
     }
-
     /**
      * Create the migration repository data store.
      */
-    public function createRepository(): void
+    public function create_repository(): void
     {
-        $schema = $this->getConnection()->getSchemaBuilder();
-
+        $schema = $this->get_connection()->get_schema_builder();
         $schema->create($this->table, function ($table): void {
             // The migrations table is responsible for keeping track of which of the
             // migrations have actually run for the application. We'll create the
@@ -161,61 +131,53 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
             $table->integer('batch');
         });
     }
-
     /**
      * Determine if the migration repository exists.
      *
      * @return bool
      */
-    public function repositoryExists()
+    public function repository_exists()
     {
-        $schema = $this->getConnection()->getSchemaBuilder();
-
-        return $schema->hasTable($this->table);
+        $schema = $this->get_connection()->get_schema_builder();
+        return $schema->has_table($this->table);
     }
-
     /**
      * Delete the migration repository data store.
      */
-    public function deleteRepository(): void
+    public function delete_repository(): void
     {
-        $schema = $this->getConnection()->getSchemaBuilder();
-
+        $schema = $this->get_connection()->get_schema_builder();
         $schema->drop($this->table);
     }
-
     /**
      * Get a query builder for the migration table.
      */
     protected function table(): \Illuminate\Database\Query\Builder
     {
-        return $this->getConnection()->table($this->table)->useWritePdo();
+        return $this->get_connection()->table($this->table)->use_write_pdo();
     }
-
     /**
      * Get the connection resolver instance.
      */
-    public function getConnectionResolver(): \Illuminate\Database\ConnectionResolverInterface
+    public function get_connection_resolver(): \Illuminate\Database\Connection_Resolver_Interface
     {
         return $this->resolver;
     }
-
     /**
      * Resolve the database connection instance.
      *
      * @return \Illuminate\Database\Connection
      */
-    public function getConnection()
+    public function get_connection()
     {
         return $this->resolver->connection($this->connection);
     }
-
     /**
      * Set the information source to gather data.
      *
      * @param  string  $name
      */
-    public function setSource($name): void
+    public function set_source($name): void
     {
         $this->connection = $name;
     }

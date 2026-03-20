@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Auth;
 
 use Closure;
-
-interface PasswordBroker
+interface Password_Broker
 {
     /**
      * Constant representing a successfully sent reminder.
@@ -14,42 +12,36 @@ interface PasswordBroker
      * @var string
      */
     public const RESET_LINK_SENT = 'passwords.sent';
-
     /**
      * Constant representing a successfully reset password.
      *
      * @var string
      */
     public const PASSWORD_RESET = 'passwords.reset';
-
     /**
      * Constant representing the user not found response.
      *
      * @var string
      */
     public const INVALID_USER = 'passwords.user';
-
     /**
      * Constant representing an invalid token.
      *
      * @var string
      */
     public const INVALID_TOKEN = 'passwords.token';
-
     /**
      * Constant representing a throttled reset attempt.
      *
      * @var string
      */
     public const RESET_THROTTLED = 'passwords.throttled';
-
     /**
      * Send a password reset link to a user.
      *
      * @return string
      */
-    public function sendResetLink(array $credentials, ?Closure $callback = null);
-
+    public function send_reset_link(array $credentials, ?Closure $callback = null);
     /**
      * Reset the password for the given token.
      *

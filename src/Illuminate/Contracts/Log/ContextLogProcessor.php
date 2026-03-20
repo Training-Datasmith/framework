@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Log;
 
-use Monolog\Processor\ProcessorInterface;
-
-interface ContextLogProcessor extends ProcessorInterface
+use Monolog\Processor\Processor_Interface;
+interface Context_Log_Processor extends Processor_Interface
 {
 }

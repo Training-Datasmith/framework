@@ -1,20 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Client;
 
-use Carbon\CarbonImmutable;
+use Carbon\Carbon_Immutable;
 use Closure;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Promise\EachPromise;
-use GuzzleHttp\Utils;
-use Illuminate\Http\Client\Promises\LazyPromise;
-
+use Guzzle_Http\Exception\Request_Exception;
+use Guzzle_Http\Promise\Each_Promise;
+use Guzzle_Http\Utils;
+use Illuminate\Http\Client\Promises\Lazy_Promise;
 use function Illuminate\Support\defer;
-
-use Illuminate\Support\Defer\DeferredCallback;
-
+use Illuminate\Support\Defer\Deferred_Callback;
 /**
  * @mixin \Illuminate\Http\Client\Factory
  */
@@ -24,115 +20,99 @@ class Batch
      * The factory instance.
      */
     protected \Illuminate\Http\Client\Factory $factory;
-
     /**
      * The array of requests.
      *
      * @var array<array-key, \Illuminate\Http\Client\PendingRequest>
      */
     protected $requests = [];
-
     /**
      * The total number of requests that belong to the batch.
      *
      * @var non-negative-int
      */
-    public $totalRequests = 0;
-
+    public $total_requests = 0;
     /**
      * The total number of requests that are still pending.
      *
      * @var non-negative-int
      */
-    public $pendingRequests = 0;
-
+    public $pending_requests = 0;
     /**
      * The total number of requests that have failed.
      *
      * @var non-negative-int
      */
-    public $failedRequests = 0;
-
+    public $failed_requests = 0;
     /**
      * The handler function for the Guzzle client.
      *
      * @var callable
      */
     protected $handler;
-
     /**
      * The callback to run before the first request from the batch runs.
      *
      * @var (\Closure($this): void)|null
      */
-    protected $beforeCallback;
-
+    protected $before_callback;
     /**
      * The callback to run after a request from the batch succeeds.
      *
      * @var (\Closure($this, int|string, \Illuminate\Http\Client\Response): void)|null
      */
-    protected $progressCallback;
-
+    protected $progress_callback;
     /**
      * The callback to run after a request from the batch fails.
      *
      * @var (\Closure($this, int|string, \Illuminate\Http\Client\Response|\Illuminate\Http\Client\RequestException|\Illuminate\Http\Client\ConnectionException): void)|null
      */
-    protected $catchCallback;
-
+    protected $catch_callback;
     /**
      * The callback to run if all the requests from the batch succeeded.
      *
      * @var (\Closure($this, array<int|string, \Illuminate\Http\Client\Response>): void)|null
      */
-    protected $thenCallback;
-
+    protected $then_callback;
     /**
      * The callback to run after all the requests from the batch finish.
      *
      * @var (\Closure($this, array<int|string, \Illuminate\Http\Client\Response>): void)|null
      */
-    protected $finallyCallback;
-
+    protected $finally_callback;
     /**
      * If the batch already was sent.
      *
      * @var bool
      */
-    protected $inProgress = false;
-
+    protected $in_progress = false;
     /**
      * The date when the batch was created.
      *
      * @var \Carbon\CarbonImmutable|null
      */
-    public $createdAt;
-
+    public $created_at;
     /**
      * The date when the batch finished.
      *
      * @var \Carbon\CarbonImmutable|null
      */
-    public $finishedAt;
-
+    public $finished_at;
     /**
      * The maximum number of concurrent requests.
      *
      * @var int|null
      */
-    protected $concurrencyLimit;
-
+    protected $concurrency_limit;
     /**
      * Create a new request batch instance.
      */
     public function __construct(?Factory $factory = null)
     {
         $this->factory = $factory ?: new Factory();
-        $this->handler = Utils::chooseHandler();
-        $this->createdAt = new CarbonImmutable();
+        $this->handler = Utils::choose_handler();
+        $this->created_at = new Carbon_Immutable();
     }
-
     /**
      * Add a request to the batch with a key.
      *
@@ -141,15 +121,12 @@ class Batch
      */
     public function as(string $key)
     {
-        if ($this->inProgress) {
-            throw new BatchInProgressException();
+        if ($this->in_progress) {
+            throw new Batch_In_Progress_Exception();
         }
-
-        $this->incrementPendingRequests();
-
-        return $this->requests[$key] = $this->asyncRequest();
+        $this->increment_pending_requests();
+        return $this->requests[$key] = $this->async_request();
     }
-
     /**
      * Add a request to the batch with a numeric index.
      *
@@ -157,17 +134,14 @@ class Batch
      *
      * @throws \Illuminate\Http\Client\BatchInProgressException
      */
-    public function newRequest()
+    public function new_request()
     {
-        if ($this->inProgress) {
-            throw new BatchInProgressException();
+        if ($this->in_progress) {
+            throw new Batch_In_Progress_Exception();
         }
-
-        $this->incrementPendingRequests();
-
-        return $this->requests[] = $this->asyncRequest();
+        $this->increment_pending_requests();
+        return $this->requests[] = $this->async_request();
     }
-
     /**
      * Register a callback to run before the first request from the batch runs.
      *
@@ -175,11 +149,9 @@ class Batch
      */
     public function before(Closure $callback): self
     {
-        $this->beforeCallback = $callback;
-
+        $this->before_callback = $callback;
         return $this;
     }
-
     /**
      * Register a callback to run after a request from the batch succeeds.
      *
@@ -187,11 +159,9 @@ class Batch
      */
     public function progress(Closure $callback): self
     {
-        $this->progressCallback = $callback;
-
+        $this->progress_callback = $callback;
         return $this;
     }
-
     /**
      * Register a callback to run after a request from the batch fails.
      *
@@ -199,11 +169,9 @@ class Batch
      */
     public function catch(Closure $callback): self
     {
-        $this->catchCallback = $callback;
-
+        $this->catch_callback = $callback;
         return $this;
     }
-
     /**
      * Register a callback to run after all the requests from the batch succeed.
      *
@@ -211,11 +179,9 @@ class Batch
      */
     public function then(Closure $callback): self
     {
-        $this->thenCallback = $callback;
-
+        $this->then_callback = $callback;
         return $this;
     }
-
     /**
      * Register a callback to run after all the requests from the batch finish.
      *
@@ -223,29 +189,24 @@ class Batch
      */
     public function finally(Closure $callback): self
     {
-        $this->finallyCallback = $callback;
-
+        $this->finally_callback = $callback;
         return $this;
     }
-
     /**
      * Set the maximum number of concurrent requests.
      */
     public function concurrency(int $limit): self
     {
-        $this->concurrencyLimit = $limit;
-
+        $this->concurrency_limit = $limit;
         return $this;
     }
-
     /**
      * Defer the batch to run in the background after the current task has finished.
      */
-    public function defer(): DeferredCallback
+    public function defer(): Deferred_Callback
     {
-        return defer(fn (): array => $this->send());
+        return defer(fn(): array => $this->send());
     }
-
     /**
      * Send all of the requests in the batch.
      *
@@ -253,163 +214,124 @@ class Batch
      */
     public function send(): array
     {
-        $this->inProgress = true;
-
-        if ($this->beforeCallback !== null) {
-            call_user_func($this->beforeCallback, $this);
+        $this->in_progress = true;
+        if ($this->before_callback !== null) {
+            call_user_func($this->before_callback, $this);
         }
-
         $results = [];
-
-        if (! empty($this->requests)) {
-            $eachPromiseOptions = [
-                'fulfilled' => function ($result, $key) use (&$results) {
-                    $results[$key] = $result;
-
-                    $this->decrementPendingRequests();
-
-                    if ($result instanceof Response && $result->successful()) {
-                        if ($this->progressCallback !== null) {
-                            call_user_func($this->progressCallback, $this, $key, $result);
-                        }
-
-                        return $result;
+        if (!empty($this->requests)) {
+            $each_promise_options = ['fulfilled' => function ($result, $key) use (&$results) {
+                $results[$key] = $result;
+                $this->decrement_pending_requests();
+                if ($result instanceof Response && $result->successful()) {
+                    if ($this->progress_callback !== null) {
+                        call_user_func($this->progress_callback, $this, $key, $result);
                     }
-
-                    if (
-                        ($result instanceof Response && $result->failed()) ||
-                        $result instanceof RequestException ||
-                        $result instanceof ConnectionException
-                    ) {
-                        $this->incrementFailedRequests();
-
-                        if ($this->catchCallback !== null) {
-                            call_user_func($this->catchCallback, $this, $key, $result);
-                        }
-                    }
-
                     return $result;
-                },
-                'rejected' => function ($reason, $key) {
-                    $this->decrementPendingRequests();
-
-                    if ($reason instanceof RequestException || $reason instanceof ConnectionException) {
-                        $this->incrementFailedRequests();
-
-                        if ($this->catchCallback !== null) {
-                            call_user_func($this->catchCallback, $this, $key, $reason);
-                        }
+                }
+                if ($result instanceof Response && $result->failed() || $result instanceof Request_Exception || $result instanceof Connection_Exception) {
+                    $this->increment_failed_requests();
+                    if ($this->catch_callback !== null) {
+                        call_user_func($this->catch_callback, $this, $key, $result);
                     }
-
-                    return $reason;
-                },
-            ];
-
-            if ($this->concurrencyLimit !== null) {
-                $eachPromiseOptions['concurrency'] = $this->concurrencyLimit;
+                }
+                return $result;
+            }, 'rejected' => function ($reason, $key) {
+                $this->decrement_pending_requests();
+                if ($reason instanceof Request_Exception || $reason instanceof Connection_Exception) {
+                    $this->increment_failed_requests();
+                    if ($this->catch_callback !== null) {
+                        call_user_func($this->catch_callback, $this, $key, $reason);
+                    }
+                }
+                return $reason;
+            }];
+            if ($this->concurrency_limit !== null) {
+                $each_promise_options['concurrency'] = $this->concurrency_limit;
             }
-
-            $promiseGenerator = function () {
+            $promise_generator = function () {
                 foreach ($this->requests as $key => $item) {
-                    $promise = $item instanceof PendingRequest ? $item->getPromise() : $item;
-                    yield $key => $promise instanceof LazyPromise ? $promise->buildPromise() : $promise;
+                    $promise = $item instanceof Pending_Request ? $item->get_promise() : $item;
+                    yield $key => $promise instanceof Lazy_Promise ? $promise->build_promise() : $promise;
                 }
             };
-
-            (new EachPromise($promiseGenerator(), $eachPromiseOptions))
-                ->promise()
-                ->wait();
+            (new Each_Promise($promise_generator(), $each_promise_options))->promise()->wait();
         }
-
         // Before returning the results, we must ensure that the results are sorted
         // in the same order as the requests were defined, respecting any custom
         // key names that were assigned to this request using the "as" method.
-        uksort($results, fn ($key1, $key2): int => array_search($key1, array_keys($this->requests), true) <=>
-               array_search($key2, array_keys($this->requests), true));
-
-        if (! $this->hasFailures() && $this->thenCallback !== null) {
-            call_user_func($this->thenCallback, $this, $results);
+        uksort($results, fn($key1, $key2): int => array_search($key1, array_keys($this->requests), true) <=> array_search($key2, array_keys($this->requests), true));
+        if (!$this->has_failures() && $this->then_callback !== null) {
+            call_user_func($this->then_callback, $this, $results);
         }
-
-        if ($this->finallyCallback !== null) {
-            call_user_func($this->finallyCallback, $this, $results);
+        if ($this->finally_callback !== null) {
+            call_user_func($this->finally_callback, $this, $results);
         }
-
-        $this->finishedAt = new CarbonImmutable();
-        $this->inProgress = false;
-
+        $this->finished_at = new Carbon_Immutable();
+        $this->in_progress = false;
         return $results;
     }
-
     /**
      * Retrieve a new async pending request.
      */
-    protected function asyncRequest(): \Illuminate\Http\Client\PendingRequest
+    protected function async_request(): \Illuminate\Http\Client\Pending_Request
     {
-        return $this->factory->setHandler($this->handler)->async();
+        return $this->factory->set_handler($this->handler)->async();
     }
-
     /**
      * Get the total number of requests that have been processed by the batch thus far.
      *
      * @return non-negative-int
      */
-    public function processedRequests(): int
+    public function processed_requests(): int
     {
-        return $this->totalRequests - $this->pendingRequests;
+        return $this->total_requests - $this->pending_requests;
     }
-
     /**
      * Determine if the batch has finished executing.
      */
     public function finished(): bool
     {
-        return ! is_null($this->finishedAt);
+        return !is_null($this->finished_at);
     }
-
     /**
      * Increment the count of total and pending requests in the batch.
      */
-    protected function incrementPendingRequests(): void
+    protected function increment_pending_requests(): void
     {
-        $this->totalRequests++;
-        $this->pendingRequests++;
+        $this->total_requests++;
+        $this->pending_requests++;
     }
-
     /**
      * Decrement the count of pending requests in the batch.
      */
-    protected function decrementPendingRequests(): void
+    protected function decrement_pending_requests(): void
     {
-        $this->pendingRequests--;
+        $this->pending_requests--;
     }
-
     /**
      * Determine if the batch has job failures.
      */
-    public function hasFailures(): bool
+    public function has_failures(): bool
     {
-        return $this->failedRequests > 0;
+        return $this->failed_requests > 0;
     }
-
     /**
      * Increment the count of failed requests in the batch.
      */
-    protected function incrementFailedRequests(): void
+    protected function increment_failed_requests(): void
     {
-        $this->failedRequests++;
+        $this->failed_requests++;
     }
-
     /**
      * Get the requests in the batch.
      *
      * @return array<array-key, \Illuminate\Http\Client\PendingRequest>
      */
-    public function getRequests(): array
+    public function get_requests(): array
     {
         return $this->requests;
     }
-
     /**
      * Add a request to the batch with a numeric index.
      *
@@ -419,6 +341,6 @@ class Batch
      */
     public function __call(string $method, array $parameters)
     {
-        return $this->newRequest()->{$method}(...$parameters);
+        return $this->new_request()->{$method}(...$parameters);
     }
 }

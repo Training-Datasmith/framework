@@ -1,77 +1,61 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Testing\Concerns;
 
 use Illuminate\Support\Facades\View as ViewFacade;
-use Illuminate\Support\MessageBag;
-use Illuminate\Support\ViewErrorBag;
-use Illuminate\Testing\TestComponent;
-use Illuminate\Testing\TestView;
+use Illuminate\Support\Message_Bag;
+use Illuminate\Support\View_Error_Bag;
+use Illuminate\Testing\Test_Component;
+use Illuminate\Testing\Test_View;
 use Illuminate\View\View;
-
-trait InteractsWithViews
+trait Interacts_With_Views
 {
     /**
      * Create a new TestView from the given view.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
      */
-    protected function view(string $view, $data = []): \Illuminate\Testing\TestView
+    protected function view(string $view, $data = []): \Illuminate\Testing\Test_View
     {
-        return new TestView(view($view, $data));
+        return new Test_View(view($view, $data));
     }
-
     /**
      * Render the contents of the given Blade template string.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
      */
-    protected function blade(string $template, $data = []): \Illuminate\Testing\TestView
+    protected function blade(string $template, $data = []): \Illuminate\Testing\Test_View
     {
-        $tempDirectory = sys_get_temp_dir();
-
-        if (! in_array($tempDirectory, ViewFacade::getFinder()->getPaths())) {
-            ViewFacade::addLocation(sys_get_temp_dir());
+        $temp_directory = sys_get_temp_dir();
+        if (!in_array($temp_directory, View_Facade::get_finder()->get_paths())) {
+            View_Facade::add_location(sys_get_temp_dir());
         }
-
-        $tempFileInfo = pathinfo(tempnam($tempDirectory, 'laravel-blade'));
-
-        $tempFile = $tempFileInfo['dirname'].'/'.$tempFileInfo['filename'].'.blade.php';
-
-        file_put_contents($tempFile, $template);
-
-        return new TestView(view($tempFileInfo['filename'], $data));
+        $temp_file_info = pathinfo(tempnam($temp_directory, 'laravel-blade'));
+        $temp_file = $temp_file_info['dirname'] . '/' . $temp_file_info['filename'] . '.blade.php';
+        file_put_contents($temp_file, $template);
+        return new Test_View(view($temp_file_info['filename'], $data));
     }
-
     /**
      * Render the given view component.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
      */
-    protected function component(string $componentClass, $data = []): \Illuminate\Testing\TestComponent
+    protected function component(string $component_class, $data = []): \Illuminate\Testing\Test_Component
     {
-        $component = $this->app->make($componentClass, $data);
-
-        $view = value($component->resolveView(), $data);
-
-        $view = $view instanceof View
-            ? $view->with($component->data())
-            : view($view, $component->data());
-
-        return new TestComponent($component, $view);
+        $component = $this->app->make($component_class, $data);
+        $view = value($component->resolve_view(), $data);
+        $view = $view instanceof View ? $view->with($component->data()) : view($view, $component->data());
+        return new Test_Component($component, $view);
     }
-
     /**
      * Populate the shared view error bag with the given errors.
      *
      * @return $this
      */
-    protected function withViewErrors(array $errors, string $key = 'default')
+    protected function with_view_errors(array $errors, string $key = 'default')
     {
-        ViewFacade::share('errors', (new ViewErrorBag())->put($key, new MessageBag($errors)));
-
+        View_Facade::share('errors', (new View_Error_Bag())->put($key, new Message_Bag($errors)));
         return $this;
     }
 }

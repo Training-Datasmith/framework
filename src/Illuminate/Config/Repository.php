@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Config;
 
 use ArrayAccess;
@@ -10,11 +9,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
-
-class Repository implements ArrayAccess, ConfigContract
+class Repository implements ArrayAccess, Config_Contract
 {
     use Macroable;
-
     /**
      * Create a new configuration repository.
      */
@@ -25,9 +22,9 @@ class Repository implements ArrayAccess, ConfigContract
          * @var array<string,mixed>
          */
         protected array $items = []
-    ) {
+    )
+    {
     }
-
     /**
      * Determine if the given configuration value exists.
      *
@@ -37,7 +34,6 @@ class Repository implements ArrayAccess, ConfigContract
     {
         return Arr::has($this->items, $key);
     }
-
     /**
      * Get the specified configuration value.
      *
@@ -48,33 +44,27 @@ class Repository implements ArrayAccess, ConfigContract
     public function get($key, $default = null)
     {
         if (is_array($key)) {
-            return $this->getMany($key);
+            return $this->get_many($key);
         }
-
         return Arr::get($this->items, $key, $default);
     }
-
     /**
      * Get many configuration values.
      *
      * @param  array<string|int,mixed>  $keys
      * @return array<string,mixed>
      */
-    public function getMany($keys): array
+    public function get_many($keys): array
     {
         $config = [];
-
         foreach ($keys as $key => $default) {
             if (is_numeric($key)) {
                 [$key, $default] = [$default, null];
             }
-
             $config[$key] = Arr::get($this->items, $key, $default);
         }
-
         return $config;
     }
-
     /**
      * Get the specified string configuration value.
      *
@@ -85,16 +75,11 @@ class Repository implements ArrayAccess, ConfigContract
     public function string(string $key, $default = null): string
     {
         $value = $this->get($key, $default);
-
-        if (! is_string($value)) {
-            throw new InvalidArgumentException(
-                sprintf('Configuration value for key [%s] must be a string, %s given.', $key, gettype($value))
-            );
+        if (!is_string($value)) {
+            throw new InvalidArgumentException(sprintf('Configuration value for key [%s] must be a string, %s given.', $key, gettype($value)));
         }
-
         return $value;
     }
-
     /**
      * Get the specified integer configuration value.
      *
@@ -105,16 +90,11 @@ class Repository implements ArrayAccess, ConfigContract
     public function integer(string $key, $default = null): int
     {
         $value = $this->get($key, $default);
-
-        if (! is_int($value)) {
-            throw new InvalidArgumentException(
-                sprintf('Configuration value for key [%s] must be an integer, %s given.', $key, gettype($value))
-            );
+        if (!is_int($value)) {
+            throw new InvalidArgumentException(sprintf('Configuration value for key [%s] must be an integer, %s given.', $key, gettype($value)));
         }
-
         return $value;
     }
-
     /**
      * Get the specified float configuration value.
      *
@@ -125,16 +105,11 @@ class Repository implements ArrayAccess, ConfigContract
     public function float(string $key, $default = null): float
     {
         $value = $this->get($key, $default);
-
-        if (! is_float($value)) {
-            throw new InvalidArgumentException(
-                sprintf('Configuration value for key [%s] must be a float, %s given.', $key, gettype($value))
-            );
+        if (!is_float($value)) {
+            throw new InvalidArgumentException(sprintf('Configuration value for key [%s] must be a float, %s given.', $key, gettype($value)));
         }
-
         return $value;
     }
-
     /**
      * Get the specified boolean configuration value.
      *
@@ -145,16 +120,11 @@ class Repository implements ArrayAccess, ConfigContract
     public function boolean(string $key, $default = null): bool
     {
         $value = $this->get($key, $default);
-
-        if (! is_bool($value)) {
-            throw new InvalidArgumentException(
-                sprintf('Configuration value for key [%s] must be a boolean, %s given.', $key, gettype($value))
-            );
+        if (!is_bool($value)) {
+            throw new InvalidArgumentException(sprintf('Configuration value for key [%s] must be a boolean, %s given.', $key, gettype($value)));
         }
-
         return $value;
     }
-
     /**
      * Get the specified array configuration value.
      *
@@ -165,16 +135,11 @@ class Repository implements ArrayAccess, ConfigContract
     public function array(string $key, $default = null): array
     {
         $value = $this->get($key, $default);
-
-        if (! is_array($value)) {
-            throw new InvalidArgumentException(
-                sprintf('Configuration value for key [%s] must be an array, %s given.', $key, gettype($value))
-            );
+        if (!is_array($value)) {
+            throw new InvalidArgumentException(sprintf('Configuration value for key [%s] must be an array, %s given.', $key, gettype($value)));
         }
-
         return $value;
     }
-
     /**
      * Get the specified array configuration value as a collection.
      *
@@ -185,7 +150,6 @@ class Repository implements ArrayAccess, ConfigContract
     {
         return new Collection($this->array($key, $default));
     }
-
     /**
      * Set a given configuration value.
      *
@@ -195,12 +159,10 @@ class Repository implements ArrayAccess, ConfigContract
     public function set($key, $value = null): void
     {
         $keys = is_array($key) ? $key : [$key => $value];
-
         foreach ($keys as $key => $value) {
             Arr::set($this->items, $key, $value);
         }
     }
-
     /**
      * Prepend a value onto an array configuration value.
      *
@@ -210,12 +172,9 @@ class Repository implements ArrayAccess, ConfigContract
     public function prepend($key, $value): void
     {
         $array = $this->get($key, []);
-
         array_unshift($array, $value);
-
         $this->set($key, $array);
     }
-
     /**
      * Push a value onto an array configuration value.
      *
@@ -225,12 +184,9 @@ class Repository implements ArrayAccess, ConfigContract
     public function push($key, $value): void
     {
         $array = $this->get($key, []);
-
         $array[] = $value;
-
         $this->set($key, $array);
     }
-
     /**
      * Get all of the configuration items for the application.
      */
@@ -238,7 +194,6 @@ class Repository implements ArrayAccess, ConfigContract
     {
         return $this->items;
     }
-
     /**
      * Determine if the given configuration option exists.
      *
@@ -248,7 +203,6 @@ class Repository implements ArrayAccess, ConfigContract
     {
         return $this->has($key);
     }
-
     /**
      * Get a configuration option.
      *
@@ -258,7 +212,6 @@ class Repository implements ArrayAccess, ConfigContract
     {
         return $this->get($key);
     }
-
     /**
      * Set a configuration option.
      *
@@ -269,7 +222,6 @@ class Repository implements ArrayAccess, ConfigContract
     {
         $this->set($key, $value);
     }
-
     /**
      * Unset a configuration option.
      *

@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\Events;
 
 use Illuminate\Console\Scheduling\Event;
-
-class ScheduledTaskFinished
+class Scheduled_Task_Finished
 {
     /**
      * Create a new event instance.
@@ -14,9 +12,7 @@ class ScheduledTaskFinished
      * @param  \Illuminate\Console\Scheduling\Event  $task  The scheduled event that ran.
      * @param  float  $runtime  The runtime of the scheduled event.
      */
-    public function __construct(
-        public Event $task,
-        public float $runtime,
-    ) {
+    public function __construct(public Event $task, public float $runtime)
+    {
     }
 }

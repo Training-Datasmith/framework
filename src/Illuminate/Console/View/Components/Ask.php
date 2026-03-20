@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components;
 
 use Symfony\Component\Console\Question\Question;
-
 class Ask extends Component
 {
     /**
@@ -17,11 +15,6 @@ class Ask extends Component
      */
     public function render($question, $default = null, bool $multiline = false)
     {
-        return $this->usingQuestionHelper(
-            fn () => $this->output->askQuestion(
-                (new Question($question, $default))
-                    ->setMultiline($multiline)
-            )
-        );
+        return $this->using_question_helper(fn() => $this->output->ask_question((new Question($question, $default))->set_multiline($multiline)));
     }
 }

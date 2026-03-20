@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Testing\Concerns;
 
 use Illuminate\Foundation\Testing\Wormhole;
 use Illuminate\Support\Carbon;
-
-trait InteractsWithTime
+trait Interacts_With_Time
 {
     /**
      * @template TReturn of mixed
@@ -17,13 +15,11 @@ trait InteractsWithTime
      * @param  (callable(): TReturn)|null  $callback
      * @return ($callback is null ? \Illuminate\Support\Carbon : TReturn)
      */
-    public function freezeTime($callback = null)
+    public function freeze_time($callback = null)
     {
-        $result = $this->travelTo($now = Carbon::now(), $callback);
-
+        $result = $this->travel_to($now = Carbon::now(), $callback);
         return is_null($callback) ? $now : $result;
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -32,13 +28,11 @@ trait InteractsWithTime
      * @param  (callable(): TReturn)|null  $callback
      * @return ($callback is null ? \Illuminate\Support\Carbon : TReturn)
      */
-    public function freezeSecond($callback = null)
+    public function freeze_second($callback = null)
     {
-        $result = $this->travelTo($now = Carbon::now()->startOfSecond(), $callback);
-
+        $result = $this->travel_to($now = Carbon::now()->start_of_second(), $callback);
         return is_null($callback) ? $now : $result;
     }
-
     /**
      * Begin travelling to another time.
      *
@@ -48,7 +42,6 @@ trait InteractsWithTime
     {
         return new Wormhole($value);
     }
-
     /**
      * @template TReturn of mixed
      *
@@ -58,23 +51,21 @@ trait InteractsWithTime
      * @param  (callable(): TReturn)|null  $callback
      * @return ($callback is null ? void : TReturn)
      */
-    public function travelTo($date, $callback = null)
+    public function travel_to($date, $callback = null)
     {
-        Carbon::setTestNow($date);
-
+        Carbon::set_test_now($date);
         if ($callback) {
             return tap($callback($date), function (): void {
-                Carbon::setTestNow();
+                Carbon::set_test_now();
             });
         }
     }
-
     /**
      * Travel back to the current time.
      *
      * @return \DateTimeInterface
      */
-    public function travelBack()
+    public function travel_back()
     {
         return Wormhole::back();
     }

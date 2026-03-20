@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components\Mutators;
 
-class EnsureDynamicContentIsHighlighted
+class Ensure_Dynamic_Content_Is_Highlighted
 {
     /**
      * Highlight dynamic content within the given string.

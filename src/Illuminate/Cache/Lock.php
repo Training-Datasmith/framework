@@ -1,33 +1,28 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache;
 
 use Illuminate\Contracts\Cache\Lock as LockContract;
-use Illuminate\Contracts\Cache\LockTimeoutException;
-use Illuminate\Support\InteractsWithTime;
+use Illuminate\Contracts\Cache\Lock_Timeout_Exception;
+use Illuminate\Support\Interacts_With_Time;
 use Illuminate\Support\Sleep;
 use Illuminate\Support\Str;
-
-abstract class Lock implements LockContract
+abstract class Lock implements Lock_Contract
 {
-    use InteractsWithTime;
-
+    use Interacts_With_Time;
     /**
      * The scope identifier of this lock.
      *
      * @var string
      */
     protected $owner;
-
     /**
      * The number of milliseconds to wait before re-attempting to acquire a lock while blocking.
      *
      * @var int
      */
-    protected $sleepMilliseconds = 250;
-
+    protected $sleep_milliseconds = 250;
     /**
      * Create a new lock instance.
      *
@@ -35,42 +30,41 @@ abstract class Lock implements LockContract
      * @param  int  $seconds
      * @param  string|null  $owner
      */
-    public function __construct(/**
-     * The name of the lock.
-     */
-        protected $name, /**
-     * The number of seconds the lock should be maintained.
-     */
+    public function __construct(
+        /**
+         * The name of the lock.
+         */
+        protected $name,
+        /**
+         * The number of seconds the lock should be maintained.
+         */
         protected $seconds,
         $owner = null
-    ) {
+    )
+    {
         if (is_null($owner)) {
             $owner = Str::random();
         }
         $this->owner = $owner;
     }
-
     /**
      * Attempt to acquire the lock.
      *
      * @return bool
      */
     abstract public function acquire();
-
     /**
      * Release the lock.
      *
      * @return bool
      */
     abstract public function release();
-
     /**
      * Returns the owner value written into the driver for this lock.
      *
      * @return string
      */
-    abstract protected function getCurrentOwner();
-
+    abstract protected function get_current_owner();
     /**
      * Attempt to acquire the lock.
      *
@@ -80,7 +74,6 @@ abstract class Lock implements LockContract
     public function get($callback = null)
     {
         $result = $this->acquire();
-
         if ($result && is_callable($callback)) {
             try {
                 return $callback();
@@ -88,10 +81,8 @@ abstract class Lock implements LockContract
                 $this->release();
             }
         }
-
         return $result;
     }
-
     /**
      * Attempt to acquire the lock for the given number of seconds.
      *
@@ -103,20 +94,15 @@ abstract class Lock implements LockContract
      */
     public function block($seconds, $callback = null)
     {
-        $starting = ((int) now()->format('Uu')) / 1000;
-
+        $starting = (int) now()->format('Uu') / 1000;
         $milliseconds = $seconds * 1000;
-
-        while (! $this->acquire()) {
-            $now = ((int) now()->format('Uu')) / 1000;
-
-            if (($now + $this->sleepMilliseconds - $milliseconds) >= $starting) {
-                throw new LockTimeoutException();
+        while (!$this->acquire()) {
+            $now = (int) now()->format('Uu') / 1000;
+            if ($now + $this->sleep_milliseconds - $milliseconds >= $starting) {
+                throw new Lock_Timeout_Exception();
             }
-
-            Sleep::usleep($this->sleepMilliseconds * 1000);
+            Sleep::usleep($this->sleep_milliseconds * 1000);
         }
-
         if (is_callable($callback)) {
             try {
                 return $callback();
@@ -124,10 +110,8 @@ abstract class Lock implements LockContract
                 $this->release();
             }
         }
-
         return true;
     }
-
     /**
      * Returns the current owner of the lock.
      *
@@ -137,38 +121,34 @@ abstract class Lock implements LockContract
     {
         return $this->owner;
     }
-
     /**
      * Determines whether this lock is allowed to release the lock in the driver.
      *
      * @return bool
      */
-    public function isOwnedByCurrentProcess()
+    public function is_owned_by_current_process()
     {
-        return $this->isOwnedBy($this->owner);
+        return $this->is_owned_by($this->owner);
     }
-
     /**
      * Determine whether this lock is owned by the given identifier.
      *
      * @param  string|null  $owner
      * @return bool
      */
-    public function isOwnedBy($owner)
+    public function is_owned_by($owner)
     {
-        return $this->getCurrentOwner() === $owner;
+        return $this->get_current_owner() === $owner;
     }
-
     /**
      * Specify the number of milliseconds to sleep in between blocked lock acquisition attempts.
      *
      * @param  int  $milliseconds
      * @return $this
      */
-    public function betweenBlockedAttemptsSleepFor($milliseconds)
+    public function between_blocked_attempts_sleep_for($milliseconds)
     {
-        $this->sleepMilliseconds = $milliseconds;
-
+        $this->sleep_milliseconds = $milliseconds;
         return $this;
     }
 }

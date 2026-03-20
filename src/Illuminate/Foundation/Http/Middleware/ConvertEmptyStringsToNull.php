@@ -1,20 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Http\Middleware;
 
 use Closure;
-
-class ConvertEmptyStringsToNull extends TransformsRequest
+class Convert_Empty_Strings_To_Null extends Transforms_Request
 {
     /**
      * All of the registered skip callbacks.
      *
      * @var array
      */
-    protected static $skipCallbacks = [];
-
+    protected static $skip_callbacks = [];
     /**
      * Handle an incoming request.
      *
@@ -23,15 +20,13 @@ class ConvertEmptyStringsToNull extends TransformsRequest
      */
     public function handle($request, Closure $next)
     {
-        foreach (static::$skipCallbacks as $callback) {
+        foreach (static::$skip_callbacks as $callback) {
             if ($callback($request)) {
                 return $next($request);
             }
         }
-
         return parent::handle($request, $next);
     }
-
     /**
      * Transform the given value.
      *
@@ -43,20 +38,18 @@ class ConvertEmptyStringsToNull extends TransformsRequest
     {
         return $value === '' ? null : $value;
     }
-
     /**
      * Register a callback that instructs the middleware to be skipped.
      */
-    public static function skipWhen(Closure $callback): void
+    public static function skip_when(Closure $callback): void
     {
-        static::$skipCallbacks[] = $callback;
+        static::$skip_callbacks[] = $callback;
     }
-
     /**
      * Flush the middleware's global state.
      */
-    public static function flushState(): void
+    public static function flush_state(): void
     {
-        static::$skipCallbacks = [];
+        static::$skip_callbacks = [];
     }
 }

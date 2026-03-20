@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Support\Fluent;
-
 /**
  * @method $this after(string $column) Place the column "after" another column (MySQL)
  * @method $this always(bool $value = true) Used as a modifier for generatedAs() (PostgreSQL)
@@ -37,6 +35,6 @@ use Illuminate\Support\Fluent;
  * @method $this useCurrentOnUpdate() Set the TIMESTAMP column to use CURRENT_TIMESTAMP when updating (MySQL)
  * @method $this virtualAs(string|\Illuminate\Contracts\Database\Query\Expression $expression) Create a virtual generated column (MySQL/PostgreSQL/SQLite)
  */
-class ColumnDefinition extends Fluent
+class Column_Definition extends Fluent
 {
 }

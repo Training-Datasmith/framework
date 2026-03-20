@@ -1,21 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Console;
 
-use Illuminate\Console\GeneratorCommand;
-
+use Illuminate\Console\Generator_Command;
 use function Laravel\Prompts\confirm;
-
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-
-use Symfony\Component\Console\Output\OutputInterface;
-
-#[AsCommand(name: 'make:exception')]
-class ExceptionMakeCommand extends GeneratorCommand
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Console\Input\Input_Interface;
+use Symfony\Component\Console\Input\Input_Option;
+use Symfony\Component\Console\Output\Output_Interface;
+#[As_Command(name: 'make:exception')]
+class Exception_Make_Command extends Generator_Command
 {
     /**
      * The console command name.
@@ -23,81 +18,64 @@ class ExceptionMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'make:exception';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create a new custom exception class';
-
     /**
      * The type of class being generated.
      *
      * @var string
      */
     protected $type = 'Exception';
-
     /**
      * Get the stub file for the generator.
      */
-    protected function getStub(): string
+    protected function get_stub(): string
     {
         if ($this->option('render')) {
-            return $this->option('report')
-                ? __DIR__.'/stubs/exception-render-report.stub'
-                : __DIR__.'/stubs/exception-render.stub';
+            return $this->option('report') ? __DIR__ . '/stubs/exception-render-report.stub' : __DIR__ . '/stubs/exception-render.stub';
         }
-
-        return $this->option('report')
-            ? __DIR__.'/stubs/exception-report.stub'
-            : __DIR__.'/stubs/exception.stub';
+        return $this->option('report') ? __DIR__ . '/stubs/exception-report.stub' : __DIR__ . '/stubs/exception.stub';
     }
-
     /**
      * Determine if the class already exists.
      *
      * @param  string  $rawName
      */
-    protected function alreadyExists($rawName): bool
+    protected function already_exists($raw_name): bool
     {
-        return class_exists($this->rootNamespace().'Exceptions\\'.$rawName);
+        return class_exists($this->root_namespace() . 'Exceptions\\' . $raw_name);
     }
-
     /**
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
      */
-    protected function getDefaultNamespace($rootNamespace): string
+    protected function get_default_namespace($root_namespace): string
     {
-        return $rootNamespace.'\Exceptions';
+        return $root_namespace . '\Exceptions';
     }
-
     /**
      * Interact further with the user if they were prompted for missing arguments.
      *
      * @return void
      */
-    protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)
+    protected function after_prompting_for_missing_arguments(Input_Interface $input, Output_Interface $output)
     {
-        if ($this->didReceiveOptions($input)) {
+        if ($this->did_receive_options($input)) {
             return;
         }
-
-        $input->setOption('report', confirm('Should the exception have a report method?', default: false));
-        $input->setOption('render', confirm('Should the exception have a render method?', default: false));
+        $input->set_option('report', confirm('Should the exception have a report method?', default: false));
+        $input->set_option('render', confirm('Should the exception have a render method?', default: false));
     }
-
     /**
      * Get the console command options.
      */
-    protected function getOptions(): array
+    protected function get_options(): array
     {
-        return [
-            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the exception already exists'],
-            ['render', null, InputOption::VALUE_NONE, 'Create the exception with an empty render method'],
-            ['report', null, InputOption::VALUE_NONE, 'Create the exception with an empty report method'],
-        ];
+        return [['force', 'f', Input_Option::VALUE_NONE, 'Create the class even if the exception already exists'], ['render', null, Input_Option::VALUE_NONE, 'Create the exception with an empty render method'], ['report', null, Input_Option::VALUE_NONE, 'Create the exception with an empty report method']];
     }
 }

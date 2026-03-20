@@ -1,33 +1,28 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Testing;
 
 use Illuminate\Support\Arr;
-use Symfony\Component\Mime\MimeTypes;
-
-class MimeType
+use Symfony\Component\Mime\Mime_Types;
+class Mime_Type
 {
     /**
      * The MIME types instance.
      */
-    private static ?\Symfony\Component\Mime\MimeTypes $mime = null;
-
+    private static ?\Symfony\Component\Mime\Mime_Types $mime = null;
     /**
      * Get the MIME types instance.
      *
      * @return \Symfony\Component\Mime\MimeTypesInterface
      */
-    public static function getMimeTypes(): \Symfony\Component\Mime\MimeTypes
+    public static function get_mime_types(): \Symfony\Component\Mime\Mime_Types
     {
         if (self::$mime === null) {
-            self::$mime = new MimeTypes();
+            self::$mime = new Mime_Types();
         }
-
         return self::$mime;
     }
-
     /**
      * Get the MIME type for a file based on the file's extension.
      *
@@ -37,10 +32,8 @@ class MimeType
     public static function from($filename)
     {
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
-
         return self::get($extension);
     }
-
     /**
      * Get the MIME type for a given extension or return all MIME types.
      *
@@ -49,17 +42,16 @@ class MimeType
      */
     public static function get($extension)
     {
-        return Arr::first(self::getMimeTypes()->getMimeTypes($extension)) ?? 'application/octet-stream';
+        return Arr::first(self::get_mime_types()->get_mime_types($extension)) ?? 'application/octet-stream';
     }
-
     /**
      * Search for the extension of a given MIME type.
      *
      * @param  string  $mimeType
      * @return string|null
      */
-    public static function search($mimeType)
+    public static function search($mime_type)
     {
-        return Arr::first(self::getMimeTypes()->getExtensions($mimeType));
+        return Arr::first(self::get_mime_types()->get_extensions($mime_type));
     }
 }

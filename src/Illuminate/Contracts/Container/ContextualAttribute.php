@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Container;
 
-interface ContextualAttribute
+interface Contextual_Attribute
 {
 }

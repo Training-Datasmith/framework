@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\Concerns;
 
 use Illuminate\Support\Collection;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Output\OutputInterface;
-
-trait CallsCommands
+use Symfony\Component\Console\Input\Array_Input;
+use Symfony\Component\Console\Output\Null_Output;
+use Symfony\Component\Console\Output\Output_Interface;
+trait Calls_Commands
 {
     /**
      * Resolve the console command instance for the given command.
@@ -17,8 +15,7 @@ trait CallsCommands
      * @param  \Symfony\Component\Console\Command\Command|string  $command
      * @return \Symfony\Component\Console\Command\Command
      */
-    abstract protected function resolveCommand($command);
-
+    abstract protected function resolve_command($command);
     /**
      * Call another console command.
      *
@@ -27,65 +24,54 @@ trait CallsCommands
      */
     public function call($command, array $arguments = [])
     {
-        return $this->runCommand($command, $arguments, $this->output);
+        return $this->run_command($command, $arguments, $this->output);
     }
-
     /**
      * Call another console command without output.
      *
      * @param  \Symfony\Component\Console\Command\Command|string  $command
      * @return int
      */
-    public function callSilent($command, array $arguments = [])
+    public function call_silent($command, array $arguments = [])
     {
-        return $this->runCommand($command, $arguments, new NullOutput());
+        return $this->run_command($command, $arguments, new Null_Output());
     }
-
     /**
      * Call another console command without output.
      *
      * @param  \Symfony\Component\Console\Command\Command|string  $command
      * @return int
      */
-    public function callSilently($command, array $arguments = [])
+    public function call_silently($command, array $arguments = [])
     {
-        return $this->callSilent($command, $arguments);
+        return $this->call_silent($command, $arguments);
     }
-
     /**
      * Run the given console command.
      *
      * @param  \Symfony\Component\Console\Command\Command|string  $command
      * @return int
      */
-    protected function runCommand($command, array $arguments, OutputInterface $output)
+    protected function run_command($command, array $arguments, Output_Interface $output)
     {
         $arguments['command'] = $command;
-
-        $result = $this->resolveCommand($command)->run(
-            $this->createInputFromArguments($arguments),
-            $output
-        );
-
-        $this->restorePrompts();
-
+        $result = $this->resolve_command($command)->run($this->create_input_from_arguments($arguments), $output);
+        $this->restore_prompts();
         return $result;
     }
-
     /**
      * Create an input instance from the given arguments.
      *
      * @return \Symfony\Component\Console\Input\ArrayInput
      */
-    protected function createInputFromArguments(array $arguments)
+    protected function create_input_from_arguments(array $arguments)
     {
-        return tap(new ArrayInput(array_merge($this->context(), $arguments)), function ($input): void {
-            if ($input->getParameterOption('--no-interaction')) {
-                $input->setInteractive(false);
+        return tap(new Array_Input(array_merge($this->context(), $arguments)), function ($input): void {
+            if ($input->get_parameter_option('--no-interaction')) {
+                $input->set_interactive(false);
             }
         });
     }
-
     /**
      * Get all of the context passed to the command.
      *
@@ -93,16 +79,6 @@ trait CallsCommands
      */
     protected function context()
     {
-        return (new Collection($this->option()))
-            ->only([
-                'ansi',
-                'no-ansi',
-                'no-interaction',
-                'quiet',
-                'verbose',
-            ])
-            ->filter()
-            ->mapWithKeys(fn ($value, $key): array => ["--{$key}" => $value])
-            ->all();
+        return (new Collection($this->option()))->only(['ansi', 'no-ansi', 'no-interaction', 'quiet', 'verbose'])->filter()->map_with_keys(fn($value, $key): array => ["--{$key}" => $value])->all();
     }
 }

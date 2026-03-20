@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Events;
 
 trait Dispatchable
@@ -16,7 +15,6 @@ trait Dispatchable
     {
         return event(new static(...$arguments));
     }
-
     /**
      * Dispatch the event with the given arguments if the given truth test passes.
      *
@@ -24,13 +22,12 @@ trait Dispatchable
      * @param  mixed  ...$arguments
      * @return mixed
      */
-    public static function dispatchIf($boolean, ...$arguments)
+    public static function dispatch_if($boolean, ...$arguments)
     {
         if ($boolean) {
             return event(new static(...$arguments));
         }
     }
-
     /**
      * Dispatch the event with the given arguments unless the given truth test passes.
      *
@@ -38,19 +35,18 @@ trait Dispatchable
      * @param  mixed  ...$arguments
      * @return mixed
      */
-    public static function dispatchUnless($boolean, ...$arguments)
+    public static function dispatch_unless($boolean, ...$arguments)
     {
-        if (! $boolean) {
+        if (!$boolean) {
             return event(new static(...$arguments));
         }
     }
-
     /**
      * Broadcast the event with the given arguments.
      *
      * @param  mixed  ...$arguments
      */
-    public static function broadcast(...$arguments): \Illuminate\Broadcasting\PendingBroadcast
+    public static function broadcast(...$arguments): \Illuminate\Broadcasting\Pending_Broadcast
     {
         return broadcast(new static(...$arguments));
     }

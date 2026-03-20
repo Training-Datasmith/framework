@@ -1,19 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Broadcasting;
 
-class FakePendingBroadcast extends PendingBroadcast
+class Fake_Pending_Broadcast extends Pending_Broadcast
 {
     /**
      * Create a new pending broadcast instance.
      */
     public function __construct()
     {
-
     }
-
     /**
      * Broadcast the event using a specific broadcaster.
      *
@@ -24,22 +21,19 @@ class FakePendingBroadcast extends PendingBroadcast
     {
         return $this;
     }
-
     /**
      * Broadcast the event to everyone except the current user.
      *
      * @return $this
      */
-    public function toOthers(): static
+    public function to_others(): static
     {
         return $this;
     }
-
     /**
      * Handle the object's destruction.
      */
     public function __destruct()
     {
-
     }
 }

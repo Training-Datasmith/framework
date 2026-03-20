@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Translation;
 
 interface Translator
@@ -14,7 +13,6 @@ interface Translator
      * @return mixed
      */
     public function get($key, array $replace = [], $locale = null);
-
     /**
      * Get a translation according to an integer value.
      *
@@ -24,19 +22,17 @@ interface Translator
      * @return string
      */
     public function choice($key, $number, array $replace = [], $locale = null);
-
     /**
      * Get the default locale being used.
      *
      * @return string
      */
-    public function getLocale();
-
+    public function get_locale();
     /**
      * Set the default locale.
      *
      * @param  string  $locale
      * @return void
      */
-    public function setLocale($locale);
+    public function set_locale($locale);
 }

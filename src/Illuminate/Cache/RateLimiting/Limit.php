@@ -1,8 +1,7 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Illuminate\Cache\RateLimiting;
+declare (strict_types=1);
+namespace Illuminate\Cache\Rate_Limiting;
 
 class Limit
 {
@@ -11,110 +10,101 @@ class Limit
      *
      * @var int
      */
-    public $maxAttempts;
-
+    public $max_attempts;
     /**
      * The number of seconds until the rate limit is reset.
      *
      * @var int
      */
-    public $decaySeconds;
-
+    public $decay_seconds;
     /**
      * The after callback used to determine if the limiter should be hit.
      *
      * @var ?callable
      */
-    public $afterCallback;
-
+    public $after_callback;
     /**
      * The response generator callback.
      *
      * @var callable
      */
-    public $responseCallback;
-
+    public $response_callback;
     /**
      * Create a new limit instance.
      *
      * @param  mixed  $key
      */
-    public function __construct(/**
-     * The rate limit signature key.
-     */
+    public function __construct(
+        /**
+         * The rate limit signature key.
+         */
         public $key = '',
-        int $maxAttempts = 60,
-        int $decaySeconds = 60
-    ) {
-        $this->maxAttempts = $maxAttempts;
-        $this->decaySeconds = $decaySeconds;
+        int $max_attempts = 60,
+        int $decay_seconds = 60
+    )
+    {
+        $this->max_attempts = $max_attempts;
+        $this->decay_seconds = $decay_seconds;
     }
-
     /**
      * Create a new rate limit.
      *
      * @param  int  $maxAttempts
      * @param  int  $decaySeconds
      */
-    public static function perSecond($maxAttempts, $decaySeconds = 1): static
+    public static function per_second($max_attempts, $decay_seconds = 1): static
     {
-        return new static('', $maxAttempts, $decaySeconds);
+        return new static('', $max_attempts, $decay_seconds);
     }
-
     /**
      * Create a new rate limit.
      *
      * @param  int  $maxAttempts
      * @param  int  $decayMinutes
      */
-    public static function perMinute($maxAttempts, $decayMinutes = 1): static
+    public static function per_minute($max_attempts, $decay_minutes = 1): static
     {
-        return new static('', $maxAttempts, 60 * $decayMinutes);
+        return new static('', $max_attempts, 60 * $decay_minutes);
     }
-
     /**
      * Create a new rate limit using minutes as decay time.
      *
      * @param  int  $decayMinutes
      * @param  int  $maxAttempts
      */
-    public static function perMinutes($decayMinutes, $maxAttempts): static
+    public static function per_minutes($decay_minutes, $max_attempts): static
     {
-        return new static('', $maxAttempts, 60 * $decayMinutes);
+        return new static('', $max_attempts, 60 * $decay_minutes);
     }
-
     /**
      * Create a new rate limit using hours as decay time.
      *
      * @param  int  $maxAttempts
      * @param  int  $decayHours
      */
-    public static function perHour($maxAttempts, $decayHours = 1): static
+    public static function per_hour($max_attempts, $decay_hours = 1): static
     {
-        return new static('', $maxAttempts, 60 * 60 * $decayHours);
+        return new static('', $max_attempts, 60 * 60 * $decay_hours);
     }
-
     /**
      * Create a new rate limit using days as decay time.
      *
      * @param  int  $maxAttempts
      * @param  int  $decayDays
      */
-    public static function perDay($maxAttempts, $decayDays = 1): static
+    public static function per_day($max_attempts, $decay_days = 1): static
     {
-        return new static('', $maxAttempts, 60 * 60 * 24 * $decayDays);
+        return new static('', $max_attempts, 60 * 60 * 24 * $decay_days);
     }
-
     /**
      * Create a new unlimited rate limit.
      *
      * @return static
      */
-    public static function none(): \Illuminate\Cache\RateLimiting\Unlimited
+    public static function none(): \Illuminate\Cache\Rate_Limiting\Unlimited
     {
         return new Unlimited();
     }
-
     /**
      * Set the key of the rate limit.
      *
@@ -124,10 +114,8 @@ class Limit
     public function by($key): static
     {
         $this->key = $key;
-
         return $this;
     }
-
     /**
      * Set the callback to determine if the limiter should be hit.
      *
@@ -136,11 +124,9 @@ class Limit
      */
     public function after($callback): static
     {
-        $this->afterCallback = $callback;
-
+        $this->after_callback = $callback;
         return $this;
     }
-
     /**
      * Set the callback that should generate the response when the limit is exceeded.
      *
@@ -148,18 +134,15 @@ class Limit
      */
     public function response(callable $callback): static
     {
-        $this->responseCallback = $callback;
-
+        $this->response_callback = $callback;
         return $this;
     }
-
     /**
      * Get a potential fallback key for the limit.
      */
-    public function fallbackKey(): string
+    public function fallback_key(): string
     {
         $prefix = $this->key ? "{$this->key}:" : '';
-
-        return "{$prefix}attempts:{$this->maxAttempts}:decay:{$this->decaySeconds}";
+        return "{$prefix}attempts:{$this->max_attempts}:decay:{$this->decay_seconds}";
     }
 }

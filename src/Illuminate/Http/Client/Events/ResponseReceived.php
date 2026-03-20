@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Client\Events;
 
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Client\Response;
-
-class ResponseReceived
+class Response_Received
 {
     /**
      * The request instance.
@@ -15,14 +13,12 @@ class ResponseReceived
      * @var \Illuminate\Http\Client\Request
      */
     public $request;
-
     /**
      * The response instance.
      *
      * @var \Illuminate\Http\Client\Response
      */
     public $response;
-
     /**
      * Create a new event instance.
      */

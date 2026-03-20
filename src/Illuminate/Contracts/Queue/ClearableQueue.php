@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Queue;
 
-interface ClearableQueue
+interface Clearable_Queue
 {
     /**
      * Delete all of the jobs from the queue.

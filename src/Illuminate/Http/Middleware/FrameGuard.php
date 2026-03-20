@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Middleware;
 
 use Closure;
-
-class FrameGuard
+class Frame_Guard
 {
     /**
      * Handle the given request and get the response.
@@ -17,9 +15,7 @@ class FrameGuard
     public function handle($request, Closure $next)
     {
         $response = $next($request);
-
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN', false);
-
         return $response;
     }
 }

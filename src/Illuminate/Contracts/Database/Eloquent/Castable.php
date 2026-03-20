@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Database\Eloquent;
 
 interface Castable
@@ -12,5 +11,5 @@ interface Castable
      * @param  string[]  $arguments
      * @return class-string<CastsAttributes|CastsInboundAttributes>|CastsAttributes|CastsInboundAttributes
      */
-    public static function castUsing(array $arguments);
+    public static function cast_using(array $arguments);
 }

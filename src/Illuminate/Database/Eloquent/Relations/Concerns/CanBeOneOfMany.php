@@ -1,39 +1,34 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Relations\Concerns;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
+use Illuminate\Database\Query\Join_Clause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-
-trait CanBeOneOfMany
+trait Can_Be_One_Of_Many
 {
     /**
      * Determines whether the relationship is one-of-many.
      *
      * @var bool
      */
-    protected $isOneOfMany = false;
-
+    protected $is_one_of_many = false;
     /**
      * The name of the relationship.
      *
      * @var string
      */
-    protected $relationName;
-
+    protected $relation_name;
     /**
      * The one of many inner join subselect query builder instance.
      *
      * @var \Illuminate\Database\Eloquent\Builder<*>|null
      */
-    protected $oneOfManySubQuery;
-
+    protected $one_of_many_sub_query;
     /**
      * Add constraints for inner join subselect for one of many relationships.
      *
@@ -42,22 +37,19 @@ trait CanBeOneOfMany
      * @param  string|null  $aggregate
      * @return void
      */
-    abstract public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null);
-
+    abstract public function add_one_of_many_sub_query_constraints(Builder $query, $column = null, $aggregate = null);
     /**
      * Get the columns the determine the relationship groups.
      *
      * @return array|string
      */
-    abstract public function getOneOfManySubQuerySelectColumns();
-
+    abstract public function get_one_of_many_sub_query_select_columns();
     /**
      * Add join query constraints for one of many relationships.
      *
      * @return void
      */
-    abstract public function addOneOfManyJoinSubQueryConstraints(JoinClause $join);
-
+    abstract public function add_one_of_many_join_sub_query_constraints(Join_Clause $join);
     /**
      * Indicate that the relation is a single result of a larger one-to-many relationship.
      *
@@ -68,81 +60,44 @@ trait CanBeOneOfMany
      *
      * @throws \InvalidArgumentException
      */
-    public function ofMany($column = 'id', $aggregate = 'MAX', $relation = null)
+    public function of_many($column = 'id', $aggregate = 'MAX', $relation = null)
     {
-        $this->isOneOfMany = true;
-
-        $this->relationName = $relation ?: $this->getDefaultOneOfManyJoinAlias(
-            $this->guessRelationship()
-        );
-
-        $keyName = $this->query->getModel()->getKeyName();
-
-        $columns = is_string($columns = $column) ? [
-            $column => $aggregate,
-            $keyName => $aggregate,
-        ] : $column;
-
-        if (! array_key_exists($keyName, $columns)) {
-            $columns[$keyName] = 'MAX';
+        $this->is_one_of_many = true;
+        $this->relation_name = $relation ?: $this->get_default_one_of_many_join_alias($this->guess_relationship());
+        $key_name = $this->query->get_model()->get_key_name();
+        $columns = is_string($columns = $column) ? [$column => $aggregate, $key_name => $aggregate] : $column;
+        if (!array_key_exists($key_name, $columns)) {
+            $columns[$key_name] = 'MAX';
         }
-
         if ($aggregate instanceof Closure) {
             $closure = $aggregate;
         }
-
         foreach ($columns as $column => $aggregate) {
-            if (! in_array(strtolower((string) $aggregate), ['min', 'max'])) {
+            if (!in_array(strtolower((string) $aggregate), ['min', 'max'])) {
                 throw new InvalidArgumentException("Invalid aggregate [{$aggregate}] used within ofMany relation. Available aggregates: MIN, MAX");
             }
-
-            $subQuery = $this->newOneOfManySubQuery(
-                $this->getOneOfManySubQuerySelectColumns(),
-                array_merge([$column], $previous['columns'] ?? []),
-                $aggregate,
-            );
-
+            $sub_query = $this->new_one_of_many_sub_query($this->get_one_of_many_sub_query_select_columns(), array_merge([$column], $previous['columns'] ?? []), $aggregate);
             if (isset($previous)) {
-                $this->addOneOfManyJoinSubQuery(
-                    $subQuery,
-                    $previous['subQuery'],
-                    $previous['columns'],
-                );
+                $this->add_one_of_many_join_sub_query($sub_query, $previous['subQuery'], $previous['columns']);
             }
-
             if (isset($closure)) {
-                $closure($subQuery);
+                $closure($sub_query);
             }
-
-            if (! isset($previous)) {
-                $this->oneOfManySubQuery = $subQuery;
+            if (!isset($previous)) {
+                $this->one_of_many_sub_query = $sub_query;
             }
-
             if (array_key_last($columns) == $column) {
-                $this->addOneOfManyJoinSubQuery(
-                    $this->query,
-                    $subQuery,
-                    array_merge([$column], $previous['columns'] ?? []),
-                );
+                $this->add_one_of_many_join_sub_query($this->query, $sub_query, array_merge([$column], $previous['columns'] ?? []));
             }
-
-            $previous = [
-                'subQuery' => $subQuery,
-                'columns' => array_merge([$column], $previous['columns'] ?? []),
-            ];
+            $previous = ['subQuery' => $sub_query, 'columns' => array_merge([$column], $previous['columns'] ?? [])];
         }
-
-        $this->addConstraints();
-
-        $columns = $this->query->getQuery()->columns;
-
+        $this->add_constraints();
+        $columns = $this->query->get_query()->columns;
         if (is_null($columns) || $columns === ['*']) {
-            $this->select([$this->qualifyColumn('*')]);
+            $this->select([$this->qualify_column('*')]);
         }
-
         return $this;
     }
-
     /**
      * Indicate that the relation is the latest single result of a larger one-to-many relationship.
      *
@@ -150,11 +105,10 @@ trait CanBeOneOfMany
      * @param  string|null  $relation
      * @return $this
      */
-    public function latestOfMany($column = 'id', $relation = null)
+    public function latest_of_many($column = 'id', $relation = null)
     {
-        return $this->ofMany(Collection::wrap($column)->mapWithKeys(fn ($column): array => [$column => 'MAX'])->all(), 'MAX', $relation);
+        return $this->of_many(Collection::wrap($column)->map_with_keys(fn($column): array => [$column => 'MAX'])->all(), 'MAX', $relation);
     }
-
     /**
      * Indicate that the relation is the oldest single result of a larger one-to-many relationship.
      *
@@ -162,24 +116,20 @@ trait CanBeOneOfMany
      * @param  string|null  $relation
      * @return $this
      */
-    public function oldestOfMany($column = 'id', $relation = null)
+    public function oldest_of_many($column = 'id', $relation = null)
     {
-        return $this->ofMany(Collection::wrap($column)->mapWithKeys(fn ($column): array => [$column => 'MIN'])->all(), 'MIN', $relation);
+        return $this->of_many(Collection::wrap($column)->map_with_keys(fn($column): array => [$column => 'MIN'])->all(), 'MIN', $relation);
     }
-
     /**
      * Get the default alias for the one of many inner join clause.
      *
      * @param  string  $relation
      * @return string
      */
-    protected function getDefaultOneOfManyJoinAlias($relation)
+    protected function get_default_one_of_many_join_alias($relation)
     {
-        return $relation == $this->query->getModel()->getTable()
-            ? $relation.'_of_many'
-            : $relation;
+        return $relation == $this->query->get_model()->get_table() ? $relation . '_of_many' : $relation;
     }
-
     /**
      * Get a new query for the related model, grouping the query by the given column, often the foreign key of the relationship.
      *
@@ -188,35 +138,26 @@ trait CanBeOneOfMany
      * @param  string|null  $aggregate
      * @return \Illuminate\Database\Eloquent\Builder<*>
      */
-    protected function newOneOfManySubQuery($groupBy, $columns = null, $aggregate = null)
+    protected function new_one_of_many_sub_query($group_by, $columns = null, $aggregate = null)
     {
-        $subQuery = $this->query->getModel()
-            ->newQuery()
-            ->withoutGlobalScopes($this->removedScopes());
-
-        foreach (Arr::wrap($groupBy) as $group) {
-            $subQuery->groupBy($this->qualifyRelatedColumn($group));
+        $sub_query = $this->query->get_model()->new_query()->without_global_scopes($this->removed_scopes());
+        foreach (Arr::wrap($group_by) as $group) {
+            $sub_query->group_by($this->qualify_related_column($group));
         }
-
-        if (! is_null($columns)) {
+        if (!is_null($columns)) {
             foreach ($columns as $key => $column) {
-                $aggregatedColumn = $subQuery->getQuery()->grammar->wrap($subQuery->qualifyColumn($column));
-
+                $aggregated_column = $sub_query->get_query()->grammar->wrap($sub_query->qualify_column($column));
                 if ($key === 0) {
-                    $aggregatedColumn = "{$aggregate}({$aggregatedColumn})";
+                    $aggregated_column = "{$aggregate}({$aggregated_column})";
                 } else {
-                    $aggregatedColumn = "min({$aggregatedColumn})";
+                    $aggregated_column = "min({$aggregated_column})";
                 }
-
-                $subQuery->selectRaw($aggregatedColumn.' as '.$subQuery->getQuery()->grammar->wrap($column.'_aggregate'));
+                $sub_query->select_raw($aggregated_column . ' as ' . $sub_query->get_query()->grammar->wrap($column . '_aggregate'));
             }
         }
-
-        $this->addOneOfManySubQueryConstraints($subQuery, column: null, aggregate: $aggregate);
-
-        return $subQuery;
+        $this->add_one_of_many_sub_query_constraints($sub_query, column: null, aggregate: $aggregate);
+        return $sub_query;
     }
-
     /**
      * Add the join subquery to the given query on the given column and the relationship's foreign key.
      *
@@ -225,102 +166,89 @@ trait CanBeOneOfMany
      * @param  array<string>  $on
      * @return void
      */
-    protected function addOneOfManyJoinSubQuery(Builder $parent, Builder $subQuery, $on)
+    protected function add_one_of_many_join_sub_query(Builder $parent, Builder $sub_query, $on)
     {
-        $parent->beforeQuery(function ($parent) use ($subQuery, $on): void {
-            $subQuery->applyBeforeQueryCallbacks();
-
-            $parent->joinSub($subQuery, $this->relationName, function ($join) use ($on): void {
-                foreach ($on as $onColumn) {
-                    $join->on($this->qualifySubSelectColumn($onColumn.'_aggregate'), '=', $this->qualifyRelatedColumn($onColumn));
+        $parent->before_query(function ($parent) use ($sub_query, $on): void {
+            $sub_query->apply_before_query_callbacks();
+            $parent->join_sub($sub_query, $this->relation_name, function ($join) use ($on): void {
+                foreach ($on as $on_column) {
+                    $join->on($this->qualify_sub_select_column($on_column . '_aggregate'), '=', $this->qualify_related_column($on_column));
                 }
-
-                $this->addOneOfManyJoinSubQueryConstraints($join);
+                $this->add_one_of_many_join_sub_query_constraints($join);
             });
         });
     }
-
     /**
      * Merge the relationship query joins to the given query builder.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<*>  $query
      * @return void
      */
-    protected function mergeOneOfManyJoinsTo(Builder $query)
+    protected function merge_one_of_many_joins_to(Builder $query)
     {
-        $query->getQuery()->beforeQueryCallbacks = $this->query->getQuery()->beforeQueryCallbacks;
-
-        $query->applyBeforeQueryCallbacks();
+        $query->get_query()->before_query_callbacks = $this->query->get_query()->before_query_callbacks;
+        $query->apply_before_query_callbacks();
     }
-
     /**
      * Get the query builder that will contain the relationship constraints.
      *
      * @return \Illuminate\Database\Eloquent\Builder<*>
      */
-    protected function getRelationQuery()
+    protected function get_relation_query()
     {
-        return $this->isOneOfMany()
-            ? $this->oneOfManySubQuery
-            : $this->query;
+        return $this->is_one_of_many() ? $this->one_of_many_sub_query : $this->query;
     }
-
     /**
      * Get the one of many inner join subselect builder instance.
      *
      * @return \Illuminate\Database\Eloquent\Builder<*>|void
      */
-    public function getOneOfManySubQuery()
+    public function get_one_of_many_sub_query()
     {
-        return $this->oneOfManySubQuery;
+        return $this->one_of_many_sub_query;
     }
-
     /**
      * Get the qualified column name for the one-of-many relationship using the subselect join query's alias.
      *
      * @param  string  $column
      */
-    public function qualifySubSelectColumn($column): string
+    public function qualify_sub_select_column($column): string
     {
-        return $this->getRelationName().'.'.last(explode('.', $column));
+        return $this->get_relation_name() . '.' . last(explode('.', $column));
     }
-
     /**
      * Qualify related column using the related table name if it is not already qualified.
      *
      * @param  string  $column
      * @return string
      */
-    protected function qualifyRelatedColumn($column)
+    protected function qualify_related_column($column)
     {
-        return $this->query->getModel()->qualifyColumn($column);
+        return $this->query->get_model()->qualify_column($column);
     }
-
     /**
      * Guess the "hasOne" relationship's name via backtrace.
      */
-    protected function guessRelationship(): string
+    protected function guess_relationship(): string
     {
         return debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)[2]['function'];
     }
-
     /**
      * Determine whether the relationship is a one-of-many relationship.
      *
      * @return bool
      */
-    public function isOneOfMany()
+    public function is_one_of_many()
     {
-        return $this->isOneOfMany;
+        return $this->is_one_of_many;
     }
-
     /**
      * Get the name of the relationship.
      *
      * @return string
      */
-    public function getRelationName()
+    public function get_relation_name()
     {
-        return $this->relationName;
+        return $this->relation_name;
     }
 }

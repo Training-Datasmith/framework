@@ -1,40 +1,35 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http;
 
-use Illuminate\Contracts\Support\MessageProvider;
+use Illuminate\Contracts\Support\Message_Provider;
 use Illuminate\Session\Store as SessionStore;
-use Illuminate\Support\MessageBag;
+use Illuminate\Support\Message_Bag;
 use Illuminate\Support\Str;
-use Illuminate\Support\Traits\ForwardsCalls;
+use Illuminate\Support\Traits\Forwards_Calls;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Uri;
-use Illuminate\Support\ViewErrorBag;
-use Symfony\Component\HttpFoundation\File\UploadedFile as SymfonyUploadedFile;
-use Symfony\Component\HttpFoundation\RedirectResponse as BaseRedirectResponse;
-
-class RedirectResponse extends BaseRedirectResponse
+use Illuminate\Support\View_Error_Bag;
+use Symfony\Component\Http_Foundation\File\Uploaded_File as SymfonyUploadedFile;
+use Symfony\Component\Http_Foundation\Redirect_Response as BaseRedirectResponse;
+class Redirect_Response extends Base_Redirect_Response
 {
-    use ForwardsCalls, ResponseTrait, Macroable {
+    use Forwards_Calls, Response_Trait, Macroable {
         Macroable::__call as macroCall;
     }
-
     /**
      * The request instance.
      *
      * @var \Illuminate\Http\Request
      */
     protected $request;
-
     /**
      * The session store instance.
      *
      * @var \Illuminate\Session\Store
      */
     protected $session;
-
     /**
      * Flash a piece of data to the session.
      *
@@ -45,82 +40,68 @@ class RedirectResponse extends BaseRedirectResponse
     public function with($key, $value = null)
     {
         $key = is_array($key) ? $key : [$key => $value];
-
         foreach ($key as $k => $v) {
             $this->session->flash($k, $v);
         }
-
         return $this;
     }
-
     /**
      * Add multiple cookies to the response.
      *
      * @return $this
      */
-    public function withCookies(array $cookies)
+    public function with_cookies(array $cookies)
     {
         foreach ($cookies as $cookie) {
-            $this->headers->setCookie($cookie);
+            $this->headers->set_cookie($cookie);
         }
-
         return $this;
     }
-
     /**
      * Flash an array of input to the session.
      *
      * @return $this
      */
-    public function withInput(?array $input = null)
+    public function with_input(?array $input = null)
     {
-        $this->session->flashInput($this->removeFilesFromInput(
-            ! is_null($input) ? $input : $this->request->input()
-        ));
-
+        $this->session->flash_input($this->remove_files_from_input(!is_null($input) ? $input : $this->request->input()));
         return $this;
     }
-
     /**
      * Remove all uploaded files form the given input array.
      *
      * @return array
      */
-    protected function removeFilesFromInput(array $input)
+    protected function remove_files_from_input(array $input)
     {
         foreach ($input as $key => $value) {
             if (is_array($value)) {
-                $input[$key] = $this->removeFilesFromInput($value);
+                $input[$key] = $this->remove_files_from_input($value);
             }
-
-            if ($value instanceof SymfonyUploadedFile) {
+            if ($value instanceof Symfony_Uploaded_File) {
                 unset($input[$key]);
             }
         }
-
         return $input;
     }
-
     /**
      * Flash an array of input to the session.
      *
      * @return $this
      */
-    public function onlyInput()
+    public function only_input()
     {
-        return $this->withInput($this->request->only(func_get_args()));
+        return $this->with_input($this->request->only(func_get_args()));
     }
-
     /**
      * Flash an array of input to the session.
      *
      * @return $this
      */
-    public function exceptInput()
+    public function except_input()
     {
-        return $this->withInput($this->request->except(func_get_args()));
+        return $this->with_input($this->request->except(func_get_args()));
     }
-
     /**
      * Flash a container of errors to the session.
      *
@@ -128,133 +109,104 @@ class RedirectResponse extends BaseRedirectResponse
      * @param  string  $key
      * @return $this
      */
-    public function withErrors($provider, $key = 'default')
+    public function with_errors($provider, $key = 'default')
     {
-        $value = $this->parseErrors($provider);
-
-        $errors = $this->session->get('errors', new ViewErrorBag());
-
-        if (! $errors instanceof ViewErrorBag) {
-            $errors = new ViewErrorBag();
+        $value = $this->parse_errors($provider);
+        $errors = $this->session->get('errors', new View_Error_Bag());
+        if (!$errors instanceof View_Error_Bag) {
+            $errors = new View_Error_Bag();
         }
-
-        $this->session->flash(
-            'errors',
-            $errors->put($key, $value)
-        );
-
+        $this->session->flash('errors', $errors->put($key, $value));
         return $this;
     }
-
     /**
      * Parse the given errors into an appropriate value.
      *
      * @param  \Illuminate\Contracts\Support\MessageProvider|array|string  $provider
      * @return \Illuminate\Support\MessageBag
      */
-    protected function parseErrors($provider)
+    protected function parse_errors($provider)
     {
-        if ($provider instanceof MessageProvider) {
-            return $provider->getMessageBag();
+        if ($provider instanceof Message_Provider) {
+            return $provider->get_message_bag();
         }
-
-        return new MessageBag((array) $provider);
+        return new Message_Bag((array) $provider);
     }
-
     /**
      * Add a fragment identifier to the URL.
      *
      * @param  string  $fragment
      * @return $this
      */
-    public function withFragment($fragment)
+    public function with_fragment($fragment)
     {
-        return $this->withoutFragment()
-            ->setTargetUrl($this->getTargetUrl().'#'.Str::after($fragment, '#'));
+        return $this->without_fragment()->set_target_url($this->get_target_url() . '#' . Str::after($fragment, '#'));
     }
-
     /**
      * Remove any fragment identifier from the response URL.
      *
      * @return $this
      */
-    public function withoutFragment()
+    public function without_fragment()
     {
-        return $this->setTargetUrl(Str::before($this->getTargetUrl(), '#'));
+        return $this->set_target_url(Str::before($this->get_target_url(), '#'));
     }
-
     /**
      * Enforce that the redirect target must have the same host as the current request.
      */
-    public function enforceSameOrigin(
-        string $fallback,
-        bool $validateScheme = true,
-        bool $validatePort = true,
-    ): static {
-        $target = Uri::of($this->targetUrl);
-        $current = Uri::of($this->request->getSchemeAndHttpHost());
-
-        if ($target->host() !== $current->host() ||
-            ($validateScheme && $target->scheme() !== $current->scheme()) ||
-            ($validatePort && $target->port() !== $current->port())) {
-            $this->setTargetUrl($fallback);
+    public function enforce_same_origin(string $fallback, bool $validate_scheme = true, bool $validate_port = true): static
+    {
+        $target = Uri::of($this->target_url);
+        $current = Uri::of($this->request->get_scheme_and_http_host());
+        if ($target->host() !== $current->host() || $validate_scheme && $target->scheme() !== $current->scheme() || $validate_port && $target->port() !== $current->port()) {
+            $this->set_target_url($fallback);
         }
-
         return $this;
     }
-
     /**
      * Get the original response content.
      */
-    public function getOriginalContent(): void
+    public function get_original_content(): void
     {
-
     }
-
     /**
      * Get the request instance.
      *
      * @return \Illuminate\Http\Request|null
      */
-    public function getRequest()
+    public function get_request()
     {
         return $this->request;
     }
-
     /**
      * Set the request instance.
      *
      * @return $this
      */
-    public function setRequest(Request $request)
+    public function set_request(Request $request)
     {
         $this->request = $request;
-
         return $this;
     }
-
     /**
      * Get the session store instance.
      *
      * @return \Illuminate\Session\Store|null
      */
-    public function getSession()
+    public function get_session()
     {
         return $this->session;
     }
-
     /**
      * Set the session store instance.
      *
      * @return $this
      */
-    public function setSession(SessionStore $session)
+    public function set_session(Session_Store $session)
     {
         $this->session = $session;
-
         return $this;
     }
-
     /**
      * Dynamically bind flash data in the session.
      *
@@ -266,14 +218,12 @@ class RedirectResponse extends BaseRedirectResponse
      */
     public function __call($method, $parameters)
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::has_macro($method)) {
+            return $this->macro_call($method, $parameters);
         }
-
         if (str_starts_with($method, 'with')) {
             return $this->with(Str::snake(substr($method, 4)), $parameters[0]);
         }
-
-        static::throwBadMethodCallException($method);
+        static::throw_bad_method_call_exception($method);
     }
 }

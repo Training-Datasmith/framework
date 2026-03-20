@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Console;
 
 interface Application
@@ -13,8 +12,7 @@ interface Application
      * @param  \Symfony\Component\Console\Output\OutputInterface|null  $outputBuffer
      * @return int
      */
-    public function call($command, array $parameters = [], $outputBuffer = null);
-
+    public function call($command, array $parameters = [], $output_buffer = null);
     /**
      * Get the output from the last command.
      *

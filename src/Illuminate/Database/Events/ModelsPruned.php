@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Events;
 
-class ModelsPruned
+class Models_Pruned
 {
     /**
      * Create a new event instance.
@@ -12,9 +11,7 @@ class ModelsPruned
      * @param  string  $model  The class name of the model that was pruned.
      * @param  int  $count  The number of pruned records.
      */
-    public function __construct(
-        public $model,
-        public $count,
-    ) {
+    public function __construct(public $model, public $count)
+    {
     }
 }

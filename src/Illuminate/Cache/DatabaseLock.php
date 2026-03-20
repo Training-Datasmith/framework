@@ -1,18 +1,15 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache;
 
 use Illuminate\Database\Connection;
-use Illuminate\Database\DetectsConcurrencyErrors;
-use Illuminate\Database\QueryException;
+use Illuminate\Database\Detects_Concurrency_Errors;
+use Illuminate\Database\Query_Exception;
 use Throwable;
-
-class DatabaseLock extends Lock
+class Database_Lock extends Lock
 {
-    use DetectsConcurrencyErrors;
-
+    use Detects_Concurrency_Errors;
     /**
      * Create a new lock instance.
      *
@@ -23,26 +20,30 @@ class DatabaseLock extends Lock
      * @param  array{int, int}|null  $lottery
      * @param  int  $defaultTimeoutInSeconds
      */
-    public function __construct(/**
-     * The database connection instance.
-     */
-        protected \Illuminate\Database\Connection $connection, /**
-     * The database table name.
-     */
+    public function __construct(
+        /**
+         * The database connection instance.
+         */
+        protected \Illuminate\Database\Connection $connection,
+        /**
+         * The database table name.
+         */
         protected $table,
         $name,
         $seconds,
-        $owner = null, /**
-     * The prune probability odds.
-     */
-        protected $lottery = [2, 100], /**
-     * The default number of seconds that a lock should be held.
-     */
-        protected $defaultTimeoutInSeconds = 86400
-    ) {
+        $owner = null,
+        /**
+         * The prune probability odds.
+         */
+        protected $lottery = [2, 100],
+        /**
+         * The default number of seconds that a lock should be held.
+         */
+        protected $default_timeout_in_seconds = 86400
+    )
+    {
         parent::__construct($name, $seconds, $owner);
     }
-
     /**
      * Attempt to acquire the lock.
      *
@@ -53,43 +54,27 @@ class DatabaseLock extends Lock
     public function acquire()
     {
         try {
-            $this->connection->table($this->table)->insert([
-                'key' => $this->name,
-                'owner' => $this->owner,
-                'expiration' => $this->expiresAt(),
-            ]);
-
+            $this->connection->table($this->table)->insert(['key' => $this->name, 'owner' => $this->owner, 'expiration' => $this->expires_at()]);
             $acquired = true;
-        } catch (QueryException) {
-            $updated = $this->connection->table($this->table)
-                ->where('key', $this->name)
-                ->where(fn ($query) => $query->where('owner', $this->owner)->orWhere('expiration', '<=', $this->currentTime()))->update([
-                    'owner' => $this->owner,
-                    'expiration' => $this->expiresAt(),
-                ]);
-
+        } catch (Query_Exception) {
+            $updated = $this->connection->table($this->table)->where('key', $this->name)->where(fn($query) => $query->where('owner', $this->owner)->or_where('expiration', '<=', $this->current_time()))->update(['owner' => $this->owner, 'expiration' => $this->expires_at()]);
             $acquired = $updated >= 1;
         }
-
         if (count($this->lottery ?? []) === 2 && random_int(1, $this->lottery[1]) <= $this->lottery[0]) {
-            $this->pruneExpiredLocks();
+            $this->prune_expired_locks();
         }
-
         return $acquired;
     }
-
     /**
      * Get the UNIX timestamp indicating when the lock should expire.
      *
      * @return int
      */
-    protected function expiresAt(): float|int|array
+    protected function expires_at(): float|int|array
     {
-        $lockTimeout = $this->seconds > 0 ? $this->seconds : $this->defaultTimeoutInSeconds;
-
-        return $this->currentTime() + $lockTimeout;
+        $lock_timeout = $this->seconds > 0 ? $this->seconds : $this->default_timeout_in_seconds;
+        return $this->current_time() + $lock_timeout;
     }
-
     /**
      * Release the lock.
      *
@@ -98,72 +83,58 @@ class DatabaseLock extends Lock
      */
     public function release(): bool
     {
-        if ($this->isOwnedByCurrentProcess()) {
+        if ($this->is_owned_by_current_process()) {
             try {
-                $this->connection->table($this->table)
-                    ->where('key', $this->name)
-                    ->where('owner', $this->owner)
-                    ->delete();
-
+                $this->connection->table($this->table)->where('key', $this->name)->where('owner', $this->owner)->delete();
                 return true;
             } catch (Throwable $e) {
-                if ($this->causedByConcurrencyError($e)) {
+                if ($this->caused_by_concurrency_error($e)) {
                     return true;
                 }
-
                 throw $e;
             }
         }
-
         return false;
     }
-
     /**
      * Releases this lock in disregard of ownership.
      */
-    public function forceRelease(): void
+    public function force_release(): void
     {
-        $this->connection->table($this->table)
-            ->where('key', $this->name)
-            ->delete();
+        $this->connection->table($this->table)->where('key', $this->name)->delete();
     }
-
     /**
      * Deletes locks that are past expiration.
      *
      *
      * @throws \Throwable
      */
-    public function pruneExpiredLocks(): void
+    public function prune_expired_locks(): void
     {
         try {
-            $this->connection->table($this->table)
-                ->where('expiration', '<=', $this->currentTime())
-                ->delete();
+            $this->connection->table($this->table)->where('expiration', '<=', $this->current_time())->delete();
         } catch (Throwable $e) {
-            if (! $this->causedByConcurrencyError($e)) {
+            if (!$this->caused_by_concurrency_error($e)) {
                 throw $e;
             }
         }
     }
-
     /**
      * Returns the owner value written into the driver for this lock.
      *
      * @return string|null
      */
-    protected function getCurrentOwner()
+    protected function get_current_owner()
     {
         return $this->connection->table($this->table)->where('key', $this->name)->first()?->owner;
     }
-
     /**
      * Get the name of the database connection being used to manage the lock.
      *
      * @return string
      */
-    public function getConnectionName()
+    public function get_connection_name()
     {
-        return $this->connection->getName();
+        return $this->connection->get_name();
     }
 }

@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Events;
 
-class MaintenanceModeDisabled
+class Maintenance_Mode_Disabled
 {
 }

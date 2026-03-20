@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Auth\Events;
 
 class Failed
@@ -16,7 +15,9 @@ class Failed
     public function __construct(
         public $guard,
         public $user,
-        #[\SensitiveParameter] public $credentials,
-    ) {
+        #[\Sensitive_Parameter]
+        public $credentials
+    )
+    {
     }
 }

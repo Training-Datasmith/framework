@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Support\Traits;
 
 use Closure;
-use Illuminate\Support\HigherOrderWhenProxy;
-
+use Illuminate\Support\Higher_Order_When_Proxy;
 trait Conditionable
 {
     /**
@@ -23,25 +21,20 @@ trait Conditionable
     public function when($value = null, ?callable $callback = null, ?callable $default = null)
     {
         $value = $value instanceof Closure ? $value($this) : $value;
-
         if (func_num_args() === 0) {
-            return new HigherOrderWhenProxy($this);
+            return new Higher_Order_When_Proxy($this);
         }
-
         if (func_num_args() === 1) {
-            return (new HigherOrderWhenProxy($this))->condition($value);
+            return (new Higher_Order_When_Proxy($this))->condition($value);
         }
         if ($value) {
             return $callback($this, $value) ?? $this;
         }
-
         if ($default) {
             return $default($this, $value) ?? $this;
         }
-
         return $this;
     }
-
     /**
      * Apply the callback if the given "value" is (or resolves to) falsy.
      *
@@ -56,22 +49,18 @@ trait Conditionable
     public function unless($value = null, ?callable $callback = null, ?callable $default = null)
     {
         $value = $value instanceof Closure ? $value($this) : $value;
-
         if (func_num_args() === 0) {
-            return (new HigherOrderWhenProxy($this))->negateConditionOnCapture();
+            return (new Higher_Order_When_Proxy($this))->negate_condition_on_capture();
         }
-
         if (func_num_args() === 1) {
-            return (new HigherOrderWhenProxy($this))->condition(! $value);
+            return (new Higher_Order_When_Proxy($this))->condition(!$value);
         }
-        if (! $value) {
+        if (!$value) {
             return $callback($this, $value) ?? $this;
         }
-
         if ($default) {
             return $default($this, $value) ?? $this;
         }
-
         return $this;
     }
 }

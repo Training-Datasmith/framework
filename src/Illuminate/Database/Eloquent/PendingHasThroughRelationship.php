@@ -1,21 +1,19 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent;
 
 use BadMethodCallException;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
+use Illuminate\Database\Eloquent\Relations\Has_Many;
+use Illuminate\Database\Eloquent\Relations\Morph_One_Or_Many;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
-
 /**
  * @template TIntermediateModel of \Illuminate\Database\Eloquent\Model
  * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
  * @template TLocalRelationship of \Illuminate\Database\Eloquent\Relations\HasOneOrMany<TIntermediateModel, TDeclaringModel>
  */
-class PendingHasThroughRelationship
+class Pending_Has_Through_Relationship
 {
     /**
      * Create a pending has-many-through or has-one-through relationship.
@@ -27,14 +25,14 @@ class PendingHasThroughRelationship
         /**
          * The root model that the relationship exists on.
          */
-        protected $rootModel,
+        protected $root_model,
         /**
          * The local relationship.
          */
-        protected $localRelationship
-    ) {
+        protected $local_relationship
+    )
+    {
     }
-
     /**
      * Define the distant relationship that this model has.
      *
@@ -58,38 +56,19 @@ class PendingHasThroughRelationship
     public function has($callback)
     {
         if (is_string($callback)) {
-            $callback = fn () => $this->localRelationship->getRelated()->{$callback}();
+            $callback = fn() => $this->local_relationship->get_related()->{$callback}();
         }
-
-        $distantRelation = $callback($this->localRelationship->getRelated());
-
-        if ($distantRelation instanceof HasMany || $this->localRelationship instanceof HasMany) {
-            $returnedRelation = $this->rootModel->hasManyThrough(
-                $distantRelation->getRelated()::class,
-                $this->localRelationship->getRelated()::class,
-                $this->localRelationship->getForeignKeyName(),
-                $distantRelation->getForeignKeyName(),
-                $this->localRelationship->getLocalKeyName(),
-                $distantRelation->getLocalKeyName(),
-            );
+        $distant_relation = $callback($this->local_relationship->get_related());
+        if ($distant_relation instanceof Has_Many || $this->local_relationship instanceof Has_Many) {
+            $returned_relation = $this->root_model->has_many_through($distant_relation->get_related()::class, $this->local_relationship->get_related()::class, $this->local_relationship->get_foreign_key_name(), $distant_relation->get_foreign_key_name(), $this->local_relationship->get_local_key_name(), $distant_relation->get_local_key_name());
         } else {
-            $returnedRelation = $this->rootModel->hasOneThrough(
-                $distantRelation->getRelated()::class,
-                $this->localRelationship->getRelated()::class,
-                $this->localRelationship->getForeignKeyName(),
-                $distantRelation->getForeignKeyName(),
-                $this->localRelationship->getLocalKeyName(),
-                $distantRelation->getLocalKeyName(),
-            );
+            $returned_relation = $this->root_model->has_one_through($distant_relation->get_related()::class, $this->local_relationship->get_related()::class, $this->local_relationship->get_foreign_key_name(), $distant_relation->get_foreign_key_name(), $this->local_relationship->get_local_key_name(), $distant_relation->get_local_key_name());
         }
-
-        if ($this->localRelationship instanceof MorphOneOrMany) {
-            $returnedRelation->where($this->localRelationship->getQualifiedMorphType(), $this->localRelationship->getMorphClass());
+        if ($this->local_relationship instanceof Morph_One_Or_Many) {
+            $returned_relation->where($this->local_relationship->get_qualified_morph_type(), $this->local_relationship->get_morph_class());
         }
-
-        return $returnedRelation;
+        return $returned_relation;
     }
-
     /**
      * Handle dynamic method calls into the model.
      *
@@ -97,14 +76,9 @@ class PendingHasThroughRelationship
      */
     public function __call(string $method, array $parameters)
     {
-        if (Str::startsWith($method, 'has')) {
-            return $this->has((new Stringable($method))->after('has')->lcfirst()->toString());
+        if (Str::starts_with($method, 'has')) {
+            return $this->has((new Stringable($method))->after('has')->lcfirst()->to_string());
         }
-
-        throw new BadMethodCallException(sprintf(
-            'Call to undefined method %s::%s()',
-            static::class,
-            $method
-        ));
+        throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', static::class, $method));
     }
 }

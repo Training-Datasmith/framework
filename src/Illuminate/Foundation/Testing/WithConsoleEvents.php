@@ -1,20 +1,18 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Testing;
 
 use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
-
-trait WithConsoleEvents
+trait With_Console_Events
 {
     /**
      * Register console events.
      *
      * @return void
      */
-    protected function setUpWithConsoleEvents()
+    protected function set_up_with_console_events()
     {
-        $this->app[ConsoleKernel::class]->rerouteSymfonyCommandEvents();
+        $this->app[Console_Kernel::class]->reroute_symfony_command_events();
     }
 }

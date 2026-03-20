@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\View;
 
 interface Factory
@@ -13,7 +12,6 @@ interface Factory
      * @return bool
      */
     public function exists($view);
-
     /**
      * Get the evaluated view contents for the given path.
      *
@@ -22,8 +20,7 @@ interface Factory
      * @param  array  $mergeData
      * @return \Illuminate\Contracts\View\View
      */
-    public function file($path, $data = [], $mergeData = []);
-
+    public function file($path, $data = [], $merge_data = []);
     /**
      * Get the evaluated view contents for the given view.
      *
@@ -32,8 +29,7 @@ interface Factory
      * @param  array  $mergeData
      * @return \Illuminate\Contracts\View\View
      */
-    public function make($view, $data = [], $mergeData = []);
-
+    public function make($view, $data = [], $merge_data = []);
     /**
      * Add a piece of shared data to the environment.
      *
@@ -42,7 +38,6 @@ interface Factory
      * @return mixed
      */
     public function share($key, $value = null);
-
     /**
      * Register a view composer event.
      *
@@ -51,7 +46,6 @@ interface Factory
      * @return array
      */
     public function composer($views, $callback);
-
     /**
      * Register a view creator event.
      *
@@ -60,7 +54,6 @@ interface Factory
      * @return array
      */
     public function creator($views, $callback);
-
     /**
      * Add a new namespace to the loader.
      *
@@ -68,8 +61,7 @@ interface Factory
      * @param  string|array  $hints
      * @return $this
      */
-    public function addNamespace($namespace, $hints);
-
+    public function add_namespace($namespace, $hints);
     /**
      * Replace the namespace hints for the given namespace.
      *
@@ -77,5 +69,5 @@ interface Factory
      * @param  string|array  $hints
      * @return $this
      */
-    public function replaceNamespace($namespace, $hints);
+    public function replace_namespace($namespace, $hints);
 }

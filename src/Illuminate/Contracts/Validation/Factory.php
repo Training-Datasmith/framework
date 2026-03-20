@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Validation;
 
 interface Factory
@@ -12,7 +11,6 @@ interface Factory
      * @return \Illuminate\Contracts\Validation\Validator
      */
     public function make(array $data, array $rules, array $messages = [], array $attributes = []);
-
     /**
      * Register a custom validator extension.
      *
@@ -22,7 +20,6 @@ interface Factory
      * @return void
      */
     public function extend($rule, $extension, $message = null);
-
     /**
      * Register a custom implicit validator extension.
      *
@@ -31,8 +28,7 @@ interface Factory
      * @param  string|null  $message
      * @return void
      */
-    public function extendImplicit($rule, $extension, $message = null);
-
+    public function extend_implicit($rule, $extension, $message = null);
     /**
      * Register a custom implicit validator message replacer.
      *

@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http;
 
-class StreamedEvent
+class Streamed_Event
 {
     /**
      * Create a new streamed event instance.
@@ -18,6 +17,7 @@ class StreamedEvent
          * The data of the stream.
          */
         public mixed $data
-    ) {
+    )
+    {
     }
 }

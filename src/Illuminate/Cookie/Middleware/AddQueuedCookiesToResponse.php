@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cookie\Middleware;
 
 use Closure;
-
-class AddQueuedCookiesToResponse
+class Add_Queued_Cookies_To_Response
 {
     /**
      * Create a new CookieQueue instance.
@@ -15,10 +13,10 @@ class AddQueuedCookiesToResponse
         /**
          * The cookie jar instance.
          */
-        protected \Illuminate\Contracts\Cookie\QueueingFactory $cookies
-    ) {
+        protected \Illuminate\Contracts\Cookie\Queueing_Factory $cookies
+    )
+    {
     }
-
     /**
      * Handle an incoming request.
      *
@@ -28,11 +26,9 @@ class AddQueuedCookiesToResponse
     public function handle($request, Closure $next)
     {
         $response = $next($request);
-
-        foreach ($this->cookies->getQueuedCookies() as $cookie) {
-            $response->headers->setCookie($cookie);
+        foreach ($this->cookies->get_queued_cookies() as $cookie) {
+            $response->headers->set_cookie($cookie);
         }
-
         return $response;
     }
 }

@@ -1,49 +1,40 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent;
 
-use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Database\Events\ModelsPruned;
+use Illuminate\Contracts\Debug\Exception_Handler;
+use Illuminate\Database\Events\Models_Pruned;
 use LogicException;
 use Throwable;
-
 trait Prunable
 {
     /**
      * Prune all prunable models in the database.
      */
-    public function pruneAll(int $chunkSize = 1000): int
+    public function prune_all(int $chunk_size = 1000): int
     {
         $total = 0;
-
-        $this->prunable()
-            ->when(static::isSoftDeletable(), function ($query): void {
-                $query->withTrashed();
-            })->chunkById($chunkSize, function ($models) use (&$total): void {
-                $models->each(function ($model) use (&$total): void {
-                    try {
-                        $model->prune();
-
-                        $total++;
-                    } catch (Throwable $e) {
-                        $handler = app(ExceptionHandler::class);
-
-                        if ($handler) {
-                            $handler->report($e);
-                        } else {
-                            throw $e;
-                        }
+        $this->prunable()->when(static::is_soft_deletable(), function ($query): void {
+            $query->with_trashed();
+        })->chunk_by_id($chunk_size, function ($models) use (&$total): void {
+            $models->each(function ($model) use (&$total): void {
+                try {
+                    $model->prune();
+                    $total++;
+                } catch (Throwable $e) {
+                    $handler = app(Exception_Handler::class);
+                    if ($handler) {
+                        $handler->report($e);
+                    } else {
+                        throw $e;
                     }
-                });
-
-                event(new ModelsPruned(static::class, $total));
+                }
             });
-
+            event(new Models_Pruned(static::class, $total));
+        });
         return $total;
     }
-
     /**
      * Get the prunable model query.
      *
@@ -53,7 +44,6 @@ trait Prunable
     {
         throw new LogicException('Please implement the prunable method on your model.');
     }
-
     /**
      * Prune the model in the database.
      *
@@ -62,12 +52,8 @@ trait Prunable
     public function prune()
     {
         $this->pruning();
-
-        return static::isSoftDeletable()
-            ? $this->forceDelete()
-            : $this->delete();
+        return static::is_soft_deletable() ? $this->force_delete() : $this->delete();
     }
-
     /**
      * Prepare the model for pruning.
      *
@@ -75,6 +61,5 @@ trait Prunable
      */
     protected function pruning()
     {
-
     }
 }

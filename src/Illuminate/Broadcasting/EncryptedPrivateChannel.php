@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Broadcasting;
 
-class EncryptedPrivateChannel extends Channel
+class Encrypted_Private_Channel extends Channel
 {
     /**
      * Create a new channel instance.
@@ -13,6 +12,6 @@ class EncryptedPrivateChannel extends Channel
      */
     public function __construct($name)
     {
-        parent::__construct('private-encrypted-'.$name);
+        parent::__construct('private-encrypted-' . $name);
     }
 }

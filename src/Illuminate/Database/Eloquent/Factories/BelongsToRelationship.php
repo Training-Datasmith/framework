@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Factories;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-
-class BelongsToRelationship
+use Illuminate\Database\Eloquent\Relations\Morph_To;
+class Belongs_To_Relationship
 {
     /**
      * The cached, resolved parent instance ID.
@@ -15,7 +13,6 @@ class BelongsToRelationship
      * @var mixed
      */
     protected $resolved;
-
     /**
      * Create a new "belongs to" relationship definition.
      *
@@ -31,26 +28,19 @@ class BelongsToRelationship
          * The relationship name.
          */
         protected $relationship
-    ) {
+    )
+    {
     }
-
     /**
      * Get the parent model attributes and resolvers for the given child model.
      *
      * @return array
      */
-    public function attributesFor(Model $model)
+    public function attributes_for(Model $model)
     {
         $relationship = $model->{$this->relationship}();
-
-        return $relationship instanceof MorphTo ? [
-            $relationship->getMorphType() => $this->factory instanceof Factory ? $this->factory->newModel()->getMorphClass() : $this->factory->getMorphClass(),
-            $relationship->getForeignKeyName() => $this->resolver($relationship->getOwnerKeyName()),
-        ] : [
-            $relationship->getForeignKeyName() => $this->resolver($relationship->getOwnerKeyName()),
-        ];
+        return $relationship instanceof Morph_To ? [$relationship->get_morph_type() => $this->factory instanceof Factory ? $this->factory->new_model()->get_morph_class() : $this->factory->get_morph_class(), $relationship->get_foreign_key_name() => $this->resolver($relationship->get_owner_key_name())] : [$relationship->get_foreign_key_name() => $this->resolver($relationship->get_owner_key_name())];
     }
-
     /**
      * Get the deferred resolver for this relationship's parent ID.
      *
@@ -60,18 +50,13 @@ class BelongsToRelationship
     protected function resolver($key)
     {
         return function () use ($key) {
-            if (! $this->resolved) {
-                $instance = $this->factory instanceof Factory
-                    ? ($this->factory->getRandomRecycledModel($this->factory->modelName()) ?? $this->factory->create())
-                    : $this->factory;
-
-                return $this->resolved = $key ? $instance->{$key} : $instance->getKey();
+            if (!$this->resolved) {
+                $instance = $this->factory instanceof Factory ? $this->factory->get_random_recycled_model($this->factory->model_name()) ?? $this->factory->create() : $this->factory;
+                return $this->resolved = $key ? $instance->{$key} : $instance->get_key();
             }
-
             return $this->resolved;
         };
     }
-
     /**
      * Specify the model instances to always use when creating relationships.
      *
@@ -83,7 +68,6 @@ class BelongsToRelationship
         if ($this->factory instanceof Factory) {
             $this->factory = $this->factory->recycle($recycle);
         }
-
         return $this;
     }
 }

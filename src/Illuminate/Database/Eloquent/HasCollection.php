@@ -1,58 +1,48 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent;
 
-use Illuminate\Database\Eloquent\Attributes\CollectedBy;
+use Illuminate\Database\Eloquent\Attributes\Collected_By;
 use ReflectionClass;
-
 /**
  * @template TCollection of \Illuminate\Database\Eloquent\Collection
  */
-trait HasCollection
+trait Has_Collection
 {
     /**
      * The resolved collection class names by model.
      *
      * @var array<class-string<static>, class-string<TCollection>>
      */
-    protected static array $resolvedCollectionClasses = [];
-
+    protected static array $resolved_collection_classes = [];
     /**
      * Create a new Eloquent Collection instance.
      *
      * @param  array<array-key, \Illuminate\Database\Eloquent\Model>  $models
      * @return TCollection
      */
-    public function newCollection(array $models = []): object
+    public function new_collection(array $models = []): object
     {
-        static::$resolvedCollectionClasses[static::class] ??= ($this->resolveCollectionFromAttribute() ?? static::$collectionClass);
-
-        $collection = new static::$resolvedCollectionClasses[static::class]($models);
-
-        if (Model::isAutomaticallyEagerLoadingRelationships()) {
-            $collection->withRelationshipAutoloading();
+        static::$resolved_collection_classes[static::class] ??= $this->resolve_collection_from_attribute() ?? static::$collection_class;
+        $collection = new static::$resolved_collection_classes[static::class]($models);
+        if (Model::is_automatically_eager_loading_relationships()) {
+            $collection->with_relationship_autoloading();
         }
-
         return $collection;
     }
-
     /**
      * Resolve the collection class name from the CollectedBy attribute.
      *
      * @return class-string<TCollection>|null
      */
-    public function resolveCollectionFromAttribute()
+    public function resolve_collection_from_attribute()
     {
-        $reflectionClass = new ReflectionClass(static::class);
-
-        $attributes = $reflectionClass->getAttributes(CollectedBy::class);
-
-        if (! isset($attributes[0]) || ! isset($attributes[0]->getArguments()[0])) {
+        $reflection_class = new ReflectionClass(static::class);
+        $attributes = $reflection_class->get_attributes(Collected_By::class);
+        if (!isset($attributes[0]) || !isset($attributes[0]->get_arguments()[0])) {
             return;
         }
-
-        return $attributes[0]->getArguments()[0];
+        return $attributes[0]->get_arguments()[0];
     }
 }

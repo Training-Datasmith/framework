@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Auth\Access;
 
 use Illuminate\Contracts\Auth\Access\Gate;
-
 trait Authorizable
 {
     /**
@@ -17,9 +15,8 @@ trait Authorizable
      */
     public function can($abilities, $arguments = [])
     {
-        return app(Gate::class)->forUser($this)->check($abilities, $arguments);
+        return app(Gate::class)->for_user($this)->check($abilities, $arguments);
     }
-
     /**
      * Determine if the entity has any of the given abilities.
      *
@@ -27,11 +24,10 @@ trait Authorizable
      * @param  mixed  $arguments
      * @return bool
      */
-    public function canAny($abilities, $arguments = [])
+    public function can_any($abilities, $arguments = [])
     {
-        return app(Gate::class)->forUser($this)->any($abilities, $arguments);
+        return app(Gate::class)->for_user($this)->any($abilities, $arguments);
     }
-
     /**
      * Determine if the entity does not have the given abilities.
      *
@@ -40,9 +36,8 @@ trait Authorizable
      */
     public function cant($abilities, $arguments = []): bool
     {
-        return ! $this->can($abilities, $arguments);
+        return !$this->can($abilities, $arguments);
     }
-
     /**
      * Determine if the entity does not have the given abilities.
      *

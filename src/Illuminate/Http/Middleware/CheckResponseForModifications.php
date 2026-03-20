@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Middleware;
 
 use Closure;
-use Symfony\Component\HttpFoundation\Response;
-
-class CheckResponseForModifications
+use Symfony\Component\Http_Foundation\Response;
+class Check_Response_For_Modifications
 {
     /**
      * Handle an incoming request.
@@ -18,11 +16,9 @@ class CheckResponseForModifications
     public function handle($request, Closure $next)
     {
         $response = $next($request);
-
         if ($response instanceof Response) {
-            $response->isNotModified($request);
+            $response->is_not_modified($request);
         }
-
         return $response;
     }
 }

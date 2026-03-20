@@ -1,23 +1,20 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Auth\Middleware;
 
 use Closure;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
+use Illuminate\Auth\Authentication_Exception;
+use Illuminate\Contracts\Auth\Middleware\Authenticates_Requests;
 use Illuminate\Http\Request;
-
-class Authenticate implements AuthenticatesRequests
+class Authenticate implements Authenticates_Requests
 {
     /**
      * The callback that should be used to generate the authentication redirect path.
      *
      * @var callable
      */
-    protected static $redirectToCallback;
-
+    protected static $redirect_to_callback;
     /**
      * Create a new middleware instance.
      */
@@ -26,9 +23,9 @@ class Authenticate implements AuthenticatesRequests
          * The authentication factory instance.
          */
         protected \Illuminate\Contracts\Auth\Factory $auth
-    ) {
+    )
+    {
     }
-
     /**
      * Specify the guards for the middleware.
      *
@@ -37,9 +34,8 @@ class Authenticate implements AuthenticatesRequests
      */
     public static function using($guard, ...$others): string
     {
-        return static::class.':'.implode(',', [$guard, ...$others]);
+        return static::class . ':' . implode(',', [$guard, ...$others]);
     }
-
     /**
      * Handle an incoming request.
      *
@@ -51,10 +47,8 @@ class Authenticate implements AuthenticatesRequests
     public function handle($request, Closure $next, ...$guards)
     {
         $this->authenticate($request, $guards);
-
         return $next($request);
     }
-
     /**
      * Determine if the user is logged in to any of the given guards.
      *
@@ -67,16 +61,13 @@ class Authenticate implements AuthenticatesRequests
         if (empty($guards)) {
             $guards = [null];
         }
-
         foreach ($guards as $guard) {
             if ($this->auth->guard($guard)->check()) {
-                return $this->auth->shouldUse($guard);
+                return $this->auth->should_use($guard);
             }
         }
-
         $this->unauthenticated($request, $guards);
     }
-
     /**
      * Handle an unauthenticated user.
      *
@@ -86,30 +77,24 @@ class Authenticate implements AuthenticatesRequests
      */
     protected function unauthenticated($request, array $guards): never
     {
-        throw new AuthenticationException(
-            'Unauthenticated.',
-            $guards,
-            $request->expectsJson() ? null : $this->redirectTo($request),
-        );
+        throw new Authentication_Exception('Unauthenticated.', $guards, $request->expects_json() ? null : $this->redirect_to($request));
     }
-
     /**
      * Get the path the user should be redirected to when they are not authenticated.
      *
      * @return string|null
      */
-    protected function redirectTo(Request $request)
+    protected function redirect_to(Request $request)
     {
-        if (static::$redirectToCallback) {
-            return call_user_func(static::$redirectToCallback, $request);
+        if (static::$redirect_to_callback) {
+            return call_user_func(static::$redirect_to_callback, $request);
         }
     }
-
     /**
      * Specify the callback that should be used to generate the redirect path.
      */
-    public static function redirectUsing(callable $redirectToCallback): void
+    public static function redirect_using(callable $redirect_to_callback): void
     {
-        static::$redirectToCallback = $redirectToCallback;
+        static::$redirect_to_callback = $redirect_to_callback;
     }
 }

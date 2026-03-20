@@ -1,16 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Exceptions\Whoops;
 
-use Illuminate\Contracts\Foundation\ExceptionRenderer;
-
+use Illuminate\Contracts\Foundation\Exception_Renderer;
 use function tap;
-
 use Whoops\Run as Whoops;
-
-class WhoopsExceptionRenderer implements ExceptionRenderer
+class Whoops_Exception_Renderer implements Exception_Renderer
 {
     /**
      * Renders the given exception as HTML.
@@ -21,21 +17,18 @@ class WhoopsExceptionRenderer implements ExceptionRenderer
     public function render($throwable)
     {
         return tap(new Whoops(), function ($whoops): void {
-            $whoops->appendHandler($this->whoopsHandler());
-
-            $whoops->writeToOutput(false);
-
-            $whoops->allowQuit(false);
-        })->handleException($throwable);
+            $whoops->append_handler($this->whoops_handler());
+            $whoops->write_to_output(false);
+            $whoops->allow_quit(false);
+        })->handle_exception($throwable);
     }
-
     /**
      * Get the Whoops handler for the application.
      *
      * @return \Whoops\Handler\Handler
      */
-    protected function whoopsHandler()
+    protected function whoops_handler()
     {
-        return (new WhoopsHandler())->forDebug();
+        return (new Whoops_Handler())->for_debug();
     }
 }

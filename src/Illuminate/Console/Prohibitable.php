@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console;
 
 trait Prohibitable
@@ -11,8 +10,7 @@ trait Prohibitable
      *
      * @var bool
      */
-    protected static $prohibitedFromRunning = false;
-
+    protected static $prohibited_from_running = false;
     /**
      * Indicate whether the command should be prohibited from running.
      *
@@ -20,22 +18,19 @@ trait Prohibitable
      */
     public static function prohibit($prohibit = true): void
     {
-        static::$prohibitedFromRunning = $prohibit;
+        static::$prohibited_from_running = $prohibit;
     }
-
     /**
      * Determine if the command is prohibited from running and display a warning if so.
      */
-    protected function isProhibited(bool $quiet = false): bool
+    protected function is_prohibited(bool $quiet = false): bool
     {
-        if (! static::$prohibitedFromRunning) {
+        if (!static::$prohibited_from_running) {
             return false;
         }
-
-        if (! $quiet) {
+        if (!$quiet) {
             $this->components->warn('This command is prohibited from running in this environment.');
         }
-
         return true;
     }
 }

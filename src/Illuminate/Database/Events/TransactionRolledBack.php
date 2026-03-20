@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Events;
 
-class TransactionRolledBack extends ConnectionEvent
+class Transaction_Rolled_Back extends Connection_Event
 {
 }

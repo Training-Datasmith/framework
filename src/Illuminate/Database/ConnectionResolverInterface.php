@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database;
 
-interface ConnectionResolverInterface
+interface Connection_Resolver_Interface
 {
     /**
      * Get a database connection instance.
@@ -13,19 +12,17 @@ interface ConnectionResolverInterface
      * @return \Illuminate\Database\ConnectionInterface
      */
     public function connection($name = null);
-
     /**
      * Get the default connection name.
      *
      * @return string
      */
-    public function getDefaultConnection();
-
+    public function get_default_connection();
     /**
      * Set the default connection name.
      *
      * @param  string  $name
      * @return void
      */
-    public function setDefaultConnection($name);
+    public function set_default_connection($name);
 }

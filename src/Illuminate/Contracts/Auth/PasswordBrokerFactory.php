@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Auth;
 
-interface PasswordBrokerFactory
+interface Password_Broker_Factory
 {
     /**
      * Get a password broker instance by name.

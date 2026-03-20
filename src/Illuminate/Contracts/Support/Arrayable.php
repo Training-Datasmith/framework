@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Support;
 
 /**
@@ -15,5 +14,5 @@ interface Arrayable
      *
      * @return array<TKey, TValue>
      */
-    public function toArray();
+    public function to_array();
 }

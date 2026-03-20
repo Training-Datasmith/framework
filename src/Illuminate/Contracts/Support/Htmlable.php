@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Support;
 
 interface Htmlable
@@ -11,5 +10,5 @@ interface Htmlable
      *
      * @return string
      */
-    public function toHtml();
+    public function to_html();
 }

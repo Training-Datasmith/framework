@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Console\View\Components;
 
 class Confirm extends Component
@@ -13,8 +12,6 @@ class Confirm extends Component
      */
     public function render(string $question, bool $default = false)
     {
-        return $this->usingQuestionHelper(
-            fn () => $this->output->confirm($question, $default),
-        );
+        return $this->using_question_helper(fn() => $this->output->confirm($question, $default));
     }
 }

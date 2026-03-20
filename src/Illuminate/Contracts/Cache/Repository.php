@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Cache;
 
 use Closure;
-use Psr\SimpleCache\CacheInterface;
-
-interface Repository extends CacheInterface
+use Psr\Simple_Cache\Cache_Interface;
+interface Repository extends Cache_Interface
 {
     /**
      * Retrieve an item from the cache and delete it.
@@ -19,7 +17,6 @@ interface Repository extends CacheInterface
      * @return (TCacheValue is null ? mixed : TCacheValue)
      */
     public function pull($key, $default = null);
-
     /**
      * Store an item in the cache.
      *
@@ -29,7 +26,6 @@ interface Repository extends CacheInterface
      * @return bool
      */
     public function put($key, $value, $ttl = null);
-
     /**
      * Store an item in the cache if the key does not exist.
      *
@@ -39,7 +35,6 @@ interface Repository extends CacheInterface
      * @return bool
      */
     public function add($key, $value, $ttl = null);
-
     /**
      * Increment the value of an item in the cache.
      *
@@ -48,7 +43,6 @@ interface Repository extends CacheInterface
      * @return int|bool
      */
     public function increment($key, $value = 1);
-
     /**
      * Decrement the value of an item in the cache.
      *
@@ -57,7 +51,6 @@ interface Repository extends CacheInterface
      * @return int|bool
      */
     public function decrement($key, $value = 1);
-
     /**
      * Store an item in the cache indefinitely.
      *
@@ -66,7 +59,6 @@ interface Repository extends CacheInterface
      * @return bool
      */
     public function forever($key, $value);
-
     /**
      * Get an item from the cache, or execute the given Closure and store the result.
      *
@@ -78,7 +70,6 @@ interface Repository extends CacheInterface
      * @return TCacheValue
      */
     public function remember($key, $ttl, Closure $callback);
-
     /**
      * Get an item from the cache, or execute the given Closure and store the result forever.
      *
@@ -89,7 +80,6 @@ interface Repository extends CacheInterface
      * @return TCacheValue
      */
     public function sear($key, Closure $callback);
-
     /**
      * Get an item from the cache, or execute the given Closure and store the result forever.
      *
@@ -99,8 +89,7 @@ interface Repository extends CacheInterface
      * @param  \Closure(): TCacheValue  $callback
      * @return TCacheValue
      */
-    public function rememberForever($key, Closure $callback);
-
+    public function remember_forever($key, Closure $callback);
     /**
      * Remove an item from the cache.
      *
@@ -108,11 +97,10 @@ interface Repository extends CacheInterface
      * @return bool
      */
     public function forget($key);
-
     /**
      * Get the cache store implementation.
      *
      * @return \Illuminate\Contracts\Cache\Store
      */
-    public function getStore();
+    public function get_store();
 }

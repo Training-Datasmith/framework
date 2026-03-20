@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Attributes;
 
 use Attribute;
-
 #[Attribute(Attribute::TARGET_CLASS)]
-class UseResourceCollection
+class Use_Resource_Collection
 {
     /**
      * Create a new attribute instance.

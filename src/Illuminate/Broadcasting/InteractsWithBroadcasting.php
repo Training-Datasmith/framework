@@ -1,46 +1,37 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Broadcasting;
 
 use Illuminate\Support\Arr;
-
 use function Illuminate\Support\enum_value;
-
-trait InteractsWithBroadcasting
+trait Interacts_With_Broadcasting
 {
     /**
      * The broadcaster connection to use to broadcast the event.
      *
      * @var array
      */
-    protected $broadcastConnection = [null];
-
+    protected $broadcast_connection = [null];
     /**
      * Broadcast the event using a specific broadcaster.
      *
      * @param  \UnitEnum|array|string|null  $connection
      * @return $this
      */
-    public function broadcastVia($connection = null)
+    public function broadcast_via($connection = null)
     {
         $connection = enum_value($connection);
-
-        $this->broadcastConnection = is_null($connection)
-            ? [null]
-            : Arr::wrap($connection);
-
+        $this->broadcast_connection = is_null($connection) ? [null] : Arr::wrap($connection);
         return $this;
     }
-
     /**
      * Get the broadcaster connections the event should be broadcast on.
      *
      * @return array
      */
-    public function broadcastConnections()
+    public function broadcast_connections()
     {
-        return $this->broadcastConnection;
+        return $this->broadcast_connection;
     }
 }

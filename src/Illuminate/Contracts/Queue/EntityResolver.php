@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Queue;
 
-interface EntityResolver
+interface Entity_Resolver
 {
     /**
      * Resolve the entity for the given ID.

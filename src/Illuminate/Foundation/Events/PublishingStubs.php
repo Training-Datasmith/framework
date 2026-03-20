@@ -1,20 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Events;
 
-class PublishingStubs
+class Publishing_Stubs
 {
     use Dispatchable;
-
     /**
      * The stubs being published.
      *
      * @var array
      */
     public $stubs = [];
-
     /**
      * Create a new event instance.
      */
@@ -22,7 +19,6 @@ class PublishingStubs
     {
         $this->stubs = $stubs;
     }
-
     /**
      * Add a new stub to be published.
      *
@@ -31,7 +27,6 @@ class PublishingStubs
     public function add(string $path, string $name): static
     {
         $this->stubs[$path] = $name;
-
         return $this;
     }
 }

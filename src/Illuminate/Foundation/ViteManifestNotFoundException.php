@@ -1,12 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation;
 
 /**
  * @deprecated use ViteException
  */
-class ViteManifestNotFoundException extends ViteException
+class Vite_Manifest_Not_Found_Exception extends Vite_Exception
 {
 }

@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Support;
 
 use Countable;
-
-interface MessageBag extends Arrayable, Countable
+interface Message_Bag extends Arrayable, Countable
 {
     /**
      * Get the keys present in the message bag.
@@ -14,7 +12,6 @@ interface MessageBag extends Arrayable, Countable
      * @return array
      */
     public function keys();
-
     /**
      * Add a message to the bag.
      *
@@ -23,7 +20,6 @@ interface MessageBag extends Arrayable, Countable
      * @return $this
      */
     public function add($key, $message);
-
     /**
      * Merge a new array of messages into the bag.
      *
@@ -31,7 +27,6 @@ interface MessageBag extends Arrayable, Countable
      * @return $this
      */
     public function merge($messages);
-
     /**
      * Determine if messages exist for a given key.
      *
@@ -39,7 +34,6 @@ interface MessageBag extends Arrayable, Countable
      * @return bool
      */
     public function has($key);
-
     /**
      * Get the first message from the bag for a given key.
      *
@@ -48,7 +42,6 @@ interface MessageBag extends Arrayable, Countable
      * @return string
      */
     public function first($key = null, $format = null);
-
     /**
      * Get all of the messages from the bag for a given key.
      *
@@ -57,7 +50,6 @@ interface MessageBag extends Arrayable, Countable
      * @return array
      */
     public function get($key, $format = null);
-
     /**
      * Get all of the messages for every key in the bag.
      *
@@ -65,7 +57,6 @@ interface MessageBag extends Arrayable, Countable
      * @return array
      */
     public function all($format = null);
-
     /**
      * Remove a message from the bag.
      *
@@ -73,40 +64,35 @@ interface MessageBag extends Arrayable, Countable
      * @return $this
      */
     public function forget($key);
-
     /**
      * Get the raw messages in the container.
      *
      * @return array
      */
-    public function getMessages();
-
+    public function get_messages();
     /**
      * Get the default message format.
      *
      * @return string
      */
-    public function getFormat();
-
+    public function get_format();
     /**
      * Set the default message format.
      *
      * @param  string  $format
      * @return $this
      */
-    public function setFormat($format = ':message');
-
+    public function set_format($format = ':message');
     /**
      * Determine if the message bag has any messages.
      *
      * @return bool
      */
-    public function isEmpty();
-
+    public function is_empty();
     /**
      * Determine if the message bag has any messages.
      *
      * @return bool
      */
-    public function isNotEmpty();
+    public function is_not_empty();
 }

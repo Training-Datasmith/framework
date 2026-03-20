@@ -1,43 +1,37 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Console;
 
-use Illuminate\Console\Concerns\CreatesMatchingTest;
-use Illuminate\Console\GeneratorCommand;
+use Illuminate\Console\Concerns\Creates_Matching_Test;
+use Illuminate\Console\Generator_Command;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputOption;
-
-#[AsCommand(name: 'make:component')]
-class ComponentMakeCommand extends GeneratorCommand
+use Symfony\Component\Console\Attribute\As_Command;
+use Symfony\Component\Console\Input\Input_Option;
+#[As_Command(name: 'make:component')]
+class Component_Make_Command extends Generator_Command
 {
-    use CreatesMatchingTest;
-
+    use Creates_Matching_Test;
     /**
      * The console command name.
      *
      * @var string
      */
     protected $name = 'make:component';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create a new view component class';
-
     /**
      * The type of class being generated.
      *
      * @var string
      */
     protected $type = 'Component';
-
     /**
      * Execute the console command.
      *
@@ -46,144 +40,96 @@ class ComponentMakeCommand extends GeneratorCommand
     public function handle()
     {
         if ($this->option('view')) {
-            return $this->writeView();
+            return $this->write_view();
         }
-
-        if (parent::handle() === false && ! $this->option('force')) {
+        if (parent::handle() === false && !$this->option('force')) {
             return;
         }
-
-        if (! $this->option('inline')) {
-            $this->writeView();
+        if (!$this->option('inline')) {
+            $this->write_view();
         }
     }
-
     /**
      * Write the view for the component.
      *
      * @return void
      */
-    protected function writeView()
+    protected function write_view()
     {
         $separator = '/';
-
         if (windows_os()) {
             $separator = '\\';
         }
-
-        $path = $this->viewPath(
-            str_replace('.', $separator, $this->getView()).'.blade.php'
-        );
-
-        if (! $this->files->isDirectory(dirname($path))) {
-            $this->files->makeDirectory(dirname($path), 0777, true, true);
+        $path = $this->view_path(str_replace('.', $separator, $this->get_view()) . '.blade.php');
+        if (!$this->files->is_directory(dirname($path))) {
+            $this->files->make_directory(dirname($path), 0777, true, true);
         }
-
-        if ($this->files->exists($path) && ! $this->option('force')) {
+        if ($this->files->exists($path) && !$this->option('force')) {
             $this->components->error('View already exists.');
-
             return;
         }
-
-        file_put_contents(
-            $path,
-            '<div>
-    <!-- '.Inspiring::quotes()->random().' -->
-</div>'
-        );
-
+        file_put_contents($path, '<div>
+    <!-- ' . Inspiring::quotes()->random() . ' -->
+</div>');
         $this->components->info(sprintf('%s [%s] created successfully.', 'View', $path));
     }
-
     /**
      * Build the class with the given name.
      *
      * @param  string  $name
      */
-    protected function buildClass($name): string
+    protected function build_class($name): string
     {
         if ($this->option('inline')) {
-            return str_replace(
-                ['DummyView', '{{ view }}'],
-                "<<<'blade'\n<div>\n    <!-- ".Inspiring::quotes()->random()." -->\n</div>\nblade",
-                parent::buildClass($name)
-            );
+            return str_replace(['DummyView', '{{ view }}'], "<<<'blade'\n<div>\n    <!-- " . Inspiring::quotes()->random() . " -->\n</div>\nblade", parent::build_class($name));
         }
-
-        return str_replace(
-            ['DummyView', '{{ view }}'],
-            'view(\''.$this->getView().'\')',
-            parent::buildClass($name)
-        );
+        return str_replace(['DummyView', '{{ view }}'], 'view(\'' . $this->get_view() . '\')', parent::build_class($name));
     }
-
     /**
      * Get the view name relative to the view path.
      *
      * @return string view
      */
-    protected function getView(): string
+    protected function get_view(): string
     {
         $segments = explode('/', str_replace('\\', '/', $this->argument('name')));
-
         $name = array_pop($segments);
-
-        $path = is_string($this->option('path'))
-            ? explode('/', trim($this->option('path'), '/'))
-            : [
-                'components',
-                ...$segments,
-            ];
-
+        $path = is_string($this->option('path')) ? explode('/', trim($this->option('path'), '/')) : ['components', ...$segments];
         $path[] = $name;
-
-        return (new Collection($path))
-            ->map(fn ($segment) => Str::kebab($segment))
-            ->implode('.');
+        return (new Collection($path))->map(fn($segment) => Str::kebab($segment))->implode('.');
     }
-
     /**
      * Get the stub file for the generator.
      *
      * @return string
      */
-    protected function getStub()
+    protected function get_stub()
     {
-        return $this->resolveStubPath('/stubs/view-component.stub');
+        return $this->resolve_stub_path('/stubs/view-component.stub');
     }
-
     /**
      * Resolve the fully-qualified path to the stub.
      *
      * @return string
      */
-    protected function resolveStubPath(string $stub)
+    protected function resolve_stub_path(string $stub)
     {
-        return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
-            ? $customPath
-            : __DIR__.$stub;
+        return file_exists($custom_path = $this->laravel->base_path(trim($stub, '/'))) ? $custom_path : __DIR__ . $stub;
     }
-
     /**
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
      */
-    protected function getDefaultNamespace($rootNamespace): string
+    protected function get_default_namespace($root_namespace): string
     {
-        return $rootNamespace.'\View\Components';
+        return $root_namespace . '\View\Components';
     }
-
     /**
      * Get the console command options.
      */
-    protected function getOptions(): array
+    protected function get_options(): array
     {
-        return [
-            ['inline', null, InputOption::VALUE_NONE, 'Create a component that renders an inline view'],
-            ['view', null, InputOption::VALUE_NONE, 'Create an anonymous component with only a view'],
-            ['path', null, InputOption::VALUE_REQUIRED, 'The location where the component view should be created'],
-            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the component already exists'],
-        ];
+        return [['inline', null, Input_Option::VALUE_NONE, 'Create a component that renders an inline view'], ['view', null, Input_Option::VALUE_NONE, 'Create an anonymous component with only a view'], ['path', null, Input_Option::VALUE_REQUIRED, 'The location where the component view should be created'], ['force', 'f', Input_Option::VALUE_NONE, 'Create the class even if the component already exists']];
     }
 }

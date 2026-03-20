@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Support;
 
-interface CanBeEscapedWhenCastToString
+interface Can_Be_Escaped_When_Cast_To_String
 {
     /**
      * Indicate that the object's string representation should be escaped when __toString is invoked.
@@ -12,5 +11,5 @@ interface CanBeEscapedWhenCastToString
      * @param  bool  $escape
      * @return $this
      */
-    public function escapeWhenCastingToString($escape = true);
+    public function escape_when_casting_to_string($escape = true);
 }

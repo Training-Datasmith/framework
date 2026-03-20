@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Validation;
 
 use Closure;
-
 /**
  * @deprecated see ValidationRule
  */
-interface InvokableRule
+interface Invokable_Rule
 {
     /**
      * Run the validation rule.

@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Factories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-
-class BelongsToManyRelationship
+class Belongs_To_Many_Relationship
 {
     /**
      * The pivot attributes / attribute resolver.
@@ -15,7 +13,6 @@ class BelongsToManyRelationship
      * @var callable|array
      */
     protected $pivot;
-
     /**
      * Create a new attached relationship definition.
      *
@@ -23,37 +20,33 @@ class BelongsToManyRelationship
      * @param  callable|array  $pivot
      * @param  string  $relationship
      */
-    public function __construct(/**
-     * The related factory instance.
-     */
+    public function __construct(
+        /**
+         * The related factory instance.
+         */
         protected $factory,
-        $pivot, /**
-     * The relationship name.
-     */
+        $pivot,
+        /**
+         * The relationship name.
+         */
         protected $relationship
-    ) {
+    )
+    {
         $this->pivot = $pivot;
     }
-
     /**
      * Create the attached relationship for the given model.
      */
-    public function createFor(Model $model): void
+    public function create_for(Model $model): void
     {
-        $factoryInstance = $this->factory instanceof Factory;
-
-        if ($factoryInstance) {
+        $factory_instance = $this->factory instanceof Factory;
+        if ($factory_instance) {
             $relationship = $model->{$this->relationship}();
         }
-
-        Collection::wrap($factoryInstance ? $this->factory->prependState($relationship->getQuery()->pendingAttributes)->create([], $model) : $this->factory)->each(function ($attachable) use ($model): void {
-            $model->{$this->relationship}()->attach(
-                $attachable,
-                is_callable($this->pivot) ? call_user_func($this->pivot, $model) : $this->pivot
-            );
+        Collection::wrap($factory_instance ? $this->factory->prepend_state($relationship->get_query()->pending_attributes)->create([], $model) : $this->factory)->each(function ($attachable) use ($model): void {
+            $model->{$this->relationship}()->attach($attachable, is_callable($this->pivot) ? call_user_func($this->pivot, $model) : $this->pivot);
         });
     }
-
     /**
      * Specify the model instances to always use when creating relationships.
      *
@@ -65,7 +58,6 @@ class BelongsToManyRelationship
         if ($this->factory instanceof Factory) {
             $this->factory = $this->factory->recycle($recycle);
         }
-
         return $this;
     }
 }

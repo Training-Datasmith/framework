@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Console;
 
 interface Kernel
@@ -12,7 +11,6 @@ interface Kernel
      * @return void
      */
     public function bootstrap();
-
     /**
      * Handle an incoming console command.
      *
@@ -21,7 +19,6 @@ interface Kernel
      * @return int
      */
     public function handle($input, $output = null);
-
     /**
      * Run an Artisan console command by name.
      *
@@ -29,8 +26,7 @@ interface Kernel
      * @param  \Symfony\Component\Console\Output\OutputInterface|null  $outputBuffer
      * @return int
      */
-    public function call($command, array $parameters = [], $outputBuffer = null);
-
+    public function call($command, array $parameters = [], $output_buffer = null);
     /**
      * Queue an Artisan console command by name.
      *
@@ -38,21 +34,18 @@ interface Kernel
      * @return \Illuminate\Foundation\Bus\PendingDispatch
      */
     public function queue($command, array $parameters = []);
-
     /**
      * Get all of the commands registered with the console.
      *
      * @return array
      */
     public function all();
-
     /**
      * Get the output for the last run command.
      *
      * @return string
      */
     public function output();
-
     /**
      * Terminate the application.
      *

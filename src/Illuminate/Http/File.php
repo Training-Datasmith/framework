@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http;
 
-use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
-
-class File extends SymfonyFile
+use Symfony\Component\Http_Foundation\File\File as SymfonyFile;
+class File extends Symfony_File
 {
-    use FileHelpers;
+    use File_Helpers;
 }

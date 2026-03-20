@@ -1,18 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Events;
 
-class QueryExecuted
+class Query_Executed
 {
     /**
      * The database connection name.
      *
      * @var string
      */
-    public $connectionName;
-
+    public $connection_name;
     /**
      * Create a new event instance.
      *
@@ -22,34 +20,36 @@ class QueryExecuted
      * @param  \Illuminate\Database\Connection  $connection
      * @param  null|'read'|'write'  $readWriteType
      */
-    public function __construct(/**
-     * The SQL query that was executed.
-     */
-        public $sql, /**
-     * The array of query bindings.
-     */
-        public $bindings, /**
-     * The number of milliseconds it took to execute the query.
-     */
-        public $time, /**
-     * The database connection instance.
-     */
-        public $connection, /**
-     * The PDO read / write type for the executed query.
-     */
-        public $readWriteType = null
-    ) {
-        $this->connectionName = $this->connection->getName();
+    public function __construct(
+        /**
+         * The SQL query that was executed.
+         */
+        public $sql,
+        /**
+         * The array of query bindings.
+         */
+        public $bindings,
+        /**
+         * The number of milliseconds it took to execute the query.
+         */
+        public $time,
+        /**
+         * The database connection instance.
+         */
+        public $connection,
+        /**
+         * The PDO read / write type for the executed query.
+         */
+        public $read_write_type = null
+    )
+    {
+        $this->connection_name = $this->connection->get_name();
     }
-
     /**
      * Get the raw SQL representation of the query with embedded bindings.
      */
-    public function toRawSql(): string
+    public function to_raw_sql(): string
     {
-        return $this->connection
-            ->query()
-            ->getGrammar()
-            ->substituteBindingsIntoRawSql($this->sql, $this->connection->prepareBindings($this->bindings));
+        return $this->connection->query()->get_grammar()->substitute_bindings_into_raw_sql($this->sql, $this->connection->prepare_bindings($this->bindings));
     }
 }

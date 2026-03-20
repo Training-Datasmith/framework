@@ -1,28 +1,22 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database;
 
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Database\ConcurrencyErrorDetector as ConcurrencyErrorDetectorContract;
+use Illuminate\Contracts\Database\Concurrency_Error_Detector as ConcurrencyErrorDetectorContract;
 use Throwable;
-
-trait DetectsConcurrencyErrors
+trait Detects_Concurrency_Errors
 {
     /**
      * Determine if the given exception was caused by a concurrency error such as a deadlock or serialization failure.
      *
      * @return bool
      */
-    protected function causedByConcurrencyError(Throwable $e)
+    protected function caused_by_concurrency_error(Throwable $e)
     {
-        $container = Container::getInstance();
-
-        $detector = $container->bound(ConcurrencyErrorDetectorContract::class)
-            ? $container[ConcurrencyErrorDetectorContract::class]
-            : new ConcurrencyErrorDetector();
-
-        return $detector->causedByConcurrencyError($e);
+        $container = Container::get_instance();
+        $detector = $container->bound(Concurrency_Error_Detector_Contract::class) ? $container[Concurrency_Error_Detector_Contract::class] : new Concurrency_Error_Detector();
+        return $detector->caused_by_concurrency_error($e);
     }
 }

@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Container\Attributes;
 
 use Attribute;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Container\ContextualAttribute;
-
+use Illuminate\Contracts\Container\Contextual_Attribute;
 #[Attribute(Attribute::TARGET_PARAMETER)]
-class Authenticated implements ContextualAttribute
+class Authenticated implements Contextual_Attribute
 {
     /**
      * Create a new class instance.
@@ -17,7 +15,6 @@ class Authenticated implements ContextualAttribute
     public function __construct(public ?string $guard = null)
     {
     }
-
     /**
      * Resolve the currently authenticated user.
      *
@@ -25,6 +22,6 @@ class Authenticated implements ContextualAttribute
      */
     public static function resolve(self $attribute, Container $container): mixed
     {
-        return call_user_func($container->make('auth')->userResolver(), $attribute->guard);
+        return call_user_func($container->make('auth')->user_resolver(), $attribute->guard);
     }
 }

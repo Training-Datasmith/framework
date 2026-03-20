@@ -1,15 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Http\Resources;
 
-class MissingValue implements PotentiallyMissing
+class Missing_Value implements Potentially_Missing
 {
     /**
      * Determine if the object should be considered "missing".
      */
-    public function isMissing(): bool
+    public function is_missing(): bool
     {
         return true;
     }

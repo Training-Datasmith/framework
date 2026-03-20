@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Symfony\Component\Console\Attribute\AsCommand;
-
-#[AsCommand(name: 'event:clear')]
-class EventClearCommand extends Command
+use Symfony\Component\Console\Attribute\As_Command;
+#[As_Command(name: 'event:clear')]
+class Event_Clear_Command extends Command
 {
     /**
      * The console command name.
@@ -17,25 +15,24 @@ class EventClearCommand extends Command
      * @var string
      */
     protected $name = 'event:clear';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Clear all cached events and listeners';
-
     /**
      * Create a new config clear command instance.
      */
-    public function __construct(/**
-     * The filesystem instance.
-     */
+    public function __construct(
+        /**
+         * The filesystem instance.
+         */
         protected \Illuminate\Filesystem\Filesystem $files
-    ) {
+    )
+    {
         parent::__construct();
     }
-
     /**
      * Execute the console command.
      *
@@ -44,8 +41,7 @@ class EventClearCommand extends Command
      */
     public function handle(): void
     {
-        $this->files->delete($this->laravel->getCachedEventsPath());
-
+        $this->files->delete($this->laravel->get_cached_events_path());
         $this->components->info('Cached events cleared successfully.');
     }
 }

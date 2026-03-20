@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Foundation;
 
 use Exception;
-
-class MixManifestNotFoundException extends Exception
+class Mix_Manifest_Not_Found_Exception extends Exception
 {
 }

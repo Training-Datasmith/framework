@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Database\Eloquent\Casts;
 
 class Attribute
@@ -12,28 +11,24 @@ class Attribute
      * @var callable
      */
     public $get;
-
     /**
      * The attribute mutator.
      *
      * @var callable
      */
     public $set;
-
     /**
      * Indicates if caching is enabled for this attribute.
      *
      * @var bool
      */
-    public $withCaching = false;
-
+    public $with_caching = false;
     /**
      * Indicates if caching of objects is enabled for this attribute.
      *
      * @var bool
      */
-    public $withObjectCaching = true;
-
+    public $with_object_caching = true;
     /**
      * Create a new attribute accessor / mutator.
      */
@@ -42,7 +37,6 @@ class Attribute
         $this->get = $get;
         $this->set = $set;
     }
-
     /**
      * Create a new attribute accessor / mutator.
      */
@@ -50,7 +44,6 @@ class Attribute
     {
         return new static($get, $set);
     }
-
     /**
      * Create a new attribute accessor.
      */
@@ -58,7 +51,6 @@ class Attribute
     {
         return new static($get);
     }
-
     /**
      * Create a new attribute mutator.
      */
@@ -66,24 +58,20 @@ class Attribute
     {
         return new static(null, $set);
     }
-
     /**
      * Disable object caching for the attribute.
      */
-    public function withoutObjectCaching(): static
+    public function without_object_caching(): static
     {
-        $this->withObjectCaching = false;
-
+        $this->with_object_caching = false;
         return $this;
     }
-
     /**
      * Enable caching for the attribute.
      */
-    public function shouldCache(): static
+    public function should_cache(): static
     {
-        $this->withCaching = true;
-
+        $this->with_caching = true;
         return $this;
     }
 }

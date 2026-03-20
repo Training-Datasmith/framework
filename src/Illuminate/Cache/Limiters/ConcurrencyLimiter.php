@@ -1,14 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Cache\Limiters;
 
 use Illuminate\Support\Sleep;
 use Illuminate\Support\Str;
 use Throwable;
-
-class ConcurrencyLimiter
+class Concurrency_Limiter
 {
     /**
      * Create a new concurrency limiter instance.
@@ -30,14 +28,14 @@ class ConcurrencyLimiter
         /**
          * The allowed number of concurrent locks.
          */
-        protected $maxLocks,
+        protected $max_locks,
         /**
          * The number of seconds a slot should be maintained.
          */
-        protected $releaseAfter
-    ) {
+        protected $release_after
+    )
+    {
     }
-
     /**
      * Attempt to acquire the lock for the given number of seconds.
      *
@@ -52,17 +50,13 @@ class ConcurrencyLimiter
     public function block($timeout, $callback = null, $sleep = 250)
     {
         $starting = time();
-
         $id = Str::random(20);
-
-        while (! $slot = $this->acquire($id)) {
+        while (!$slot = $this->acquire($id)) {
             if (time() - $timeout >= $starting) {
-                throw new LimiterTimeoutException();
+                throw new Limiter_Timeout_Exception();
             }
-
             Sleep::usleep($sleep * 1000);
         }
-
         if (is_callable($callback)) {
             try {
                 return tap($callback(), function () use ($slot): void {
@@ -70,14 +64,11 @@ class ConcurrencyLimiter
                 });
             } catch (Throwable $exception) {
                 $this->release($slot);
-
                 throw $exception;
             }
         }
-
         return true;
     }
-
     /**
      * Attempt to acquire a slot lock.
      *
@@ -86,17 +77,14 @@ class ConcurrencyLimiter
      */
     protected function acquire($id)
     {
-        for ($i = 1; $i <= $this->maxLocks; $i++) {
-            $lock = $this->store->lock($this->name.$i, $this->releaseAfter, $id);
-
+        for ($i = 1; $i <= $this->max_locks; $i++) {
+            $lock = $this->store->lock($this->name . $i, $this->release_after, $id);
             if ($lock->acquire()) {
                 return $lock;
             }
         }
-
         return false;
     }
-
     /**
      * Release the lock.
      *

@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Illuminate\Contracts\Auth;
 
-interface UserProvider
+interface User_Provider
 {
     /**
      * Retrieve a user by their unique identifier.
@@ -12,8 +11,7 @@ interface UserProvider
      * @param  mixed  $identifier
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public function retrieveById($identifier);
-
+    public function retrieve_by_id($identifier);
     /**
      * Retrieve a user by their unique identifier and "remember me" token.
      *
@@ -21,34 +19,50 @@ interface UserProvider
      * @param  string  $token
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public function retrieveByToken($identifier, #[\SensitiveParameter] $token);
-
+    public function retrieve_by_token(
+        $identifier,
+        #[\Sensitive_Parameter]
+        $token
+    );
     /**
      * Update the "remember me" token for the given user in storage.
      *
      * @param  string  $token
      * @return void
      */
-    public function updateRememberToken(Authenticatable $user, #[\SensitiveParameter] $token);
-
+    public function update_remember_token(
+        Authenticatable $user,
+        #[\Sensitive_Parameter]
+        $token
+    );
     /**
      * Retrieve a user by the given credentials.
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public function retrieveByCredentials(#[\SensitiveParameter] array $credentials);
-
+    public function retrieve_by_credentials(
+        #[\Sensitive_Parameter]
+        array $credentials
+    );
     /**
      * Validate a user against the given credentials.
      *
      * @return bool
      */
-    public function validateCredentials(Authenticatable $user, #[\SensitiveParameter] array $credentials);
-
+    public function validate_credentials(
+        Authenticatable $user,
+        #[\Sensitive_Parameter]
+        array $credentials
+    );
     /**
      * Rehash the user's password if required and supported.
      *
      * @return void
      */
-    public function rehashPasswordIfRequired(Authenticatable $user, #[\SensitiveParameter] array $credentials, bool $force = false);
+    public function rehash_password_if_required(
+        Authenticatable $user,
+        #[\Sensitive_Parameter]
+        array $credentials,
+        bool $force = false
+    );
 }
